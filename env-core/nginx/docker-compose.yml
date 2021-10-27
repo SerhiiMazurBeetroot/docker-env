@@ -1,0 +1,33 @@
+version: '3.6'
+services:
+  nginx:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./conf.d:/etc/nginx/conf.d/
+      - ssl-certs:/etc/nginx/certs:ro
+      - ./logs:/var/log/nginx
+    restart: always
+  mkcert:
+    image: aegypius/mkcert-for-nginx-proxy
+    container_name: nginx-mkcert
+    restart: unless-stopped
+    volumes:
+    - ssl-certs:/app/certs:rw
+    - ./certs-root/:/app/ca:rw
+    - ~/.mozilla/firefox:/root/.mozilla/firefox:rw
+    - ~/.pki/nssdb:/root/.pki/nssdb:rw
+    - ${CA_STORE:-/usr/local/share/ca-certificates}:/usr/local/share/ca-certificates
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+networks:
+  default:
+    external:
+      name: dockerwp
+volumes:
+  ssl-certs: 
+    name: ssl-certs
+    external: true

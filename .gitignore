@@ -1,0 +1,84 @@
+#################################################################################
+##                                                                              #
+##    GIT IGNORE FOR WORDPRESS SITES                                            #
+##    ------------------------------                                            #
+##    Adapted from: http://bigwilliam.com/gitignore-for-wordpress-projects/     #
+##    and https://github.com/github/gitignore/blob/master/WordPress.gitignore   #
+##                                                                              #
+#################################################################################
+
+#################################################################################
+##                                                                              #
+##         NOTE: TO STOP TRACKING A FILE AFTER IGNORING IT,                     #
+##               USE THESE GIT COMMANDS:                                        #
+##                                                                              #
+##               git rm --cached <file>                                         #
+##               git add . # or git add <file>                                  #
+##                                                                              #
+#################################################################################
+
+
+## OS and Utility Stuff ##
+
+#==================#
+#     OS Files     #
+#==================#
+*.DS_Store
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+*[Tt]humbs.db
+*.Trashes
+
+
+#===================#
+#     IDE Files     #
+#===================#
+.idea
+*.sublime-project
+*.sublime-workspace
+*.komodoproject
+*.codekit3
+
+
+#===============================#
+#     Log, map files, .env      #
+#===============================#
+*.log
+*.log.bak
+error_log
+access_log
+.sass-cache
+*.css.map
+*.js.map
+*.LICENSE
+*.lck
+.env
+
+
+## Vendor, Libs and Content ##
+
+#===================================#
+#       Vendor and npm Files        #
+#===================================#
+node_modules
+
+#===================================#
+#       WordPress Sites             #
+#===================================#
+/projects/*
+
+
+#===============================#
+#     Certificates              #
+#===============================#
+/env-core/nginx/certs-root/*
+
+
+#===============================#
+#     NGINX conf                #
+#===============================#
+default.conf
