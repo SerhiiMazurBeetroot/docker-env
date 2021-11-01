@@ -6,7 +6,22 @@ set -o pipefail
 check_env_settings () {
     if [ ! -f ./env-core/settings.log ]; 
     then
-        ENV_VERSION=$(git log -n 1 --pretty=format:"%H")
+        if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ];
+        then
+            ENV_VERSION=$(git log -n 1 --pretty=format:"%H")
+        else
+            echo "# test" >> README.MD
+            git init
+            git add README.MD
+            git commit -m "first commit"
+            git branch -M master
+            git remote add origin https://github.com/SerhiiMazurBeetroot/devENV.git
+            git fetch
+            git reset --hard origin/master
+			
+			ENV_VERSION=$(git log -n 1 --pretty=format:"%H")
+        fi
+
         echo "ENV_THEME | ENV_VERSION |" >> ./env-core/settings.log
         echo "dark  | $ENV_VERSION |" >> ./env-core/settings.log
     else
