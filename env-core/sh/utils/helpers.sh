@@ -334,6 +334,7 @@ git_config_fileMode() {
 
 existing_projects_list() {
     EMPTY_LINE
-    column -t wp-instances.log
-    EMPTY_LINE
+    awk 'NR==FNR{for(i=1;i<=NF;i++) 
+        max[i] = length($i) > max[i] ? length($i) : max[i]; next} 
+    { for(i=1;i<=NF;i++) printf "%-"max[i]"s  ", $i; printf "\n"}' wp-instances.log wp-instances.log
 }
