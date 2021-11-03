@@ -46,7 +46,7 @@ change_env_theme () {
 }
 
 check_env_version () {
-    ENV_VERSION=$(git log -n 1 --pretty=format:"%H")
+    ENV_VERSION=$(awk '/''/{print $3}' ./env-core/settings.log | tail -n 1);
     REPO='git://github.com/SerhiiMazurBeetroot/devENV.git'
     URL='https://api.github.com/repos/SerhiiMazurBeetroot/devENV'
 
@@ -71,6 +71,8 @@ update_env () {
         ECHO_GREEN "Getting updates..."
         git fetch
         git reset --hard origin/master
+
+        sed -i -e 's/'$ENV_VERSION'/'$GIT_VERSION'/g' ./env-core/settings.log
     else
         ECHO_GREEN "Already up to date."
         EMPTY_LINE
