@@ -22,26 +22,32 @@ get_existing_domains () {
         string=$(awk '{print $5}' wp-instances.log | tail -n +2);
         OptionList=($string)
 
-        while true;
-        do
-            EMPTY_LINE
-            ECHO_INFO "Existing sites:"
-            for i in "${!OptionList[@]}";
+        if [ "$string" ];
+        then
+            while true;
             do
-                ECHO_KEY_VALUE "[$(($i+1))]" "${OptionList[$i]}"
+                EMPTY_LINE
+                ECHO_INFO "Existing sites:"
+                for i in "${!OptionList[@]}";
+                do
+                    ECHO_KEY_VALUE "[$(($i+1))]" "${OptionList[$i]}"
+                done
+
+                ((++i))
+                read -rp "$(ECHO_YELLOW "Please select one of:")" choice
+
+                [ -z "$choice" ] && choice=-1
+                if (( "$choice" > 0 && "$choice" <= $i )); then
+                    DOMAIN_NAME="${OptionList[$(($choice-1))]}"
+                    break
+                else
+                    ECHO_WARN_RED "Wrong option"
+                fi
             done
-
-            ((i++))
-            read -rp "$(ECHO_YELLOW "Please select one of:")" choice
-
-            [ -z "$choice" ] && choice=-1
-            if (( "$choice" > 0 && "$choice" <= $i )); then
-                DOMAIN_NAME="${OptionList[$(($choice-1))]}"
-                break
-            else
-                ECHO_WARN_RED "Wrong option"
-            fi
-        done
+        else
+            ECHO_ERROR "Wordpress sites don't exists"
+            main_actions
+        fi
     fi
 }
 
