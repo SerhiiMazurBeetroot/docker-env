@@ -16,6 +16,35 @@ get_domain_name () {
     fi
 }
 
+get_existing_domains () {
+    if [ -z "$DOMAIN_NAME" ];
+    then
+        string=$(awk '{print $5}' wp-instances.log | tail -n +2);
+        OptionList=($string)
+
+        while true;
+        do
+            EMPTY_LINE
+            ECHO_INFO "Existing sites:"
+            for i in "${!OptionList[@]}";
+            do
+                ECHO_KEY_VALUE "[$(($i+1))]" "${OptionList[$i]}"
+            done
+
+            ((i++))
+            read -rp "$(ECHO_YELLOW "Please select one of:")" choice
+
+            [ -z "$choice" ] && choice=-1
+            if (( "$choice" > 0 && "$choice" <= $i )); then
+                DOMAIN_NAME="${OptionList[$(($choice-1))]}"
+                break
+            else
+                ECHO_WARN_RED "Wrong option"
+            fi
+        done
+    fi
+}
+
 get_project_dir () {
     QUESTION=$1
 
@@ -51,7 +80,7 @@ check_domain_exists () {
 }
 
 get_db_name () {
-    get_domain_name
+    get_existing_domains
     DB_NAME=$(awk '/'"$DOMAIN_NAME"'/{print $9}' wp-instances.log | head -n 1);
 
     if [ "$DB_NAME" ];
@@ -163,7 +192,7 @@ recommendation_windows_host () {
 }
 
 fix_permissions () {
-    get_domain_name
+    get_existing_domains
 
     DOMAIN_CHECK=$(awk '/'"$DOMAIN_NAME"'/{print $5}' wp-instances.log | head -n 1);
     [[ "$DOMAIN_NAME" == "$DOMAIN_CHECK" ]] && DOMAIN_EXISTS=1

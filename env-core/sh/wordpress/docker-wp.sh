@@ -94,7 +94,7 @@ docker_wp_create () {
 }
 
 docker_wp_start () {
-    get_domain_name
+    get_existing_domains
 
     if [ "$(docker ps -a | grep "$DOMAIN_NAME"-wordpress)" ];
     then
@@ -142,7 +142,7 @@ docker_wp_start () {
 
 
 docker_wp_stop () {
-    get_domain_name
+    get_existing_domains
 
     get_project_dir "skip_question"
 
@@ -164,7 +164,7 @@ docker_wp_stop () {
 }
 
 docker_wp_restart () {
-    get_domain_name
+    get_existing_domains
 
     get_project_dir "skip_question"
 
@@ -178,7 +178,7 @@ docker_wp_restart () {
 }
 
 docker_wp_delete () {
-    get_domain_name
+    get_existing_domains
 
     get_project_dir "skip_question"
 
@@ -225,7 +225,7 @@ docker_wp_delete () {
 }
 
 docker_wp_rebuild () {
-    get_domain_name
+    get_existing_domains
 
     get_project_dir "skip_question"
 

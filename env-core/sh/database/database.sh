@@ -38,7 +38,7 @@ create_db_dump () {
 }
 
 auto_backup_db () {
-    get_domain_name
+    get_existing_domains
 
     if [ "$(docker ps -a | grep "$DOMAIN_NAME"-wordpress)" ];
     then
@@ -60,7 +60,7 @@ auto_backup_db () {
 }
 
 export_db () {
-    get_domain_name
+    get_existing_domains
 
     if [ "$(docker ps -a | grep "$DOMAIN_NAME"-wordpress)" ];
     then
@@ -99,7 +99,7 @@ export_db () {
 }
 
 import_db () {
-    get_db_name
+    get_existing_domains
     get_project_dir "skip_question"
 
     if [ "$(docker ps -a | grep "$DOMAIN_NAME"-wordpress)" ];
@@ -151,7 +151,7 @@ search_replace () {
 
         case $yn in
         [Yy]*)
-            get_domain_name
+            get_existing_domains
             check_domain_exists
 
             if [[ $DOMAIN_EXISTS == 1 ]];
