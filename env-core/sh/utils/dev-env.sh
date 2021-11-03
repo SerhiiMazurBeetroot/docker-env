@@ -48,8 +48,9 @@ change_env_theme () {
 check_env_version () {
     ENV_VERSION=$(git log -n 1 --pretty=format:"%H")
     REPO='git://github.com/SerhiiMazurBeetroot/devENV.git'
+    URL='https://api.github.com/repos/SerhiiMazurBeetroot/devENV'
 
-    if curl --output /dev/null --silent --head --fail -k $REPO
+    if curl --output /dev/null --silent --head --fail -k $URL
     then
         GIT_VERSION=$(git ls-remote $REPO | grep refs/heads/master | cut -f 1);
     else
@@ -72,5 +73,6 @@ update_env () {
         git reset --hard origin/master
     else
         ECHO_GREEN "Already up to date."
+        EMPTY_LINE
     fi
 }
