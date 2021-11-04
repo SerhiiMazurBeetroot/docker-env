@@ -27,7 +27,8 @@ get_existing_domains () {
             while true;
             do
                 EMPTY_LINE
-                ECHO_INFO "Existing sites:"
+                ECHO_INFO "Your Next choice:"
+                ECHO_YELLOW "[0] Return to the previous menu"
                 for i in "${!OptionList[@]}";
                 do
                     ECHO_KEY_VALUE "[$(($i+1))]" "${OptionList[$i]}"
@@ -41,7 +42,12 @@ get_existing_domains () {
                     DOMAIN_NAME="${OptionList[$(($choice-1))]}"
                     break
                 else
-                    ECHO_WARN_RED "Wrong option"
+                    if [ "$choice" == 0 ];
+                    then
+                        existing_site_actions
+                    else
+                        ECHO_WARN_RED "Wrong option"
+                    fi
                 fi
             done
         else
