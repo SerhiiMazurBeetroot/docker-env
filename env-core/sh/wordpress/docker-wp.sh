@@ -36,6 +36,7 @@ docker_wp_create () {
                         mkdir -p $PROJECT_DOCKER_DIR
                         cp ./env-core/templates/wordpress/Dockerfile-template $PROJECT_DOCKER_DIR/Dockerfile
                         sed -i -e 's/{WP_VERSION}/'$WP_VERSION'/g' $PROJECT_DOCKER_DIR/Dockerfile
+                        sed -i -e 's/{PHP_VERSION}/'$PHP_VERSION'/g' $PROJECT_DOCKER_DIR/Dockerfile
 
                         cp ./env-core/templates/wordpress/docker-compose.example.com.yml $PROJECT_DOCKER_DIR/docker-compose."$DOMAIN_NODOT".yml
                         sed -i -e 's/{DOMAIN_NAME}/'$DOMAIN_NAME'/g' $PROJECT_DOCKER_DIR/docker-compose."$DOMAIN_NODOT".yml

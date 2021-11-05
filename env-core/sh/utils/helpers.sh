@@ -147,12 +147,18 @@ get_all_data () {
         ECHO_ERROR "Wordpress not supported, please check version"
     fi
 
+    #PHP_VERSION
+    EMPTY_LINE
+    ECHO_YELLOW "Enter PHP_VERSION [default 2nd item]" 
+    get_php_versions
+
     EMPTY_LINE
     ECHO_YELLOW "Check everything before proceeding:"
     while true; do
        ECHO_KEY_VALUE "DOMAIN_NAME:" "$DOMAIN_NAME"
        ECHO_KEY_VALUE "DOMAIN_FULL:" "$DOMAIN_FULL"
        ECHO_KEY_VALUE "WP_VERSION:" "$WP_VERSION"
+       ECHO_KEY_VALUE "PHP_VERSION:" "$PHP_VERSION"
        ECHO_KEY_VALUE "DB_NAME:" "$DB_NAME"
        ECHO_KEY_VALUE "TABLE_PREFIX:" "$TABLE_PREFIX"
        EMPTY_LINE
@@ -349,4 +355,24 @@ existing_projects_list() {
     awk 'NR==FNR{for(i=1;i<=NF;i++) 
         max[i] = length($i) > max[i] ? length($i) : max[i]; next} 
     { for(i=1;i<=NF;i++) printf "%-"max[i]"s  ", $i; printf "\n"}' wp-instances.log wp-instances.log
+}
+
+get_php_versions () {
+    PHP_LIST=($(curl -s 'https://www.php.net/releases/active.php' | grep -Eo '[0-9]\.[0-9]' | awk '!a[$0]++'));
+
+    for i in "${!PHP_LIST[@]}";
+    do
+        ECHO_KEY_VALUE "[$(($i+1))]" "${PHP_LIST[$i]}"
+    done
+
+    ((++i))
+    read -rp "$(ECHO_YELLOW "Please select one of:")" choice
+
+    [ -z "$choice" ] && choice=-1
+    if (( "$choice" > 0 && "$choice" <= $i )); then
+        PHP_VERSION="${PHP_LIST[$(($choice-1))]}"
+    else
+        PHP_VERSION="${PHP_LIST[1]}"
+    fi
+    export PHP_VERSION
 }
