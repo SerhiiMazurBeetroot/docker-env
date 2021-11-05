@@ -110,6 +110,7 @@ import_db () {
         DB_FILE=$(find $PROJECT_DATABASE_DIR/ -name "*.sql")
         if [[ "$DB_FILE" ]];
         then
+            get_db_name
             ECHO_GREEN "DB collected, inserting it to the SQL container"
             dbstatus=1
             while [[ $dbstatus != [0] ]]
