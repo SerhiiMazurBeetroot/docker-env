@@ -147,6 +147,35 @@ get_all_data () {
         ECHO_ERROR "Wordpress not supported, please check version"
     fi
 
+    #WP_USER
+    EMPTY_LINE
+    ECHO_YELLOW "Enter WP_USER [default 'developer']"
+    read -rp "WP_USER: " WP_USER
+    [[ $WP_USER == '' ]] && WP_USER=developer
+
+    #WP_PASSWORD
+    EMPTY_LINE
+    ECHO_YELLOW "Enter WP_PASSWORD [default '1']"
+    randpassword
+    ECHO_GREEN "1 - 1"
+    ECHO_GREEN "2 - $WP_PASSWORD"
+    ECHO_GREEN "3 - Enter your password"
+    read -rp "$(ECHO_YELLOW "Please select one of:")" passw
+    if [[ ! "$passw" =~ [1-3] ]];
+    then
+        WP_PASSWORD=1
+    elif [[ "$passw" -eq 1 ]];
+    then
+        WP_PASSWORD=1
+    elif [[ "$passw" -eq 2 ]];
+    then
+        WP_PASSWORD="$WP_PASSWORD"
+    elif [[ "$passw" -eq 3 ]];
+    then
+        EMPTY_LINE
+        read -rp "$(ECHO_YELLOW "Your password:")" WP_PASSWORD
+    fi
+
     #PHP_VERSION
     EMPTY_LINE
     ECHO_YELLOW "Enter PHP_VERSION [default 2nd item]" 
@@ -158,9 +187,12 @@ get_all_data () {
        ECHO_KEY_VALUE "DOMAIN_NAME:" "$DOMAIN_NAME"
        ECHO_KEY_VALUE "DOMAIN_FULL:" "$DOMAIN_FULL"
        ECHO_KEY_VALUE "WP_VERSION:" "$WP_VERSION"
+       ECHO_KEY_VALUE "WP_USER:" "$WP_USER"
+       ECHO_KEY_VALUE "WP_PASSWORD:" "$WP_PASSWORD"
        ECHO_KEY_VALUE "PHP_VERSION:" "$PHP_VERSION"
        ECHO_KEY_VALUE "DB_NAME:" "$DB_NAME"
        ECHO_KEY_VALUE "TABLE_PREFIX:" "$TABLE_PREFIX"
+       ECHO_YELLOW "You can find this info in the file /projetcs/$DOMAIN_FULL/wp-docker/.env" 
        EMPTY_LINE
 
         read -rp "Is that correct? [Y/n] " yn
@@ -285,6 +317,10 @@ env_file_load () {
         sed -i -e 's/{DOMAIN_FULL}/'$DOMAIN_FULL'/g' $PROJECT_DOCKER_DIR/.env
         sed -i -e 's/{WP_VERSION}/'$WP_VERSION'/g' $PROJECT_DOCKER_DIR/.env
         sed -i -e 's/{PORT}/'$PORT'/g' $PROJECT_DOCKER_DIR/.env
+        sed -i -e 's/{WP_VERSION}/'$WP_VERSION'/g' $PROJECT_DOCKER_DIR/.env
+        sed -i -e 's/{WP_USER}/'$WP_USER'/g' $PROJECT_DOCKER_DIR/.env
+        sed -i -e 's/{WP_PASSWORD}/'$WP_PASSWORD'/g' $PROJECT_DOCKER_DIR/.env
+        sed -i -e 's/{PHP_VERSION}/'$PHP_VERSION'/g' $PROJECT_DOCKER_DIR/.env
     fi
 }
 

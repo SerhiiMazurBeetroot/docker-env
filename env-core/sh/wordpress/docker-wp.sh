@@ -55,6 +55,8 @@ docker_wp_create () {
                         fix_permissions
                         recommendation_windows_host add
                         docker_wp_restart
+
+                        wp_core_install
                     else
                         ECHO_YELLOW "Wordpress for $DOMAIN_FULL is already created"
                         if [ -d $PROJECT_DOCKER_DIR/docker-compose."$DOMAIN_NODOT".yml ];
@@ -189,6 +191,7 @@ docker_wp_delete () {
         ECHO_ATTENTION "You can't restore the site after it has been deleted."
         ECHO_ATTENTION "This operation will remove the localhost containers, volumes, and the WordPress core files."
         while true; do
+            ECHO_WARN_YELLOW "Removing now... $DOMAIN_FULL"
             read -rp "$(ECHO_WARN_RED "Do you wish to proceed?") [Y/n] " yn
             case $yn in
                 [Yy]*)

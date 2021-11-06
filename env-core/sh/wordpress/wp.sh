@@ -88,3 +88,11 @@ get_latest_wp_version () {
     WP_LATEST_VER=$(curl -s 'https://api.github.com/repos/wordpress/wordpress/tags' | grep "name" | head -n 1 | awk '$0=$2' | awk '{gsub(/\"|\",/, ""); print}');
     export WP_LATEST_VER
 }
+
+wp_core_install () {    
+    docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec wp core install --url=https://'$DOMAIN_FULL' --title='$DOMAIN_NAME' --admin_user='$WP_USER' --admin_password='$WP_PASSWORD' --admin_email=example@example.com --allow-root'
+}
+
+randpassword(){ 
+    WP_PASSWORD=$(LC_CTYPE=C tr -dc A-Za-z0-9_\!\@\#\$\%\^\&\*\(\)-+= < /dev/urandom | head -c 20) || true
+}
