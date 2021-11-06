@@ -96,3 +96,25 @@ wp_core_install () {
 randpassword(){ 
     WP_PASSWORD=$(LC_CTYPE=C tr -dc A-Za-z0-9_\!\@\#\$\%\^\&\*\(\)-+= < /dev/urandom | head -c 20) || true
 }
+
+wp_remove_default_content () {
+    EMPTY_LINE
+    ECHO_ATTENTION "The following command will remove default posts, pages, plugins, themes"
+    read -rp "$(ECHO_YELLOW "Do you want to remove the default content?") Y/n " EMPTY_CONTENT
+
+    if [ "y" = "$EMPTY_CONTENT" ]
+    then
+        get_existing_domains
+
+        # Remove all posts, comments, and terms
+        docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'wp site empty --yes --allow-root'
+
+        # Remove plugins and themes
+        docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec wp plugin delete hello akismet --allow-root'
+        docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec wp theme delete twentynineteen twentytwenty --allow-root'
+
+        # Set pretty urls
+        docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec wp rewrite structure '/%postname%/' --hard --allow-root'
+        docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec wp rewrite flush --hard --allow-root'
+    fi
+}

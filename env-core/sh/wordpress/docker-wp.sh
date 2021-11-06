@@ -57,6 +57,7 @@ docker_wp_create () {
                         docker_wp_restart
 
                         wp_core_install
+                        wp_remove_default_content
                     else
                         ECHO_YELLOW "Wordpress for $DOMAIN_FULL is already created"
                         if [ -d $PROJECT_DOCKER_DIR/docker-compose."$DOMAIN_NODOT".yml ];
