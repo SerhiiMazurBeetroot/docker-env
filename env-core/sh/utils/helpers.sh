@@ -85,7 +85,6 @@ check_domain_exists () {
     if [[ "$DOMAIN_NAME" == "$DOMAIN_CHECK" ]];
     then
         DOMAIN_EXISTS=1
-        ECHO_ERROR "Site already exists"
     else
         DOMAIN_EXISTS=0
     fi
@@ -244,8 +243,7 @@ recommendation_windows_host () {
 fix_permissions () {
     get_existing_domains
 
-    DOMAIN_CHECK=$(awk '/'"$DOMAIN_NAME"'/{print $5}' wp-instances.log | head -n 1);
-    [[ "$DOMAIN_NAME" == "$DOMAIN_CHECK" ]] && DOMAIN_EXISTS=1
+    check_domain_exists
 
     if [[ $DOMAIN_EXISTS == 1 ]];
     then

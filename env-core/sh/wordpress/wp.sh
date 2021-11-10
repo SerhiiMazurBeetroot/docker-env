@@ -6,8 +6,7 @@ set -o pipefail
 clone_repo () {
     get_existing_domains
 
-    DOMAIN_CHECK=$(awk '/'"$DOMAIN_NAME"'/{print $5}' wp-instances.log | head -n 1);
-    [[ "$DOMAIN_NAME" == "$DOMAIN_CHECK" ]] && DOMAIN_EXISTS=1
+    check_domain_exists
 
     if [[ $DOMAIN_EXISTS == 1 ]];
     then

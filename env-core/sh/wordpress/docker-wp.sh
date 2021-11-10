@@ -91,6 +91,8 @@ docker_wp_create () {
                     fi
                 fi
             fi 
+        else
+            ECHO_ERROR "Site already exists"
         fi
     else
         ECHO_ERROR "Nginx container not running"
