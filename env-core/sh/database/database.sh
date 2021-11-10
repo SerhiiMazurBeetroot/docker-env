@@ -40,7 +40,7 @@ create_db_dump () {
 auto_backup_db () {
     get_existing_domains
 
-    if [ "$(docker ps -a | grep "$DOMAIN_NAME"-wordpress)" ];
+    if [ "$(docker ps -a | grep "$DOMAIN_NAME"-mysql)" ];
     then
         get_db_name
 
@@ -62,7 +62,7 @@ auto_backup_db () {
 export_db () {
     get_existing_domains
 
-    if [ "$(docker ps -a | grep "$DOMAIN_NAME"-wordpress)" ];
+    if [ "$(docker ps -a | grep "$DOMAIN_NAME"-mysql)" ];
     then
         get_db_name
 
@@ -102,7 +102,7 @@ import_db () {
     get_existing_domains
     get_project_dir "skip_question"
 
-    if [ "$(docker ps -a | grep "$DOMAIN_NAME"-wordpress)" ];
+    if [ "$(docker ps -a | grep "$DOMAIN_NAME"-mysql)" ];
     then
         ECHO_GREEN "Wordpress and DB container exists"
         ECHO_YELLOW "Getting DB from '/wp-database/' and updating local"
@@ -111,6 +111,8 @@ import_db () {
         if [[ "$DB_FILE" ]];
         then
             get_db_name
+            env_file_load
+
             ECHO_GREEN "DB collected, inserting it to the SQL container"
             dbstatus=1
             while [[ $dbstatus != [0] ]]
@@ -121,10 +123,15 @@ import_db () {
                     dbstatus=0
                     ECHO_GREEN "DB found"
 
-                    env_file_load
-
                     docker cp $PROJECT_DATABASE_DIR/*.sql "$DOMAIN_NAME"-mysql:/docker-entrypoint-initdb.d/dump.sql
 
+                    # Drop DB
+                    docker exec -t -i "$DOMAIN_NAME-mysql"  bash -l -c "mysqladmin drop $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
+
+                    # Create empty DB                                        
+                    docker exec -t -i "$DOMAIN_NAME-mysql"  bash -l -c "mysqladmin create $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
+
+                    # Import DB
                     docker exec -i "$DOMAIN_NAME"-mysql bash -l -c "mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < /docker-entrypoint-initdb.d/dump.sql"
                     
                     ECHO_SUCCESS "DB dump for $DOMAIN_FULL inserted"
@@ -133,6 +140,9 @@ import_db () {
                 else
                     sleep 5
                     ECHO_YELLOW "Trying to insert DB, awaiting MariaDB container..."
+
+                    # Create empty DB                                        
+                    docker exec -t -i "$DOMAIN_NAME-mysql"  bash -l -c "mysqladmin create $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
                 fi
             done
         else
