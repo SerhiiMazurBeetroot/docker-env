@@ -168,7 +168,7 @@ search_replace () {
             if [[ $DOMAIN_EXISTS == 1 ]];
             then
             read -rp "search: " search
-            read -r "replace: " replace
+            read -rp "replace: " replace
 
             ECHO_YELLOW "Running search-replace now from $search to $replace, this might take a while!"
             docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec wp search-replace --all-tables '$search' '$replace' --allow-root'
