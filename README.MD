@@ -12,7 +12,7 @@ Spin up a local environment on Linux, Mac, and Windows.
 # 1. What's inside the containers
 <p align="left">
   <a href="https://hub.docker.com/_/php">
-    <img alt="PHP" src="https://img.shields.io/badge/PHP%20fpm-v7.4-8892bf">
+    <img alt="PHP" src="https://img.shields.io/badge/PHP%20fpm-option-8892bf">
   </a>
 
   <a href="https://hub.docker.com/_/mariadb">
@@ -57,6 +57,7 @@ Spin up a local environment on Linux, Mac, and Windows.
 | Certificates  | Automatic creation/renewal  SSL certificates        |
 | Logs          | Follow log output for Nginx, WP instance            |
 | Projects      | Auto-creat all instances for wp site                |
+| PHP           | Choose from active PHP version                      |
 | Wordpress     | Install the version you need or use the latest      |
 | Database      | Database import and export, search-replace          |
 | Repository    | Clone an existing theme from your repo              |
