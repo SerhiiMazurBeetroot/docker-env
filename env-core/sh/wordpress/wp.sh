@@ -13,19 +13,39 @@ clone_repo () {
         get_project_dir "skip_question"
     
         ECHO_INFO "Getting plugins and themes from the repository"
-        read -rp "Clone from repo (url): " clone
-        while [ -z "$clone" ]; do 
-            read -rp "Please complete the cloning path: " clone
+        read -rp "Clone from repo (url): " URL_CLONE
+        while [ -z "$URL_CLONE" ]; do 
+            read -rp "Please complete the cloning path: " URL_CLONE
         done
 
-        if curl --output /dev/null --silent --head --fail -k $clone
+        if [[ "${URL_CLONE}" == *"git@"* ]];
+        then
+            # replace : => /
+            URL_CORRECT=${URL_CLONE//:/\/}
+            # replace git@ => https://
+            URL_CORRECT=${URL_CORRECT/git@/https://}
+        else
+            URL_CORRECT=$URL_CLONE
+        fi
+
+        # Checking URL
+        if curl --output /dev/null --silent --head --fail -k $URL_CORRECT
+        then
+            ECHO_SUCCESS "URL EXISTS"
+            URL_EXISTS=1
+        else
+            ECHO_WARN_YELLOW "URL NOT EXISTS"
+            URL_EXISTS=0
+        fi
+
+        if [[ $URL_EXISTS == 1 ]];
         then
             ECHO_YELLOW "Cloning repository to temp..."
             rm -rf $PROJECT_ROOT_DIR/repository
             
             git config --global http.sslVerify false
 
-            git clone "$clone" $PROJECT_ROOT_DIR/repository/
+            git clone "$URL_CLONE" $PROJECT_ROOT_DIR/repository/
 
             if [ ! -d $PROJECT_DATABASE_DIR/ ];
             then
@@ -75,7 +95,7 @@ clone_repo () {
                 esac
             done
         else
-            echo -e "${RED} Path is not correct"
+            ECHO_ERROR "Path is not correct"
             exit;
         fi
     else
