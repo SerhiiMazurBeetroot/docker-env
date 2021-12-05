@@ -187,7 +187,7 @@ For Windows User
 
 Please remember to add or remove your domain in the Windows host file:
 
-[C:\Windows\System32\Drivers\etc\hosts]
+[C:\Windows\System32\drivers\etc\hosts]
 ```
 
 <br>
