@@ -185,3 +185,36 @@ search_replace () {
         esac
     done
 }
+
+replace_project_from_db () {
+    get_existing_domains
+    get_project_dir "skip_question"
+
+    if [[ -d "$PROJECT_DATABASE_DIR" ]];
+    then
+        EMPTY_LINE
+        ECHO_YELLOW "Replace... DB_NAME & TABLE_PREFIX"
+
+        DOMAIN_FULL=$(awk '/'"$DOMAIN_NAME"'/{print $7}' wp-instances.log | head -n 1);
+
+        PREV_INSTANCES=$(awk '/'"$DOMAIN_NAME"'/{print}' wp-instances.log | head -n 1);
+        PREV_DB_NAME=$(awk '/'"$DOMAIN_NAME"'/{print $9}' wp-instances.log | head -n 1);
+        NEW_DB_NAME=$(grep 'Database:' projects/$DOMAIN_FULL/wp-database/*.sql | awk '/''/{print $5}' )
+        NEW_TABLE_PREFIX=$(grep 'Table structure for table' projects/$DOMAIN_FULL/wp-database/*.sql | awk '/'_comments'/{print $6}' | sed 's/comments//g' | sed 's/`//g' )
+
+        # Replace wp-instances.log
+        FIND_DB_NAME='\| '"$PREV_DB_NAME"' \|'
+        REPLACE_DB_NAME='\| '"$NEW_DB_NAME"' |'
+        NEW_INSTANCES=$(echo $PREV_INSTANCES | sed -r 's/'"$FIND_DB_NAME"'/'"$REPLACE_DB_NAME"'/')
+        sed -i -e 's/'"$PREV_INSTANCES"'/'"$NEW_INSTANCES"'/g' wp-instances.log
+
+        # Replace .env
+        PREV_DB_ENV=$(awk '/'MYSQL_DATABASE'/{print}' $PROJECT_DOCKER_DIR/.env | head -n 1);
+        PREV_TABLE_PREFIX=$(awk '/'TABLE_PREFIX'/{print}' $PROJECT_DOCKER_DIR/.env | head -n 1);
+        sed -i -e 's/'"$PREV_DB_ENV"'/'"MYSQL_DATABASE='$NEW_DB_NAME'"'/g' $PROJECT_DOCKER_DIR/.env
+        sed -i -e 's/'"$PREV_TABLE_PREFIX"'/'"TABLE_PREFIX='$NEW_TABLE_PREFIX'"'/g' $PROJECT_DOCKER_DIR/.env
+    else
+        ECHO_ERROR "DB DIR doesn't exists"
+
+    fi
+}

@@ -6,13 +6,15 @@ set -o pipefail
 docker_wp_create () {
     if [ "$(docker ps -a | grep "nginx-proxy")" ];
     then
+        set_setup_type
+
         get_domain_name
 
         check_domain_exists
 
         if [[ $DOMAIN_EXISTS == 0 ]];
         then
-            get_all_data
+            check_all_data
             if [ "$(docker image ls | grep "$DOMAIN_NAME"-wordpress)" ] && [ "$(docker volume ls | grep $DOMAIN_NAME)" ];
             then
                 ECHO_SUCCESS "Site image and volume found"
@@ -58,6 +60,7 @@ docker_wp_create () {
 
                         wp_core_install
                         wp_remove_default_content
+                        [[ "$SETUP_TYPE" == 3 ]] && clone_repo
                     else
                         ECHO_YELLOW "Wordpress for $DOMAIN_FULL is already created"
                         if [ -d $PROJECT_DOCKER_DIR/docker-compose."$DOMAIN_NODOT".yml ];

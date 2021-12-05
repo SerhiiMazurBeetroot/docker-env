@@ -102,86 +102,10 @@ get_db_name () {
     fi
 }
 
-get_all_data () {
-    get_domain_name
-
-    get_project_dir "$@"
-
-    #DB_NAME
-    EMPTY_LINE
-    ECHO_YELLOW "Enter DB_NAME [default 'db']"
-
-    read -rp "DB_NAME: " DB_NAME
-
-    if [[ $DB_NAME == '' ]];
-    then
-        DB_NAME="db"
-    fi
-
-    #TABLE_PREFIX
-    EMPTY_LINE
-    ECHO_YELLOW "Enter DB TABLE_PREFIX, [default 'wp_']" 
-    read -rp "DB TABLE_PREFIX: " TABLE_PREFIX
-    
-    if [[ $TABLE_PREFIX == '' ]];
-    then
-        TABLE_PREFIX="wp_"
-    fi
-
-    #WP_VERSION
-    EMPTY_LINE
-    get_latest_wp_version
-
-    ECHO_YELLOW "Enter WP_VERSION [default $WP_LATEST_VER]" 
-
-    read -rp "WP_VERSION: " WP_VERSION
-
-    if [[ $WP_VERSION ]];
-    then
-        true
-    elif [[ ! $WP_VERSION ]];
-    then
-        WP_VERSION=$WP_LATEST_VER
-    else
-        ECHO_ERROR "Wordpress not supported, please check version"
-    fi
-
-    #WP_USER
-    EMPTY_LINE
-    ECHO_YELLOW "Enter WP_USER [default 'developer']"
-    read -rp "WP_USER: " WP_USER
-    [[ $WP_USER == '' ]] && WP_USER=developer
-
-    #WP_PASSWORD
-    EMPTY_LINE
-    ECHO_YELLOW "Enter WP_PASSWORD [default '1']"
-    randpassword
-    ECHO_GREEN "1 - 1"
-    ECHO_GREEN "2 - $WP_PASSWORD"
-    ECHO_GREEN "3 - Enter your password"
-    read -rp "$(ECHO_YELLOW "Please select one of:")" passw
-    if [[ ! "$passw" =~ [1-3] ]];
-    then
-        WP_PASSWORD=1
-    elif [[ "$passw" -eq 1 ]];
-    then
-        WP_PASSWORD=1
-    elif [[ "$passw" -eq 2 ]];
-    then
-        WP_PASSWORD="$WP_PASSWORD"
-    elif [[ "$passw" -eq 3 ]];
-    then
-        EMPTY_LINE
-        read -rp "$(ECHO_YELLOW "Your password:")" WP_PASSWORD
-    fi
-
-    #PHP_VERSION
-    EMPTY_LINE
-    ECHO_YELLOW "Enter PHP_VERSION [default 2nd item]" 
-    get_php_versions
-
+check_all_data () {
     EMPTY_LINE
     ECHO_YELLOW "Check everything before proceeding:"
+
     while true; do
        ECHO_KEY_VALUE "DOMAIN_NAME:" "$DOMAIN_NAME"
        ECHO_KEY_VALUE "DOMAIN_FULL:" "$DOMAIN_FULL"
@@ -191,7 +115,7 @@ get_all_data () {
        ECHO_KEY_VALUE "PHP_VERSION:" "$PHP_VERSION"
        ECHO_KEY_VALUE "DB_NAME:" "$DB_NAME"
        ECHO_KEY_VALUE "TABLE_PREFIX:" "$TABLE_PREFIX"
-       ECHO_YELLOW "You can find this info in the file /projetcs/$DOMAIN_FULL/wp-docker/.env" 
+       ECHO_YELLOW "You can find this info in the file /projects/$DOMAIN_FULL/wp-docker/.env" 
        EMPTY_LINE
 
         read -rp "Is that correct? [Y/n] " yn
@@ -209,12 +133,127 @@ get_all_data () {
         *) echo "Please answer yes or no" ;;
         esac
     done
+}
 
-    if [[ -z $DOMAIN_NAME || -z $WP_VERSION || -z $DB_NAME || -z $TABLE_PREFIX ]];
+set_setup_type () {
+    EMPTY_LINE
+    while true; do
+        ECHO_YELLOW "Installation type:"
+        ECHO_KEY_VALUE "[1]" "default"
+        ECHO_KEY_VALUE "[2]" "custom"
+        ECHO_KEY_VALUE "[3]" "beetroot"
+        read -rp "$(ECHO_YELLOW "Please select one of:")" SETUP_TYPE
+
+        case $SETUP_TYPE in
+        1)
+            get_domain_name
+            get_project_dir "$@"
+            setup_default_args
+            break
+            ;;
+        2)
+            get_domain_name
+            get_project_dir "$@"
+            setup_custom_args "$@"
+            break
+            ;;
+        3)
+            get_domain_name
+            get_project_dir "$@"
+            setup_default_args
+            break
+            ;;
+        esac
+    done
+}
+
+setup_default_args () {
+    #DB_NAME
+    if [[ $DB_NAME == '' ]];
     then
-        ECHO_ERROR "One or more variables are undefined"
-        exit;
-    fi 
+        DB_NAME="db"
+    fi
+
+    #TABLE_PREFIX
+    if [[ $TABLE_PREFIX == '' ]];
+    then
+        TABLE_PREFIX="wp_"
+    fi
+
+    #WP_VERSION
+    EMPTY_LINE
+    get_latest_wp_version
+    if [[ $WP_VERSION ]];
+    then
+        true
+    elif [[ ! $WP_VERSION ]];
+    then
+        WP_VERSION=$WP_LATEST_VER
+    else
+        ECHO_ERROR "Wordpress not supported, please check version"
+    fi
+
+    #WP_USER
+    [[ $WP_USER == '' ]] && WP_USER=developer
+
+    #WP_PASSWORD
+    randpassword
+    if [[ ! "$passw" =~ [1-3] ]];
+    then
+        WP_PASSWORD=1
+    elif [[ "$passw" -eq 1 ]];
+    then
+        WP_PASSWORD=1
+    elif [[ "$passw" -eq 2 ]];
+    then
+        WP_PASSWORD="$WP_PASSWORD"
+    elif [[ "$passw" -eq 3 ]];
+    then
+        EMPTY_LINE
+        read -rp "$(ECHO_YELLOW "Your password:")" WP_PASSWORD
+    fi
+
+    #PHP_VERSION
+    get_php_versions "default"
+}
+
+setup_custom_args () {
+    #DB_NAME
+    EMPTY_LINE
+    ECHO_YELLOW "Enter DB_NAME [default 'db']"
+    read -rp "DB_NAME: " DB_NAME
+
+    #TABLE_PREFIX
+    EMPTY_LINE
+    ECHO_YELLOW "Enter DB TABLE_PREFIX, [default 'wp_']" 
+    read -rp "DB TABLE_PREFIX: " TABLE_PREFIX
+
+    #WP_VERSION
+    EMPTY_LINE
+    get_latest_wp_version
+    ECHO_YELLOW "Enter WP_VERSION [default $WP_LATEST_VER]" 
+    read -rp "WP_VERSION: " WP_VERSION
+
+    #WP_USER
+    EMPTY_LINE
+    ECHO_YELLOW "Enter WP_USER [default 'developer']"
+    read -rp "WP_USER: " WP_USER
+
+    #WP_PASSWORD
+    EMPTY_LINE
+    ECHO_YELLOW "Enter WP_PASSWORD [default '1']"
+    randpassword
+    ECHO_GREEN "1 - 1"
+    ECHO_GREEN "2 - $WP_PASSWORD"
+    ECHO_GREEN "3 - Enter your password"
+    read -rp "$(ECHO_YELLOW "Please select one of:")" passw
+
+    #PHP_VERSION
+    EMPTY_LINE
+    ECHO_YELLOW "Enter PHP_VERSION [default 2nd item]" 
+    get_php_versions
+
+    setup_default_args
 }
 
 recommendation_windows_host () {
@@ -392,21 +431,27 @@ existing_projects_list() {
 }
 
 get_php_versions () {
+    QUESTION=$1
+
     PHP_LIST=($(curl -s 'https://www.php.net/releases/active.php' | grep -Eo '[0-9]\.[0-9]' | awk '!a[$0]++'));
 
-    for i in "${!PHP_LIST[@]}";
-    do
-        ECHO_KEY_VALUE "[$(($i+1))]" "${PHP_LIST[$i]}"
-    done
-
-    ((++i))
-    read -rp "$(ECHO_YELLOW "Please select one of:")" choice
-
-    [ -z "$choice" ] && choice=-1
-    if (( "$choice" > 0 && "$choice" <= $i )); then
-        PHP_VERSION="${PHP_LIST[$(($choice-1))]}"
-    else
+    if [[ $QUESTION == "default" ]];
+    then
         PHP_VERSION="${PHP_LIST[1]}"
+    else
+        for i in "${!PHP_LIST[@]}";
+        do
+            ECHO_KEY_VALUE "[$(($i+1))]" "${PHP_LIST[$i]}"
+        done
+
+        ((++i))
+        read -rp "$(ECHO_YELLOW "Please select one of:")" choice
+
+        [ -z "$choice" ] && choice=-1
+        if (( "$choice" > 0 && "$choice" <= $i )); then
+            PHP_VERSION="${PHP_LIST[$(($choice-1))]}"
+        else
+            PHP_VERSION="${PHP_LIST[1]}"
+        fi
     fi
-    export PHP_VERSION
 }

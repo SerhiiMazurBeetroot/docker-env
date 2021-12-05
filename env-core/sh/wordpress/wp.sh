@@ -12,7 +12,8 @@ clone_repo () {
     then
         get_project_dir "skip_question"
     
-        ECHO_INFO "Getting plugins and themes from the repository"
+        EMPTY_LINE
+        ECHO_YELLOW "Getting plugins and themes from the repository"
         read -rp "Clone from repo (url): " URL_CLONE
         while [ -z "$URL_CLONE" ]; do 
             read -rp "Please complete the cloning path: " URL_CLONE
@@ -84,7 +85,11 @@ clone_repo () {
 
                 case $yn in
                 [Yy]*)
+                    replace_project_from_db
+                    docker_wp_rebuild
+                    docker_wp_restart
                     import_db
+                    fix_permissions
                     break
                 ;;
                 [Nn]*)
