@@ -91,7 +91,6 @@ check_domain_exists () {
 }
 
 get_db_name () {
-    get_existing_domains
     DB_NAME=$(awk '/'"$DOMAIN_NAME"'/{print $9}' wp-instances.log | head -n 1);
 
     if [ "$DB_NAME" ];
@@ -280,8 +279,6 @@ recommendation_windows_host () {
 }
 
 fix_permissions () {
-    get_existing_domains
-
     check_domain_exists
 
     if [[ $DOMAIN_EXISTS == 1 ]];
@@ -428,6 +425,88 @@ existing_projects_list() {
     awk 'NR==FNR{for(i=1;i<=NF;i++) 
         max[i] = length($i) > max[i] ? length($i) : max[i]; next} 
     { for(i=1;i<=NF;i++) printf "%-"max[i]"s  ", $i; printf "\n"}' wp-instances.log wp-instances.log
+}
+
+running_projects_list() {
+    string=$(docker ps -a --format "table {{.Names}}" | grep -w "wordpress" | sed -r 's/'-wordpress'/''/');
+    running_container=($string)
+    
+    if [ "$string" ];
+    then
+        while true;
+        do
+            EMPTY_LINE
+            ECHO_INFO "Your Next choice:"
+            ECHO_YELLOW "[0] Return to main menu"
+
+            for i in "${!running_container[@]}";
+            do
+                ECHO_KEY_VALUE "[$(($i+1))]" "${running_container[$i]}"
+            done
+
+            ((++i))
+            read -rp "$(ECHO_YELLOW "Please select one of:")" choice
+
+            [ -z "$choice" ] && choice=-1
+            if (( "$choice" > 0 && "$choice" <= $i )); then
+                DOMAIN_NAME="${running_container[$(($choice-1))]}"
+                break
+            else
+                if [ "$choice" == 0 ];
+                then
+                    existing_site_actions
+                else
+                    ECHO_WARN_RED "Wrong option"
+                fi
+            fi
+        done
+    else
+        ECHO_ERROR "Wordpress sites not running"
+        main_actions
+    fi
+}
+
+stopped_projects_list() {
+    running_string=$(docker ps -a --format "table {{.Names}}" | grep -w "wordpress" | sed -r 's/'-wordpress'/''/');
+    existing_string=$(awk '{print $5}' wp-instances.log | tail -n +2);
+
+    if [[ "$running_string" && "$existing_string" ]];
+    then
+        running_container=($running_string)
+        running_container=$(printf "%s\|" "${running_container[@]}")
+        stopped_container=($(echo "$existing_string" | sed "s/\($running_container\)//g"))
+
+        while true;
+        do
+            EMPTY_LINE
+            ECHO_INFO "Your Next choice:"
+            ECHO_YELLOW "[0] Return to main menu"
+
+            for i in "${!stopped_container[@]}";
+            do
+                ECHO_KEY_VALUE "[$(($i+1))]" "${stopped_container[$i]}"
+            done
+
+            ((++i))
+            read -rp "$(ECHO_YELLOW "Please select one of:")" choice
+
+            [ -z "$choice" ] && choice=-1
+            if (( "$choice" > 0 && "$choice" <= $i )); then
+                DOMAIN_NAME="${stopped_container[$(($choice-1))]}"
+                break
+            else
+                if [ "$choice" == 0 ];
+                then
+                    existing_site_actions
+                else
+                    ECHO_WARN_RED "Wrong option"
+                fi
+            fi
+        done
+    else
+        ECHO_ERROR "Wordpress sites not running"
+        main_actions
+    fi
 }
 
 get_php_versions () {

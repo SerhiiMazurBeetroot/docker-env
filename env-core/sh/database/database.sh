@@ -38,7 +38,7 @@ create_db_dump () {
 }
 
 auto_backup_db () {
-    get_existing_domains
+    running_projects_list
 
     if [ "$(docker ps -a | grep "$DOMAIN_NAME"-mysql)" ];
     then
@@ -60,7 +60,7 @@ auto_backup_db () {
 }
 
 export_db () {
-    get_existing_domains
+    running_projects_list
 
     if [ "$(docker ps -a | grep "$DOMAIN_NAME"-mysql)" ];
     then
@@ -99,7 +99,7 @@ export_db () {
 }
 
 import_db () {
-    get_existing_domains
+    running_projects_list
     get_project_dir "skip_question"
 
     if [ "$(docker ps -a | grep "$DOMAIN_NAME"-mysql)" ];
@@ -162,7 +162,7 @@ search_replace () {
 
         case $yn in
         [Yy]*)
-            get_existing_domains
+            running_projects_list
             check_domain_exists
 
             if [[ $DOMAIN_EXISTS == 1 ]];

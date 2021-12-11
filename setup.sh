@@ -143,6 +143,7 @@ existing_site_actions () {
                 exit
                 ;;
             8)
+                get_existing_domains
                 fix_permissions
                 exit
                 ;;

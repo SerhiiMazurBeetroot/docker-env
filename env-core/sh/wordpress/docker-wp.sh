@@ -103,7 +103,7 @@ docker_wp_create () {
 }
 
 docker_wp_start () {
-    get_existing_domains
+    stopped_projects_list
 
     if [ "$(docker ps -a | grep "$DOMAIN_NAME"-wordpress)" ];
     then
@@ -135,6 +135,8 @@ docker_wp_start () {
             fi
         else
             # In case the docker images were deleted
+            get_project_dir "skip_question"
+
             ECHO_ERROR "Site image or volume was not found"
             ECHO_YELLOW "Checking for Docker-compose file exist"
             if [ -f $PROJECT_DOCKER_DIR/docker-compose."$DOMAIN_NODOT".yml ];
@@ -151,8 +153,6 @@ docker_wp_start () {
 
 
 docker_wp_stop () {
-    get_existing_domains
-
     get_project_dir "skip_question"
 
     if [ "$(docker ps -a | grep "$DOMAIN_NAME"-wordpress)" ];
@@ -173,7 +173,7 @@ docker_wp_stop () {
 }
 
 docker_wp_restart () {
-    get_existing_domains
+    [[ "$DOMAIN_NAME" == '' ]] && running_projects_list
 
     get_project_dir "skip_question"
 
