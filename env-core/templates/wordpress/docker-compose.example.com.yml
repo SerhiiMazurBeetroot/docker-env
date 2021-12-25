@@ -11,6 +11,8 @@ services:
       - '${PORT}:3306'
     volumes:
       - {DOMAIN_NAME}_db_data:/var/lib/mysql
+    # Set max_allowed_packet to 256M (or any other value)
+    command: ['--max_allowed_packet=32505856']
       
   {DOMAIN_NAME}-wordpress:
     build:
