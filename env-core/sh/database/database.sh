@@ -199,8 +199,19 @@ replace_project_from_db () {
 
         PREV_INSTANCES=$(awk '/'"$DOMAIN_NAME"'/{print}' wp-instances.log | head -n 1);
         PREV_DB_NAME=$(awk '/'"$DOMAIN_NAME"'/{print $9}' wp-instances.log | head -n 1);
-        NEW_DB_NAME=$(grep 'Database:' projects/$DOMAIN_FULL/wp-database/*.sql | awk '/''/{print $5}' )
-        NEW_TABLE_PREFIX=$(grep 'Table structure for table' projects/$DOMAIN_FULL/wp-database/*.sql | awk '/'_comments'/{print $6}' | sed 's/comments//g' | sed 's/`//g' )
+        NEW_DB_NAME=$(grep 'Database:' projects/$DOMAIN_FULL/wp-database/*.sql | head -n 1 | awk '//{print $5}' | sed 's/'\'Database:'//g' || true )
+        
+        if [[ "$NEW_DB_NAME" == '' ]];
+        then
+            NEW_DB_NAME=$(grep -e 'База данных:' projects/$DOMAIN_FULL/wp-database/*.sql | head -n 1 | awk '/''/{print $4}' | tr --delete \` )
+        fi
+
+        NEW_TABLE_PREFIX=$(grep -e 'Table structure for table' projects/$DOMAIN_FULL/wp-database/*.sql | awk '/'_comments'/{print $6}' | sed 's/comments//g' | sed 's/`//g' || true )
+
+        if [[ "$NEW_TABLE_PREFIX" == '' ]];
+        then
+            NEW_TABLE_PREFIX=$(grep -e 'Структура таблицы' projects/$DOMAIN_FULL/wp-database/*.sql | awk '/''/{print}' | awk '/'_comments'/{print $4}' | sed 's/comments//g' | tr --delete \` )
+        fi
 
         # Replace wp-instances.log
         FIND_DB_NAME='\| '"$PREV_DB_NAME"' \|'
@@ -213,6 +224,9 @@ replace_project_from_db () {
         PREV_TABLE_PREFIX=$(awk '/'TABLE_PREFIX'/{print}' $PROJECT_DOCKER_DIR/.env | head -n 1);
         sed -i -e 's/'"$PREV_DB_ENV"'/'"MYSQL_DATABASE='$NEW_DB_NAME'"'/g' $PROJECT_DOCKER_DIR/.env
         sed -i -e 's/'"$PREV_TABLE_PREFIX"'/'"TABLE_PREFIX='$NEW_TABLE_PREFIX'"'/g' $PROJECT_DOCKER_DIR/.env
+
+        ECHO_KEY_VALUE "PREV_INSTANCES:" "$PREV_INSTANCES"
+        ECHO_KEY_VALUE "NEW_INSTANCES:" "$NEW_INSTANCES"
     else
         ECHO_ERROR "DB DIR doesn't exists"
 
