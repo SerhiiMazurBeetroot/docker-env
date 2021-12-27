@@ -467,14 +467,21 @@ running_projects_list() {
 }
 
 stopped_projects_list() {
-    running_string=$(docker ps -a --format "table {{.Names}}" | grep -w "wordpress" | sed -r 's/'-wordpress'/''/');
+    running_string=$(docker ps -a --format "table {{.Names}}" | grep -w "wordpress");
     existing_string=$(awk '{print $5}' wp-instances.log | tail -n +2);
 
-    if [[ "$running_string" && "$existing_string" ]];
+    for I in $existing_string
+    do
+        existing_container=${existing_container:+$existing_container }$I"-wordpress"
+    done
+
+    if [[ "$running_string" && "$existing_container" ]];
     then
         running_container=($running_string)
         running_container=$(printf "%s\|" "${running_container[@]}")
-        stopped_container=($(echo "$existing_string" | sed "s/\($running_container\)//g"))
+
+        stopped_container=$(echo "$existing_container" | sed "s/\($running_container\)//g")
+        stopped_container=($(echo "$stopped_container" | sed -r 's/'-wordpress'/''/g' ))
 
         while true;
         do
