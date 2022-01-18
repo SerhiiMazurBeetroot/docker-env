@@ -7,9 +7,6 @@ docker_wp_create () {
     if [ "$(docker ps -a | grep "nginx-proxy")" ];
     then
         set_setup_type
-
-        get_domain_name
-
         check_domain_exists
 
         if [[ $DOMAIN_EXISTS == 0 ]];
@@ -60,6 +57,8 @@ docker_wp_create () {
 
                         wp_core_install
                         wp_remove_default_content
+                        
+                        #clone from repo SETUP_TYPE=beetroot
                         [[ "$SETUP_TYPE" == 3 ]] && clone_repo
                     else
                         ECHO_YELLOW "Wordpress for $DOMAIN_FULL is already created"
@@ -103,7 +102,7 @@ docker_wp_create () {
 }
 
 docker_wp_start () {
-    stopped_projects_list
+    stopped_projects_list "======== START project ========"
 
     if [ "$(docker ps -a | grep "$DOMAIN_NAME"-wordpress)" ];
     then
@@ -173,7 +172,7 @@ docker_wp_stop () {
 }
 
 docker_wp_restart () {
-    [[ "$DOMAIN_NAME" == '' ]] && running_projects_list
+    [[ "$DOMAIN_NAME" == '' ]] && running_projects_list "======= RESTART project ======="
 
     get_project_dir "skip_question"
 
@@ -187,7 +186,7 @@ docker_wp_restart () {
 }
 
 docker_wp_delete () {
-    get_existing_domains
+    get_existing_domains "======== DELETE project ======="
 
     get_project_dir "skip_question"
 
@@ -224,7 +223,10 @@ docker_wp_delete () {
                     
                     break
                     ;;
-                [Nn]*) exit;;
+                [Nn]*) 
+                    unset_variables
+                    existing_site_actions
+                    ;;
 
                 *) echo "Please answer yes or no" ;;
             esac
@@ -235,7 +237,7 @@ docker_wp_delete () {
 }
 
 docker_wp_rebuild () {
-    get_existing_domains
+    get_existing_domains "======= REBUILD project ======="
 
     get_project_dir "skip_question"
 

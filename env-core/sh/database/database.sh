@@ -38,7 +38,7 @@ create_db_dump () {
 }
 
 auto_backup_db () {
-    running_projects_list
+    running_projects_list "========= STOP project ========"
 
     if [ "$(docker ps -a | grep "$DOMAIN_NAME"-mysql)" ];
     then
@@ -60,8 +60,6 @@ auto_backup_db () {
 }
 
 export_db () {
-    running_projects_list
-
     if [ "$(docker ps -a | grep "$DOMAIN_NAME"-mysql)" ];
     then
         get_db_name
@@ -99,7 +97,6 @@ export_db () {
 }
 
 import_db () {
-    running_projects_list
     get_project_dir "skip_question"
 
     if [ "$(docker ps -a | grep "$DOMAIN_NAME"-mysql)" ];
@@ -162,18 +159,16 @@ search_replace () {
 
         case $yn in
         [Yy]*)
-            running_projects_list
             check_domain_exists
 
             if [[ $DOMAIN_EXISTS == 1 ]];
             then
-            read -rp "search: " search
-            read -rp "replace: " replace
+                read -rp "search: " search
+                read -rp "replace: " replace
 
-            ECHO_YELLOW "Running search-replace now from $search to $replace, this might take a while!"
-            docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec wp search-replace --all-tables '$search' '$replace' --allow-root'
-            ECHO_SUCCESS "Search-replace done"
-
+                ECHO_YELLOW "Running search-replace now from $search to $replace, this might take a while!"
+                docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec wp search-replace --all-tables '$search' '$replace' --allow-root'
+                ECHO_SUCCESS "Search-replace done"
             fi
             break
             ;;

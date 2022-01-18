@@ -14,6 +14,7 @@ main_actions () {
     check_env_settings
 
     while true; do
+        ECHO_INFO "======== devENV ======="
         ECHO_YELLOW "0 - Exit and do nothing"
         ECHO_GREEN "1 - Nginx"
         ECHO_GREEN "2 - New project"
@@ -28,20 +29,15 @@ main_actions () {
             ;;
         1)
             nginx_actions
-            exit
             ;;
         2)
             docker_wp_create
-
-            exit
             ;;
         3)
             existing_site_actions
-            exit
             ;;
         4)
             env_settings
-            exit
             ;;
         esac
     done
@@ -51,7 +47,7 @@ main_actions () {
 nginx_actions () {
     while true; do
         EMPTY_LINE
-        ECHO_INFO "Your Next choice"
+        ECHO_INFO "===== Nginx server ===="
         ECHO_YELLOW "0 - Return to main menu"
         ECHO_GREEN "1 - Setup"
         ECHO_GREEN "2 - Stop"
@@ -64,27 +60,21 @@ nginx_actions () {
         case $proxy_actions in
             0)
                 main_actions
-                exit
                 ;;
             1)
                 nginx_proxy
-                exit
                 ;;
             2)
                 docker_nginx_stop
-                exit
                 ;;
             3)
                 docker_nginx_start
-                exit
                 ;;
             4)
                 docker_nginx_restart
-                exit
                 ;;
             5)
                 docker_nginx_rebuild
-                exit
                 ;;
         esac
     done
@@ -93,7 +83,7 @@ nginx_actions () {
 existing_site_actions () {
     while true; do
         EMPTY_LINE
-        ECHO_INFO "Your Next choice"
+        ECHO_INFO "==== Existing sites ==="
         ECHO_YELLOW "0 - Return to main menu"
         ECHO_ATTENTION "1 - Permanently Remove"
         ECHO_GREEN "2 - Stop"
@@ -105,51 +95,48 @@ existing_site_actions () {
         ECHO_INFO "8 - Fix permissions"
         ECHO_INFO "9 - Clone from repo"
 
-
         read -rp "$(ECHO_YELLOW "Please select one of:")" actions
 
         case $actions in
             0)
                 main_actions
-                exit
                 ;;
             1)
                 docker_wp_delete
-                exit
+                unset_variables
                 ;;
             2)
                 auto_backup_db
                 docker_wp_stop
-                exit
+                unset_variables
                 ;;
             3)
                 docker_wp_start
-                exit
+                unset_variables
                 ;;
             4)
                 docker_wp_restart
-                exit
+                unset_variables
                 ;;
             5)
                 docker_wp_rebuild
                 docker_wp_restart
-                exit
+                unset_variables
                 ;;
             6)
                 existing_projects_list
                 ;;
             7)
                 db_actions
-                exit
                 ;;
             8)
-                get_existing_domains
+                get_existing_domains "======= Fix permissions ======="
                 fix_permissions
-                exit
+                unset_variables
                 ;;
             9)
                 clone_repo
-                exit
+                unset_variables
                 ;;
 
         esac
@@ -159,7 +146,8 @@ existing_site_actions () {
 db_actions () {
     while true; do
         EMPTY_LINE
-        ECHO_YELLOW "0 - Return to main menu"
+        ECHO_INFO "========== DB actions ========="
+        ECHO_YELLOW "0 - Return to the previous menu"
         ECHO_GREEN "1 - Update DB (import)"
         ECHO_GREEN "2 - Dump DB (export)"
         ECHO_GREEN "3 - Search-Replace"
@@ -167,20 +155,22 @@ db_actions () {
 
         case $actions in
             0)
-                main_actions
-                exit
+                existing_site_actions
                 ;;
             1)
+                running_projects_list "========== IMPORT DB =========="
                 import_db
-                exit
+                unset_variables
                 ;;
             2)
+                running_projects_list "========== EXPORT DB =========="
                 export_db
-                break
+                unset_variables
                 ;;
             3)
+                running_projects_list "====== Search-Replace DB ======"
                 search_replace
-                break
+                unset_variables
                 ;;
         esac
     done
@@ -191,6 +181,7 @@ env_settings () {
 
     while true; do
         EMPTY_LINE
+        ECHO_INFO "===== ENV settings ===="
         ECHO_YELLOW "0 - Return to main menu"
         ECHO_KEY_VALUE "1 - ENV_UPDATES:" "$ENV_UPDATES"
         ECHO_KEY_VALUE "2 - ENV_THEME:" "$ENV_THEME"
@@ -199,15 +190,12 @@ env_settings () {
         case $settings in
             0)
                 main_actions
-                exit
                 ;;
             1)
                 update_env
-                exit
                 ;;
             2)
                 change_env_theme
-                break
                 ;;
         esac
     done
