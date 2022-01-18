@@ -87,6 +87,8 @@ Spin up a local environment on Linux, Mac, and Windows.
 ./setup
 ```
 
+<br>
+
 ### Choose one from the following options:
 
 ```
@@ -95,14 +97,16 @@ Spin up a local environment on Linux, Mac, and Windows.
 2 - New project
 
 3 - Existing project
+
+4 - ENV settings
 ```
+### First of all you need to run Nginx server [option 1]
 
 <br>
 
 
-## 5.2 Setup Nginx server first time [option 1]
+## 5.2 With the server, you can run the following commands:
 
-#### First of all you need to run Nginx server [option 1]
 
 
 ```
@@ -121,11 +125,36 @@ Spin up a local environment on Linux, Mac, and Windows.
 
 ## 5.3 Create new project [option 2]
 
-```
 All projects will be created automatically.
 
-You just need to answer a couple of questions about the project.
-```
+<br>
+
+## You just need to choose installation type:
+
+| #   | Type     | Description                          |
+|-----|----------|--------------------------------------|
+| 1   | default  | Use all default variables            |
+| 2   | custom   | Fill all variables about the project |
+| 3   | beetroot | Use all default variables, clone project, replace project & import DB |
+|     |          |                                      |
+
+## Prepare an answer to a couple of questions about the required project variables:
+
+
+| Variables     | Example        |   |
+|---------------|----------------|---|
+| DOMAIN_NAME   | test           |   |
+| DOMAIN_FULL   | dev.test.local | * |
+| DB_NAME       | db             | * |
+| TABLE_PREFIX  | wp_            | * |
+| WP_VERSION    | 5.8.3          | * |
+| WP_USER       | developer      | * |
+| WP_PASSWORD   | 1              | * |
+| PHP_VERSION   | 8.0            | * | 
+|               |                |   | 
+
+*Variables has default value.
+
 
 <br>
 
