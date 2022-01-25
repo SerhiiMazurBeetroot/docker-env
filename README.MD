@@ -221,6 +221,23 @@ Please remember to add or remove your domain in the Windows host file:
 
 <br>
 
+## 5.7 Database management tool
+
+```
+In this envinronment used Adminer database management tool.
+
+To access any database, all you need to do is visit its link through your browser.
+
+As an example: https://dev.test.local/adminer.php
+```
+
+Tutorials:
+
+1. [How to use Adminer:](https://kinsta.com/blog/adminer/) 
+
+
+<br>
+
 # 6. Related projects
 1. [Nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy)
 2. [Mkcert-for-nginx-proxy](https://github.com/aegypius/mkcert-for-nginx-proxy)
