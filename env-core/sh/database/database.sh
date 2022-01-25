@@ -194,19 +194,24 @@ replace_project_from_db () {
 
         PREV_INSTANCES=$(awk '/'"$DOMAIN_NAME"'/{print}' wp-instances.log | head -n 1);
         PREV_DB_NAME=$(awk '/'"$DOMAIN_NAME"'/{print $9}' wp-instances.log | head -n 1);
-        NEW_DB_NAME=$(grep 'Database:' projects/$DOMAIN_FULL/wp-database/*.sql | head -n 1 | awk '//{print $5}' | sed 's/'\'Database:'//g' || true )
+
+        # DB_NAME case 1
+        NEW_DB_NAME=$(grep 'Database:' "$PROJECT_DATABASE_DIR"/*.sql | head -n 1 | awk '//{print $5}' | sed 's/'\'Database:'//g' || true )
         
+        # DB_NAME case 2 (Cyrillic letters)
         if [[ "$NEW_DB_NAME" == '' ]];
         then
-            NEW_DB_NAME=$(grep -e 'База данных:' projects/$DOMAIN_FULL/wp-database/*.sql | head -n 1 | awk '/''/{print $4}' | tr --delete \` )
+            NEW_DB_NAME=$(grep -e 'База данных:' "$PROJECT_DATABASE_DIR"/*.sql | head -n 1 | awk '/''/{print $4}' | tr --delete \` || true )
         fi
 
-        NEW_TABLE_PREFIX=$(grep -e 'Table structure for table' projects/$DOMAIN_FULL/wp-database/*.sql | awk '/'_comments'/{print $6}' | sed 's/comments//g' | sed 's/`//g' || true )
-
-        if [[ "$NEW_TABLE_PREFIX" == '' ]];
+        # DB_NAME case 3 (file without description), get DB_NAME from file name
+        if [[ "$NEW_DB_NAME" == '' ]];
         then
-            NEW_TABLE_PREFIX=$(grep -e 'Структура таблицы' projects/$DOMAIN_FULL/wp-database/*.sql | awk '/''/{print}' | awk '/'_comments'/{print $4}' | sed 's/comments//g' | tr --delete \` )
+            NEW_DB_NAME="$(basename "$PROJECT_DATABASE_DIR"/*.sql | sed 's/.sql//g' )"
         fi
+
+        # TABLE_PREFIX
+        NEW_TABLE_PREFIX=$(grep 'CREATE TABLE' "$PROJECT_DATABASE_DIR"/*.sql | grep -o '[a-z]*[_comments]\+' | awk '/'_comments'/{print}' | sed 's/comments//g' )
 
         # Replace wp-instances.log
         FIND_DB_NAME='\| '"$PREV_DB_NAME"' \|'
