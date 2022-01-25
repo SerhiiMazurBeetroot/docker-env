@@ -11,6 +11,8 @@ clone_repo () {
     if [[ $DOMAIN_EXISTS == 1 ]];
     then
         get_project_dir "skip_question"
+        EMPTY_LINE
+        fix_permissions
     
         EMPTY_LINE
         ECHO_YELLOW "Getting plugins and themes from the repository"
