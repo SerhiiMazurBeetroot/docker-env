@@ -22,7 +22,7 @@ get_project_dir () {
     #DOMAIN_FULL
     if [[ $QUESTION == "skip_question" ]];
     then
-        DOMAIN_FULL=$(awk '/'"$DOMAIN_NAME"'/{print $7}' wp-instances.log | head -n 1);
+        DOMAIN_FULL=$(awk '/'" $DOMAIN_NAME "'/{print $7}' wp-instances.log | head -n 1);
     else
         EMPTY_LINE
         ECHO_YELLOW "Enter DOMAIN_FULL [default dev.$DOMAIN_NAME.local]"
