@@ -39,11 +39,11 @@ get_project_dir () {
 }
 
 get_db_name () {
-    DB_NAME=$(awk '/'"$DOMAIN_NAME"'/{print $9}' wp-instances.log | head -n 1);
+    DB_NAME=$(awk '/'" $DOMAIN_NAME "'/{print $9}' wp-instances.log | head -n 1);
 
     if [ "$DB_NAME" ];
     then
-        DOMAIN_NAME=$(awk '/'"$DOMAIN_NAME"'/{print $5}' wp-instances.log | head -n 1);
+        DOMAIN_NAME=$(awk '/'" $DOMAIN_NAME "'/{print $5}' wp-instances.log | head -n 1);
     else
         ECHO_ERROR "Wordpress site not exists"
     fi

@@ -190,10 +190,10 @@ replace_project_from_db () {
         EMPTY_LINE
         ECHO_YELLOW "Replace... DB_NAME & TABLE_PREFIX"
 
-        DOMAIN_FULL=$(awk '/'"$DOMAIN_NAME"'/{print $7}' wp-instances.log | head -n 1);
+        DOMAIN_FULL=$(awk '/'" $DOMAIN_NAME "'/{print $7}' wp-instances.log | head -n 1);
 
-        PREV_INSTANCES=$(awk '/'"$DOMAIN_NAME"'/{print}' wp-instances.log | head -n 1);
-        PREV_DB_NAME=$(awk '/'"$DOMAIN_NAME"'/{print $9}' wp-instances.log | head -n 1);
+        PREV_INSTANCES=$(awk '/'" $DOMAIN_NAME "'/{print}' wp-instances.log | head -n 1);
+        PREV_DB_NAME=$(awk '/'" $DOMAIN_NAME "'/{print $9}' wp-instances.log | head -n 1);
 
         # DB_NAME case 1
         NEW_DB_NAME=$(grep 'Database:' "$PROJECT_DATABASE_DIR"/*.sql | head -n 1 | awk '//{print $5}' | sed 's/'\'Database:'//g' || true )

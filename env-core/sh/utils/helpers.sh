@@ -4,7 +4,7 @@ set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
 check_domain_exists () {
-    DOMAIN_CHECK=$(awk '/'"$DOMAIN_NAME"'/{print $5}' wp-instances.log | head -n 1);
+    DOMAIN_CHECK=$(awk '/'" $DOMAIN_NAME "'/{print $5}' wp-instances.log | head -n 1);
 
     if [[ "$DOMAIN_NAME" == "$DOMAIN_CHECK" ]];
     then
@@ -77,9 +77,25 @@ git_config_fileMode() {
     if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ];
     then
         git config core.fileMode false
+        cd "${PWD}/projects/$DOMAIN_FULL" && git config core.fileMode false
+        cd ../../
     fi
 }
 
 unset_variables () {
-    unset DOMAIN_NAME
+    unset DOMAIN_NAME DB_NAME TABLE_PREFIX PHP_VERSION
+}
+
+print_project_vars() {
+    ECHO_KEY_VALUE "DOMAIN_NAME:" "$DOMAIN_NAME"
+    ECHO_KEY_VALUE "DOMAIN_FULL:" "$DOMAIN_FULL"
+    ECHO_KEY_VALUE "WP_VERSION:" "$WP_VERSION"
+    ECHO_KEY_VALUE "WP_USER:" "$WP_USER"
+    ECHO_KEY_VALUE "WP_PASSWORD:" "$WP_PASSWORD"
+    ECHO_KEY_VALUE "PHP_VERSION:" "$PHP_VERSION"
+    ECHO_KEY_VALUE "DB_NAME:" "$DB_NAME"
+    ECHO_KEY_VALUE "TABLE_PREFIX:" "$TABLE_PREFIX"
+    ECHO_KEY_VALUE "COMPOSER:" "$COMPOSER"
+    ECHO_YELLOW "You can find this info in the file /projects/$DOMAIN_FULL/wp-docker/.env" 
+    EMPTY_LINE
 }
