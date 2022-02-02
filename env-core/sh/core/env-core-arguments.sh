@@ -67,23 +67,26 @@ get_php_versions () {
 
     PHP_LIST=($(curl -s 'https://www.php.net/releases/active.php' | grep -Eo '[0-9]\.[0-9]' | awk '!a[$0]++'));
 
-    if [[ $QUESTION == "default" ]];
+    if [ ! $PHP_VERSION ];
     then
-        PHP_VERSION="${PHP_LIST[1]}"
-    else
-        for i in "${!PHP_LIST[@]}";
-        do
-            ECHO_KEY_VALUE "[$(($i+1))]" "${PHP_LIST[$i]}"
-        done
-
-        ((++i))
-        read -rp "$(ECHO_YELLOW "Please select one of:")" choice
-
-        [ -z "$choice" ] && choice=-1
-        if (( "$choice" > 0 && "$choice" <= $i )); then
-            PHP_VERSION="${PHP_LIST[$(($choice-1))]}"
-        else
+        if [[ $QUESTION == "default" ]];
+        then
             PHP_VERSION="${PHP_LIST[1]}"
+        else
+            for i in "${!PHP_LIST[@]}";
+            do
+                ECHO_KEY_VALUE "[$(($i+1))]" "${PHP_LIST[$i]}"
+            done
+
+            ((++i))
+            read -rp "$(ECHO_YELLOW "Please select one of:")" choice
+
+            [ -z "$choice" ] && choice=-1
+            if (( "$choice" > 0 && "$choice" <= $i )); then
+                PHP_VERSION="${PHP_LIST[$(($choice-1))]}"
+            else
+                PHP_VERSION="${PHP_LIST[1]}"
+            fi
         fi
     fi
 }
