@@ -8,16 +8,7 @@ check_all_data () {
     ECHO_YELLOW "Check everything before proceeding:"
 
     while true; do
-       ECHO_KEY_VALUE "DOMAIN_NAME:" "$DOMAIN_NAME"
-       ECHO_KEY_VALUE "DOMAIN_FULL:" "$DOMAIN_FULL"
-       ECHO_KEY_VALUE "WP_VERSION:" "$WP_VERSION"
-       ECHO_KEY_VALUE "WP_USER:" "$WP_USER"
-       ECHO_KEY_VALUE "WP_PASSWORD:" "$WP_PASSWORD"
-       ECHO_KEY_VALUE "PHP_VERSION:" "$PHP_VERSION"
-       ECHO_KEY_VALUE "DB_NAME:" "$DB_NAME"
-       ECHO_KEY_VALUE "TABLE_PREFIX:" "$TABLE_PREFIX"
-       ECHO_YELLOW "You can find this info in the file /projects/$DOMAIN_FULL/wp-docker/.env" 
-       EMPTY_LINE
+       print_project_vars
 
         read -rp "Is that correct? [Y/n] " yn
 
@@ -65,9 +56,7 @@ set_setup_type () {
             break
             ;;
         3)
-            get_domain_name
-            get_project_dir "$@"
-            setup_default_args
+            setup_beetroot_args "$@"
             break
             ;;
         esac
@@ -76,16 +65,10 @@ set_setup_type () {
 
 setup_default_args () {
     #DB_NAME
-    if [[ $DB_NAME == '' ]];
-    then
-        DB_NAME="db"
-    fi
+    [[ $DB_NAME == '' ]] && DB_NAME="db"
 
     #TABLE_PREFIX
-    if [[ $TABLE_PREFIX == '' ]];
-    then
-        TABLE_PREFIX="wp_"
-    fi
+    [[ $TABLE_PREFIX == '' ]] && TABLE_PREFIX="wp_"
 
     #WP_VERSION
     EMPTY_LINE
@@ -122,6 +105,18 @@ setup_default_args () {
 
     #PHP_VERSION
     get_php_versions "default"
+
+    #COMPOSER
+    if [[ ! "$COMPOSER" =~ [1-2] ]];
+    then
+        COMPOSER="no"
+    elif [[ "$COMPOSER" -eq 1 ]];
+    then
+        COMPOSER="no"
+    elif [[ "$COMPOSER" -eq 2 ]];
+    then
+        COMPOSER="yes"
+    fi
 }
 
 setup_custom_args () {
@@ -160,87 +155,42 @@ setup_custom_args () {
     ECHO_YELLOW "Enter PHP_VERSION [default 2nd item]" 
     get_php_versions
 
+    #COMPOSER
+    EMPTY_LINE
+    ECHO_YELLOW "Install Composer [default 'no']"
+    randpassword
+    ECHO_GREEN "1 - no"
+    ECHO_GREEN "2 - yes"
+    read -rp "$(ECHO_YELLOW "Please select one of:")" COMPOSER
+
     setup_default_args
 }
 
-delete_site_data () {
-    
-    if [ -d "$PROJECT_ROOT_DIR" ];
-    then
-        EMPTY_LINE
-        ECHO_YELLOW "Deleting Site files and webroot"
-        rm -rf "$PROJECT_ROOT_DIR"
-    else
-        echo "Webroot not found"
-    fi
+setup_beetroot_args() {
+    EMPTY_LINE
+    while true; do
+        ECHO_INFO "==== Use variables ===="
+        ECHO_YELLOW "[0] Return to main menu"
+        ECHO_KEY_VALUE "[1]" "default"
+        ECHO_KEY_VALUE "[2]" "custom"
+        read -rp "$(ECHO_YELLOW "Please select one of:")" choise
 
-    #Remove from wp-instances.log
-    sed -i -e '/'"$DOMAIN_NAME"'/d' ./wp-instances.log
-
-    #Remove from /etc/hosts
-    setup_hosts_file rem
-}
-
-# Load/Create enviroment variables
-env_file_load () {
-    # get_domain_name
-
-    get_project_dir "skip_question"
-
-    if [ -f $PROJECT_DOCKER_DIR/.env ]; 
-    then
-        source $PROJECT_DOCKER_DIR/.env
-    else
-        ECHO_YELLOW ".env file not found, creating..."
-        cp -rf ./env-core/templates/wordpress/.env.dev.example $PROJECT_DOCKER_DIR/.env
-
-        sed -i -e 's/{DOMAIN_NAME}/'$DOMAIN_NAME'/g' $PROJECT_DOCKER_DIR/.env
-        sed -i -e 's/{MYSQL_DATABASE}/'$DB_NAME'/g' $PROJECT_DOCKER_DIR/.env
-        sed -i -e 's/{TABLE_PREFIX}/'$TABLE_PREFIX'/g' $PROJECT_DOCKER_DIR/.env
-        sed -i -e 's/{DOMAIN_FULL}/'$DOMAIN_FULL'/g' $PROJECT_DOCKER_DIR/.env
-        sed -i -e 's/{WP_VERSION}/'$WP_VERSION'/g' $PROJECT_DOCKER_DIR/.env
-        sed -i -e 's/{PORT}/'$PORT'/g' $PROJECT_DOCKER_DIR/.env
-        sed -i -e 's/{WP_VERSION}/'$WP_VERSION'/g' $PROJECT_DOCKER_DIR/.env
-        sed -i -e 's/{WP_USER}/'$WP_USER'/g' $PROJECT_DOCKER_DIR/.env
-        sed -i -e 's/{WP_PASSWORD}/'$WP_PASSWORD'/g' $PROJECT_DOCKER_DIR/.env
-        sed -i -e 's/{PHP_VERSION}/'$PHP_VERSION'/g' $PROJECT_DOCKER_DIR/.env
-    fi
-}
-
-fix_permissions () {
-    check_domain_exists
-
-    if [[ $DOMAIN_EXISTS == 1 ]];
-    then
-        get_project_dir "skip_question"
-
-        ECHO_YELLOW "Fixing Permissions, this can take a while!"
-        if [ "$(docker ps -a | grep "$DOMAIN_NAME"-wordpress)" ];
-        then
-            docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec chown -R www-data:www-data /var/www/html/'
-            docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec chmod -R 755 /var/www/html/'
-        fi
-
-        #Fix WP permissions
-        if [[ $OSTYPE != "windows" ]];
-        then
-            if [ -d $PROJECT_ROOT_DIR ];
-            then
-                sudo chmod -R 777 "$PROJECT_ROOT_DIR" # Suggested Permissions 755
-            fi
-
-            if [ -d $PROJECT_CONTENT_DIR ];
-            then
-                sudo chmod -R 777 "$PROJECT_CONTENT_DIR" # Suggested Permissions 755
-                [[ -d "$PROJECT_CONTENT_DIR"/themes ]] && sudo chmod -R 777 "$PROJECT_CONTENT_DIR"/themes # Suggested Permissions 755
-                [[ -d "$PROJECT_CONTENT_DIR"/plugins ]] && sudo chmod -R 777 "$PROJECT_CONTENT_DIR"/plugins # Suggested Permissions 755
-                [[ -d "$PROJECT_CONTENT_DIR"/uploads ]] && sudo chmod -R 777 "$PROJECT_CONTENT_DIR"/uploads # Suggested Permissions 755
-            fi
-
-            git_config_fileMode
-        fi
-
-    else
-        ECHO_ERROR "Wordpress site not exists"
-    fi
+        case $choise in
+        0)
+            main_actions
+            ;;
+        1)
+            get_domain_name
+            get_project_dir "$@"
+            setup_default_args
+            break
+            ;;
+        2)
+            get_domain_name
+            get_project_dir "$@"
+            setup_custom_args
+            break
+            ;;
+        esac
+    done
 }

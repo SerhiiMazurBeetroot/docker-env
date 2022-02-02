@@ -92,6 +92,11 @@ clone_repo () {
                     docker_wp_restart
                     import_db
                     fix_permissions
+                    edit_file_wp_config_setup_beetroot
+                    wp_get_default_theme
+                    wp_composer_install
+                    edit_file_gitignore
+                    EMPTY_LINE
                     break
                 ;;
                 [Nn]*)
@@ -119,6 +124,10 @@ wp_core_install () {
     docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec wp core install --url=https://'$DOMAIN_FULL' --title='$DOMAIN_NAME' --admin_user='$WP_USER' --admin_password='$WP_PASSWORD' --admin_email=example@example.com --allow-root'
 }
 
+wp_composer_install() {
+    docker exec -it "$DOMAIN_NAME-wordpress" bash -c "cd ./wp-content/themes/$WP_DEFAULT_THEME && composer update"
+}
+
 randpassword(){ 
     WP_PASSWORD=$(LC_CTYPE=C tr -dc A-Za-z0-9_\!\@\#\$\%\^\&\*\(\)-+= < /dev/urandom | head -c 20) || true
 }
@@ -142,5 +151,29 @@ wp_remove_default_content () {
         # Set pretty urls
         docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec wp rewrite structure '/%postname%/' --hard --allow-root'
         docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec wp rewrite flush --hard --allow-root'
+    fi
+}
+
+wp_get_default_theme () {
+    if [[ -d "$PROJECT_DATABASE_DIR" ]];
+    then
+        DB_FILE="$(basename "$PROJECT_DATABASE_DIR"/*.sql )"
+
+        if [[ -f "$PROJECT_DATABASE_DIR/$DB_FILE" ]];
+        then
+            #1 => find in file | #2 => replace 'stylesheet' | #3 => replace character '' | #4 => replace , | #5 => replace space
+            WP_DEFAULT_THEME=$( grep -o "'stylesheet',\s*'[A-Za-z0-9.,-]*\+'" "$PROJECT_DATABASE_DIR"/*.sql | sed 's/'stylesheet'//g' | sed 's/'\''//g' | sed 's/,//g' | sed 's/^[ \t]*//;s/[ \t]*$//' )
+            ECHO_YELLOW "WP_DEFAULT_THEME: $WP_DEFAULT_THEME"
+
+            # Replace variable WP_DEFAULT_THEME .env file
+            PREV_THEME="$(grep -o "WP_DEFAULT_THEME=[A-Za-z0-9.,-]*\+" "$PROJECT_DOCKER_DIR"/.env)"
+            sed -i -e 's/'$PREV_THEME'/'WP_DEFAULT_THEME=$WP_DEFAULT_THEME'/g' $PROJECT_DOCKER_DIR/.env
+            
+        else
+            ECHO_YELLOW "DB FILE doesn't exists"
+
+        fi
+    else
+        ECHO_ERROR "DB DIR doesn't exists"
     fi
 }

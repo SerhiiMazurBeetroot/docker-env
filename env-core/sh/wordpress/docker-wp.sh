@@ -33,12 +33,23 @@ docker_wp_create () {
                         fi
 
                         mkdir -p $PROJECT_DOCKER_DIR
-                        cp ./env-core/templates/wordpress/Dockerfile-template $PROJECT_DOCKER_DIR/Dockerfile
+
+                        #Choose needed Dockerfile
+                        if [[ $COMPOSER == "no" ]];
+                        then
+                           cp ./env-core/templates/wordpress/Dockerfile-template $PROJECT_DOCKER_DIR/Dockerfile
+                        else
+                           cp ./env-core/templates/wordpress/Dockerfile-composer $PROJECT_DOCKER_DIR/Dockerfile
+                        fi
+
                         sed -i -e 's/{WP_VERSION}/'$WP_VERSION'/g' $PROJECT_DOCKER_DIR/Dockerfile
                         sed -i -e 's/{PHP_VERSION}/'$PHP_VERSION'/g' $PROJECT_DOCKER_DIR/Dockerfile
 
                         cp ./env-core/templates/wordpress/docker-compose.example.com.yml $PROJECT_DOCKER_DIR/docker-compose."$DOMAIN_NODOT".yml
                         sed -i -e 's/{DOMAIN_NAME}/'$DOMAIN_NAME'/g' $PROJECT_DOCKER_DIR/docker-compose."$DOMAIN_NODOT".yml
+
+                        #Replace Volumes from 'wp-content' to 'wp-core' files SETUP_TYPE=beetroot
+                        [[ "$SETUP_TYPE" == 3 ]] && sed -i -e 's/wp-content\///g' $PROJECT_DOCKER_DIR/docker-compose."$DOMAIN_NODOT".yml
 
                         cp ./env-core/templates/wordpress/php.conf.ini $PROJECT_DOCKER_DIR/php.conf.ini
 
@@ -58,8 +69,32 @@ docker_wp_create () {
                         wp_core_install
                         wp_remove_default_content
                         
-                        #clone from repo SETUP_TYPE=beetroot
-                        [[ "$SETUP_TYPE" == 3 ]] && clone_repo
+                        #clone from repo
+                        # if [ "$SETUP_TYPE" == 3 ];
+                        # then
+                            while true; do
+                                EMPTY_LINE
+                                read -rp "$(ECHO_YELLOW "Start Clone?") Y/n " yn
+
+                                case $yn in
+                                [Yy]*)
+                                    clone_repo
+                                    break
+                                ;;
+                                [Nn]*)
+                                    break
+                                    ;;
+
+                                *) echo "Please answer yes or no" ;;
+                                esac
+                            done
+                        # fi
+
+                        # Print for user project info
+                        EMPTY_LINE
+                        ECHO_INFO "Project variables:"
+                        print_project_vars
+
                     else
                         ECHO_YELLOW "Wordpress for $DOMAIN_FULL is already created"
                         if [ -d $PROJECT_DOCKER_DIR/docker-compose."$DOMAIN_NODOT".yml ];
@@ -209,6 +244,8 @@ docker_wp_delete () {
                         EMPTY_LINE
                         imageid=$(docker image ls --format '{{.Repository}}' | grep "$DOMAIN_NAME"-wordpress)
                         [ -n "$imageid" ] && docker rmi "$imageid" --force && ECHO_YELLOW "Deleting images" || ECHO_WARN_YELLOW "Image not found"
+                    else
+                        ECHO_ERROR "Docker image does not exist"
                     fi
 
                     if [ $(docker volume ls --format '{{.Name}}' | grep "$DOMAIN_NAME"_db_data) ];
@@ -216,6 +253,8 @@ docker_wp_delete () {
                         EMPTY_LINE
                         volumename=$(docker volume ls --format '{{.Name}}' | grep "$DOMAIN_NAME"_db_data)
                         [ -n "$volumename" ] && docker volume rm "$volumename" && ECHO_YELLOW "Deleting Volume" || echo "Volume not found"
+                    else
+                        ECHO_ERROR "Docker volume does not exist"
                     fi
 
                     delete_site_data

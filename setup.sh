@@ -32,6 +32,7 @@ main_actions () {
             ;;
         2)
             docker_wp_create
+            unset_variables
             ;;
         3)
             existing_site_actions
