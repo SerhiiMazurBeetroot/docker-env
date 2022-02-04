@@ -4,7 +4,7 @@ set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
 docker_wp_create () {
-    if [ "$(docker ps -a | grep "nginx-proxy")" ];
+    if [ "$( docker ps --format '{{.Names}}' | grep -P '(^)nginx-proxy($)' )" ];
     then
         set_setup_type
         check_domain_exists

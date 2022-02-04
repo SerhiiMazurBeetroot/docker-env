@@ -11,7 +11,7 @@ nginx_proxy () {
     else
         if [ -f "./env-core/nginx/docker-compose.yml" ];
         then
-            if [ "$(docker ps --format '{{.Names}}' | grep nginx-proxy)" ]
+            if [ "$( docker ps --format '{{.Names}}' | grep -P '(^)nginx-proxy($)' )" ]
             then
                 EMPTY_LINE
                 ECHO_SUCCESS "Nginx-proxy already setup and running"
@@ -43,7 +43,7 @@ nginx_proxy () {
                     docker_nginx_start
                 else
                     docker_nginx_start
-                    if [ "$(docker ps -a | grep nginx-proxy)" ]
+                    if [ "$( docker ps --format '{{.Names}}' | grep -P '(^)nginx-proxy($)' )" ]
                     then
                         ECHO_SUCCESS "Container started"
                     else

@@ -8,7 +8,7 @@ docker_nginx_start () {
 }
 
 docker_nginx_stop () {
-    if [ "$(docker ps -a | grep "nginx-proxy")" ];
+    if [ "$( docker ps --format '{{.Names}}' | grep -P '(^)nginx-proxy($)' )" ];
     then
         docker-compose -f ./env-core/nginx/docker-compose.yml down
     else
@@ -17,7 +17,7 @@ docker_nginx_stop () {
 }
 
 docker_nginx_restart () {
-    if [ "$(docker ps -a | grep "nginx-proxy")" ];
+    if [ "$( docker ps --format '{{.Names}}' | grep -P '(^)nginx-proxy($)' )" ];
     then
         docker-compose -f ./env-core/nginx/docker-compose.yml restart
     else
