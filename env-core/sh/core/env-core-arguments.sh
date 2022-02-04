@@ -31,11 +31,19 @@ get_project_dir () {
 
     [[ $DOMAIN_FULL == '' ]] && DOMAIN_FULL="dev.$DOMAIN_NAME.local"
 
+    set_project_vars
+}
+
+set_project_vars() {
+    #DIR
     DOMAIN_NODOT=$(echo "$DOMAIN_NAME" | tr . _)
     PROJECT_ROOT_DIR=./projects/"$DOMAIN_FULL"
     PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/wp-docker
     PROJECT_DATABASE_DIR=$PROJECT_ROOT_DIR/wp-database
     PROJECT_CONTENT_DIR=$PROJECT_ROOT_DIR/wp-content
+
+    #CONTAINER
+    DOCKER_CONTAINER_DB="$DOMAIN_NAME-mysql"
 }
 
 get_db_name () {

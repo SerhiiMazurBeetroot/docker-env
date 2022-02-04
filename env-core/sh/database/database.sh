@@ -22,7 +22,7 @@ create_db_dump () {
     file=$PROJECT_DATABASE_DIR/$DUMP_FILE
 
     # Create dump
-    docker exec -i "$DOMAIN_NAME"-mysql sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' > "$file"
+    docker exec -i "$DOCKER_CONTAINER_DB" sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' > "$file"
 
     # Check if new backup was created
     if [ -e "$file" ];
@@ -40,7 +40,7 @@ create_db_dump () {
 auto_backup_db () {
     running_projects_list "========= STOP project ========"
 
-    if [ "$(docker ps -a | grep "$DOMAIN_NAME"-mysql)" ];
+    if [ "$( docker ps --format '{{.Names}}' | grep -P '(^)'$DOCKER_CONTAINER_DB'($)' )" ];
     then
         get_db_name
 
@@ -60,7 +60,9 @@ auto_backup_db () {
 }
 
 export_db () {
-    if [ "$(docker ps -a | grep "$DOMAIN_NAME"-mysql)" ];
+    get_project_dir "skip_question"
+
+    if [ "$( docker ps --format '{{.Names}}' | grep -P '(^)'$DOCKER_CONTAINER_DB'($)' )" ];
     then
         get_db_name
 
@@ -99,7 +101,7 @@ export_db () {
 import_db () {
     get_project_dir "skip_question"
 
-    if [ "$(docker ps -a | grep "$DOMAIN_NAME"-mysql)" ];
+    if [ "$( docker ps --format '{{.Names}}' | grep -P '(^)'$DOCKER_CONTAINER_DB'($)' )" ];
     then
         ECHO_GREEN "Wordpress and DB container exists"
         ECHO_YELLOW "Getting DB from '/wp-database/' and updating local"
@@ -115,21 +117,21 @@ import_db () {
             while [[ $dbstatus != [0] ]]
             do
 
-                if [ "$(docker exec -i "$DOMAIN_NAME"-mysql sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" --execute "show databases"' | grep $DB_NAME )" ];
+                if [ "$(docker exec -i "$DOCKER_CONTAINER_DB" sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" --execute "show databases"' | grep $DB_NAME )" ];
                 then
                     dbstatus=0
                     ECHO_GREEN "DB found"
 
-                    docker cp $PROJECT_DATABASE_DIR/*.sql "$DOMAIN_NAME"-mysql:/docker-entrypoint-initdb.d/dump.sql
+                    docker cp "$PROJECT_DATABASE_DIR"/*.sql "$DOCKER_CONTAINER_DB":/docker-entrypoint-initdb.d/dump.sql
 
                     # Drop DB
-                    docker exec -t -i "$DOMAIN_NAME-mysql"  bash -l -c "mysqladmin drop $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
+                    docker exec -t -i "$DOCKER_CONTAINER_DB"  bash -l -c "mysqladmin drop $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
 
                     # Create empty DB                                        
-                    docker exec -t -i "$DOMAIN_NAME-mysql"  bash -l -c "mysqladmin create $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
+                    docker exec -t -i "$DOCKER_CONTAINER_DB"  bash -l -c "mysqladmin create $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
 
                     # Import DB
-                    docker exec -i "$DOMAIN_NAME"-mysql bash -l -c "mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < /docker-entrypoint-initdb.d/dump.sql"
+                    docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < /docker-entrypoint-initdb.d/dump.sql"
                     
                     ECHO_SUCCESS "DB dump for $DOMAIN_FULL inserted"
 
@@ -139,7 +141,7 @@ import_db () {
                     ECHO_YELLOW "Trying to insert DB, awaiting MariaDB container..."
 
                     # Create empty DB                                        
-                    docker exec -t -i "$DOMAIN_NAME-mysql"  bash -l -c "mysqladmin create $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
+                    docker exec -t -i "$DOCKER_CONTAINER_DB"  bash -l -c "mysqladmin create $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
                 fi
             done
         else
