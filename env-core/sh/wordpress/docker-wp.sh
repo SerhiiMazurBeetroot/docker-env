@@ -12,10 +12,10 @@ docker_wp_create () {
         if [[ $DOMAIN_EXISTS == 0 ]];
         then
             check_all_data
-            if [ "$(docker image ls | grep "$DOMAIN_NAME"-wordpress)" ] && [ "$(docker volume ls | grep $DOMAIN_NAME)" ];
+            if [ "$( docker image ls | grep -P '(^|_)'$DOCKER_CONTAINER_WP'(?=\s|$)' )" ] && [ "$( docker volume ls --format '{{.Name}}' | grep -P '(^|_)'$DOCKER_VOLUME_DB'($)' )" ];
             then
                 ECHO_SUCCESS "Site image and volume found"
-                [ "$(docker ps -a | grep $DOMAIN_NAME-wordpress)" ] && ECHO_ERROR "Containers already running for this domain" && exit;
+                [ "$( docker ps --format '{{.Names}}' | grep -P "(^|\s)\'$DOCKER_CONTAINER_WP'(?=\s|$)" )" ] && ECHO_ERROR "Containers already running for this domain" && exit;
                 [ -f $PROJECT_DOCKER_DIR/docker-compose."$DOMAIN_NODOT".yml ] && ECHO_ERROR "Docker-compose file present, you can start local site again by choosing 3" && exit;
             else
                 if [ -f "./env-core/templates/wordpress/docker-compose.example.com.yml" ];
@@ -100,7 +100,7 @@ docker_wp_create () {
                         if [ -d $PROJECT_DOCKER_DIR/docker-compose."$DOMAIN_NODOT".yml ];
                         then
                             ECHO_YELLOW "Docker File already setup"
-                            if [ "$(docker ps -a | grep "$DOMAIN_NAME"-wordpress)" ]
+                            if [ "$( docker ps --format '{{.Names}}' | grep -P '(^)'$DOCKER_CONTAINER_WP'($)' )" ]
                             then 
                                 ECHO_ERROR "Container running already"
                                 exit;
@@ -139,12 +139,12 @@ docker_wp_create () {
 docker_wp_start () {
     stopped_projects_list "======== START project ========"
 
-    if [ "$(docker ps -a | grep "$DOMAIN_NAME"-wordpress)" ];
+    if [ "$( docker ps --format '{{.Names}}' | grep -P '(^)'$DOCKER_CONTAINER_WP'($)' )" ];
     then
         ECHO_WARN_RED "Containers already running for this domain"
         exit;
     else
-        if [ "$(docker image ls | grep "$DOMAIN_NAME"-wordpress)" ] && [ "$(docker volume ls | grep $DOMAIN_NAME)" ];
+        if [ "$( docker image ls | grep -P '(^|_)'$DOCKER_CONTAINER_WP'(?=\s|$)' )" ] && [ "$( docker volume ls --format '{{.Name}}' | grep -P '(^|_)'$DOCKER_VOLUME_DB'($)' )" ];
         then
             ECHO_SUCCESS "Site image and volume found"
 
@@ -189,7 +189,7 @@ docker_wp_start () {
 docker_wp_stop () {
     get_project_dir "skip_question"
 
-    if [ "$(docker ps -a | grep "$DOMAIN_NAME"-wordpress)" ];
+    if [ "$( docker ps --format '{{.Names}}' | grep -P '(^)'$DOCKER_CONTAINER_WP'($)' )" ];
     then
         
         if [ -f $PROJECT_DOCKER_DIR/docker-compose."$DOMAIN_NODOT".yml ];
@@ -211,7 +211,7 @@ docker_wp_restart () {
 
     get_project_dir "skip_question"
 
-    if [ "$(docker ps -a | grep "$DOMAIN_NAME"-wordpress)" ];
+    if [ "$( docker ps --format '{{.Names}}' | grep -P '(^)'$DOCKER_CONTAINER_WP'($)' )" ];
     then
         [ -f $PROJECT_DOCKER_DIR/docker-compose."$DOMAIN_NODOT".yml ] && docker-compose -f $PROJECT_DOCKER_DIR/docker-compose."$DOMAIN_NODOT".yml restart
         docker_nginx_restart
@@ -239,19 +239,19 @@ docker_wp_delete () {
                     fix_permissions
                     docker_wp_stop
                     
-                    if [ $(docker image ls --format '{{.Repository}}' | grep "$DOMAIN_NAME"-wordpress) ];
+                    if [ $( docker image ls --format '{{.Repository}}' | grep -P '(^)'$DOCKER_CONTAINER_WP'($)' ) ];
                     then
                         EMPTY_LINE
-                        imageid=$(docker image ls --format '{{.Repository}}' | grep "$DOMAIN_NAME"-wordpress)
+                        imageid=$( docker image ls --format '{{.Repository}}' | grep -P '(^|_)'$DOCKER_CONTAINER_WP'(?=\s|$)' )
                         [ -n "$imageid" ] && docker rmi "$imageid" --force && ECHO_YELLOW "Deleting images" || ECHO_WARN_YELLOW "Image not found"
                     else
                         ECHO_ERROR "Docker image does not exist"
                     fi
 
-                    if [ $(docker volume ls --format '{{.Name}}' | grep "$DOMAIN_NAME"_db_data) ];
+                    if [ $( docker volume ls --format '{{.Name}}' | grep -P '(^|_)'$DOCKER_VOLUME_DB'($)' ) ];
                     then
                         EMPTY_LINE
-                        volumename=$(docker volume ls --format '{{.Name}}' | grep "$DOMAIN_NAME"_db_data)
+                        volumename=$( docker volume ls --format '{{.Name}}' | grep -P '(^|_)'$DOCKER_VOLUME_DB'($)' )
                         [ -n "$volumename" ] && docker volume rm "$volumename" && ECHO_YELLOW "Deleting Volume" || echo "Volume not found"
                     else
                         ECHO_ERROR "Docker volume does not exist"

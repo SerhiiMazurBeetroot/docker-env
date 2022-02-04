@@ -43,7 +43,9 @@ set_project_vars() {
     PROJECT_CONTENT_DIR=$PROJECT_ROOT_DIR/wp-content
 
     #CONTAINER
+    DOCKER_CONTAINER_WP="$DOMAIN_NAME-wordpress"
     DOCKER_CONTAINER_DB="$DOMAIN_NAME-mysql"
+    DOCKER_VOLUME_DB="$DOMAIN_NAME"_db_data
 }
 
 get_db_name () {

@@ -58,10 +58,10 @@ fix_permissions () {
         get_project_dir "skip_question"
 
         ECHO_YELLOW "Fixing Permissions, this can take a while!"
-        if [ "$(docker ps -a | grep _"$DOMAIN_NAME"-wordpress)" ];
+        if [ "$( docker ps --format '{{.Names}}' | grep -P '(^|_)'$DOCKER_CONTAINER_WP'(?=\s|$)' )" ];
         then
-            docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec chown -R www-data:www-data /var/www/html/'
-            docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec chmod -R 755 /var/www/html/'
+            docker exec -i "$DOCKER_CONTAINER_WP" sh -c 'exec chown -R www-data:www-data /var/www/html/'
+            docker exec -i "$DOCKER_CONTAINER_WP" sh -c 'exec chmod -R 755 /var/www/html/'
         else
             ECHO_ERROR "Docker container for this site does not exist"
         fi

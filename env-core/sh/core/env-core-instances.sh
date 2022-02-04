@@ -58,7 +58,7 @@ running_projects_list() {
     unset running_container
     ACTION=$1
 
-    string=$(docker ps -a --format "table {{.Names}}" | grep -w "wordpress" | sed -r 's/'-wordpress'/''/') || true;
+    string=$(docker ps --format '{{.Names}}' | grep -w "wordpress" | sed -r 's/'-wordpress'/''/') || true;
     running_container=($string)
 
     if [ "$string" ];
@@ -101,7 +101,7 @@ stopped_projects_list() {
     unset stopped_container
     ACTION=$1
 
-    running_string=$(docker ps -a --format "table {{.Names}}" | grep -w "wordpress") || true;
+    running_string=$(docker ps --format '{{.Names}}' | grep -w "wordpress") || true;
     existing_string=$(awk '{print $5}' wp-instances.log | tail -n +2);
 
     for I in $existing_string

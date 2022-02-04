@@ -169,7 +169,7 @@ search_replace () {
                 read -rp "replace: " replace
 
                 ECHO_YELLOW "Running search-replace now from $search to $replace, this might take a while!"
-                docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec wp search-replace --all-tables '$search' '$replace' --allow-root'
+                docker exec -i "$DOCKER_CONTAINER_WP" sh -c 'exec wp search-replace --all-tables '$search' '$replace' --allow-root'
                 ECHO_SUCCESS "Search-replace done"
             fi
             break

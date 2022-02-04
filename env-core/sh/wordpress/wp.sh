@@ -121,11 +121,11 @@ get_latest_wp_version () {
 }
 
 wp_core_install () {    
-    docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec wp core install --url=https://'$DOMAIN_FULL' --title='$DOMAIN_NAME' --admin_user='$WP_USER' --admin_password='$WP_PASSWORD' --admin_email=example@example.com --allow-root'
+    docker exec -i "$DOCKER_CONTAINER_WP" sh -c 'exec wp core install --url=https://'$DOMAIN_FULL' --title='$DOMAIN_NAME' --admin_user='$WP_USER' --admin_password='$WP_PASSWORD' --admin_email=example@example.com --allow-root'
 }
 
 wp_composer_install() {
-    docker exec -it "$DOMAIN_NAME-wordpress" bash -c "cd ./wp-content/themes/$WP_DEFAULT_THEME && composer update"
+    docker exec -it "$DOCKER_CONTAINER_WP" bash -c "cd ./wp-content/themes/$WP_DEFAULT_THEME && composer update"
 }
 
 randpassword(){ 
@@ -142,15 +142,15 @@ wp_remove_default_content () {
         get_existing_domains
 
         # Remove all posts, comments, and terms
-        docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'wp site empty --yes --allow-root'
+        docker exec -i "$DOCKER_CONTAINER_WP" sh -c 'wp site empty --yes --allow-root'
 
         # Remove plugins and themes
-        docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec wp plugin delete hello akismet --allow-root'
-        docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec wp theme delete twentynineteen twentytwenty --allow-root'
+        docker exec -i "$DOCKER_CONTAINER_WP" sh -c 'exec wp plugin delete hello akismet --allow-root'
+        docker exec -i "$DOCKER_CONTAINER_WP" sh -c 'exec wp theme delete twentynineteen twentytwenty --allow-root'
 
         # Set pretty urls
-        docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec wp rewrite structure '/%postname%/' --hard --allow-root'
-        docker exec -i "$DOMAIN_NAME"-wordpress sh -c 'exec wp rewrite flush --hard --allow-root'
+        docker exec -i "$DOCKER_CONTAINER_WP" sh -c 'exec wp rewrite structure '/%postname%/' --hard --allow-root'
+        docker exec -i "$DOCKER_CONTAINER_WP" sh -c 'exec wp rewrite flush --hard --allow-root'
     fi
 }
 
