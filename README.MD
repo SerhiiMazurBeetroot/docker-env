@@ -84,7 +84,7 @@ Spin up a local environment on Linux, Mac, and Windows.
 ## 5.1 Run from the command line
 
 ```
-./setup
+./setup.sh
 ```
 
 <br>
@@ -190,13 +190,20 @@ All projects will be created automatically.
 
 ## 5.5 Trusted certificates
 
+
+```
 Certificates will be automatically created for all running instances.
 
-You need one time manually add root certs from the folder:
+You need one time manually add root certs:
+```
 
-```
-./env-core/nginx/certs-root
-```
+
+| Step | Action              | Description                |
+|------|---------------------|----------------------------|
+| 1    | Open directory      | env-core/nginx/certs-root/ |
+| 2    | Rename file         | rootCA.pem => rootCA.crt   |
+| 3    | Install certificate | rootCA.crt                 |
+
 Tutorials how to setup:
 
 1. [Windows:](https://docs.microsoft.com/en-us/skype-sdk/sdn/articles/installing-the-trusted-root-certificate) Installing a trusted root certificate
@@ -216,7 +223,12 @@ For Windows User
 
 Please remember to add or remove your domain in the Windows host file:
 
-[C:\Windows\System32\drivers\etc\hosts]
+1. Open file to edit [C:\Windows\System32\drivers\etc\hosts]
+
+2. Add line as an example: 127.0.0.1 dev.test.local
+
+3. Save file
+
 ```
 
 <br>
