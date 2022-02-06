@@ -101,8 +101,6 @@ ex  "$PROJECT_ROOT_DIR/wp-config.php" <<EOF
 \$composer_autoload = __DIR__ . '/vendor/autoload.php';
 if ( file_exists( \$composer_autoload ) ) {
     require_once \$composer_autoload;
-    \$dotenv = new Symfony\Component\Dotenv\Dotenv();
-    \$dotenv->usePutenv()->bootEnv(__DIR__.'/wp-docker/.env');
 }
 define('WP_DEBUG', getenv('WP_DEBUG'));
 define('WP_DEBUG_DISPLAY', getenv('WP_DEBUG_DISPLAY'));
@@ -121,7 +119,23 @@ ex  "$PROJECT_ROOT_DIR/.gitignore" <<EOF
 /logs/
 /vendor/
 adminer.php
+wp-config-docker.php
 .
 xit
 EOF
+}
+
+edit_file_env_setup_beetroot() {
+    PROJECT_THEME_DIR=$PROJECT_CONTENT_DIR/themes/$WP_DEFAULT_THEME
+
+    if [[ -f "$PROJECT_THEME_DIR/.env.example" ]];
+    then
+        cp -rf "$PROJECT_THEME_DIR/.env.example" "$PROJECT_THEME_DIR/.env"
+
+        sed -i -e 's~http://site.local~https://'"$DOMAIN_FULL"'~g' "$PROJECT_THEME_DIR/.env"
+        sed -i -e 's/dbname/'"$DB_NAME"'/g' "$PROJECT_THEME_DIR/.env"
+        sed -i -e 's/DB_USER=mysql/DB_USER=root/g' "$PROJECT_THEME_DIR/.env"
+        sed -i -e 's/DB_PASSWORD=mysql/DB_PASSWORD=PassWorD123/g' "$PROJECT_THEME_DIR/.env"
+        sed -i -e 's/localhost/'"$DOMAIN_NAME-mysql"'/g' "$PROJECT_THEME_DIR/.env"
+    fi
 }
