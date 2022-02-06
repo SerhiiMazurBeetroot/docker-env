@@ -70,25 +70,22 @@ docker_wp_create () {
                         wp_remove_default_content
                         
                         #clone from repo
-                        # if [ "$SETUP_TYPE" == 3 ];
-                        # then
-                            while true; do
-                                EMPTY_LINE
-                                read -rp "$(ECHO_YELLOW "Start Clone?") Y/n " yn
+                        while true; do
+                            EMPTY_LINE
+                            read -rp "$(ECHO_YELLOW "Start Clone?") Y/n " yn
 
-                                case $yn in
-                                [Yy]*)
-                                    clone_repo
-                                    break
+                            case $yn in
+                            [Yy]*)
+                                clone_repo
+                                break
+                            ;;
+                            [Nn]*)
+                                break
                                 ;;
-                                [Nn]*)
-                                    break
-                                    ;;
 
-                                *) echo "Please answer yes or no" ;;
-                                esac
-                            done
-                        # fi
+                            *) echo "Please answer yes or no" ;;
+                            esac
+                        done
 
                         # Print for user project info
                         EMPTY_LINE
@@ -128,8 +125,6 @@ docker_wp_create () {
                     fi
                 fi
             fi 
-        else
-            ECHO_ERROR "Site already exists"
         fi
     else
         ECHO_ERROR "Nginx container not running"
@@ -239,7 +234,7 @@ docker_wp_delete () {
                     fix_permissions
                     docker_wp_stop
                     
-                    if [ $( docker image ls --format '{{.Repository}}' | grep -P '(^)'$DOCKER_CONTAINER_WP'($)' ) ];
+                    if [ $( docker image ls --format '{{.Repository}}' | grep -P '(^|_)'$DOCKER_CONTAINER_WP'(?=\s|$)' ) ];
                     then
                         EMPTY_LINE
                         imageid=$( docker image ls --format '{{.Repository}}' | grep -P '(^|_)'$DOCKER_CONTAINER_WP'(?=\s|$)' )

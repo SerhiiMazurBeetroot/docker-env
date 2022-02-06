@@ -20,6 +20,7 @@ check_all_data () {
             ECHO_ERROR "Enter correct information"
             unset_variables
             docker_wp_create
+            break
             ;;
 
         *) echo "Please answer yes or no" ;;
@@ -30,8 +31,8 @@ check_all_data () {
 set_setup_type () {
     unset_variables
 
-    EMPTY_LINE
     while true; do
+        EMPTY_LINE
         ECHO_INFO "== Installation type =="
         ECHO_YELLOW "[0] Return to main menu"
         ECHO_KEY_VALUE "[1]" "default"
@@ -45,18 +46,46 @@ set_setup_type () {
             ;;
         1)
             get_domain_name
-            get_project_dir "$@"
-            setup_default_args
+            check_domain_exists
+
+            if [[ $DOMAIN_EXISTS == 0 ]];
+            then
+                get_project_dir "$@"
+                setup_default_args
+            else
+                ECHO_ERROR "Site already exists"
+                docker_wp_create
+            fi
+
             break
             ;;
         2)
             get_domain_name
-            get_project_dir "$@"
-            setup_custom_args "$@"
+            check_domain_exists
+
+            if [[ $DOMAIN_EXISTS == 0 ]];
+            then
+                get_project_dir "$@"
+                setup_custom_args "$@"
+            else
+                ECHO_ERROR "Site already exists"
+                docker_wp_create
+            fi
+
             break
             ;;
         3)
-            setup_beetroot_args "$@"
+            get_domain_name
+            check_domain_exists
+
+            if [[ $DOMAIN_EXISTS == 0 ]];
+            then
+                setup_beetroot_args "$@"
+            else
+                ECHO_ERROR "Site already exists"
+                docker_wp_create
+            fi
+
             break
             ;;
         esac
@@ -114,6 +143,12 @@ setup_default_args () {
     then
         COMPOSER="no"
     elif [[ "$COMPOSER" -eq 2 ]];
+    then
+        COMPOSER="yes"
+    fi
+
+    #Beetroot project - Composer require
+    if [[ "$SETUP_TYPE" -eq 3 ]];
     then
         COMPOSER="yes"
     fi

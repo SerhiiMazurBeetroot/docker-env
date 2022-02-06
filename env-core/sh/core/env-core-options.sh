@@ -16,7 +16,7 @@ delete_site_data () {
     fi
 
     #Remove from wp-instances.log
-    sed -i -e '/'"$DOMAIN_NAME"'/d' ./wp-instances.log
+    sed -i -e '/'"| $DOMAIN_NAME |"'/d' ./wp-instances.log
 
     #Remove from /etc/hosts
     setup_hosts_file rem
@@ -65,7 +65,6 @@ fix_permissions () {
         else
             ECHO_ERROR "Docker container for this site does not exist"
         fi
-        ECHO_YELLOW "Fixing Permissions step 2"
 
         #Fix WP permissions
         if [[ $OSTYPE != "windows" ]];
@@ -77,7 +76,6 @@ fix_permissions () {
 
             if [ -d $PROJECT_CONTENT_DIR ];
             then
-            ECHO_YELLOW "PROJECT_CONTENT_DIR exists"
                 sudo chmod -R 777 "$PROJECT_CONTENT_DIR" # Suggested Permissions 755
                 [[ -d "$PROJECT_CONTENT_DIR"/themes ]] && sudo chmod -R 777 "$PROJECT_CONTENT_DIR"/themes # Suggested Permissions 755
                 [[ -d "$PROJECT_CONTENT_DIR"/plugins ]] && sudo chmod -R 777 "$PROJECT_CONTENT_DIR"/plugins # Suggested Permissions 755
