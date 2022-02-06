@@ -95,6 +95,7 @@ clone_repo () {
                     edit_file_wp_config_setup_beetroot
                     wp_get_default_theme
                     wp_composer_install
+                    fix_linux_watchers
                     edit_file_gitignore
                     EMPTY_LINE
                     break

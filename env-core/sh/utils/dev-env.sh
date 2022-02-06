@@ -22,8 +22,7 @@ check_env_settings () {
 			ENV_VERSION=$(git log -n 1 --pretty=format:"%H")
         fi
 
-        echo "ENV_THEME | ENV_VERSION |" >> ./env-core/settings.log
-        echo "dark  | $ENV_VERSION |" >> ./env-core/settings.log
+        save_settings "dark"
     else
         ENV_THEME=$(awk '/''/{print $1}' ./env-core/settings.log | tail -n 1);
     fi
@@ -35,14 +34,11 @@ change_env_theme () {
 
     if [ "$ENV_THEME" = 'dark' ];
     then
-        rm ./env-core/settings.log
-        echo "ENV_THEME | ENV_VERSION |" >> ./env-core/settings.log
-        echo "light | $ENV_VERSION   |" >> ./env-core/settings.log
+        save_settings "light"
     else
-        rm ./env-core/settings.log
-        echo "ENV_THEME | ENV_VERSION |" >> ./env-core/settings.log
-        echo "dark  | $ENV_VERSION   |" >> ./env-core/settings.log
+        save_settings "dark"
     fi
+    exit
 }
 
 check_env_version () {
@@ -65,6 +61,14 @@ check_env_version () {
     fi
 }
 
+save_settings () {
+    ENV_THEME=$1
+
+    rm ./env-core/settings.log
+    echo "ENV_THEME | ENV_VERSION |" >> ./env-core/settings.log
+    echo "$ENV_THEME  | $ENV_VERSION   |" >> ./env-core/settings.log
+}
+
 update_env () {
     if [ $ENV_VERSION != $GIT_VERSION ];
     then
@@ -76,5 +80,14 @@ update_env () {
     else
         ECHO_GREEN "Already up to date."
         EMPTY_LINE
+    fi
+}
+
+fix_linux_watchers () {
+    if [[ $OSTYPE == "linux" ]];
+    then
+        EMPTY_LINE
+        ECHO_YELLOW "Change system limit for number of file watchers"
+        echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
     fi
 }
