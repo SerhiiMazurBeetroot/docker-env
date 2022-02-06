@@ -125,7 +125,12 @@ wp_core_install () {
 }
 
 wp_composer_install() {
-    docker exec -it "$DOCKER_CONTAINER_WP" bash -c "cd ./wp-content/themes/$WP_DEFAULT_THEME && composer update"
+    if [[ -f "$PROJECT_CONTENT_DIR/themes/$WP_DEFAULT_THEME/composer.json" ]];
+    then
+        docker exec -it "$DOCKER_CONTAINER_WP" bash -c "cd ./wp-content/themes/$WP_DEFAULT_THEME && composer update"
+    else
+        ECHO_YELLOW "composer.json file doesn't exists"
+    fi
 }
 
 randpassword(){ 
