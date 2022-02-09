@@ -64,7 +64,7 @@ check_env_version () {
 save_settings () {
     ENV_THEME=$1
 
-    rm ./env-core/settings.log
+    [ -f ./env-core/settings.log ] && rm ./env-core/settings.log
     echo "ENV_THEME | ENV_VERSION |" >> ./env-core/settings.log
     echo "$ENV_THEME  | $ENV_VERSION   |" >> ./env-core/settings.log
 }
