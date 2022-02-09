@@ -164,13 +164,15 @@ wp_remove_default_content () {
 wp_get_default_theme () {
     if [[ -d "$PROJECT_DATABASE_DIR" ]];
     then
-        DB_FILE="$(basename "$PROJECT_DATABASE_DIR"/*.sql )"
+        # DB_FILE
+        get_db_file
 
         if [[ -f "$PROJECT_DATABASE_DIR/$DB_FILE" ]];
         then
             #1 => find in file | #2 => replace 'stylesheet' | #3 => replace character '' | #4 => replace , | #5 => replace space
-            WP_DEFAULT_THEME=$( grep -o "'stylesheet',\s*'[A-Za-z0-9.,-]*\+'" "$PROJECT_DATABASE_DIR"/*.sql | sed 's/'stylesheet'//g' | sed 's/'\''//g' | sed 's/,//g' | sed 's/^[ \t]*//;s/[ \t]*$//' )
+            WP_DEFAULT_THEME=$( grep -o "'stylesheet',\s*'[A-Za-z0-9.,-]*\+'" "$PROJECT_DATABASE_DIR/$DB_FILE" | sed 's/'stylesheet'//g' | sed 's/'\''//g' | sed 's/,//g' | sed 's/^[ \t]*//;s/[ \t]*$//' )
             ECHO_YELLOW "WP_DEFAULT_THEME: $WP_DEFAULT_THEME"
+            EMPTY_LINE
 
             # Replace variable WP_DEFAULT_THEME .env file
             PREV_THEME="$(grep -o "WP_DEFAULT_THEME=[A-Za-z0-9.,-]*\+" "$PROJECT_DOCKER_DIR"/.env)"

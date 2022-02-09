@@ -100,13 +100,13 @@ export_db () {
 
 import_db () {
     get_project_dir "skip_question"
+    get_db_file
 
     if [ "$( docker ps --format '{{.Names}}' | grep -P '(^)'$DOCKER_CONTAINER_DB'($)' )" ];
     then
         ECHO_GREEN "Wordpress and DB container exists"
         ECHO_YELLOW "Getting DB from '/wp-database/' and updating local"
 
-        DB_FILE=$(find $PROJECT_DATABASE_DIR/ -name "*.sql")
         if [[ "$DB_FILE" ]];
         then
             get_db_name
@@ -122,7 +122,7 @@ import_db () {
                     dbstatus=0
                     ECHO_GREEN "DB found"
 
-                    docker cp "$PROJECT_DATABASE_DIR"/*.sql "$DOCKER_CONTAINER_DB":/docker-entrypoint-initdb.d/dump.sql
+                    docker cp "$PROJECT_DATABASE_DIR/$DB_FILE" "$DOCKER_CONTAINER_DB":/docker-entrypoint-initdb.d/dump.sql
 
                     # Drop DB
                     docker exec -t -i "$DOCKER_CONTAINER_DB"  bash -l -c "mysqladmin drop $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
@@ -197,23 +197,26 @@ replace_project_from_db () {
         PREV_INSTANCES=$(awk '/'" $DOMAIN_NAME "'/{print}' wp-instances.log | head -n 1);
         PREV_DB_NAME=$(awk '/'" $DOMAIN_NAME "'/{print $9}' wp-instances.log | head -n 1);
 
+        # DB_FILE
+        get_db_file
+
         # DB_NAME case 1
-        NEW_DB_NAME=$(grep 'Database:' "$PROJECT_DATABASE_DIR"/*.sql | head -n 1 | awk '//{print $5}' | sed 's/'\'Database:'//g' || true )
+        NEW_DB_NAME=$(grep 'Database:' "$PROJECT_DATABASE_DIR/$DB_FILE" | head -n 1 | awk '//{print $5}' | sed 's/'\'Database:'//g' || true )
         
         # DB_NAME case 2 (Cyrillic letters)
         if [[ "$NEW_DB_NAME" == '' ]];
         then
-            NEW_DB_NAME=$(grep -e 'База данных:' "$PROJECT_DATABASE_DIR"/*.sql | head -n 1 | awk '/''/{print $4}' | tr --delete \` || true )
+            NEW_DB_NAME=$(grep -e 'База данных:' "$PROJECT_DATABASE_DIR/$DB_FILE" | head -n 1 | awk '/''/{print $4}' | tr --delete \` || true )
         fi
 
         # DB_NAME case 3 (file without description), get DB_NAME from file name
         if [[ "$NEW_DB_NAME" == '' ]];
         then
-            NEW_DB_NAME="$(basename "$PROJECT_DATABASE_DIR"/*.sql | sed 's/.sql//g' )"
+            NEW_DB_NAME="$(basename "$DB_FILE" | sed 's/.sql//g' )"
         fi
 
         # TABLE_PREFIX
-        NEW_TABLE_PREFIX=$(grep 'CREATE TABLE' "$PROJECT_DATABASE_DIR"/*.sql | grep -o '[a-z]*[_comments]\+' | awk '/'_comments'/{print}' | sed 's/comments//g' )
+        NEW_TABLE_PREFIX=$(grep 'CREATE TABLE' "$PROJECT_DATABASE_DIR/$DB_FILE" | grep -o '[a-z]*[_comments]\+' | awk '/'_comments'/{print}' | sed 's/comments//g' )
 
         # Replace wp-instances.log
         FIND_DB_NAME='\| '"$PREV_DB_NAME"' \|'
