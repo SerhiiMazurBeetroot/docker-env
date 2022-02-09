@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="devENV" src="./env-core/featured.png" height="100%" width="40%">
+  <img alt="devENV" src="./env-core/images/featured.png" height="100%" width="40%">
 </p>
 
 # Local Docker WP devENV
@@ -61,7 +61,7 @@ Spin up a local environment on Linux, Mac, and Windows.
 | Wordpress     | Install the version you need or use the latest      |
 | Database      | Database import and export, search-replace          |
 | Repository    | Clone an existing theme from your repo              |
-|               |                                                     |
+| Composer      | Install Composer inside container                   |
 
 <br>
 
@@ -173,6 +173,8 @@ All projects will be created automatically.
 
 6 - Docker actions
 
+    1 - Install composer.json
+
 7 - Database actions
 
     1 - Update DB (import from backup file)
@@ -198,11 +200,18 @@ You need one time manually add root certs:
 ```
 
 
-| Step | Action              | Description                |
-|------|---------------------|----------------------------|
-| 1    | Open directory      | env-core/nginx/certs-root/ |
-| 2    | Rename file         | rootCA.pem => rootCA.crt   |
-| 3    | Install certificate | rootCA.crt                 |
+| Step | Action                | Description                               |
+|------|-----------------------|-------------------------------------------|
+| 1    | Open directory        | env-core/nginx/certs-root/                |
+| 2    | Rename file           | rootCA.pem => rootCA.crt                  |
+| 3    | Open certificate      | rootCA.crt                                |
+| 4    | Install certificate   | [screen 1](./env-core/images/certs-1.jpg) |
+| 5    | Choose store location | [screen 2](./env-core/images/certs-2.jpg) |
+| 6    | Select store          | [screen 3](./env-core/images/certs-3.jpg) |
+| 7    | Import certificate    | [screen 4](./env-core/images/certs-4.jpg) |
+| 8    | Confirm install       | [screen 5](./env-core/images/certs-5.jpg) |
+| 9    | Restart browser       |                                           |
+
 
 Tutorials how to setup:
 
