@@ -171,7 +171,7 @@ All projects will be created automatically.
 
 5 - Rebuild container
 
-6 - List of existing projects
+6 - Docker actions
 
 7 - Database actions
 

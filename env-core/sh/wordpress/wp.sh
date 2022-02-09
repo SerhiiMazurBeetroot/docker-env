@@ -127,9 +127,19 @@ wp_core_install () {
 }
 
 wp_composer_install() {
+    if [ "$DOMAIN_NAME" == '' ];
+    then
+        running_projects_list "======= Install Composer ======"
+        get_project_dir "skip_question"
+        get_db_name
+        wp_get_default_theme
+        edit_file_env_setup_beetroot
+        edit_file_gitignore
+    fi
+
     if [[ -f "$PROJECT_CONTENT_DIR/themes/$WP_DEFAULT_THEME/composer.json" ]];
     then
-        docker exec -it "$DOCKER_CONTAINER_WP" bash -c "cd ./wp-content/themes/$WP_DEFAULT_THEME && composer update"
+        docker exec -it "$DOCKER_CONTAINER_WP" bash -c "cd ./wp-content/themes/$WP_DEFAULT_THEME && composer update" || true && COMPOSER_ISSUE=true
     else
         ECHO_YELLOW "composer.json file doesn't exists"
     fi
