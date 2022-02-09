@@ -91,10 +91,17 @@ fix_permissions () {
 }
 
 edit_file_wp_config_setup_beetroot() {
-    #Replace wp-config variables
-    sed -i -e "s/getenv('WP_SITEURL')/getenv('WP_HOME')/g" "$PROJECT_ROOT_DIR/wp-config.php"
 
-    #Include Composer to wp-config (Before first line)
+    if [[ -f "$PROJECT_ROOT_DIR/wp-config.php" ]];
+    then
+        #Replace wp-config variables
+        sed -i -e "s/getenv('WP_SITEURL')/getenv('WP_HOME')/g" "$PROJECT_ROOT_DIR/wp-config.php"
+
+        CONFIG_EXISTS=$(awk '/composer_autoload/{print}' "$PROJECT_ROOT_DIR/wp-config.php");
+
+        if [[ -z $CONFIG_EXISTS ]];
+        then
+            #Include Composer to wp-config (Before first line)
 ex  "$PROJECT_ROOT_DIR/wp-config.php" <<EOF
 1 insert
 <?php
@@ -109,6 +116,10 @@ define('WP_DEBUG_LOG', getenv('WP_DEBUG_LOG'));
 .
 xit
 EOF
+        else
+            touch "$PROJECT_ROOT_DIR/.env"
+        fi
+    fi
 
 }
 
