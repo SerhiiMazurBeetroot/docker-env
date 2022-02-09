@@ -13,13 +13,17 @@ main_actions () {
     check_instances_file_exists
     check_env_settings
 
+    # Notice about updates to main menu
+    [[ ! $ENV_UPDATES ]] && check_env_version
+    [[ $ENV_UPDATES == "Everything up-to-date" ]] && ENV_UPDATES=""
+
     while true; do
         ECHO_INFO "======== devENV ======="
         ECHO_YELLOW "0 - Exit and do nothing"
         ECHO_GREEN "1 - Nginx"
         ECHO_GREEN "2 - New project"
         ECHO_GREEN "3 - Existing project"
-        ECHO_INFO "4 - ENV settings"
+        ECHO_KEY_VALUE "4 - ENV settings" "$ENV_UPDATES"
 
         read -rp "$(ECHO_YELLOW "Please select one of:")" userChoice
 
