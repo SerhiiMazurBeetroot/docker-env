@@ -14,28 +14,7 @@ check_domain_exists () {
     fi
 }
 
-recommendation_windows_host () {
-    QUESTION=$1
 
-	if [[ $OSTYPE == "windows" ]];
-    then
-        if [[ $QUESTION == "add" ]];
-        then
-            ECHO_INFO "For Windows User"
-            ECHO_GREEN "kindly add the below in the Windows host file"
-            ECHO_GREEN "[location C:\Windows\System32\drivers\etc\hosts]"
-            ECHO_GREEN "127.0.0.1 $DOMAIN_FULL"
-        fi
-
-        if [[ $QUESTION == "rem" ]];
-        then
-            ECHO_INFO "For Windows User"
-            ECHO_GREEN "127.0.0.1 $DOMAIN_FULL"
-            ECHO_GREEN "please remember to remove it from the host file"
-            ECHO_GREEN "[location C:\Windows\System32\drivers\etc\hosts]"
-        fi
-    fi
-}
 
 check_package_availability () {
     command -v docker-compose >/dev/null 2>&1 || { ECHO_ERROR "Please install docker-compose"; exit 1; }
@@ -86,16 +65,13 @@ unset_variables () {
     unset DOMAIN_NAME DB_NAME TABLE_PREFIX PHP_VERSION
 }
 
-print_project_vars() {
-    ECHO_KEY_VALUE "DOMAIN_NAME:" "$DOMAIN_NAME"
-    ECHO_KEY_VALUE "DOMAIN_FULL:" "$DOMAIN_FULL"
-    ECHO_KEY_VALUE "WP_VERSION:" "$WP_VERSION"
-    ECHO_KEY_VALUE "WP_USER:" "$WP_USER"
-    ECHO_KEY_VALUE "WP_PASSWORD:" "$WP_PASSWORD"
-    ECHO_KEY_VALUE "PHP_VERSION:" "$PHP_VERSION"
-    ECHO_KEY_VALUE "DB_NAME:" "$DB_NAME"
-    ECHO_KEY_VALUE "TABLE_PREFIX:" "$TABLE_PREFIX"
-    ECHO_KEY_VALUE "COMPOSER:" "$COMPOSER"
-    ECHO_YELLOW "You can find this info in the file /projects/$DOMAIN_FULL/wp-docker/.env" 
-    EMPTY_LINE
+
+# Get the last *.sql file
+get_db_file () {
+    SQL_FILES=("$PROJECT_DATABASE_DIR"/*.sql)
+
+    for file in "${SQL_FILES[@]}"
+    do
+        DB_FILE="$(basename "$file")"
+    done
 }

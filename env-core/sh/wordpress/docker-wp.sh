@@ -63,7 +63,7 @@ docker_wp_create () {
 
                         setup_hosts_file add
                         fix_permissions
-                        recommendation_windows_host add
+                        notice_windows_host add
                         docker_wp_restart
 
                         wp_core_install
@@ -90,7 +90,10 @@ docker_wp_create () {
                         # Print for user project info
                         EMPTY_LINE
                         ECHO_INFO "Project variables:"
-                        print_project_vars
+                        notice_project_vars
+
+                        # COMPOSER_ISSUE exists
+                        notice_composer
 
                     else
                         ECHO_YELLOW "Wordpress for $DOMAIN_FULL is already created"
@@ -253,7 +256,7 @@ docker_wp_delete () {
                     fi
 
                     delete_site_data
-                    recommendation_windows_host rem
+                    notice_windows_host rem
                     
                     break
                     ;;

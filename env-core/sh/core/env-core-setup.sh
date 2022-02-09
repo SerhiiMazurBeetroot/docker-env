@@ -8,7 +8,7 @@ check_all_data () {
     ECHO_YELLOW "Check everything before proceeding:"
 
     while true; do
-       print_project_vars
+       notice_project_vars
 
         read -rp "Is that correct? [Y/n] " yn
 
