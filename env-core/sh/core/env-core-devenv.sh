@@ -86,8 +86,12 @@ update_env () {
 fix_linux_watchers () {
     if [[ $OSTYPE == "linux" ]];
     then
-        EMPTY_LINE
-        ECHO_YELLOW "Change system limit for number of file watchers"
-        echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+        limit=$(cat /proc/sys/fs/inotify/max_user_watches)
+        if [[ "$limit" -lt 524288 ]];
+        then
+            EMPTY_LINE
+            ECHO_YELLOW "Change system limit for number of file watchers"
+            echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+        fi
     fi
 }
