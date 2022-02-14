@@ -125,10 +125,10 @@ import_db () {
                     docker cp "$PROJECT_DATABASE_DIR/$DB_FILE" "$DOCKER_CONTAINER_DB":/docker-entrypoint-initdb.d/dump.sql
 
                     # Drop DB
-                    docker exec -t -i "$DOCKER_CONTAINER_DB"  bash -l -c "mysqladmin drop $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
+                    docker exec -i "$DOCKER_CONTAINER_DB"  bash -l -c "mysqladmin drop $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
 
                     # Create empty DB                                        
-                    docker exec -t -i "$DOCKER_CONTAINER_DB"  bash -l -c "mysqladmin create $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
+                    docker exec -i "$DOCKER_CONTAINER_DB"  bash -l -c "mysqladmin create $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
 
                     # Import DB
                     docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < /docker-entrypoint-initdb.d/dump.sql"
@@ -141,7 +141,7 @@ import_db () {
                     ECHO_YELLOW "Trying to insert DB, awaiting MariaDB container..."
 
                     # Create empty DB                                        
-                    docker exec -t -i "$DOCKER_CONTAINER_DB"  bash -l -c "mysqladmin create $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
+                    docker exec -i "$DOCKER_CONTAINER_DB"  bash -l -c "mysqladmin create $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
                 fi
             done
         else
