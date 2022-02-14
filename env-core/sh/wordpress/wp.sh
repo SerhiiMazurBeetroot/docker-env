@@ -118,7 +118,7 @@ clone_repo () {
 }
 
 get_latest_wp_version () {
-    WP_LATEST_VER=$(curl -s 'https://api.github.com/repos/wordpress/wordpress/tags' | grep "name" | head -n 1 | awk '$0=$2' | awk '{gsub(/\"|\",/, ""); print}');
+    WP_LATEST_VER=$(curl -s 'https://api.github.com/repos/wordpress/wordpress/tags' | grep "name" | head -n 1 | awk '$0=$2' | grep -Eo '[0-9]+\.[0-9]+\.?[0-9]+?' );
     export WP_LATEST_VER
 }
 
