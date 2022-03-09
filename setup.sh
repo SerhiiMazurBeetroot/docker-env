@@ -100,7 +100,7 @@ existing_site_actions () {
         ECHO_INFO "8 - Fix permissions"
         ECHO_INFO "9 - Clone from repo"
 
-        read -rp "$(ECHO_YELLOW "Please select one of:")" actions
+        read -rp "$(ECHO_YELLOW "Please select one of:")" actions        
 
         case $actions in
             0)
@@ -156,6 +156,7 @@ db_actions () {
         ECHO_GREEN "1 - Update DB (import)"
         ECHO_GREEN "2 - Dump DB (export)"
         ECHO_GREEN "3 - Search-Replace"
+        ECHO_GREEN "4 - Replace project from DB"
         read -rp "$(ECHO_YELLOW "Please select one of:")" actions
 
         case $actions in
@@ -175,6 +176,21 @@ db_actions () {
             3)
                 running_projects_list "====== Search-Replace DB ======"
                 search_replace
+                unset_variables
+                ;;
+            4)
+                running_projects_list "=== Replace project from DB ==="
+                replace_project_from_db
+                docker_wp_rebuild
+                docker_wp_restart
+                import_db
+                fix_permissions
+                edit_file_wp_config_setup_beetroot
+                wp_get_default_theme
+                wp_composer_install
+                edit_file_env_setup_beetroot
+                fix_linux_watchers
+                edit_file_gitignore
                 unset_variables
                 ;;
         esac
