@@ -57,6 +57,7 @@ fix_permissions () {
     then
         get_project_dir "skip_question"
 
+        EMPTY_LINE
         ECHO_YELLOW "Fixing Permissions, this can take a while!"
         if [ "$( docker ps --format '{{.Names}}' | grep -P '(^|_)'$DOCKER_CONTAINER_WP'(?=\s|$)' )" ];
         then
@@ -124,6 +125,14 @@ EOF
 }
 
 edit_file_gitignore() {
+    if [[ -f "$PROJECT_ROOT_DIR/.gitignore" ]];
+    then
+        GITIGNORE_EDITED=$(awk '/wp-docker/{print $1}' "$PROJECT_ROOT_DIR/.gitignore" | head -n 1);
+
+        if [ "$GITIGNORE_EDITED" == '' ];
+        then
+            EMPTY_LINE
+            ECHO_YELLOW "eidt .gitignore file..."
 ex  "$PROJECT_ROOT_DIR/.gitignore" <<EOF
 1 insert
 /wp-docker/
@@ -134,6 +143,8 @@ wp-config-docker.php
 .
 xit
 EOF
+        fi
+    fi
 }
 
 edit_file_env_setup_beetroot() {
@@ -141,6 +152,8 @@ edit_file_env_setup_beetroot() {
 
     if [[ -f "$PROJECT_THEME_DIR/.env.example" ]];
     then
+        EMPTY_LINE
+        ECHO_YELLOW "eidt .env file..."
         cp -rf "$PROJECT_THEME_DIR/.env.example" "$PROJECT_THEME_DIR/.env"
 
         sed -i -e 's~http://site.local~https://'"$DOMAIN_FULL"'~g' "$PROJECT_THEME_DIR/.env"
