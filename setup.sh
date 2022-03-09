@@ -90,15 +90,7 @@ existing_site_actions () {
         EMPTY_LINE
         ECHO_INFO "==== Existing sites ==="
         ECHO_YELLOW "0 - Return to main menu"
-        ECHO_ATTENTION "1 - Permanently Remove"
-        ECHO_GREEN "2 - Stop"
-        ECHO_GREEN "3 - Start"
-        ECHO_GREEN "4 - Restart"
-        ECHO_GREEN "5 - Rebuild"
-        ECHO_INFO "6 - Docker actions"
-        ECHO_INFO "7 - Database actions"
-        ECHO_INFO "8 - Fix permissions"
-        ECHO_INFO "9 - Clone from repo"
+        ECHO_GREEN "1 - Docker actions"
 
         read -rp "$(ECHO_YELLOW "Please select one of:")" actions        
 
@@ -107,43 +99,8 @@ existing_site_actions () {
                 main_actions
                 ;;
             1)
-                docker_wp_delete
-                unset_variables
-                ;;
-            2)
-                auto_backup_db
-                docker_wp_stop
-                unset_variables
-                ;;
-            3)
-                docker_wp_start
-                unset_variables
-                ;;
-            4)
-                docker_wp_restart
-                unset_variables
-                ;;
-            5)
-                docker_wp_rebuild
-                docker_wp_restart
-                unset_variables
-                ;;
-            6)
                 docker_actions
                 ;;
-            7)
-                db_actions
-                ;;
-            8)
-                get_existing_domains "======= Fix permissions ======="
-                fix_permissions
-                unset_variables
-                ;;
-            9)
-                clone_repo
-                unset_variables
-                ;;
-
         esac
     done
 }
@@ -202,7 +159,13 @@ docker_actions () {
         EMPTY_LINE
         ECHO_INFO "======== Docker actions ======="
         ECHO_YELLOW "0 - Return to the previous menu"
-        ECHO_GREEN "1 - Install composer.json"
+        ECHO_ATTENTION "1 - Permanently Remove"
+        ECHO_GREEN "2 - Stop"
+        ECHO_GREEN "3 - Start"
+        ECHO_GREEN "4 - Restart"
+        ECHO_GREEN "5 - Rebuild"
+        ECHO_INFO "6 - Fix permissions"
+        ECHO_INFO "7 - Run composer.json"
         read -rp "$(ECHO_YELLOW "Please select one of:")" actions
 
         case $actions in
@@ -210,9 +173,36 @@ docker_actions () {
                 existing_site_actions
                 ;;
             1)
-                wp_composer_install
-                existing_site_actions
+                docker_wp_delete
                 unset_variables
+                ;;
+            2)
+                auto_backup_db
+                docker_wp_stop
+                unset_variables
+                ;;
+            3)
+                docker_wp_start
+                unset_variables
+                ;;
+            4)
+                docker_wp_restart
+                unset_variables
+                ;;
+            5)
+                docker_wp_rebuild
+                docker_wp_restart
+                unset_variables
+                ;;
+            6)
+                get_existing_domains "======= Fix permissions ======="
+                fix_permissions
+                unset_variables
+                ;;
+            7)
+                wp_composer_install
+                unset_variables
+                existing_site_actions
                 ;;
         esac
     done
