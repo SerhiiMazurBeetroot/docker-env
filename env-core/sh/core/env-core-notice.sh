@@ -6,14 +6,15 @@ set -o pipefail
 notice_windows_host () {
     QUESTION=$1
 
-	if [[ $OSTYPE == "windows" ]];
+  if [[ $OSTYPE == "windows" ]];
     then
         if [[ $QUESTION == "add" ]];
         then
             ECHO_INFO "For Windows User"
-            ECHO_GREEN "kindly add the below in the Windows host file"
-            ECHO_GREEN "[location C:\Windows\System32\drivers\etc\hosts]"
             ECHO_GREEN "127.0.0.1 $DOMAIN_FULL"
+            ECHO_GREEN "kindly add it to your Windows host file"
+            ECHO_GREEN "Open file in editor path below (ctrl + click)"
+            realpath "C:\Windows\System32\drivers\etc\hosts"
         fi
 
         if [[ $QUESTION == "rem" ]];
@@ -21,7 +22,8 @@ notice_windows_host () {
             ECHO_INFO "For Windows User"
             ECHO_GREEN "127.0.0.1 $DOMAIN_FULL"
             ECHO_GREEN "please remember to remove it from the host file"
-            ECHO_GREEN "[location C:\Windows\System32\drivers\etc\hosts]"
+            ECHO_GREEN "Open file in editor path below (ctrl + click)"
+            realpath "C:\Windows\System32\drivers\etc\hosts"
         fi
     fi
 }
