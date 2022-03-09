@@ -91,6 +91,7 @@ existing_site_actions () {
         ECHO_INFO "==== Existing sites ==="
         ECHO_YELLOW "0 - Return to main menu"
         ECHO_GREEN "1 - Docker actions"
+        ECHO_GREEN "2 - Database actions"
 
         read -rp "$(ECHO_YELLOW "Please select one of:")" actions        
 
@@ -100,6 +101,9 @@ existing_site_actions () {
                 ;;
             1)
                 docker_actions
+                ;;
+            2)
+                db_actions
                 ;;
         esac
     done
