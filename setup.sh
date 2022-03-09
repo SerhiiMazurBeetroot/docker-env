@@ -92,6 +92,7 @@ existing_site_actions () {
         ECHO_YELLOW "0 - Return to main menu"
         ECHO_GREEN "1 - Docker actions"
         ECHO_GREEN "2 - Database actions"
+        ECHO_GREEN "3 - GIT actions"
 
         read -rp "$(ECHO_YELLOW "Please select one of:")" actions        
 
@@ -104,6 +105,9 @@ existing_site_actions () {
                 ;;
             2)
                 db_actions
+                ;;
+            3)
+                git_actions
                 ;;
         esac
     done
@@ -205,6 +209,27 @@ docker_actions () {
                 ;;
             7)
                 wp_composer_install
+                unset_variables
+                existing_site_actions
+                ;;
+        esac
+    done
+}
+
+git_actions () {
+    while true; do
+        EMPTY_LINE
+        ECHO_INFO "========= GIT actions ========="
+        ECHO_YELLOW "0 - Return to the previous menu"
+        ECHO_GREEN "1 - Clone from repo"
+        read -rp "$(ECHO_YELLOW "Please select one of:")" actions
+
+        case $actions in
+            0)
+                existing_site_actions
+                ;;
+            1)
+                clone_repo
                 unset_variables
                 existing_site_actions
                 ;;
