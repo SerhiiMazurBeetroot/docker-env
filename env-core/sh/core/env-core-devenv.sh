@@ -4,7 +4,7 @@ set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
 check_env_settings () {
-    if [ ! -f ./env-core/settings.log ]; 
+    if [ ! -f "$FILE_SETTINGS" ]; 
     then
         if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ];
         then
@@ -24,13 +24,13 @@ check_env_settings () {
 
         save_settings "dark"
     else
-        ENV_THEME=$(awk '/''/{print $1}' ./env-core/settings.log | tail -n 1);
+        ENV_THEME=$(awk '/''/{print $1}' "$FILE_SETTINGS" | tail -n 1);
     fi
 }
 
 change_env_theme () {
-    ENV_THEME=$(awk '/''/{print $1}' ./env-core/settings.log | tail -n 1);
-    ENV_VERSION=$(awk '/''/{print $3}' ./env-core/settings.log | tail -n 1);
+    ENV_THEME=$(awk '/ENV_THEME/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_THEME='//' );
+    ENV_VERSION=$(awk '/ENV_VERSION/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_VERSION='//' );
 
     if [ "$ENV_THEME" = 'dark' ];
     then
@@ -42,7 +42,11 @@ change_env_theme () {
 }
 
 check_env_version () {
-    ENV_VERSION=$(awk '/''/{print $3}' ./env-core/settings.log | tail -n 1);
+    replace_old_settings_file
+
+    ENV_THEME=$(awk '/ENV_THEME/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_THEME='//' );
+    ENV_VERSION=$(awk '/ENV_VERSION/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_VERSION='//' );
+
     REPO='git://github.com/SerhiiMazurBeetroot/devENV.git'
     URL='https://api.github.com/repos/SerhiiMazurBeetroot/devENV'
 
@@ -64,9 +68,9 @@ check_env_version () {
 save_settings () {
     ENV_THEME=$1
 
-    [ -f ./env-core/settings.log ] && rm ./env-core/settings.log
-    echo "ENV_THEME | ENV_VERSION |" >> ./env-core/settings.log
-    echo "$ENV_THEME  | $ENV_VERSION   |" >> ./env-core/settings.log
+    [ -f "$FILE_SETTINGS" ] && rm "$FILE_SETTINGS"
+    echo "ENV_THEME=$ENV_THEME" >> "$FILE_SETTINGS"
+    echo "ENV_VERSION=$ENV_VERSION" >> "$FILE_SETTINGS"
 }
 
 update_env () {
@@ -76,7 +80,7 @@ update_env () {
         git fetch
         git reset --hard origin/master
 
-        sed -i -e 's/'$ENV_VERSION'/'$GIT_VERSION'/g' ./env-core/settings.log
+        sed -i -e 's/'$ENV_VERSION'/'$GIT_VERSION'/g' "$FILE_SETTINGS"
     else
         ECHO_GREEN "Already up to date."
         EMPTY_LINE

@@ -14,6 +14,7 @@ source ./env-core/sh/core/env-core-setup.sh
 source ./env-core/sh/core/env-core-options.sh
 source ./env-core/sh/core/env-core-notice.sh
 source ./env-core/sh/core/env-core-devenv.sh
+source ./env-core/sh/core/env-core-legacy.sh
 
 source ./env-core/sh/nginx/host.sh
 source ./env-core/sh/nginx/setup-hosts-file.sh

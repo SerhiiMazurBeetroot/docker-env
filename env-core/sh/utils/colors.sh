@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [[ -f ./env-core/settings.log ]];
+if [[ -f "$FILE_SETTINGS" ]];
 then
-    theme=$(awk '/''/{print $1}' ./env-core/settings.log | tail -n 1);
+    ENV_THEME=$(awk '/ENV_THEME/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_THEME='//' );
 fi
 
 BLACK='\033[0;30m'
@@ -23,7 +23,7 @@ LIGHTPURPLE='\033[1;35m'
 LIGHTCYAN='\033[1;36m'
 NC='\033[0m'
 
-if [ "$theme" = 'light' ];
+if [ "$ENV_THEME" = 'light' ];
 then
     BLACK="$BLACK"
     WHITE="$BLACK"
