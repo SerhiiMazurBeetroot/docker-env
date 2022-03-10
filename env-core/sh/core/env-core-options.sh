@@ -16,7 +16,7 @@ delete_site_data () {
     fi
 
     #Remove from wp-instances.log
-    sed -i -e '/'"| $DOMAIN_NAME |"'/d' ./wp-instances.log
+    sed -i -e '/'"| $DOMAIN_NAME |"'/d' "$FILE_INSTANCES"
 
     #Remove from /etc/hosts
     setup_hosts_file rem

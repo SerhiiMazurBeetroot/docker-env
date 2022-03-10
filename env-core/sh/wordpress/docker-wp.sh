@@ -29,7 +29,7 @@ docker_wp_create () {
 
                         if [[ $PORT && $DOMAIN_NAME && $DB_NAME ]];
                         then
-                            echo "$PORT | https | $DOMAIN_NAME | $DOMAIN_FULL | $DB_NAME |" >> wp-instances.log
+                            echo "$PORT | https | $DOMAIN_NAME | $DOMAIN_FULL | $DB_NAME |" >> "$FILE_INSTANCES"
                         fi
 
                         mkdir -p $PROJECT_DOCKER_DIR

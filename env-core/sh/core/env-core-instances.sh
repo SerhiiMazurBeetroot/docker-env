@@ -8,7 +8,7 @@ get_existing_domains () {
 
     if [ -z "$DOMAIN_NAME" ];
     then
-        string=$(awk '{print $5}' wp-instances.log | tail -n +2);
+        string=$(awk '{print $5}' "$FILE_INSTANCES" | tail -n +2);
         OptionList=($string)
 
         if [ "$string" ];
@@ -50,7 +50,7 @@ existing_projects_list() {
     EMPTY_LINE
     awk 'NR==FNR{for(i=1;i<=NF;i++) 
         max[i] = length($i) > max[i] ? length($i) : max[i]; next} 
-    { for(i=1;i<=NF;i++) printf "%-"max[i]"s  ", $i; printf "\n"}' wp-instances.log wp-instances.log
+    { for(i=1;i<=NF;i++) printf "%-"max[i]"s  ", $i; printf "\n"}' "$FILE_INSTANCES" "$FILE_INSTANCES"
 }
 
 running_projects_list() {
@@ -102,7 +102,7 @@ stopped_projects_list() {
     ACTION=$1
 
     running_string=$(docker ps --format '{{.Names}}' | grep -w "wordpress") || true;
-    existing_string=$(awk '{print $5}' wp-instances.log | tail -n +2);
+    existing_string=$(awk '{print $5}' "$FILE_INSTANCES" | tail -n +2);
 
     for I in $existing_string
     do

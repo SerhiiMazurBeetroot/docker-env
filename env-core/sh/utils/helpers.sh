@@ -4,7 +4,7 @@ set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
 check_domain_exists () {
-    DOMAIN_CHECK=$(awk '/'" $DOMAIN_NAME "'/{print $5}' wp-instances.log | head -n 1);
+    DOMAIN_CHECK=$(awk '/'" $DOMAIN_NAME "'/{print $5}' "$FILE_INSTANCES" | head -n 1);
 
     if [[ "$DOMAIN_NAME" == "$DOMAIN_CHECK" ]];
     then
@@ -21,10 +21,10 @@ check_package_availability () {
 }
 
 check_instances_file_exists () {
-    if [ ! -f ./wp-instances.log ];
+    if [ ! -f "$FILE_INSTANCES" ];
     then
         PORT=3309
-        echo "$PORT | PROTOCOL | DOMAIN_NAME | DOMAIN_FULL | MYSQL_DATABASE |" >> wp-instances.log
+        echo "$PORT | PROTOCOL | DOMAIN_NAME | DOMAIN_FULL | MYSQL_DATABASE |" >> "$FILE_INSTANCES"
     fi
 }
 

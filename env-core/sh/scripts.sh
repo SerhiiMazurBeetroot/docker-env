@@ -1,6 +1,9 @@
 #!/bin/bash
 
 # shellcheck disable=SC1091
+FILE_SETTINGS='./env-core/settings.log'
+FILE_INSTANCES='./wp-instances.log'
+
 source ./env-core/sh/utils/colors.sh
 source ./env-core/sh/utils/echo.sh
 source ./env-core/sh/utils/helpers.sh

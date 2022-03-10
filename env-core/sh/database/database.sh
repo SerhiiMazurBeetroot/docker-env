@@ -192,10 +192,10 @@ replace_project_from_db () {
         EMPTY_LINE
         ECHO_YELLOW "Replace... DB_NAME & TABLE_PREFIX"
 
-        DOMAIN_FULL=$(awk '/'" $DOMAIN_NAME "'/{print $7}' wp-instances.log | head -n 1);
+        DOMAIN_FULL=$(awk '/'" $DOMAIN_NAME "'/{print $7}' "$FILE_INSTANCES" | head -n 1);
 
-        PREV_INSTANCES=$(awk '/'" $DOMAIN_NAME "'/{print}' wp-instances.log | head -n 1);
-        PREV_DB_NAME=$(awk '/'" $DOMAIN_NAME "'/{print $9}' wp-instances.log | head -n 1);
+        PREV_INSTANCES=$(awk '/'" $DOMAIN_NAME "'/{print}' "$FILE_INSTANCES" | head -n 1);
+        PREV_DB_NAME=$(awk '/'" $DOMAIN_NAME "'/{print $9}' "$FILE_INSTANCES" | head -n 1);
 
         # DB_FILE
         get_db_file
@@ -222,7 +222,7 @@ replace_project_from_db () {
         FIND_DB_NAME='\| '"$PREV_DB_NAME"' \|'
         REPLACE_DB_NAME='\| '"$NEW_DB_NAME"' |'
         NEW_INSTANCES=$(echo $PREV_INSTANCES | sed -r 's/'"$FIND_DB_NAME"'/'"$REPLACE_DB_NAME"'/')
-        sed -i -e 's/'"$PREV_INSTANCES"'/'"$NEW_INSTANCES"'/g' wp-instances.log
+        sed -i -e 's/'"$PREV_INSTANCES"'/'"$NEW_INSTANCES"'/g' "$FILE_INSTANCES"
 
         # Replace .env
         PREV_DB_ENV=$(awk '/'MYSQL_DATABASE'/{print}' $PROJECT_DOCKER_DIR/.env | head -n 1);

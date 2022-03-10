@@ -22,7 +22,7 @@ get_project_dir () {
     #DOMAIN_FULL
     if [[ $QUESTION == "skip_question" ]];
     then
-        DOMAIN_FULL=$(awk '/'" $DOMAIN_NAME "'/{print $7}' wp-instances.log | head -n 1);
+        DOMAIN_FULL=$(awk '/'" $DOMAIN_NAME "'/{print $7}' "$FILE_INSTANCES" | head -n 1);
     else
         EMPTY_LINE
         ECHO_YELLOW "Enter DOMAIN_FULL [default dev.$DOMAIN_NAME.local]"
@@ -49,11 +49,11 @@ set_project_vars() {
 }
 
 get_db_name () {
-    DB_NAME=$(awk '/'" $DOMAIN_NAME "'/{print $9}' wp-instances.log | head -n 1);
+    DB_NAME=$(awk '/'" $DOMAIN_NAME "'/{print $9}' "$FILE_INSTANCES" | head -n 1);
 
     if [ "$DB_NAME" ];
     then
-        DOMAIN_NAME=$(awk '/'" $DOMAIN_NAME "'/{print $5}' wp-instances.log | head -n 1);
+        DOMAIN_NAME=$(awk '/'" $DOMAIN_NAME "'/{print $5}' "$FILE_INSTANCES" | head -n 1);
     else
         ECHO_ERROR "Wordpress site not exists"
     fi
@@ -63,7 +63,7 @@ get_unique_port() {
     # GET PORT [ count port from 3309 ]
     PORT=3309
     while true; do
-        port_exist=$(awk '/'"$PORT"'/{print $1}' wp-instances.log | head -n 2 | tail -n 1);
+        port_exist=$(awk '/'"$PORT"'/{print $1}' "$FILE_INSTANCES" | head -n 2 | tail -n 1);
 
         if [[ ! "$port_exist" ]]; then
             break
