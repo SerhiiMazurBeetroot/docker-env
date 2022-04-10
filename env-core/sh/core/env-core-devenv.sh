@@ -47,7 +47,7 @@ check_env_version () {
     ENV_THEME=$(awk '/ENV_THEME/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_THEME='//' );
     ENV_VERSION=$(awk '/ENV_VERSION/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_VERSION='//' );
 
-    REPO='git://github.com/SerhiiMazurBeetroot/devENV.git'
+    REPO='https://github.com/SerhiiMazurBeetroot/devENV.git'
     URL='https://api.github.com/repos/SerhiiMazurBeetroot/devENV'
 
     if curl --output /dev/null --silent --head --fail -k $URL
