@@ -14,7 +14,7 @@ main_actions () {
     check_env_settings
 
     # Notice about updates to main menu
-    [[ ! $ENV_UPDATES ]] && check_env_version
+    [[ ! $ENV_UPDATES ]] && check_env_version "daily"
     [[ $ENV_UPDATES == "Everything up-to-date" ]] && ENV_UPDATES=""
 
     while true; do

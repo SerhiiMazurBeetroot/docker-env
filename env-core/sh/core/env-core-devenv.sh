@@ -41,12 +41,7 @@ change_env_theme () {
     exit
 }
 
-check_env_version () {
-    replace_old_settings_file
-
-    ENV_THEME=$(awk '/ENV_THEME/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_THEME='//' );
-    ENV_VERSION=$(awk '/ENV_VERSION/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_VERSION='//' );
-
+check_git_version () {
     REPO='https://github.com/SerhiiMazurBeetroot/devENV.git'
     URL='https://api.github.com/repos/SerhiiMazurBeetroot/devENV'
 
@@ -62,6 +57,33 @@ check_env_version () {
         ENV_UPDATES="There is a new version"
     else
         ENV_UPDATES="Everything up-to-date"
+    fi
+}
+
+check_env_version () {
+    replace_old_settings_file
+
+    ENV_THEME=$(awk '/ENV_THEME/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_THEME='//' );
+    ENV_VERSION=$(awk '/ENV_VERSION/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_VERSION='//' );
+    ENV_DATE_CHECK=$(awk '/ENV_DATE_CHECK/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_DATE_CHECK='//' );
+    DATE_NOW=$(date +'%m/%d/%Y')
+
+    if [[ $ENV_DATE_CHECK == '' ]];
+    then
+        check_git_version
+
+        #First setup
+        echo "ENV_DATE_CHECK=$DATE_NOW" >> "$FILE_SETTINGS"
+    else
+        #Run only once a day
+        if [[ $ENV_DATE_CHECK != $DATE_NOW || $1 != 'daily' ]];
+        then
+            check_git_version
+
+            #Replace ENV_DATE_CHECK
+            sed -i -e '/ENV_DATE_CHECK/d' "$FILE_SETTINGS"
+            echo "ENV_DATE_CHECK=$DATE_NOW" >> "$FILE_SETTINGS"
+        fi
     fi
 }
 
