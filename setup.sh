@@ -93,6 +93,7 @@ existing_site_actions () {
         ECHO_GREEN "1 - Docker actions"
         ECHO_GREEN "2 - Database actions"
         ECHO_GREEN "3 - GIT actions"
+        ECHO_INFO "4 - List of existing projects"
 
         read -rp "$(ECHO_YELLOW "Please select one of:")" actions        
 
@@ -108,6 +109,9 @@ existing_site_actions () {
                 ;;
             3)
                 git_actions
+                ;;
+            4)
+                existing_projects_list
                 ;;
         esac
     done
