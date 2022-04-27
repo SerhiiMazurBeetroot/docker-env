@@ -136,4 +136,23 @@ git_save_access () {
         *) echo "Please answer yes or no" ;;
         esac
     done
+
+    #Gitlab
+    while true; do
+        EMPTY_LINE
+        read -rp "$(ECHO_YELLOW "Save/update Gitlab access?") Y/n " yn
+
+        case $yn in
+        [Yy]*)
+            git_save_token_gitlab || true
+            git_save_user_gitlab || true
+            break
+            ;;
+        [Nn]*)
+            break
+            ;;
+
+        *) echo "Please answer yes or no" ;;
+        esac
+    done
 }
