@@ -233,7 +233,7 @@ git_actions () {
                 existing_site_actions
                 ;;
             1)
-                clone_repo
+                git_clone_repo
                 unset_variables
                 existing_site_actions
                 ;;
