@@ -116,3 +116,24 @@ git_clone_repo () {
         ECHO_ERROR "Docker container for this site does not exist"
     fi
 }
+
+git_save_access () {
+    #Github
+    while true; do
+        EMPTY_LINE
+        read -rp "$(ECHO_YELLOW "Save/update Github access?") Y/n " yn
+
+        case $yn in
+        [Yy]*)
+            git_save_token_github || true
+            git_save_user_github || true
+            break
+            ;;
+        [Nn]*)
+            break
+            ;;
+
+        *) echo "Please answer yes or no" ;;
+        esac
+    done
+}

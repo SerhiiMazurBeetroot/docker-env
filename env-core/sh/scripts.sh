@@ -26,3 +26,4 @@ source ./env-core/sh/wordpress/wp.sh
 source ./env-core/sh/database/database.sh
 
 source ./env-core/sh/git/env-git.sh
+source ./env-core/sh/git/env-github.sh

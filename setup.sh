@@ -226,6 +226,7 @@ git_actions () {
         ECHO_INFO "========= GIT actions ========="
         ECHO_YELLOW "0 - Return to the previous menu"
         ECHO_GREEN "1 - Clone from repo"
+        ECHO_GREEN "2 - Create Github repo"
         read -rp "$(ECHO_YELLOW "Please select one of:")" actions
 
         case $actions in
@@ -236,6 +237,13 @@ git_actions () {
                 git_clone_repo
                 unset_variables
                 existing_site_actions
+                ;;
+            2)
+                get_existing_domains "====== Create Github Repo ====="
+                get_project_dir "skip_question"
+                git_create_repo_github
+                unset_variables
+                git_actions
                 ;;
         esac
     done
