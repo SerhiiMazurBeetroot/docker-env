@@ -76,7 +76,7 @@ docker_wp_create () {
 
                             case $yn in
                             [Yy]*)
-                                clone_repo
+                                git_clone_repo
                                 break
                             ;;
                             [Nn]*)

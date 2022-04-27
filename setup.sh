@@ -178,6 +178,7 @@ docker_actions () {
         ECHO_GREEN "5 - Rebuild"
         ECHO_INFO "6 - Fix permissions"
         ECHO_INFO "7 - Run composer.json"
+        ECHO_INFO "8 - Install composer package"
         read -rp "$(ECHO_YELLOW "Please select one of:")" actions
 
         case $actions in
@@ -213,6 +214,11 @@ docker_actions () {
                 ;;
             7)
                 wp_composer_install
+                unset_variables
+                existing_site_actions
+                ;;
+            8)
+                wp_composer_package
                 unset_variables
                 existing_site_actions
                 ;;
