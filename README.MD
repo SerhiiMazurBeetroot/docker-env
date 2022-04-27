@@ -2,10 +2,10 @@
   <img alt="devENV" src="./env-core/images/featured.png" height="100%" width="40%">
 </p>
 
-# Local Docker WP devENV
+# Local Docker Wordpress CLI Development Environment
 This environment was created to automate your local WordPress development.
 <br>
-Spin up a local environment on Linux, Mac, and Windows.
+Spin up a local environment on Linux, Mac, and Windows using CLI.
 
 <br>
 
@@ -60,8 +60,10 @@ Spin up a local environment on Linux, Mac, and Windows.
 | PHP           | Choose from active PHP version                      |
 | Wordpress     | Install the version you need or use the latest      |
 | Database      | Database import and export, search-replace          |
-| Repository    | Clone an existing theme from your repo              |
 | Composer      | Install Composer inside container                   |
+| Repository    | Clone an existing theme from your Repository        |
+| GitHub        | Create repo and push project                        |
+| GitLab        | Create repo and push project                        |
 
 <br>
 
@@ -161,36 +163,50 @@ All projects will be created automatically.
 ## 5.4 Actions with existing sites [option 3]
 
 ```
-1 - Permanently remove project
+1 - Docker actions
 
-2 - Stop container
+    1 - Permanently remove project
 
-3 - Start container
+    2 - Stop container
 
-4 - Restart container
+    3 - Start container
 
-5 - Rebuild container
+    4 - Restart container
 
-6 - Docker actions
+    5 - Rebuild container
 
-    1 - Install composer.json
+    6 - Fix permissions
 
-7 - Database actions
+    7 - Run composer.json
+
+    8 - Install composer package
+
+2 - Database actions
 
     1 - Update DB (import from backup file)
 
-    2 - DB dump (export to backup file)
+    2 - Dump DB (export to backup file)
 
     3 - Search-Replace
 
-8 - Fix permissions
+    4 - Replace project from DB
 
-9 - Clone from repo
+3 - GIT actions
+
+    1 - Clone from repo
+
+    2 - Create GitHUB repo
+
+    3 - Create GitLAB repo
+
+4 - List of exisiting projects
 ```
 
 <br>
 
-## 5.5 Trusted certificates
+# 6. How to:
+
+## 6.1 Install trusted certificates
 
 
 ```
@@ -225,7 +241,7 @@ If you reinstall the environment, you need to update the root certificates.
 
 <br>
 
-## 5.6 Add or remove a vhost
+## 6.2 Add or remove a vhost
 
 ```
 For Windows User
@@ -242,7 +258,7 @@ Please remember to add or remove your domain in the Windows host file:
 
 <br>
 
-## 5.7 Database management tool
+## 6.3 Database management tool
 
 ```
 In this envinronment used Adminer database management tool.
@@ -259,6 +275,17 @@ Tutorials:
 
 <br>
 
-# 6. Related projects
+## 6.4 GIT
+```
+An access token is used to automatically create repositories for project using the command line.
+```
+Tutorials:
+
+1. [GitHub: Creating a personal access token](https://docs.github.com/en/enterprise-server@3.4/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) 
+2. [GitLab: Creating a personal access token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) 
+
+<br>
+
+# 7. Related projects
 1. [Nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy)
 2. [Mkcert-for-nginx-proxy](https://github.com/aegypius/mkcert-for-nginx-proxy)
