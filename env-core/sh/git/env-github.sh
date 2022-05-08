@@ -75,7 +75,7 @@ EOF
                 git add .
                 git commit -m "initial commit"
                 git branch -M master
-                git remote add origin https://github.com/$USER_GITHUB/$REPO_NAME.git
+                git remote add origin https://${TOKEN_GITHUB}@github.com/$USER_GITHUB/$REPO_NAME.git
                 git push -u origin master
             fi
 
