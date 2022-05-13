@@ -83,89 +83,90 @@ Spin up a local environment on Linux, Mac, and Windows using CLI.
 
 # 5. Start the application:
 
-## 5.1 Run from the command line
+Run from the command line:
 
 ```
 ./setup.sh
 ```
 
+## 5.1 First setup
+
+First of all you need to run Nginx server [option 1]
+
+| Step | Option | Description              |
+|------|--------|--------------------------|
+| 1    | 1      | Nginx                    |
+| 2    | 1      | Setup Nginx server       |
+| 3    | 0      | Return to main menu      |
+
 <br>
 
-### Choose one from the following options:
+## 5.2 Create new project [default]
+
+| Step | Option  | Description               | Example        |   |
+|------|---------|---------------------------|----------------|---|
+| 1    | 2       | New project               |                |   |
+| 2    | 1       | default                   |                |   |
+| 3    |         | Enter Domain Name         | test           |   |
+| 4    |         | Enter DOMAIN_FULL         | dev.test.local | * |
+| 5    | [Y/n]   | Is correct?               |                |   |
+| 6    | [Y/n]   | Remove default content?   |                |   |
+| 7    | [Y/n]   | Clone project?            |                |   |
+| 8    |         | Windows: Add to host file |                |   |
+
+*Variables has default value.
+
+<br>
+
+## 5.3 Create new project [custom]
+
+| Step | Option  | Description               | Example        |   |
+|------|---------|---------------------------|----------------|---|
+| 1    | 2       | New project               |                |   |
+| 2    | 2       | custom                    |                |   |
+| 3    |         | Enter Domain Name         | test           |   |
+| 4    |         | Enter DOMAIN_FULL         | dev.test.local | * |
+| 5    |         | Enter DB_NAME             | db             | * |
+| 6    |         | Enter TABLE_PREFIX        | wp_            | * |
+| 7    |         | Enter WP_VERSION          | 5.8.3          | * |
+| 8    |         | Enter WP_USER             | developer      | * |
+| 9    |         | Enter WP_PASSWORD         | 1              | * |
+| 10   |         | Enter PHP_VERSION         | 8.0            | * |
+| 11   | [Y/n]   | Install Composer ?        | no             | * | 
+| 12   | [Y/n]   | Is correct?               |                |   |
+| 13   | [Y/n]   | Remove default content?   |                |   |
+| 14   | [Y/n]   | Clone project?            |                |   |
+| 15   |         | Windows: Add to host file |                |   |
+
+*Variables has default value.
+
+<br>
+
+## 5.4 Create new project [beetroot]
+
+| Step | Option  | Description               | Example        |   |
+|------|---------|---------------------------|----------------|---|
+| 1    | 2       | New project               |                |   |
+| 2    | 3       | beetroot                  |                |   |
+| 3    |         | Enter Domain Name         | test           |   |
+| 4    | 1       | type? [default] [custom]  |                |   |
+| 5    |         | Enter DOMAIN_FULL         | dev.test.local | * |
+| 6    | [Y/n]   | Is correct?               |                |   |
+| 7    | [Y/n]   | Remove default content?   |                |   |
+| 8    | [Y/n]   | Clone project?            |                |   |
+| 9    |         | Repo url                  |                |   |
+| 10   |         | Windows: Add to host file |                |   |
+
+*Variables has default value.
+
+<br>
+
+## 5.5 Environment options:
 
 ```
 1 - Nginx
 
-2 - New project
-
-3 - Existing project
-
-4 - ENV settings
-```
-### First of all you need to run Nginx server [option 1]
-
-<br>
-
-
-## 5.2 With the server, you can run the following commands:
-
-
-
-```
-1 - Setup Nginx container first time
-
-2 - Stop container
-
-3 - Start container
-
-4 - Restart container
-
-5 - Rebuild Nginx container
-```
-
-<br>
-
-## 5.3 Create new project [option 2]
-
-All projects will be created automatically.
-
-<br>
-
-## You just need to choose installation type:
-
-| #   | Type     | Description                          |
-|-----|----------|--------------------------------------|
-| 1   | default  | Use all default variables            |
-| 2   | custom   | Fill all variables about the project |
-| 3   | beetroot | Use all default variables, clone project, replace project & import DB |
-|     |          |                                      |
-
-## Prepare an answer to a couple of questions about the required project variables:
-
-
-| Variables     | Example        |   |
-|---------------|----------------|---|
-| DOMAIN_NAME   | test           |   |
-| DOMAIN_FULL   | dev.test.local | * |
-| DB_NAME       | db             | * |
-| TABLE_PREFIX  | wp_            | * |
-| WP_VERSION    | 5.8.3          | * |
-| WP_USER       | developer      | * |
-| WP_PASSWORD   | 1              | * |
-| PHP_VERSION   | 8.0            | * | 
-|               |                |   | 
-
-*Variables has default value.
-
-
-<br>
-
-## 5.4 Actions with existing sites [option 3]
-
-```
-1 - Docker actions
-
-    1 - Permanently remove project
+    1 - Setup Nginx container first time
 
     2 - Stop container
 
@@ -173,33 +174,62 @@ All projects will be created automatically.
 
     4 - Restart container
 
-    5 - Rebuild container
+    5 - Rebuild Nginx container
 
-    6 - Fix permissions
+2 - New project
 
-    7 - Run composer.json
+    1 - default
 
-    8 - Install composer package
+    2 - custom
 
-2 - Database actions
+    3 - beetroot
 
-    1 - Update DB (import from backup file)
+3 - Existing project
 
-    2 - Dump DB (export to backup file)
+    1 - Docker actions
 
-    3 - Search-Replace
+        1 - Permanently remove project
 
-    4 - Replace project from DB
+        2 - Stop container
 
-3 - GIT actions
+        3 - Start container
 
-    1 - Clone from repo
+        4 - Restart container
 
-    2 - Create GitHUB repo
+        5 - Rebuild container
 
-    3 - Create GitLAB repo
+        6 - Fix permissions
 
-4 - List of exisiting projects
+        7 - Run composer.json
+
+        8 - Install composer package
+
+    2 - Database actions
+
+        1 - Update DB (import from backup file)
+
+        2 - Dump DB (export to backup file)
+
+        3 - Search-Replace
+
+        4 - Replace project from DB
+
+    3 - GIT actions
+
+        1 - Clone from repo
+
+        2 - Create GitHUB repo
+
+        3 - Create GitLAB repo
+
+    4 - List of exisiting projects
+
+4 - ENV settings
+
+    1 - ENV_UPDATES
+
+    2 - ENV_THEME
+
 ```
 
 <br>
@@ -270,7 +300,7 @@ As an example: https://dev.test.local/adminer.php
 
 Tutorials:
 
-1. [How to use Adminer:](https://kinsta.com/blog/adminer/) 
+1. [How to use Adminer](https://kinsta.com/blog/adminer/) 
 
 
 <br>
