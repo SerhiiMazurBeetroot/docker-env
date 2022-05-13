@@ -28,10 +28,10 @@ wp_composer_install() {
         EMPTY_LINE
         ECHO_YELLOW "Running composer install... $DOCKER_CONTAINER_WP"
 
-        COMPOSER_ISSUE=$(docker exec -it "$DOCKER_CONTAINER_WP" bash -c "cd /wp-content/themes/$WP_DEFAULT_THEMEcomposer && composer install" | awk '{if(/allowed/) print }' || true );
+        COMPOSER_ISSUE=$(docker exec -it "$DOCKER_CONTAINER_WP" bash -l -c "cd /wp-content/themes/$WP_DEFAULT_THEMEcomposer && composer install" | awk '{if(/allowed/) print }' || true );
         ECHO_YELLOW "COMPOSER_ISSUE: $COMPOSER_ISSUE"
         
-        docker exec -i "$DOCKER_CONTAINER_WP" /bin/bash -l -c "cd ./wp-content/themes/$WP_DEFAULT_THEME && rm -rf ./vendor && composer install" || true;
+        docker exec -i "$DOCKER_CONTAINER_WP" bash -l -c "cd ./wp-content/themes/$WP_DEFAULT_THEME && rm -rf ./vendor && composer install" || true;
     else
         ECHO_YELLOW "composer.json file doesn't exists"
     fi
@@ -65,7 +65,7 @@ randpassword(){
 wp_remove_default_content () {
     EMPTY_LINE
     ECHO_ATTENTION "The following command will remove default posts, pages, plugins, themes"
-    read -rp "$(ECHO_YELLOW "Do you want to remove the default content?") Y/n " EMPTY_CONTENT
+    read -rp "$(ECHO_YELLOW "Do you want to remove the default content (themes, plugins)?") Y/n " EMPTY_CONTENT
 
     if [ "y" = "$EMPTY_CONTENT" ]
     then
@@ -94,7 +94,6 @@ wp_get_default_theme () {
         then
             #1 => find in file | #2 => replace 'stylesheet' | #3 => replace character '' | #4 => replace , | #5 => replace space
             WP_DEFAULT_THEME=$( grep -o "'stylesheet',\s*'[A-Za-z0-9.,-]*\+'" "$PROJECT_DATABASE_DIR/$DB_FILE" | sed 's/'stylesheet'//g' | sed 's/'\''//g' | sed 's/,//g' | sed 's/^[ \t]*//;s/[ \t]*$//' )
-            ECHO_YELLOW "WP_DEFAULT_THEME: $WP_DEFAULT_THEME"
             EMPTY_LINE
 
             # Replace variable WP_DEFAULT_THEME .env file
