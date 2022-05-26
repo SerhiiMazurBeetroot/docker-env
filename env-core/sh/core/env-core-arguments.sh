@@ -13,6 +13,9 @@ get_domain_name () {
         while [ -z "$DOMAIN_NAME" ]; do 
             read -rp "Please fill in the Domain: " DOMAIN_NAME
         done
+
+        # Remove non printing chars from DOMAIN_NAME
+        DOMAIN_NAME=$(echo $DOMAIN_NAME | tr -dc '[[:print:]]' | tr -d ' ' | tr -d '[A' | tr -d '[C' | tr -d '[B' | tr -d '[D')
     fi
 }
 
