@@ -22,17 +22,21 @@ get_domain_name () {
 get_project_dir () {
     QUESTION=$1
 
+    DOMAIN_NAME_DEFAULT="dev.$DOMAIN_NAME.local"
+    #Beetroot project - DOMAIN_NAME_DEFAULT
+    [[ "$SETUP_TYPE" -eq 3 ]] && DOMAIN_NAME_DEFAULT="$DOMAIN_NAME.local"
+
     #DOMAIN_FULL
     if [[ $QUESTION == "skip_question" ]];
     then
         DOMAIN_FULL=$(awk '/'" $DOMAIN_NAME "'/{print $7}' "$FILE_INSTANCES" | head -n 1);
     else
         EMPTY_LINE
-        ECHO_YELLOW "Enter DOMAIN_FULL [default dev.$DOMAIN_NAME.local]"
+        ECHO_YELLOW "Enter DOMAIN_FULL [default $DOMAIN_NAME_DEFAULT]"
         read -rp "DOMAIN_FULL: " DOMAIN_FULL
     fi
 
-    [[ $DOMAIN_FULL == '' ]] && DOMAIN_FULL="dev.$DOMAIN_NAME.local"
+    [[ $DOMAIN_FULL == '' ]] && DOMAIN_FULL="$DOMAIN_NAME_DEFAULT"
 
     set_project_vars
 }
