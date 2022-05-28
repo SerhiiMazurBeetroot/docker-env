@@ -136,6 +136,7 @@ docker_wp_create () {
 
 docker_wp_start () {
     stopped_projects_list "======== START project ========"
+    get_project_dir "skip_question"
 
     if [ "$( docker ps --format '{{.Names}}' | grep -P '(^)'$DOCKER_CONTAINER_WP'($)' )" ];
     then
@@ -146,16 +147,11 @@ docker_wp_start () {
         then
             ECHO_SUCCESS "Site image and volume found"
 
-            get_project_dir "skip_question"
-
             if [ -f $PROJECT_DOCKER_DIR/docker-compose."$DOMAIN_NODOT".yml ];
             then
                 ECHO_YELLOW "Starting docker containers for this site"
 
-                if [ -f $PROJECT_DOCKER_DIR/docker-compose."$DOMAIN_NODOT".yml ];
-                then
-                    docker-compose -f $PROJECT_DOCKER_DIR/docker-compose."$DOMAIN_NODOT".yml up -d
-                fi
+                docker-compose -f $PROJECT_DOCKER_DIR/docker-compose."$DOMAIN_NODOT".yml up -d
 
                 ECHO_GREEN "Restarted now."
                 docker_nginx_restart
@@ -167,8 +163,6 @@ docker_wp_start () {
             fi
         else
             # In case the docker images were deleted
-            get_project_dir "skip_question"
-
             ECHO_ERROR "Site image or volume was not found"
             ECHO_YELLOW "Checking for Docker-compose file exist"
             if [ -f $PROJECT_DOCKER_DIR/docker-compose."$DOMAIN_NODOT".yml ];
@@ -269,7 +263,7 @@ docker_wp_delete () {
             esac
         done
     else
-        ECHO_ERROR "Docker container for this site does not exist"
+        ECHO_ERROR "Site DIR does not exist: $PROJECT_ROOT_DIR"
     fi
 }
 
