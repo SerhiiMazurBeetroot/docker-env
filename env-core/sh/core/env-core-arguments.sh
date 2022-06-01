@@ -38,6 +38,10 @@ get_project_dir () {
 
     [[ $DOMAIN_FULL == '' ]] && DOMAIN_FULL="$DOMAIN_NAME_DEFAULT"
 
+    # Remove non printing chars from DOMAIN_FULL
+    DOMAIN_FULL=$(echo $DOMAIN_FULL | tr -dc '[[:print:]]' | tr -d ' ' | tr -d '[A' | tr -d '[C' | tr -d '[B' | tr -d '[D')
+
+
     set_project_vars
 }
 
