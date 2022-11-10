@@ -1,11 +1,26 @@
 <p align="center">
-  <img alt="devENV" src="./env-core/docs/images/featured.png" height="100%" width="40%">
+  <img alt="devENV" src="./.env-core/docs/images/featured-new.png" height="100%" width="50%">
 </p>
 
-# Local Docker Wordpress CLI Development Environment
-This environment was created to automate your local WordPress development.
-<br>
+<p align="center" dir="auto">
+  <a href="https://github.com/SerhiiMazurBeetroot/devENV/releases">
+    <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/SerhiiMazurBeetroot/devENV">
+  </a>
+</p>
+
+# Docker Local Environment
+
+This environment was created to automate your local development.
+
 Spin up a local environment on Linux, Mac, and Windows using CLI.
+
+<br>
+
+# Automatic installation for the following projects:
+
+- Wordpress
+- Bedrock
+- PHP simple
 
 <br>
 
@@ -29,6 +44,10 @@ Spin up a local environment on Linux, Mac, and Windows using CLI.
 
   <a href="https://hub.docker.com/_/adminer">
     <img alt="Adminer" src="https://img.shields.io/badge/Adminer-v4.8.1-f99d0f">
+  </a>
+
+  <a href="https://hub.docker.com/_/phpmyadmin">
+    <img alt="phpMyAdmin" src="https://img.shields.io/badge/phpMyAdmin-latest-green">
   </a>
 
   <a href="https://github.com/aegypius/mkcert-for-nginx-proxy">
@@ -56,14 +75,12 @@ Spin up a local environment on Linux, Mac, and Windows using CLI.
 | Nginx-proxy   | Automated Nginx reverse proxy for docker containers |
 | Certificates  | Automatic creation/renewal  SSL certificates        |
 | Logs          | Follow log output for Nginx, WP instance            |
-| Projects      | Auto-creat all instances for wp site                |
 | PHP           | Choose from active PHP version                      |
-| Wordpress     | Install the version you need or use the latest      |
+| Wordpress     | Choose a version or use the latest                  |
 | Database      | Database import and export, search-replace          |
 | Composer      | Install Composer inside container                   |
-| Repository    | Clone an existing theme from your Repository        |
-| GitHub        | Create repo and push project                        |
-| GitLab        | Create repo and push project                        |
+| GIT           | Clone an existing theme, create repo and push       |
+| Archive       | Archive an inactive project (can be restored)       |
 
 <br>
 
@@ -71,21 +88,32 @@ Spin up a local environment on Linux, Mac, and Windows using CLI.
 
 ```
 ├── setup.sh              # Run devENV
-├── wp-instances.log      # List of installed sites
-├── env-core              # devENV core files
+├── .env-core             # devENV core files
 |     └── nginx           # Nginx-proxy
 |     └── sh              # Bash scripts
 |     └── templates       # Global templates
-└── projects              # WordPress sites go here
+|     └── instances.log   # List of installed sites
+└── wordpress             # WordPress sites go here
+└── bedrock               # Bedrock sites go here
+└── php                   # PHP simple sites go here
 ```
 
 <br>
 
-# [5. Start the application](./env-core/docs/5-doc.MD#5-start-the-application)
+# [5. Start the application](./.env-core/docs/5-doc.MD#51-first-setup)
 
+## [5.1 First setup](./.env-core/docs/5-doc.MD#51-first-setup)
+
+## [5.2 Create new project Wordpress](./.env-core/docs/5-doc-new-wordpress.MD#52-create-new-project-wordpress)
+
+## [5.3 Create new project Bedrock](./.env-core/docs/5-doc-new-wordpress.MD#52-create-new-project-wordpress)
+
+## [5.4 Create new project Simple PHP](./.env-core/docs/5-doc-new-php.MD#54-create-new-simple-php)
+
+## [5.5 Environment options](./.env-core/docs/5-doc-environment-options.MD#55-environment-options)
 <br>
 
-# [6. How to](./env-core/docs/6-doc.MD#6-how-to)
+# [6. How to](./.env-core/docs/6-doc.MD#6-how-to)
 
 <br>
 
