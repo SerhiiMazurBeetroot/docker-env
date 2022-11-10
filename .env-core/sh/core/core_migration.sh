@@ -12,6 +12,7 @@ env_migration() {
         replace_old_wp_instances_file
         replace_dir_projects_to_wordpress
         replace_docker_compose
+        delete_visible_envcore_dir
         core_version
     fi
 }
@@ -88,5 +89,11 @@ replace_docker_compose() {
             done
         done
         EMPTY_LINE
+    fi
+}
+
+delete_visible_envcore_dir() {
+    if [ -d "env-core" ]; then
+        rm -rf env-core
     fi
 }
