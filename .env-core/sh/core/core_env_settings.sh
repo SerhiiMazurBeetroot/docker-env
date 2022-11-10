@@ -126,6 +126,8 @@ update_env() {
         git reset --hard origin/master
 
         sed -i -e 's/'$ENV_VERSION'/'$GIT_VERSION'/g' "$FILE_SETTINGS"
+
+        exit
     else
         ECHO_GREEN "Already up to date."
         EMPTY_LINE
