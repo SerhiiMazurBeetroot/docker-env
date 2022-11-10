@@ -1,6 +1,6 @@
 #################################################################################
 ##                                                                              #
-##    GIT IGNORE FOR WORDPRESS SITES                                            #
+##    GIT IGNORE                                                                #
 ##    ------------------------------                                            #
 ##    Adapted from: http://bigwilliam.com/gitignore-for-wordpress-projects/     #
 ##    and https://github.com/github/gitignore/blob/master/WordPress.gitignore   #
@@ -67,16 +67,18 @@ access_log
 node_modules
 
 #===================================#
-#       WordPress Sites             #
+#               Sites               #
 #===================================#
 /projects/*
-!/projects/.gitkeep
-
+/wordpress/*
+/bedrock/*
+/php/*
+/nodejs/*
 
 #===============================#
 #     Certificates              #
 #===============================#
-/env-core/nginx/certs-root/*
+/.env-core/nginx/certs-root/*
 
 
 #===============================#
