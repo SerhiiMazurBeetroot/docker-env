@@ -54,6 +54,7 @@ docker_create_wp() {
             wp_core_install
 
             edit_file_compose_setup_beetroot
+            edit_file_gitignore
 
             #clone from repo
             while true; do

@@ -223,6 +223,19 @@ wp-config-docker.php
 xit
 EOF
         fi
+    else
+        EMPTY_LINE
+        ECHO_YELLOW "create .gitignore file..."
+        ex "$PROJECT_ROOT_DIR/.gitignore" <<EOF
+1 insert
+/wp-docker/
+/logs/
+/vendor/
+adminer.php
+wp-config-docker.php
+.
+xit
+EOF
     fi
 }
 

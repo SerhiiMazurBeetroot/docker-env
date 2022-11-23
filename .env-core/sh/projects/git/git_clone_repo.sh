@@ -93,7 +93,6 @@ git_clone_repo() {
                     wp_composer_install
                     edit_file_env_setup_beetroot
                     fix_linux_watchers
-                    edit_file_gitignore
                     EMPTY_LINE
                     break
                     ;;
