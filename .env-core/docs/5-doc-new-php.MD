@@ -2,6 +2,13 @@
 ----------------------------------
 <br>
 
+## [5.1 First setup](./5-doc.MD#51-first-setup)
+
+## [5.2 Create new project Wordpress](./5-doc-new-wordpress.MD#create-new-project)
+## [5.3 Create new project Bedrock](./5-doc-new-wordpress.MD#create-new-project)
+
+<br>
+
 ## 5.4 Create new Simple PHP
 
 | Step | Option  | Description               | Example        |   |
@@ -13,6 +20,12 @@
 | 5    |         | Windows: Add to host file |                |   |
 
 *Variables has default value.
+
+<br>
+
+## [5.5 Environment options](./5-doc-environment-options.MD#55-environment-options)
+
+## [6. How to](./6-doc.MD#6-how-to)
 
 <br>
 

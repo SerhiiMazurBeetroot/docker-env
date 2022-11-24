@@ -1,4 +1,4 @@
-### [Return to README.MD](../../README.MD)
+### [Return to README.MD](../../README.MD#6-how-to)
 ----------------------------------
 
 <br>
@@ -86,4 +86,4 @@ Tutorials:
 <br>
 
 ----------------------------------
-### [Return to README.MD](../../README.MD)
+### [Return to README.MD](../../README.MD#6-how-to)

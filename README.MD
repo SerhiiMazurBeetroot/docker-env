@@ -26,32 +26,26 @@ Spin up a local environment on Linux, Mac, and Windows using CLI.
 
 # 1. What's inside the containers
 <p align="left">
-  <a href="https://hub.docker.com/_/php">
-    <img alt="PHP" src="https://img.shields.io/badge/PHP%20fpm-option-8892bf">
-  </a>
-
-  <a href="https://hub.docker.com/_/mariadb">
-    <img alt="MariaDB" src="https://img.shields.io/badge/MariaDB-latest-c0765a">
-  </a>
-
-  <a href="https://hub.docker.com/_/wordpress">
-    <img alt="WordPress" src="https://img.shields.io/badge/WordPress-option-lightgrey">
-  </a>
-
   <a href="https://hub.docker.com/r/jwilder/nginx-proxy">
     <img alt="Proxy" src="https://img.shields.io/badge/jwilder-latest-00a652">
   </a>
-
+    <a href="https://github.com/aegypius/mkcert-for-nginx-proxy">
+    <img alt="Mkcert" src="https://img.shields.io/badge/mkcert-v1.0.2-f99d0f">
+  </a>
+  <a href="https://hub.docker.com/_/php">
+    <img alt="PHP" src="https://img.shields.io/badge/PHP%20fpm-option-8892bf">
+  </a>
+  <a href="https://hub.docker.com/_/mariadb">
+    <img alt="MariaDB" src="https://img.shields.io/badge/MariaDB-latest-c0765a">
+  </a>
+  <a href="https://hub.docker.com/_/wordpress">
+    <img alt="WordPress" src="https://img.shields.io/badge/WordPress-option-lightgrey">
+  </a>
   <a href="https://hub.docker.com/_/adminer">
     <img alt="Adminer" src="https://img.shields.io/badge/Adminer-v4.8.1-f99d0f">
   </a>
-
   <a href="https://hub.docker.com/_/phpmyadmin">
     <img alt="phpMyAdmin" src="https://img.shields.io/badge/phpMyAdmin-latest-green">
-  </a>
-
-  <a href="https://github.com/aegypius/mkcert-for-nginx-proxy">
-    <img alt="Mkcert" src="https://img.shields.io/badge/mkcert-v1.0.2-f99d0f">
   </a>
 </p>
 
@@ -104,9 +98,9 @@ Spin up a local environment on Linux, Mac, and Windows using CLI.
 
 ## [5.1 First setup](./.env-core/docs/5-doc.MD#51-first-setup)
 
-## [5.2 Create new project Wordpress](./.env-core/docs/5-doc-new-wordpress.MD#52-create-new-project-wordpress)
+## [5.2 Create new project Wordpress](./.env-core/docs/5-doc-new-wordpress.MD#create-new-project)
 
-## [5.3 Create new project Bedrock](./.env-core/docs/5-doc-new-wordpress.MD#52-create-new-project-wordpress)
+## [5.3 Create new project Bedrock](./.env-core/docs/5-doc-new-wordpress.MD#create-new-project)
 
 ## [5.4 Create new project Simple PHP](./.env-core/docs/5-doc-new-php.MD#54-create-new-simple-php)
 
