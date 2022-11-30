@@ -6,7 +6,7 @@ set -o pipefail
 database_export() {
     get_project_dir "skip_question"
 
-    if [ "$(docker ps --format '{{.Names}}' | grep -P '(^)'$DOCKER_CONTAINER_DB'($)')" ]; then
+    if [ "$(docker ps --format '{{.Names}}' | grep -E '(^)'$DOCKER_CONTAINER_DB'($)')" ]; then
         get_db_name
 
         if [ "$DB_NAME" ]; then

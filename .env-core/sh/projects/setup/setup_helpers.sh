@@ -70,7 +70,7 @@ get_php_versions() {
 }
 
 get_latest_wp_version() {
-    WP=$(curl -s 'https://api.github.com/repos/wordpress/wordpress/tags' | grep "name" | head -n 2 | awk '$0=$2' | grep -Eo '[0-9]+\.[0-9]+\.?[0-9]+?')
+    WP=$(curl -s 'https://api.github.com/repos/wordpress/wordpress/tags' | grep "name" | head -n 2 | awk '$0=$2' | grep -E '[0-9]+\.[0-9]+?' | tr -d \", )
     WP=($WP)
     WP_LATEST_VER=$(echo ${WP[0]} | grep -Eo '[0-9]+\.[0-9]+\.?[0-9]+' || echo "${WP[0]}.0")
     WP_PREV_VER=$(echo ${WP[1]} | grep -Eo '[0-9]+\.[0-9]+\.?[0-9]+' || echo "${WP[1]}.0")
@@ -176,7 +176,7 @@ fix_permissions() {
 
         EMPTY_LINE
         ECHO_YELLOW "Fixing Permissions, this can take a while! [$PROJECT_ROOT_DIR]"
-        if [ "$(docker ps --format '{{.Names}}' | grep -P '(^|_)'$DOCKER_CONTAINER_APP'(?=\s|$)')" ]; then
+        if [ "$(docker ps --format '{{.Names}}' | grep -E '(^)'$DOCKER_CONTAINER_APP'($)')" ]; then
             docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec chown -R www-data:www-data /var/www/html/'
             docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec chmod -R 755 /var/www/html/'
         else
