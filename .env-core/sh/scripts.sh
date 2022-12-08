@@ -4,6 +4,8 @@
 FILE_SETTINGS='./.env-core/settings.log'
 FILE_INSTANCES='./.env-core/instances.log'
 
+export AVAILABLE_PROJECTS=(wordpress bedrock php nodejs)
+
 source_files_in() {
   local dir="$1"
 

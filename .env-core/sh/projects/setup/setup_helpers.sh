@@ -3,8 +3,6 @@
 set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
-export AVAILABLE_PROJECTS=('wordpress' 'bedrock' 'php' 'nodejs')
-
 get_domain_name() {
     if [ -z "$DOMAIN_NAME" ]; then
         EMPTY_LINE
@@ -183,7 +181,7 @@ fix_permissions() {
             docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec chown -R www-data:www-data /var/www/html/'
             docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec chmod -R 755 /var/www/html/'
         else
-            ECHO_ERROR "Docker container doesn't exist [$DOMAIN_FULL]"
+            ECHO_ERROR "Docker container doesn't exist [$PROJECT_ROOT_DIR]"
         fi
 
         #Fix WP permissions

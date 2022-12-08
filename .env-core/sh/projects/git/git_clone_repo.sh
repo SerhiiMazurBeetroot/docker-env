@@ -108,6 +108,6 @@ git_clone_repo() {
             exit
         fi
     else
-        ECHO_ERROR "Docker container doesn't exist [$DOMAIN_FULL]"
+        ECHO_ERROR "Docker container doesn't exist [$PROJECT_ROOT_DIR]"
     fi
 }

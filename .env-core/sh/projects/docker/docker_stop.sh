@@ -14,8 +14,8 @@ docker_stop() {
 
         docker_nginx_restart
 
-        ECHO_SUCCESS "Docker container stopped [$DOMAIN_FULL]"
+        ECHO_SUCCESS "Docker container stopped [$PROJECT_ROOT_DIR]"
     else
-        ECHO_ERROR "Docker container doesn't exist [$DOMAIN_FULL]"
+        ECHO_ERROR "Docker container doesn't exist [$PROJECT_ROOT_DIR]"
     fi
 }

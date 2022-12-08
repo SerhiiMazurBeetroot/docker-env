@@ -22,7 +22,7 @@ docker_stop_all() {
                 [ -f "$DOCKER_FILES" ] && docker-compose -f $DOCKER_FILES down
             fi
 
-            ECHO_SUCCESS "Docker container stopped [$DOMAIN_FULL]"
+            ECHO_SUCCESS "Docker container stopped [$PROJECT_ROOT_DIR]"
         fi
         unset_variables
     done
