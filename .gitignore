@@ -84,4 +84,5 @@ node_modules
 #===============================#
 #     NGINX conf                #
 #===============================#
-default.conf
+!/.env-core/nginx/conf.d/default.conf
+/.env-core/nginx/conf.d/*
