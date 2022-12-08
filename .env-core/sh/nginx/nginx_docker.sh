@@ -80,7 +80,7 @@ docker_nginx_rebuild() {
 }
 
 docker_nginx_container() {
-    if [ "$(docker ps --format '{{.Names}}' | grep -P '(^)nginx-proxy($)')" ]; then
+    if [ "$(docker ps --format '{{.Names}}' | grep -E '(^)nginx-proxy($)')" ]; then
         NGINX_EXISTS=1
     else
         NGINX_EXISTS=0

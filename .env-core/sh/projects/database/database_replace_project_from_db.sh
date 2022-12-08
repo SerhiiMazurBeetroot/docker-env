@@ -19,11 +19,11 @@ database_replace_project_from_db() {
         get_db_file
 
         # DB_NAME case 1
-        NEW_DB_NAME=$(grep 'Database:' "$PROJECT_DATABASE_DIR/$DB_FILE" | head -n 1 | grep -o '[A-Za-z0-9.,-_]\+[`]' | tr --delete \` || true)
+        NEW_DB_NAME=$(grep 'Database:' "$PROJECT_DATABASE_DIR/$DB_FILE" | head -n 1 | grep -o '[A-Za-z0-9.,-_]\+[`]' | tr -d \` || true)
 
         # DB_NAME case 2 (Cyrillic letters)
         if [[ "$NEW_DB_NAME" == '' ]]; then
-            NEW_DB_NAME=$(grep -e 'База данных:' "$PROJECT_DATABASE_DIR/$DB_FILE" | head -n 1 | awk '/''/{print $4}' | tr --delete \` || true)
+            NEW_DB_NAME=$(grep -e 'База данных:' "$PROJECT_DATABASE_DIR/$DB_FILE" | head -n 1 | awk '/''/{print $4}' | tr -d \` || true)
         fi
 
         # DB_NAME case 3 (file without description), get DB_NAME from file name
@@ -32,7 +32,7 @@ database_replace_project_from_db() {
         fi
 
         # TABLE_PREFIX
-        NEW_TABLE_PREFIX=$(grep 'CREATE TABLE' "$PROJECT_DATABASE_DIR/$DB_FILE" | grep -o '[`][A-Za-z0-9_]\+[_comments]\+' | awk '/'_comments'/{print}' | sed 's/comments//g' | tr --delete \`)
+        NEW_TABLE_PREFIX=$(grep 'CREATE TABLE' "$PROJECT_DATABASE_DIR/$DB_FILE" | grep -o '[`][A-Za-z0-9_]\+[_comments]\+[`]' | awk '/'_comments'/{print}' | head -n 1 | sed 's/comments//g' | tr -d \`)
 
         # Replace instances.log
         FIND_DB_NAME='\| '"$PREV_DB_NAME"' \|'
@@ -41,6 +41,7 @@ database_replace_project_from_db() {
         sed -i -e 's/'"$PREV_INSTANCES"'/'"$NEW_INSTANCES"'/g' "$FILE_INSTANCES"
 
         # Replace .env
+        ECHO_YELLOW "NEW_TABLE_PREFIX: $NEW_TABLE_PREFIX"
         PREV_DB_ENV=$(awk '/'MYSQL_DATABASE'/{print}' $PROJECT_DOCKER_DIR/.env | head -n 1)
         PREV_TABLE_PREFIX=$(awk '/'TABLE_PREFIX'/{print}' $PROJECT_DOCKER_DIR/.env | head -n 1)
         sed -i -e 's/'"$PREV_DB_ENV"'/'"MYSQL_DATABASE='$NEW_DB_NAME'"'/g' $PROJECT_DOCKER_DIR/.env
