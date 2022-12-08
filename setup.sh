@@ -23,7 +23,6 @@ main_actions() {
 		ECHO_GREEN "2 - New project"
 		ECHO_GREEN "3 - Existing project"
 		ECHO_KEY_VALUE "4 - ENV settings" "$ENV_UPDATES"
-		ECHO_KEY_VALUE "5"
 
 		read -rp "$(ECHO_YELLOW "Please select one of:")" userChoice
 
@@ -42,9 +41,6 @@ main_actions() {
 			;;
 		4)
 			env_settings
-			;;
-		5)
-			get_latest_wp_version
 			;;
 		esac
 	done
