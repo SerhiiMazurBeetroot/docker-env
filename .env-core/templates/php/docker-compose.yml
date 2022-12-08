@@ -18,5 +18,5 @@ services:
 
 networks:
   default:
-    external:
-      name: dockerwp
+    name: dockerwp
+    external: true

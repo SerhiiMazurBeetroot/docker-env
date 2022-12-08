@@ -33,7 +33,6 @@ services:
         SITE_TITLE: ${SITE_TITLE}
         WP_USER: ${WP_USER}
         WP_PASSWORD: ${WP_PASSWORD}
-        # DATABASE_URL: mysql://test:test_pass@db:3306/test_db
         WORDPRESS_CONFIG_EXTRA: |
           define( 'WP_DEBUG', ${WP_DEBUG} );
           define( 'WP_DEBUG_DISPLAY', ${WP_DEBUG_DISPLAY} );
@@ -91,8 +90,8 @@ services:
 
 networks:
   default:
-    external:
-      name: dockerwp
+    name: dockerwp
+    external: true
 
 volumes:
   {DOMAIN_NAME}_db_data:

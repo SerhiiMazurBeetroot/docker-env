@@ -10,8 +10,6 @@ services:
     volumes:
       # WordPress wp-content folder
       - ./../wp-content/:/var/www/html/wp-content/:rw,cached
-      # Adminer
-      - ./../wp-docker/adminer.php:/var/www/html/adminer.php
       # Configs
       - ./../wp-docker/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
       # Debug log
@@ -25,7 +23,6 @@ services:
       WORDPRESS_DB_HOST : ${MYSQL_HOST}
       WORDPRESS_DB_PASSWORD : ${MYSQL_ROOT_PASSWORD}
       WP_VERSION : ${WP_VERSION}
-      WORDPRESS_DEBUG : ${WP_DEBUG}
       WORDPRESS_CONFIG_EXTRA: |
         define( 'WP_DEBUG', ${WP_DEBUG} );
         define( 'WP_DEBUG_DISPLAY', ${WP_DEBUG_DISPLAY} );
@@ -55,8 +52,8 @@ services:
 
 networks:
   default:
-    external:
-      name: dockerwp
+    name: dockerwp
+    external: true
 
 volumes:
   {DOMAIN_NAME}_db_data:
