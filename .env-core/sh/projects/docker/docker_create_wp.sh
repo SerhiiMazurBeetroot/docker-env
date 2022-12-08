@@ -18,8 +18,6 @@ docker_create_wp() {
             #GET PORT
             get_unique_port
 
-            get_project_dir "skip_question"
-
             print_to_file_instances
 
             # Create DIR
