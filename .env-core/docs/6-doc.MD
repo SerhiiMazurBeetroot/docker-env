@@ -60,11 +60,13 @@ Please remember to add or remove your domain in the Windows host file:
 ## 6.3 Database management tool
 
 ```
-In this envinronment used Adminer database management tool.
+In this envinronment used Adminer and phpMyAdmin database management tool.
 
 To access any database, all you need to do is visit its link through your browser.
 
-As an example: https://dev.test.local/adminer.php
+Adminer: https://dev.test.local/adminer.php
+
+phpMyAdmin: https://dev.test.local.phpmyadmin
 ```
 
 Tutorials:

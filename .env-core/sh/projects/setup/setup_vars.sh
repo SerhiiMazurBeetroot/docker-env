@@ -61,14 +61,14 @@ set_project_vars() {
     if [[ $PROJECT_TYPE -eq 1 || $PROJECT_TYPE == 'wordpress' || $PROJECT_TYPE == 'projects' ]]; then
         #WP
         DOMAIN_ADMIN="$DOMAIN_FULL/wp-admin"
-        DOMAIN_DB="$DOMAIN_FULL/adminer.php"
+        DOMAIN_DB="$DOMAIN_FULL.phpmyadmin"
         PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/wp-docker
         PROJECT_DATABASE_DIR=$PROJECT_ROOT_DIR/wp-database
         PROJECT_WP_CONTENT_DIR=$PROJECT_ROOT_DIR/wp-content
         DOCKER_CONTAINER_APP="$DOMAIN_NAME-wordpress"
         DOCKER_CONTAINER_DB="$DOMAIN_NAME-mysql"
         DOCKER_VOLUME_DB="$DOMAIN_NAME"_db_data
-        HOST_EXTRA=""
+        HOST_EXTRA="$DOMAIN_FULL.phpmyadmin"
     elif [[ $PROJECT_TYPE -eq 2 || $PROJECT_TYPE == 'bedrock' ]]; then
         #BEDROCK
         DOMAIN_ADMIN="$DOMAIN_FULL/wp/wp-admin"
