@@ -19,6 +19,7 @@ unzip_project() {
 			setup_hosts_file add
 			rm -rf $FILENAME
 			docker_rebuild
+			database_import
 
 			EMPTY_LINE
 			ECHO_SUCCESS "Successfully restored."

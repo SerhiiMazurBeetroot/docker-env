@@ -38,12 +38,15 @@ database_import() {
                         # Import DB
                         docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < /docker-entrypoint-initdb.d/dump.sql"
 
-                        ECHO_SUCCESS "DB dump for $DOMAIN_FULL inserted"
+                        ECHO_SUCCESS "DB dump for inserted [$PROJECT_ROOT_DIR]"
 
                         database_search_replace
                     else
                         sleep 5
                         ECHO_YELLOW "Trying to insert DB, awaiting MariaDB container..."
+
+                        # Drop DB
+                        docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "mysqladmin drop $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
 
                         # Create empty DB
                         docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "mysqladmin create $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
