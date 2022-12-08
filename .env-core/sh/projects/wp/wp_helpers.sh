@@ -85,5 +85,5 @@ wp_npm_install() {
 wp_core_install() {
     ECHO_YELLOW "wp_core_install..."
 
-    docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec wp core install --url=https://'$DOMAIN_FULL' --title='$DOMAIN_NAME' --admin_user='$WP_USER' --admin_password='$WP_PASSWORD' --admin_email=example@example.com --skip-email --allow-root'
+    docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec wp core install --url=https://'$DOMAIN_FULL' --title='$DOMAIN_NAME' --admin_user='$WP_USER' --admin_password="'$WP_PASSWORD'" --admin_email=example@example.com --skip-email --allow-root'
 }
