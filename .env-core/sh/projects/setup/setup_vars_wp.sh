@@ -26,16 +26,14 @@ setup_default_args() {
     [[ $WP_USER == '' ]] && WP_USER=developer
 
     #WP_PASSWORD
-    randpassword
+    [[ $passw == '' ]] && randpassword
+
     if [[ ! "$passw" =~ [1-3] ]]; then
         WP_PASSWORD=1
     elif [[ "$passw" -eq 1 ]]; then
         WP_PASSWORD=1
     elif [[ "$passw" -eq 2 ]]; then
         WP_PASSWORD="$WP_PASSWORD"
-    elif [[ "$passw" -eq 3 ]]; then
-        EMPTY_LINE
-        read -rp "$(ECHO_YELLOW "Your password:")" WP_PASSWORD
     fi
 
     #PHP_VERSION
@@ -75,6 +73,10 @@ setup_custom_args() {
     ECHO_GREEN "2 - $WP_PASSWORD"
     ECHO_GREEN "3 - Enter your password"
     read -rp "$(ECHO_YELLOW "Please select one of:")" passw
+    if [[ "$passw" -eq 3 ]]; then
+        EMPTY_LINE
+        read -rp "$(ECHO_YELLOW "Your password:")" WP_PASSWORD
+    fi
 
     #PHP_VERSION
     EMPTY_LINE
