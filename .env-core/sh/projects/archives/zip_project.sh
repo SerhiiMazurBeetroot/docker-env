@@ -12,6 +12,22 @@ zip_project() {
 		#First of all save DB
 		database_auto_backup
 
+	    #Delete "vendor" and "node_modules"
+		if [ -d $PROJECT_ROOT_DIR/vendor ]; then
+			VENDOR_DIR=($(find $PROJECT_ROOT_DIR/vendor -type d -name "vendor"))
+
+			for i in "${!VENDOR_DIR[@]}"; do
+				rm -rf ${VENDOR_DIR[$i]}
+			done
+		fi
+
+		NM_DIR=($(find $PROJECT_ROOT_DIR -type d -name "node_modules"))
+		if [ "$NM_DIR" ]; then
+			for i in "${!NM_DIR[@]}"; do
+				rm -rf ${NM_DIR[$i]}
+			done
+		fi
+
 		#Then keep archiving
 		filename="archive_"$PROJECT_ARCHIVE_DIR"_$(date '+%d-%m-%y').zip"
 
