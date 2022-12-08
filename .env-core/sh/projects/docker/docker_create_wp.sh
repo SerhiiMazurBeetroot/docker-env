@@ -30,10 +30,7 @@ docker_create_wp() {
             replace_templates_files
 
             # Replace Variables
-            sed -i -e 's/{WP_VERSION}/'$WP_VERSION'/g' $PROJECT_DOCKER_DIR/Dockerfile
-            sed -i -e 's/{PHP_VERSION}/'$PHP_VERSION'/g' $PROJECT_DOCKER_DIR/Dockerfile
-
-            sed -i -e 's/{DOMAIN_NAME}/'$DOMAIN_NAME'/g' $PROJECT_DOCKER_DIR/docker-compose.yml
+            replace_variables
 
             # Load env
             env_file_load
