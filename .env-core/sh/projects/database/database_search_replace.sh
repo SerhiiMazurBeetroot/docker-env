@@ -14,6 +14,8 @@ database_search_replace() {
             check_domain_exists
 
             if [[ $DOMAIN_EXISTS == 1 ]]; then
+                get_project_dir "skip_question"
+
                 read -rp "search: " search
                 read -rp "replace: " replace
 
