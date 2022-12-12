@@ -23,8 +23,8 @@ services:
       WORDPRESS_DB_HOST : ${MYSQL_HOST}
       WORDPRESS_DB_PASSWORD : ${MYSQL_ROOT_PASSWORD}
       WP_VERSION : ${WP_VERSION}
+      WORDPRESS_DEBUG : ${WP_DEBUG}
       WORDPRESS_CONFIG_EXTRA: |
-        define( 'WP_DEBUG', ${WP_DEBUG} );
         define( 'WP_DEBUG_DISPLAY', ${WP_DEBUG_DISPLAY} );
         define( 'WP_DEBUG_LOG', '/var/log/wordpress/debug.log' );
         define( 'FS_METHOD', 'direct' );
