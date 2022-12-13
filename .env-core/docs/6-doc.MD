@@ -87,5 +87,16 @@ Tutorials:
 
 <br>
 
+## 6.5 Docker Compose v2
+```
+Compose v1 support terminated in October 2022.
+```
+
+Tutorials:
+
+1. [How to Upgrade to Docker Compose v2](https://www.howtogeek.com/devops/how-to-upgrade-to-docker-compose-v2/) 
+
+<br>
+
 ----------------------------------
 ### [Return to README.MD](../../README.MD#6-how-to)

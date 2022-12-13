@@ -72,3 +72,11 @@ notice_wp_vars() {
         ECHO_KEY_VALUE "TABLE_PREFIX:" "$TABLE_PREFIX"
     fi
 }
+
+notice_compose_v2() {
+    command -v docker-compose >/dev/null 2>&1 || {
+        ECHO_INFO "Please install docker compose V2."
+        ECHO_INFO "Help readme 6.5"
+        EMPTY_LINE
+    }
+}
