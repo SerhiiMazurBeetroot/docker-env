@@ -12,8 +12,7 @@ setup_default_args() {
 
     #WP_VERSION
     EMPTY_LINE
-    unset WP_VERSION
-    get_latest_wp_version
+    [[ $WP_VERSION == '' ]] && get_latest_wp_version
     if [[ $WP_VERSION ]]; then
         true
     elif [[ ! $WP_VERSION ]]; then
