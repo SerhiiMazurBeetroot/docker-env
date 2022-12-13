@@ -6,7 +6,7 @@ set -o pipefail
 docker_stop() {
     get_project_dir "skip_question"
 
-    if [ "$(docker ps --format '{{.Names}}' | grep -E '(^)'$DOCKER_CONTAINER_APP'($)')" ]; then
+    if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]; then
 
         if [ -f $PROJECT_DOCKER_DIR/docker-compose.yml ]; then
             docker-compose -f $PROJECT_DOCKER_DIR/docker-compose.yml down

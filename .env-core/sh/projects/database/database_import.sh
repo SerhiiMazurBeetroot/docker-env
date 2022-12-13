@@ -6,7 +6,7 @@ set -o pipefail
 database_import() {
     get_project_dir "skip_question"
 
-    if [ "$(docker ps --format '{{.Names}}' | grep -E '(^)'$DOCKER_CONTAINER_DB'($)')" ]; then
+    if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_DB'($)')" ]; then
         ECHO_GREEN "Wordpress and DB container exists"
 
         ECHO_GREEN "PROJECT_DATABASE_DIR: $PROJECT_DATABASE_DIR"

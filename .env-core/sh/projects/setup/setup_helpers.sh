@@ -184,7 +184,7 @@ fix_permissions() {
 
         EMPTY_LINE
         ECHO_YELLOW "Fixing Permissions, this can take a while! [$PROJECT_ROOT_DIR]"
-        if [ "$(docker ps --format '{{.Names}}' | grep -E '(^)'$DOCKER_CONTAINER_APP'($)')" ]; then
+        if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]; then
             docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec chown -R www-data:www-data /var/www/html/'
             docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec chmod -R 755 /var/www/html/'
         else

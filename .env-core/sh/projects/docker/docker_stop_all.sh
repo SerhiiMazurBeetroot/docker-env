@@ -14,7 +14,7 @@ docker_stop_all() {
 
         database_auto_backup
 
-        if [ "$(docker ps --format '{{.Names}}' | grep -E '(^)'$DOCKER_CONTAINER_APP'($)')" ]; then
+        if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]; then
 
             if [ -d "$PROJECT_DOCKER_DIR" ]; then
                 DOCKER_FILES=($(find $PROJECT_DOCKER_DIR -type f -name '*.yml'))

@@ -7,11 +7,11 @@ docker_start() {
     stopped_projects_list "======== START project ========"
     get_project_dir "skip_question"
 
-    if [ "$(docker ps --format '{{.Names}}' | grep -E '(^)'$DOCKER_CONTAINER_APP'($)')" ]; then
+    if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]; then
         ECHO_WARN_RED "Containers already running for this domain"
         actions_existing_project
     else
-        if [ "$(docker image ls | grep -E '(^|_)'$DOCKER_CONTAINER_APP'(?=\s|$)')" ] && [ "$(docker volume ls --format '{{.Name}}' | grep -E '(^|_)'$DOCKER_VOLUME_DB'($)')" ]; then
+        if [ "$(docker image ls --format '{{.Repository}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ] && [ "$(docker volume ls --format '{{.Name}}' | grep -E '(^|_|-)'$DOCKER_VOLUME_DB'($)')" ]; then
             ECHO_SUCCESS "Site image and volume found"
 
             if [ -f $PROJECT_DOCKER_DIR/docker-compose.yml ]; then

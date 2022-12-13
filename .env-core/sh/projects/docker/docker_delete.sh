@@ -24,17 +24,17 @@ docker_delete() {
                 fix_permissions
                 docker_stop
 
-                if [ $(docker image ls --format '{{.Repository}}' | grep -E '(^|_)'$DOCKER_CONTAINER_APP'(?=\s|$)') ]; then
+                if [ $(docker image ls --format '{{.Repository}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)') ]; then
                     EMPTY_LINE
-                    imageid=$(docker image ls --format '{{.Repository}}' | grep -E '(^|_)'$DOCKER_CONTAINER_APP'(?=\s|$)')
+                    imageid=$(docker image ls --format '{{.Repository}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')
                     [ -n "$imageid" ] && docker rmi "$imageid" --force && ECHO_YELLOW "Deleting images" || ECHO_WARN_YELLOW "Image not found"
                 else
                     ECHO_ERROR "Docker image does not exist"
                 fi
 
-                if [ $(docker volume ls --format '{{.Name}}' | grep -E '(^|_)'$DOCKER_VOLUME_DB'($)') ]; then
+                if [ $(docker volume ls --format '{{.Name}}' | grep -E '(^|_|-)'$DOCKER_VOLUME_DB'($)') ]; then
                     EMPTY_LINE
-                    volumename=$(docker volume ls --format '{{.Name}}' | grep -E '(^|_)'$DOCKER_VOLUME_DB'($)')
+                    volumename=$(docker volume ls --format '{{.Name}}' | grep -E '(^|_|-)'$DOCKER_VOLUME_DB'($)')
                     [ -n "$volumename" ] && docker volume rm "$volumename" && ECHO_YELLOW "Deleting Volume" || echo "Volume not found"
                 else
                     ECHO_ERROR "Docker volume does not exist"
