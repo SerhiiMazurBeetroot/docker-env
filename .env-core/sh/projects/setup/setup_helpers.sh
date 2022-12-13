@@ -17,7 +17,7 @@ get_domain_name() {
         DOMAIN_NAME=$(echo $DOMAIN_NAME | tr -dc '[[:print:]]' | tr -d ' ' | tr -d '[A' | tr -d '[C' | tr -d '[B' | tr -d '[D')
 
         # Remove subdomain
-        DOMAIN_NAME=$(echo ${DOMAIN_NAME} | cut -d . -f 1 )
+        DOMAIN_NAME=$(echo ${DOMAIN_NAME} | cut -d . -f 1)
     fi
 }
 
@@ -71,20 +71,27 @@ get_php_versions() {
 }
 
 get_latest_wp_version() {
-    WP=$(curl -s 'https://api.github.com/repos/wordpress/wordpress/tags' | grep "name" | head -n 2 | awk '$0=$2' | grep -E '[0-9]+\.[0-9]+?' | tr -d \", )
+    WP=$(curl -s 'https://api.github.com/repos/wordpress/wordpress/tags' | grep "name" | head -n 2 | awk '$0=$2' | grep -E '[0-9]+\.[0-9]+?' | tr -d \",)
     WP=($WP)
     WP_LATEST_VER=$(echo ${WP[0]} | grep -Eo '[0-9]+\.[0-9]+\.?[0-9]+' || echo "${WP[0]}.0")
     WP_PREV_VER=$(echo ${WP[1]} | grep -Eo '[0-9]+\.[0-9]+\.?[0-9]+' || echo "${WP[1]}.0")
 }
 
 docker_official_image_exits() {
+    ECHO_YELLOW "Cheking docker image exists..."
+
+    # First check local image
     exist=$(docker image inspect "$1" >/dev/null 2>&1 && echo yes || echo no)
 
-    #Check if response is empty array
+    # Than check remote
     if [[ "$exist" == "no" ]]; then
-        WP_VERSION=$WP_PREV_VER
-    else
-        WP_VERSION=$WP_LATEST_VER
+        exist=$(docker manifest inspect "$1" >/dev/null 2>&1 && echo yes || echo no)
+
+        if [[ "$exist" == "no" ]]; then
+            WP_VERSION=$WP_PREV_VER
+        else
+            WP_VERSION=$WP_LATEST_VER
+        fi
     fi
 }
 
@@ -227,7 +234,7 @@ EOF
     else
         EMPTY_LINE
         ECHO_YELLOW "create .gitignore file..."
-        cat <<- EOF > $PROJECT_ROOT_DIR/.gitignore
+        cat <<-EOF >$PROJECT_ROOT_DIR/.gitignore
 /wp-docker/
 /logs/
 /vendor/
