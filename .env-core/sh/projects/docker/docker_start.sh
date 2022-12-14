@@ -11,7 +11,7 @@ docker_start() {
         ECHO_WARN_RED "Containers already running for this domain"
         actions_existing_project
     else
-        if [ "$(docker image ls --format '{{.Repository}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ] && [ "$(docker volume ls --format '{{.Name}}' | grep -E '(^|_|-)'$DOCKER_VOLUME_DB'($)')" ]; then
+        if [[ "$(docker image ls --format '{{.Repository}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]] && [ "$(docker volume ls --format '{{.Name}}' | grep -E '(^|_|-)'$DOCKER_VOLUME_DB'($)')" ]; then
             ECHO_SUCCESS "Site image and volume found"
 
             if [ -f $PROJECT_DOCKER_DIR/docker-compose.yml ]; then
