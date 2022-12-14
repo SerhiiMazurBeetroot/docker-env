@@ -74,9 +74,11 @@ notice_wp_vars() {
 }
 
 notice_compose_v2() {
-    command -v docker-compose >/dev/null 2>&1 || {
+    docker_compose_version
+
+    if [[ $COMPOSE_VERSION == 1 ]]; then
         ECHO_INFO "Please install docker compose V2."
         ECHO_INFO "Help readme 6.5"
         EMPTY_LINE
-    }
+    fi
 }
