@@ -19,7 +19,7 @@ docker_stop_all() {
             if [ -d "$PROJECT_DOCKER_DIR" ]; then
                 DOCKER_FILES=($(find $PROJECT_DOCKER_DIR -type f -name '*.yml'))
 
-                [ -f "$DOCKER_FILES" ] && docker-compose -f $DOCKER_FILES down
+                [ -f "$DOCKER_FILES" ] && docker_compose_runner "down"
             fi
 
             ECHO_SUCCESS "Docker container stopped [$PROJECT_ROOT_DIR]"

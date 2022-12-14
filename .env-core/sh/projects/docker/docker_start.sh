@@ -17,7 +17,7 @@ docker_start() {
             if [ -f $PROJECT_DOCKER_DIR/docker-compose.yml ]; then
                 ECHO_YELLOW "Starting docker containers for this site"
 
-                docker-compose -f $PROJECT_DOCKER_DIR/docker-compose.yml up -d
+                docker_compose_runner "up -d"
 
                 ECHO_GREEN "Restarted now."
                 docker_nginx_restart
@@ -36,7 +36,7 @@ docker_start() {
 
             if [ -f "$DOCKER_FILES" ]; then
                 echo "Starting Container"
-                docker-compose -f $DOCKER_FILES up -d
+                docker_compose_runner "up -d"
             else
                 ECHO_ERROR "Docker-compose file not found"
                 exit

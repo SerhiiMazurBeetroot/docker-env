@@ -9,7 +9,7 @@ docker_stop() {
     if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]; then
 
         if [ -f $PROJECT_DOCKER_DIR/docker-compose.yml ]; then
-            docker-compose -f $PROJECT_DOCKER_DIR/docker-compose.yml down
+            docker_compose_runner "down"
         fi
 
         docker_nginx_restart

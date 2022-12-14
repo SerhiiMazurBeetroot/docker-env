@@ -46,8 +46,7 @@ docker_create_nodejs () {
 
 		setup_hosts_file add
 
-		docker-compose -f $PROJECT_ROOT_DIR/docker-compose.yml up -d
-
+		docker_compose_runner "up -d"
 
 	else
 		ECHO_ERROR "Site already exists"

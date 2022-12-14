@@ -3,6 +3,7 @@
 # shellcheck disable=SC1091
 FILE_SETTINGS='./.env-core/settings.log'
 FILE_INSTANCES='./.env-core/instances.log'
+DIR_NGINX='./.env-core/nginx'
 
 export AVAILABLE_PROJECTS=(wordpress bedrock php nodejs)
 

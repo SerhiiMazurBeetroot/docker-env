@@ -50,7 +50,7 @@ docker_create_php() {
 
             ECHO_GREEN "Docker compose file set and container can be built and started"
             ECHO_TEXT "Starting Container"
-            docker-compose -f $PROJECT_DOCKER_DIR/docker-compose.yml up -d --build
+            docker_compose_runner "up -d --build"
 
             ECHO_SUCCESS "Containers Started"
 
