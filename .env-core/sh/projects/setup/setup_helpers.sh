@@ -78,7 +78,7 @@ get_latest_wp_version() {
 }
 
 docker_official_image_exits() {
-    ECHO_YELLOW "Cheking docker image exists..."
+    ECHO_YELLOW "Cheking docker image exists: $1"
 
     # First check local image
     exist=$(docker image inspect "$1" >/dev/null 2>&1 && echo yes || echo no)
