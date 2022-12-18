@@ -1,11 +1,8 @@
 FROM wordpress:{WP_VERSION}-php{PHP_VERSION}-apache
 
-#Add sudo in order to run wp-cli as the www-data user 
-RUN apt-get -y update
-RUN apt-get install -y sudo
-
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+# Add sudo in order to run wp-cli as the www-data user 
+RUN apt-get -y update && apt-get install -y sudo \
     git \
     curl \
     libpng-dev \

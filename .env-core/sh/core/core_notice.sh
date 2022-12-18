@@ -72,3 +72,13 @@ notice_wp_vars() {
         ECHO_KEY_VALUE "TABLE_PREFIX:" "$TABLE_PREFIX"
     fi
 }
+
+notice_compose_v2() {
+    docker_compose_version
+
+    if [[ $COMPOSE_VERSION == 1 ]]; then
+        ECHO_INFO "Please install docker compose V2."
+        ECHO_INFO "Help readme 6.5"
+        EMPTY_LINE
+    fi
+}

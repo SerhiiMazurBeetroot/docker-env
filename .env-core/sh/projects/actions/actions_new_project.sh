@@ -20,15 +20,15 @@ actions_new_project() {
       ;;
     1)
       docker_create_wp
-      unset_variables
+      unset_variables "PROJECT_TYPE"
       ;;
     2)
       docker_create_bedrock
-      unset_variables
+      unset_variables "PROJECT_TYPE"
       ;;
     3)
       docker_create_php
-      unset_variables
+      unset_variables "PROJECT_TYPE"
       ;;
     esac
   done

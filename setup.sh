@@ -16,15 +16,13 @@ main_actions() {
 	[[ ! $ENV_UPDATES ]] && check_env_version "daily"
 	[[ $ENV_UPDATES == "Everything up-to-date" ]] && ENV_UPDATES=""
 
-    while true; do
+	while true; do
 		ECHO_INFO "======== devENV ======="
 		ECHO_YELLOW "0 - Exit and do nothing"
 		ECHO_GREEN "1 - Nginx"
 		ECHO_GREEN "2 - New project"
 		ECHO_GREEN "3 - Existing project"
 		ECHO_KEY_VALUE "4 - ENV settings" "$ENV_UPDATES"
-		
-		
 
 		read -rp "$(ECHO_YELLOW "Please select one of:")" userChoice
 

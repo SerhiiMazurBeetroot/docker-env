@@ -60,11 +60,13 @@ Please remember to add or remove your domain in the Windows host file:
 ## 6.3 Database management tool
 
 ```
-In this envinronment used Adminer database management tool.
+In this envinronment used Adminer and phpMyAdmin database management tool.
 
 To access any database, all you need to do is visit its link through your browser.
 
-As an example: https://dev.test.local/adminer.php
+Adminer: https://dev.test.local/adminer.php
+
+phpMyAdmin: https://dev.test.local.phpmyadmin
 ```
 
 Tutorials:
@@ -82,6 +84,17 @@ Tutorials:
 
 1. [GitHub: Creating a personal access token](https://docs.github.com/en/enterprise-server@3.4/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) 
 2. [GitLab: Creating a personal access token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) 
+
+<br>
+
+## 6.5 Docker Compose v2
+```
+Compose v1 support terminated in October 2022.
+```
+
+Tutorials:
+
+1. [How to Upgrade to Docker Compose v2](https://www.howtogeek.com/devops/how-to-upgrade-to-docker-compose-v2/) 
 
 <br>
 

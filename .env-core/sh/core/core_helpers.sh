@@ -16,6 +16,8 @@ fix_linux_watchers() {
 
 check_instances_file_exists() {
     if [ ! -f "$FILE_INSTANCES" ]; then
+        mkdir $DIR_DATA
+
         PORT=3309
         echo "$PORT | STATUS | DOMAIN_NAME | DOMAIN_FULL | DB_NAME | DB_TYPE | PROJECT_TYPE | " >>"$FILE_INSTANCES"
     fi

@@ -6,6 +6,8 @@ set -o pipefail
 env_migration() {
     CORE_VER_CUR=$(awk '/CORE_VERSION/{print $1}' "$FILE_SETTINGS" | sed 's/'CORE_VERSION='//')
 
+    move_dir_data
+
     if [[ $CORE_VER_CUR == '' ]]; then
         #case v.1.0.0 => v.2.0.0
         replace_old_settings_file
@@ -13,8 +15,9 @@ env_migration() {
         replace_dir_projects_to_wordpress
         replace_docker_compose
         delete_visible_envcore_dir
-        core_version
     fi
+
+    core_version
 }
 
 replace_old_settings_file() {
@@ -95,5 +98,14 @@ replace_docker_compose() {
 delete_visible_envcore_dir() {
     if [ -d "env-core" ]; then
         rm -rf env-core
+    fi
+}
+
+move_dir_data() {
+    if [ -f "./.env-core/instances.log" ]; then
+        ECHO_YELLOW "Replacing FILE_INSTANCES ..."
+
+        mv "./.env-core/settings.log" $FILE_SETTINGS
+        mv "./.env-core/instances.log" $FILE_INSTANCES
     fi
 }

@@ -4,11 +4,11 @@ set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
 docker_nginx_setup() {
-    if [ ! -d "./.env-core/nginx" ]; then
+    if [ ! -d "$DIR_NGINX" ]; then
         ECHO_ERROR "Nginx folder does not exist"
         ECHO_ERROR "Make sure folder was not deleted"
     else
-        if [ -f "./.env-core/nginx/docker-compose.yml" ]; then
+        if [ -f "$DIR_NGINX/docker-compose.yml" ]; then
             if [ $NGINX_EXISTS -eq 1 ]; then
                 EMPTY_LINE
                 ECHO_SUCCESS "Nginx-proxy already setup and running"
@@ -56,12 +56,12 @@ docker_nginx_setup() {
 }
 
 docker_nginx_start() {
-    docker-compose -f ./.env-core/nginx/docker-compose.yml up -d
+    docker_compose_runner "up -d" "$DIR_NGINX"
 }
 
 docker_nginx_stop() {
     if [ $NGINX_EXISTS -eq 1 ]; then
-        docker-compose -f ./.env-core/nginx/docker-compose.yml down
+        docker_compose_runner "down" "$DIR_NGINX"
     else
         ECHO_ERROR "Nginx container not running"
     fi
@@ -69,18 +69,18 @@ docker_nginx_stop() {
 
 docker_nginx_restart() {
     if [ $NGINX_EXISTS -eq 1 ]; then
-        docker-compose -f ./.env-core/nginx/docker-compose.yml restart
+        docker_compose_runner "restart" "$DIR_NGINX"
     else
         ECHO_ERROR "Nginx container not running"
     fi
 }
 
 docker_nginx_rebuild() {
-    docker-compose -f ./.env-core/nginx/docker-compose.yml up -d --force-recreate --no-deps --build
+    docker_compose_runner "up -d --force-recreate --no-deps --build" "$DIR_NGINX"
 }
 
 docker_nginx_container() {
-    if [ "$(docker ps --format '{{.Names}}' | grep -P '(^)nginx-proxy($)')" ]; then
+    if [ "$(docker ps --format '{{.Names}}' | grep -E '(^)nginx-proxy($)')" ]; then
         NGINX_EXISTS=1
     else
         NGINX_EXISTS=0

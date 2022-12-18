@@ -3,8 +3,6 @@
 set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
-export AVAILABLE_PROJECTS=('wordpress' 'bedrock' 'php' 'nodejs')
-
 get_domain_name() {
     if [ -z "$DOMAIN_NAME" ]; then
         EMPTY_LINE
@@ -17,6 +15,9 @@ get_domain_name() {
 
         # Remove non printing chars from DOMAIN_NAME
         DOMAIN_NAME=$(echo $DOMAIN_NAME | tr -dc '[[:print:]]' | tr -d ' ' | tr -d '[A' | tr -d '[C' | tr -d '[B' | tr -d '[D')
+
+        # Remove subdomain
+        DOMAIN_NAME=$(echo ${DOMAIN_NAME} | cut -d . -f 1)
     fi
 }
 
@@ -70,21 +71,10 @@ get_php_versions() {
 }
 
 get_latest_wp_version() {
-    WP=$(curl -s 'https://api.github.com/repos/wordpress/wordpress/tags' | grep "name" | head -n 2 | awk '$0=$2' | grep -Eo '[0-9]+\.[0-9]+\.?[0-9]+?')
+    WP=$(curl -s 'https://api.github.com/repos/wordpress/wordpress/tags' | grep "name" | head -n 2 | awk '$0=$2' | grep -E '[0-9]+\.[0-9]+?' | tr -d \",)
     WP=($WP)
     WP_LATEST_VER=$(echo ${WP[0]} | grep -Eo '[0-9]+\.[0-9]+\.?[0-9]+' || echo "${WP[0]}.0")
     WP_PREV_VER=$(echo ${WP[1]} | grep -Eo '[0-9]+\.[0-9]+\.?[0-9]+' || echo "${WP[1]}.0")
-}
-
-docker_official_image_exits() {
-    exist=$(docker image inspect "$1" >/dev/null 2>&1 && echo yes || echo no)
-
-    #Check if response is empty array
-    if [[ "$exist" == "no" ]]; then
-        WP_VERSION=$WP_PREV_VER
-    else
-        WP_VERSION=$WP_LATEST_VER
-    fi
 }
 
 unset_variables() {
@@ -176,11 +166,11 @@ fix_permissions() {
 
         EMPTY_LINE
         ECHO_YELLOW "Fixing Permissions, this can take a while! [$PROJECT_ROOT_DIR]"
-        if [ "$(docker ps --format '{{.Names}}' | grep -P '(^|_)'$DOCKER_CONTAINER_APP'(?=\s|$)')" ]; then
+        if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]; then
             docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec chown -R www-data:www-data /var/www/html/'
             docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec chmod -R 755 /var/www/html/'
         else
-            ECHO_ERROR "Docker container doesn't exist [$DOMAIN_FULL]"
+            ECHO_ERROR "Docker container doesn't exist [$PROJECT_ROOT_DIR]"
         fi
 
         #Fix WP permissions
@@ -226,15 +216,12 @@ EOF
     else
         EMPTY_LINE
         ECHO_YELLOW "create .gitignore file..."
-        ex "$PROJECT_ROOT_DIR/.gitignore" <<EOF
-1 insert
+        cat <<-EOF >$PROJECT_ROOT_DIR/.gitignore
 /wp-docker/
 /logs/
 /vendor/
 adminer.php
 wp-config-docker.php
-.
-xit
 EOF
     fi
 }

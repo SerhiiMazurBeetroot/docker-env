@@ -32,15 +32,14 @@ docker_create_bedrock() {
             replace_templates_files
 
             # Replace Variables
-            sed -i -e 's/{DOMAIN_NAME}/'$DOMAIN_NAME'/g' $PROJECT_DOCKER_DIR/docker-compose.yml
-            sed -i -e 's/{PHP_VERSION}/'$PHP_VERSION'/g' $PROJECT_DOCKER_DIR/Dockerfile
+            replace_variables
 
             # Load env
             env_file_load
 
             ECHO_GREEN "Docker compose file set and container can be built and started"
             ECHO_TEXT "Starting Container"
-            docker-compose -f $PROJECT_DOCKER_DIR/docker-compose.yml up -d --build
+            docker_compose_runner "up -d --build"
 
             ECHO_SUCCESS "Containers Started"
 

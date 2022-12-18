@@ -7,17 +7,17 @@ docker_start() {
     stopped_projects_list "======== START project ========"
     get_project_dir "skip_question"
 
-    if [ "$(docker ps --format '{{.Names}}' | grep -P '(^)'$DOCKER_CONTAINER_APP'($)')" ]; then
+    if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]; then
         ECHO_WARN_RED "Containers already running for this domain"
         actions_existing_project
     else
-        if [ "$(docker image ls | grep -P '(^|_)'$DOCKER_CONTAINER_APP'(?=\s|$)')" ] && [ "$(docker volume ls --format '{{.Name}}' | grep -P '(^|_)'$DOCKER_VOLUME_DB'($)')" ]; then
+        if [[ "$(docker image ls --format '{{.Repository}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]] && [ "$(docker volume ls --format '{{.Name}}' | grep -E '(^|_|-)'$DOCKER_VOLUME_DB'($)')" ]; then
             ECHO_SUCCESS "Site image and volume found"
 
             if [ -f $PROJECT_DOCKER_DIR/docker-compose.yml ]; then
                 ECHO_YELLOW "Starting docker containers for this site"
 
-                docker-compose -f $PROJECT_DOCKER_DIR/docker-compose.yml up -d
+                docker_compose_runner "up -d"
 
                 ECHO_GREEN "Restarted now."
                 docker_nginx_restart
@@ -36,7 +36,7 @@ docker_start() {
 
             if [ -f "$DOCKER_FILES" ]; then
                 echo "Starting Container"
-                docker-compose -f $DOCKER_FILES up -d
+                docker_compose_runner "up -d"
             else
                 ECHO_ERROR "Docker-compose file not found"
                 exit

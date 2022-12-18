@@ -55,7 +55,7 @@ git_create_repo_github() {
 EOF
         )
 
-        response="$(echo $response | awk -F'[][]' '{print $2}' | grep -Po '("message": ".*")' | sed 's/"message"://g' || true)"
+        response="$(echo $response | awk -F'[][]' '{print $2}' | grep -Eo '("message": ".*")' | sed 's/"message"://g' || true)"
 
         if [[ $response == "" ]]; then
             ECHO_SUCCESS "Github"

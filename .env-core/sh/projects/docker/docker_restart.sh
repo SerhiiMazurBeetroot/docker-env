@@ -8,11 +8,11 @@ docker_restart() {
 
     get_project_dir "skip_question"
 
-    if [ "$(docker ps --format '{{.Names}}' | grep -P '(^)'$DOCKER_CONTAINER_APP'($)')" ]; then
-        [ -f $PROJECT_DOCKER_DIR/docker-compose.yml ] && docker-compose -f $PROJECT_DOCKER_DIR/docker-compose.yml restart
+    if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]; then
+        [ -f $PROJECT_DOCKER_DIR/docker-compose.yml ] && docker_compose_runner "restart"
 
         docker_nginx_restart
     else
-        ECHO_ERROR "Docker container doesn't exist [$DOMAIN_FULL]"
+        ECHO_ERROR "Docker container doesn't exist [$PROJECT_ROOT_DIR]"
     fi
 }

@@ -137,7 +137,7 @@ update_env() {
 core_version() {
     if [[ $CORE_VER_CUR == '' ]]; then
         echo "CORE_VERSION=$CORE_VERSION" >>"$FILE_SETTINGS"
-    else
+    elif [[ $CORE_VER_CUR != $CORE_VERSION ]]; then
         #Replace CORE_VERSION
         sed -i -e '/CORE_VERSION/d' "$FILE_SETTINGS"
         echo "CORE_VERSION=$CORE_VERSION" >>"$FILE_SETTINGS"

@@ -10,7 +10,7 @@ running_projects_list() {
     ACTION=$1
 
     for PROJECT in "${AVAILABLE_PROJECTS[@]}"; do
-        running_container+=($(docker ps --format '{{.Names}}' | grep -E "*-$PROJECT($)" | sed -r 's/'-$PROJECT'/''/')) || true
+        running_container+=($(docker ps --format '{{.Names}}' | grep -E ".*-$PROJECT($)" | sed -r 's/'-$PROJECT'/''/')) || true
     done
 
     #Check if running_container is from this environment
@@ -19,7 +19,6 @@ running_projects_list() {
         existing_container=${existing_container:+$existing_container }$DOMAIN_EXISTS
     done
     running_container=($existing_container)
-
     if [ "$running_container" ]; then
         while true; do
             EMPTY_LINE

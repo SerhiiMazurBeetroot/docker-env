@@ -9,6 +9,6 @@ docker_rebuild() {
     get_project_dir "skip_question"
 
     if [ -f $PROJECT_DOCKER_DIR/docker-compose.yml ]; then
-        docker-compose -f $PROJECT_DOCKER_DIR/docker-compose.yml up -d --force-recreate -V --no-deps --build
+        docker_compose_runner "up -d --force-recreate -V --no-deps --build"
     fi
 }

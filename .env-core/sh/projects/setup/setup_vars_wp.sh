@@ -12,8 +12,7 @@ setup_default_args() {
 
     #WP_VERSION
     EMPTY_LINE
-    unset WP_VERSION
-    get_latest_wp_version
+    [[ $WP_VERSION == '' ]] && get_latest_wp_version
     if [[ $WP_VERSION ]]; then
         true
     elif [[ ! $WP_VERSION ]]; then
@@ -26,23 +25,25 @@ setup_default_args() {
     [[ $WP_USER == '' ]] && WP_USER=developer
 
     #WP_PASSWORD
-    randpassword
+    [[ $passw == '' ]] && randpassword
+
     if [[ ! "$passw" =~ [1-3] ]]; then
         WP_PASSWORD=1
     elif [[ "$passw" -eq 1 ]]; then
         WP_PASSWORD=1
     elif [[ "$passw" -eq 2 ]]; then
         WP_PASSWORD="$WP_PASSWORD"
-    elif [[ "$passw" -eq 3 ]]; then
-        EMPTY_LINE
-        read -rp "$(ECHO_YELLOW "Your password:")" WP_PASSWORD
     fi
 
     #PHP_VERSION
     get_php_versions "default"
 
     #Check official image
-    docker_official_image_exits "wordpress:$WP_VERSION-php$PHP_VERSION-apache"
+    local IMAGE="wordpress:$WP_VERSION-php$PHP_VERSION-apache"
+    [[ $PROJECT_TYPE -eq 3 || $PROJECT_TYPE == 'php'  ]] && IMAGE="php:$PHP_VERSION-apache"
+    [[ $PROJECT_TYPE -eq 2 || $PROJECT_TYPE == 'bedrock'  ]] && IMAGE="php:$PHP_VERSION-apache"
+
+    docker_official_image_exits $IMAGE
 }
 
 setup_custom_args() {
@@ -75,6 +76,10 @@ setup_custom_args() {
     ECHO_GREEN "2 - $WP_PASSWORD"
     ECHO_GREEN "3 - Enter your password"
     read -rp "$(ECHO_YELLOW "Please select one of:")" passw
+    if [[ "$passw" -eq 3 ]]; then
+        EMPTY_LINE
+        read -rp "$(ECHO_YELLOW "Your password:")" WP_PASSWORD
+    fi
 
     #PHP_VERSION
     EMPTY_LINE

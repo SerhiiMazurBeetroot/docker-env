@@ -46,8 +46,7 @@ docker_create_nodejs () {
 
 		setup_hosts_file add
 
-		docker-compose -f $PROJECT_ROOT_DIR/docker-compose.yml up -d
-
+		docker_compose_runner "up -d"
 
 	else
 		ECHO_ERROR "Site already exists"
@@ -73,19 +72,19 @@ docker_nodejs_delete () {
 					fix_permissions
 					docker_stop
 					
-					if [ $( docker image ls --format '{{.Repository}}' | grep -P '(^|_)'$DOCKER_CONTAINER_APP'(?=\s|$)' ) ];
+					if [ $( docker image ls --format '{{.Repository}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)' ) ];
 					then
 						EMPTY_LINE
-						imageid=$( docker image ls --format '{{.Repository}}' | grep -P '(^|_)'$DOCKER_CONTAINER_APP'(?=\s|$)' )
+						imageid=$( docker image ls --format '{{.Repository}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)' )
 						[ -n "$imageid" ] && docker rmi "$imageid" --force && ECHO_YELLOW "Deleting images" || ECHO_WARN_YELLOW "Image not found"
 					else
 						ECHO_ERROR "Docker image does not exist"
 					fi
 
-					if [ $( docker volume ls --format '{{.Name}}' | grep -P '(^|_)'$DOCKER_VOLUME_DB'($)' ) ];
+					if [ $( docker volume ls --format '{{.Name}}' | grep -E '(^|_|-)'$DOCKER_VOLUME_DB'($)' ) ];
 					then
 						EMPTY_LINE
-						volumename=$( docker volume ls --format '{{.Name}}' | grep -P '(^|_)'$DOCKER_VOLUME_DB'($)' )
+						volumename=$( docker volume ls --format '{{.Name}}' | grep -E '(^|_|-)'$DOCKER_VOLUME_DB'($)' )
 						[ -n "$volumename" ] && docker volume rm "$volumename" && ECHO_YELLOW "Deleting Volume" || echo "Volume not found"
 					else
 						ECHO_ERROR "Docker volume does not exist"

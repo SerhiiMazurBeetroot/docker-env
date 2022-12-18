@@ -1,8 +1,14 @@
 #!/bin/bash
 
 # shellcheck disable=SC1091
-FILE_SETTINGS='./.env-core/settings.log'
-FILE_INSTANCES='./.env-core/instances.log'
+DIR_DATA='./.env-core/data'
+DIR_NGINX='./.env-core/nginx'
+
+FILE_SETTINGS="$DIR_DATA/settings.log"
+FILE_INSTANCES="$DIR_DATA/instances.log"
+FILE_DOCKER_HUB="$DIR_DATA/dockerHub.log"
+
+export AVAILABLE_PROJECTS=(wordpress bedrock php nodejs)
 
 source_files_in() {
   local dir="$1"

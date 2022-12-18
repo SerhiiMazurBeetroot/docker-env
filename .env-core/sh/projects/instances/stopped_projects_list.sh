@@ -6,6 +6,7 @@ set -o pipefail
 stopped_projects_list() {
     unset existing_container
     unset stopped_container
+    unset running_container
     ACTION=$1
 
     for PROJECT in "${AVAILABLE_PROJECTS[@]}"; do
@@ -25,7 +26,6 @@ stopped_projects_list() {
         running_container=$(printf "%s\|" "${running_container[@]}")
 
         stopped_container=($(echo "$existing_container" | sed "s/\($running_container\)//g"))
-        # stopped_container=($(echo "$stopped_container" | sed -r 's/'-wordpress'/''/g' ))
 
         while true; do
             EMPTY_LINE
