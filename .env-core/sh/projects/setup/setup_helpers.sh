@@ -77,24 +77,6 @@ get_latest_wp_version() {
     WP_PREV_VER=$(echo ${WP[1]} | grep -Eo '[0-9]+\.[0-9]+\.?[0-9]+' || echo "${WP[1]}.0")
 }
 
-docker_official_image_exits() {
-    ECHO_YELLOW "Cheking docker image exists: $1"
-
-    # First check local image
-    exist=$(docker image inspect "$1" >/dev/null 2>&1 && echo yes || echo no)
-
-    # Than check remote
-    if [[ "$exist" == "no" ]]; then
-        exist=$(docker manifest inspect "$1" >/dev/null 2>&1 && echo yes || echo no)
-
-        if [[ "$exist" == "no" ]]; then
-            WP_VERSION=$WP_PREV_VER
-        else
-            WP_VERSION=$WP_LATEST_VER
-        fi
-    fi
-}
-
 unset_variables() {
     unset DOMAIN_NAME DB_NAME TABLE_PREFIX PHP_VERSION $1
 }
