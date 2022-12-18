@@ -26,5 +26,7 @@ check_instances_file_exists() {
 print_to_file_instances() {
     if [[ $PORT && $DOMAIN_NAME ]]; then
         echo "$PORT | active | $DOMAIN_NAME | $DOMAIN_FULL | $DB_NAME | $DB_TYPE | $PROJECT_TYPE |" >>"$FILE_INSTANCES"
+        # Save backup
+        echo "$PORT | active | $DOMAIN_NAME | $DOMAIN_FULL | $DB_NAME | $DB_TYPE | $PROJECT_TYPE |" >>"$FILE_INSTANCES.bak"
     fi
 }
