@@ -43,7 +43,7 @@ setup_default_args() {
     [[ $PROJECT_TYPE -eq 3 || $PROJECT_TYPE == 'php'  ]] && IMAGE="php:$PHP_VERSION-apache"
     [[ $PROJECT_TYPE -eq 2 || $PROJECT_TYPE == 'bedrock'  ]] && IMAGE="php:$PHP_VERSION-apache"
 
-    docker_official_image_exits $IMAGE
+    docker_official_image_exists $IMAGE
 }
 
 setup_custom_args() {
