@@ -36,7 +36,7 @@ docker_compose_runner() {
 	cd $DIR_ENV
 }
 
-docker_official_image_exits() {
+docker_official_image_exists() {
 	ECHO_YELLOW "Cheking docker image exists: $1"
 
 	# First check local image
