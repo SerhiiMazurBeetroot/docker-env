@@ -70,6 +70,7 @@ notice_wp_vars() {
         ECHO_KEY_VALUE "WP_PASSWORD:" "$WP_PASSWORD"
         ECHO_KEY_VALUE "DB_NAME:" "$DB_NAME"
         ECHO_KEY_VALUE "TABLE_PREFIX:" "$TABLE_PREFIX"
+        [[ $PROJECT_TYPE == "wordpress" ]] && ECHO_KEY_VALUE "MULTISITE:" "$MULTISITE"
     fi
 }
 

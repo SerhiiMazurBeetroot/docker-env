@@ -78,7 +78,7 @@ get_latest_wp_version() {
 }
 
 unset_variables() {
-    unset DOMAIN_NAME DB_NAME TABLE_PREFIX PHP_VERSION $1
+    unset DOMAIN_NAME DB_NAME TABLE_PREFIX PHP_VERSION MULTISITE $1
 }
 
 update_file_instances() {
@@ -140,6 +140,8 @@ env_file_load() {
         sed -i -e 's/{WP_USER}/'$WP_USER'/g' $PROJECT_DOCKER_DIR/.env
         sed -i -e 's/{WP_PASSWORD}/'$WP_PASSWORD'/g' $PROJECT_DOCKER_DIR/.env
         sed -i -e 's/{PHP_VERSION}/'$PHP_VERSION'/g' $PROJECT_DOCKER_DIR/.env
+
+        [[ "yes" = "$MULTISITE" ]] && wp_multisite_env
 
         #Replace only first occurrence in the file
         sed -i -e '0,/{MYSQL_DATABASE}/s//'$DB_NAME'/' $PROJECT_DOCKER_DIR/.env

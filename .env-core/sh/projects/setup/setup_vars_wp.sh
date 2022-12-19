@@ -35,6 +35,10 @@ setup_default_args() {
         WP_PASSWORD="$WP_PASSWORD"
     fi
 
+    #WP_TYPE
+    [[ $MULTISITE == '' ]] && MULTISITE=no
+    [[ $MULTISITE == '2' ]] && MULTISITE=yes
+
     #PHP_VERSION
     get_php_versions "default"
 
@@ -72,14 +76,22 @@ setup_custom_args() {
     EMPTY_LINE
     ECHO_YELLOW "Enter WP_PASSWORD [default '1']"
     randpassword
-    ECHO_GREEN "1 - 1"
-    ECHO_GREEN "2 - $WP_PASSWORD"
-    ECHO_GREEN "3 - Enter your password"
+    ECHO_KEY_VALUE "[1]" "1"
+    ECHO_KEY_VALUE "[2]" "$WP_PASSWORD"
+    ECHO_KEY_VALUE "[3]" "Enter your password"
     read -rp "$(ECHO_YELLOW "Please select one of:")" passw
     if [[ "$passw" -eq 3 ]]; then
         EMPTY_LINE
         read -rp "$(ECHO_YELLOW "Your password:")" WP_PASSWORD
     fi
+
+    #WP_TYPE
+    EMPTY_LINE
+    ECHO_YELLOW "Do you want a multisite installation? [default '1']"
+    randpassword
+    ECHO_KEY_VALUE "[1]" "no"
+    ECHO_KEY_VALUE "[2]" "yes"
+    read -rp "$(ECHO_YELLOW "Please select one of:")" MULTISITE
 
     #PHP_VERSION
     EMPTY_LINE
