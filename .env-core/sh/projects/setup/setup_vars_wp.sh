@@ -35,6 +35,17 @@ setup_default_args() {
         WP_PASSWORD="$WP_PASSWORD"
     fi
 
+    #EMPTY_CONTENT
+    if [[ ! "$EMPTY_CONTENT" =~ [1-2] ]]; then
+        EMPTY_CONTENT="no"
+    elif [[ "$EMPTY_CONTENT" -eq 1 ]]; then
+        EMPTY_CONTENT="no"
+    elif [[ "$EMPTY_CONTENT" -eq 2 ]]; then
+        EMPTY_CONTENT="yes"
+    elif [[ $EMPTY_CONTENT == '' ]]; then
+        EMPTY_CONTENT="no"
+    fi
+
     #WP_TYPE
     [[ $MULTISITE == '' ]] && MULTISITE=no
     [[ $MULTISITE == '2' ]] && MULTISITE=yes
@@ -85,9 +96,16 @@ setup_custom_args() {
         read -rp "$(ECHO_YELLOW "Your password:")" WP_PASSWORD
     fi
 
+    #Remove default content
+    EMPTY_LINE
+    ECHO_YELLOW "EMPTY_CONTENT [default 'no']"
+    ECHO_GREEN "1 - no"
+    ECHO_GREEN "2 - yes"
+    read -rp "$(ECHO_YELLOW "Please select one of:")" EMPTY_CONTENT
+
     #WP_TYPE
     EMPTY_LINE
-    ECHO_YELLOW "Do you want a multisite installation? [default '1']"
+    ECHO_YELLOW "Do you want a multisite installation? [default 'no']"
     randpassword
     ECHO_KEY_VALUE "[1]" "no"
     ECHO_KEY_VALUE "[2]" "yes"
