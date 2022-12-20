@@ -47,8 +47,15 @@ setup_default_args() {
     fi
 
     #WP_TYPE
-    [[ $MULTISITE == '' ]] && MULTISITE=no
-    [[ $MULTISITE == '2' ]] && MULTISITE=yes
+    if [[ ! "$MULTISITE" =~ [1-2] ]]; then
+        MULTISITE="no"
+    elif [[ "$MULTISITE" -eq 1 ]]; then
+        MULTISITE="no"
+    elif [[ "$MULTISITE" -eq 2 ]]; then
+        MULTISITE="yes"
+    elif [[ $MULTISITE == '' ]]; then
+        MULTISITE="no"
+    fi
 
     #PHP_VERSION
     get_php_versions "default"
