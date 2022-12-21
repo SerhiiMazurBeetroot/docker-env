@@ -16,6 +16,9 @@ get_domain_name() {
         # Remove non printing chars from DOMAIN_NAME
         DOMAIN_NAME=$(echo $DOMAIN_NAME | tr -dc '[[:print:]]' | tr -d ' ' | tr -d '[A' | tr -d '[C' | tr -d '[B' | tr -d '[D')
 
+        # Replace "_" to "-"
+        DOMAIN_NAME=$(echo $DOMAIN_NAME | sed 's/_/-/g')
+
         # Remove subdomain
         DOMAIN_NAME=$(echo ${DOMAIN_NAME} | cut -d . -f 1)
     fi

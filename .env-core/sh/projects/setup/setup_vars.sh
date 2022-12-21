@@ -47,6 +47,9 @@ get_project_dir() {
     # Remove non printing chars from DOMAIN_FULL
     DOMAIN_FULL=$(echo $DOMAIN_FULL | tr -dc '[[:print:]]' | tr -d ' ' | tr -d '[A' | tr -d '[C' | tr -d '[B' | tr -d '[D')
 
+    # Replace "_" to "-"
+    DOMAIN_FULL=$(echo $DOMAIN_FULL | sed 's/_/-/g')
+
     set_project_vars
 }
 
