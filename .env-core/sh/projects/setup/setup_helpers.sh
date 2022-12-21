@@ -62,12 +62,17 @@ get_php_versions() {
 
             ((++i))
             read -rp "$(ECHO_YELLOW "Please select one of:")" choice
+            choice=${choice%.*}
 
             [ -z "$choice" ] && choice=-1
             if (("$choice" > 0 && "$choice" <= $i)); then
                 PHP_VERSION="${PHP_LIST[$(($choice - 1))]}"
             else
+                EMPTY_LINE
                 PHP_VERSION="${PHP_LIST[1]}"
+                ECHO_WARN_RED "This version of PHP does not support"
+                ECHO_GREEN "Set default version: $PHP_VERSION"
+                EMPTY_LINE
             fi
         fi
     fi
