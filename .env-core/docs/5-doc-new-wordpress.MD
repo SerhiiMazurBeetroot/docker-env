@@ -21,9 +21,8 @@
 | 4    |         | Enter Domain Name         | test           |   |
 | 5    |         | Enter DOMAIN_FULL         | dev.test.local | * |
 | 6    | [y/n]   | Is correct?               |                |   |
-| 7    | [y/n]   | Remove default content?   |                |   |
-| 8    | [y/n]   | Clone project?            |                |   |
-| 9    |         | Windows: Add to host file |                |   |
+| 7    | [y/n]   | Clone project?            |                |   |
+| 8    |         | Windows: Add to host file |                |   |
 
 *Variables has default value.
 
@@ -43,11 +42,12 @@
 | 8    |         | Enter WP_VERSION          | 5.8.3          | * |
 | 9    |         | Enter WP_USER             | developer      | * |
 | 10   |         | Enter WP_PASSWORD         | 1              | * |
-| 11   |         | Enter PHP_VERSION         | 8.0            | * |
-| 12   | [y/n]   | Is correct?               |                |   |
-| 13   | [y/n]   | Remove default content?   |                |   |
-| 14   | [y/n]   | Clone project?            |                |   |
-| 15   |         | Windows: Add to host file |                |   |
+| 11   |         | Enter EMPTY_CONTENT       | 1              | * |
+| 12   |         | Installation type         | 1              | * |
+| 13   |         | Enter PHP_VERSION         | 8.0            | * |
+| 14   | [y/n]   | Is correct?               |                |   |
+| 15   | [y/n]   | Clone project?            |                |   |
+| 16   |         | Windows: Add to host file |                |   |
 
 *Variables has default value.
 
@@ -64,10 +64,9 @@
 | 5    | 1       | type? [default] [custom]  |                |   |
 | 6    |         | Enter DOMAIN_FULL         | test.local     | * |
 | 7    | [y/n]   | Is correct?               |                |   |
-| 8    | [y/n]   | Remove default content?   |                |   |
-| 9    | [y/n]   | Clone project?            |                |   |
-| 10   |         | Repo url                  |                |   |
-| 11   |         | Windows: Add to host file |                |   |
+| 8    | [y/n]   | Clone project?            |                |   |
+| 9    |         | Repo url                  |                |   |
+| 10   |         | Windows: Add to host file |                |   |
 
 *Variables has default value.
 

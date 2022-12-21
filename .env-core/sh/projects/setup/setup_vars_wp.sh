@@ -106,16 +106,16 @@ setup_custom_args() {
     #Remove default content
     EMPTY_LINE
     ECHO_YELLOW "EMPTY_CONTENT [default 'no']"
-    ECHO_GREEN "1 - no"
-    ECHO_GREEN "2 - yes"
+    ECHO_KEY_VALUE "1" "no"
+    ECHO_KEY_VALUE "2" "yes"
     read -rp "$(ECHO_YELLOW "Please select one of:")" EMPTY_CONTENT
 
     #WP_TYPE
     EMPTY_LINE
-    ECHO_YELLOW "Do you want a multisite installation? [default 'no']"
+    ECHO_YELLOW "Installation type [default 'single']"
     randpassword
-    ECHO_KEY_VALUE "[1]" "no"
-    ECHO_KEY_VALUE "[2]" "yes"
+    ECHO_KEY_VALUE "[1]" "single"
+    ECHO_KEY_VALUE "[2]" "multisite"
     read -rp "$(ECHO_YELLOW "Please select one of:")" MULTISITE
 
     #PHP_VERSION
