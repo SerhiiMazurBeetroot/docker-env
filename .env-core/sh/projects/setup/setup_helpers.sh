@@ -81,7 +81,7 @@ get_latest_wp_version() {
 }
 
 unset_variables() {
-    unset DOMAIN_NAME DB_NAME TABLE_PREFIX PHP_VERSION MULTISITE $1
+    unset DOMAIN_NAME DB_NAME TABLE_PREFIX PHP_VERSION MULTISITE EMPTY_CONTENT $1
 }
 
 update_file_instances() {

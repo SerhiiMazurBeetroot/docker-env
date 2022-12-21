@@ -46,6 +46,4 @@ wp_site_empty() {
             fi
         fi
     fi
-
-    unset EMPTY_CONTENT
 }
