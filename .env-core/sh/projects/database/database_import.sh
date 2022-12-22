@@ -22,8 +22,9 @@ database_import() {
                 ECHO_GREEN "DB collected, inserting it to the SQL container"
                 dbstatus=1
                 while [[ $dbstatus != [0] ]]; do
+                    check_db_exists
 
-                    if [ "$(docker exec -i "$DOCKER_CONTAINER_DB" sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" --execute "show databases"' | grep $DB_NAME)" ]; then
+                    if [ $DB_EXISTS ]; then
                         dbstatus=0
                         ECHO_GREEN "DB found"
 
@@ -43,13 +44,18 @@ database_import() {
                         database_search_replace
                     else
                         sleep 5
+                        check_db_exists
                         ECHO_YELLOW "Trying to insert DB, awaiting MariaDB container..."
 
-                        # Drop DB
-                        docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "mysqladmin drop $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
+                        if [ $DB_EXISTS ]; then
+                            # Drop DB
+                            docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "mysqladmin drop $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
+                        fi
 
-                        # Create empty DB
-                        docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "mysqladmin create $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
+                        if [ ! $DB_EXISTS ]; then
+                            # Create empty DB
+                            docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "mysqladmin create $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
+                        fi
                     fi
                 done
             else

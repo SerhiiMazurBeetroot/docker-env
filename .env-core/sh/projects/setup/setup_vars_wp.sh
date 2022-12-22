@@ -35,6 +35,28 @@ setup_default_args() {
         WP_PASSWORD="$WP_PASSWORD"
     fi
 
+    #EMPTY_CONTENT
+    if [[ ! "$EMPTY_CONTENT" =~ [1-2] ]]; then
+        EMPTY_CONTENT="no"
+    elif [[ "$EMPTY_CONTENT" -eq 1 ]]; then
+        EMPTY_CONTENT="no"
+    elif [[ "$EMPTY_CONTENT" -eq 2 ]]; then
+        EMPTY_CONTENT="yes"
+    elif [[ $EMPTY_CONTENT == '' ]]; then
+        EMPTY_CONTENT="no"
+    fi
+
+    #WP_TYPE
+    if [[ ! "$MULTISITE" =~ [1-2] ]]; then
+        MULTISITE="no"
+    elif [[ "$MULTISITE" -eq 1 ]]; then
+        MULTISITE="no"
+    elif [[ "$MULTISITE" -eq 2 ]]; then
+        MULTISITE="yes"
+    elif [[ $MULTISITE == '' ]]; then
+        MULTISITE="no"
+    fi
+
     #PHP_VERSION
     get_php_versions "default"
 
@@ -72,14 +94,29 @@ setup_custom_args() {
     EMPTY_LINE
     ECHO_YELLOW "Enter WP_PASSWORD [default '1']"
     randpassword
-    ECHO_GREEN "1 - 1"
-    ECHO_GREEN "2 - $WP_PASSWORD"
-    ECHO_GREEN "3 - Enter your password"
+    ECHO_KEY_VALUE "[1]" "1"
+    ECHO_KEY_VALUE "[2]" "$WP_PASSWORD"
+    ECHO_KEY_VALUE "[3]" "Enter your password"
     read -rp "$(ECHO_YELLOW "Please select one of:")" passw
     if [[ "$passw" -eq 3 ]]; then
         EMPTY_LINE
         read -rp "$(ECHO_YELLOW "Your password:")" WP_PASSWORD
     fi
+
+    #Remove default content
+    EMPTY_LINE
+    ECHO_YELLOW "EMPTY_CONTENT [default 'no']"
+    ECHO_KEY_VALUE "1" "no"
+    ECHO_KEY_VALUE "2" "yes"
+    read -rp "$(ECHO_YELLOW "Please select one of:")" EMPTY_CONTENT
+
+    #WP_TYPE
+    EMPTY_LINE
+    ECHO_YELLOW "Installation type [default 'single']"
+    randpassword
+    ECHO_KEY_VALUE "[1]" "single"
+    ECHO_KEY_VALUE "[2]" "multisite"
+    read -rp "$(ECHO_YELLOW "Please select one of:")" MULTISITE
 
     #PHP_VERSION
     EMPTY_LINE

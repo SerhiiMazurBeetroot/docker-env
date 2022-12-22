@@ -25,6 +25,9 @@ services:
       WP_VERSION : ${WP_VERSION}
       WORDPRESS_DEBUG : ${WP_DEBUG}
       WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_ALLOW_MULTISITE', ${WP_ALLOW_MULTISITE} );
+        define( 'MULTISITE', ${WP_ALLOW_MULTISITE} );
+        define( 'ALTERNATE_WP_CRON', ${ALTERNATE_WP_CRON} );
         define( 'WP_DEBUG_DISPLAY', ${WP_DEBUG_DISPLAY} );
         define( 'WP_DEBUG_LOG', '/var/log/wordpress/debug.log' );
         define( 'FS_METHOD', 'direct' );

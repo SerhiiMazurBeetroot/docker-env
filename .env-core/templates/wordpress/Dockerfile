@@ -2,20 +2,37 @@ FROM wordpress:{WP_VERSION}-php{PHP_VERSION}-apache
 
 # Install system dependencies
 # Add sudo in order to run wp-cli as the www-data user 
-RUN apt-get -y update && apt-get install -y sudo \
+RUN apt-get -y update && apt-get install -y sudo --no-install-recommends \
     git \
     curl \
+    libfreetype6-dev \
+    libicu-dev \
+    libjpeg-dev \
+    libmagickwand-dev \
     libpng-dev \
+    libwebp-dev \
     libonig-dev \
     libxml2-dev \
+    libzip-dev \
     zip \
     unzip
 
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN docker-php-ext-configure gd \
+    --with-freetype \
+    --with-jpeg \
+    --with-webp
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-install -j "$(nproc)" \
+    bcmath \
+    exif \
+    gd \
+    intl \
+    mysqli \
+    zip
+
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Get latest Composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \

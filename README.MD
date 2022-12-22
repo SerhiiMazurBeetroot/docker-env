@@ -71,6 +71,7 @@ Spin up a local environment on Linux, Mac, and Windows using CLI.
 | Logs          | Follow log output for Nginx, WP instance            |
 | PHP           | Choose from active PHP version                      |
 | Wordpress     | Choose a version or use the latest                  |
+| Multisite     | Wordpress multisite or single site                  |
 | Database      | Database import and export, search-replace          |
 | Composer      | Install Composer inside container                   |
 | GIT           | Clone an existing theme, create repo and push       |
@@ -83,10 +84,10 @@ Spin up a local environment on Linux, Mac, and Windows using CLI.
 ```
 ├── setup.sh              # Run devENV
 ├── .env-core             # devENV core files
+|     └── data            # Data about sites, settings, docker images
 |     └── nginx           # Nginx-proxy
 |     └── sh              # Bash scripts
 |     └── templates       # Global templates
-|     └── instances.log   # List of installed sites
 └── wordpress             # WordPress sites go here
 └── bedrock               # Bedrock sites go here
 └── php                   # PHP simple sites go here

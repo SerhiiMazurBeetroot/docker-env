@@ -47,6 +47,7 @@ docker_create_wp() {
             docker_restart
 
             wp_core_install
+            wp_site_empty
 
             edit_file_compose_setup_beetroot
             edit_file_gitignore

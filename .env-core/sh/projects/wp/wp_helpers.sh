@@ -83,7 +83,15 @@ wp_npm_install() {
 }
 
 wp_core_install() {
+    EMPTY_LINE
     ECHO_YELLOW "wp_core_install..."
+    if [[ "yes" = "$MULTISITE" || "2" = "$MULTISITE" ]]; then
+        docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec wp core multisite-install --url=https://'$DOMAIN_FULL' --title='$DOMAIN_NAME' --admin_user='$WP_USER' --admin_password="'$WP_PASSWORD'" --admin_email=example@example.com --skip-email --allow-root'
 
-    docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec wp core install --url=https://'$DOMAIN_FULL' --title='$DOMAIN_NAME' --admin_user='$WP_USER' --admin_password="'$WP_PASSWORD'" --admin_email=example@example.com --skip-email --allow-root'
+        wp_multisite_htaccess
+    else
+        docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec wp core install --url=https://'$DOMAIN_FULL' --title='$DOMAIN_NAME' --admin_user='$WP_USER' --admin_password="'$WP_PASSWORD'" --admin_email=example@example.com --skip-email --allow-root'
+    fi
+
+    ECHO_SUCCESS "Done!"
 }

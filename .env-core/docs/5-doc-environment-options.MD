@@ -81,6 +81,10 @@
 
         2 - Install composer package
 
+        3 - Delete site data (posts, themes, plugins)
+
+        4 - Into a multisite installation
+
     4 - List of existing projects
 
     5 - GIT actions

@@ -16,6 +16,9 @@ get_domain_name() {
         # Remove non printing chars from DOMAIN_NAME
         DOMAIN_NAME=$(echo $DOMAIN_NAME | tr -dc '[[:print:]]' | tr -d ' ' | tr -d '[A' | tr -d '[C' | tr -d '[B' | tr -d '[D')
 
+        # Replace "_" to "-"
+        DOMAIN_NAME=$(echo $DOMAIN_NAME | sed 's/_/-/g')
+
         # Remove subdomain
         DOMAIN_NAME=$(echo ${DOMAIN_NAME} | cut -d . -f 1)
     fi
@@ -59,12 +62,17 @@ get_php_versions() {
 
             ((++i))
             read -rp "$(ECHO_YELLOW "Please select one of:")" choice
+            choice=${choice%.*}
 
             [ -z "$choice" ] && choice=-1
             if (("$choice" > 0 && "$choice" <= $i)); then
                 PHP_VERSION="${PHP_LIST[$(($choice - 1))]}"
             else
+                EMPTY_LINE
                 PHP_VERSION="${PHP_LIST[1]}"
+                ECHO_WARN_RED "This version of PHP does not support"
+                ECHO_GREEN "Set default version: $PHP_VERSION"
+                EMPTY_LINE
             fi
         fi
     fi
@@ -78,7 +86,7 @@ get_latest_wp_version() {
 }
 
 unset_variables() {
-    unset DOMAIN_NAME DB_NAME TABLE_PREFIX PHP_VERSION $1
+    unset DOMAIN_NAME DB_NAME TABLE_PREFIX PHP_VERSION MULTISITE EMPTY_CONTENT $1
 }
 
 update_file_instances() {
@@ -140,6 +148,8 @@ env_file_load() {
         sed -i -e 's/{WP_USER}/'$WP_USER'/g' $PROJECT_DOCKER_DIR/.env
         sed -i -e 's/{WP_PASSWORD}/'$WP_PASSWORD'/g' $PROJECT_DOCKER_DIR/.env
         sed -i -e 's/{PHP_VERSION}/'$PHP_VERSION'/g' $PROJECT_DOCKER_DIR/.env
+
+        [[ "yes" = "$MULTISITE" ]] && wp_multisite_env
 
         #Replace only first occurrence in the file
         sed -i -e '0,/{MYSQL_DATABASE}/s//'$DB_NAME'/' $PROJECT_DOCKER_DIR/.env

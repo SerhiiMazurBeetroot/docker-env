@@ -21,3 +21,7 @@ get_db_name() {
         ECHO_ERROR "Dite not exists"
     fi
 }
+
+check_db_exists() {
+    DB_EXISTS=$(docker exec -i "$DOCKER_CONTAINER_DB" sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" --execute "show databases"' | grep -Eo $DB_NAME || true)
+}
