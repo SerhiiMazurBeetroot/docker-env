@@ -71,6 +71,10 @@ services:
       - PMA_PORT=${PMA_PORT}
       - PMA_USER=${PMA_USER}
       - PMA_PASSWORD=${PMA_PASSWORD}
+    restart: always
+    volumes:
+      # Configs
+      - ./../wp-docker/phpmyadmin.ini:/usr/local/etc/php/conf.d/phpmyadmin.ini
 
 networks:
   default:
