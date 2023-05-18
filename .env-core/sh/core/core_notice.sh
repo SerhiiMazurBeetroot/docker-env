@@ -27,7 +27,10 @@ notice_windows_host() {
 
 notice_project_urls() {
 	EMPTY_LINE
+	get_unique_frontport
+
 	ECHO_KEY_VALUE "DOMAIN_FULL:" "https://$DOMAIN_FULL"
+	[[ $PORT_FRONT != "-" && $PORT_FRONT != "" ]] && ECHO_KEY_VALUE "DOMAIN_FRONT:" "http://localhost:$PORT_FRONT"
 	[[ $DOMAIN_ADMIN != "" ]] && ECHO_KEY_VALUE "DOMAIN_ADMIN:" "https://$DOMAIN_ADMIN"
 	[[ $DOMAIN_ADMIN != "" ]] && ECHO_KEY_VALUE "DOMAIN_DB:" "https://$DOMAIN_DB"
 	[[ $DOMAIN_MAIL != "" ]] && ECHO_KEY_VALUE "DOMAIN_MAIL:" "https://$DOMAIN_MAIL"
@@ -64,7 +67,7 @@ notice_composer() {
 }
 
 notice_wp_vars() {
-	if [[ $PROJECT_TYPE == "wordpress" || $PROJECT_TYPE == "bedrock" ]]; then
+	if [[ $PROJECT_TYPE == "wordpress" || $PROJECT_TYPE == "bedrock" || $PROJECT_TYPE == "wpnextjs" ]]; then
 		ECHO_KEY_VALUE "WP_VERSION:" "$WP_VERSION"
 		ECHO_KEY_VALUE "WP_USER:" "$WP_USER"
 		ECHO_KEY_VALUE "WP_PASSWORD:" "$WP_PASSWORD"

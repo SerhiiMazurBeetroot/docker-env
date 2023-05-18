@@ -18,6 +18,10 @@ get_project_type() {
         PROJECT_TYPE="php"
         DB_TYPE="MYSQL"
     elif [[ $PROJECT_TYPE -eq 4 ]]; then
+        PROJECT_TYPE="wpnextjs"
+        DB_TYPE="MYSQL"
+        DB_NAME="db"
+    elif [[ $PROJECT_TYPE -eq 5 ]]; then
         PROJECT_TYPE="nodejs"
         DB_TYPE="MONGO"
         DB_NAME="db"
@@ -96,9 +100,27 @@ set_project_vars() {
         DOCKER_CONTAINER_DB="$DOMAIN_NAME-mysql"
         DOCKER_VOLUME_DB="$DOMAIN_NAME"_db_datac
         HOST_EXTRA=""
-    elif [[ $PROJECT_TYPE -eq 4 || $PROJECT_TYPE == 'nodejs' ]]; then
+    elif [[ $PROJECT_TYPE -eq 5 || $PROJECT_TYPE == 'wpnextjs' ]]; then
+        #WP-Next
+        PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/docker
+        PROJECT_BACKEND_DIR=$PROJECT_ROOT_DIR/backend
+        PROJECT_FRONTEND_DIR=$PROJECT_ROOT_DIR/frontend
+        PROJECT_DATABASE_DIR=$PROJECT_BACKEND_DIR/wp-database
+        PROJECT_WP_CONTENT_DIR=$PROJECT_BACKEND_DIR/wp-content
+        DOMAIN_ADMIN="$DOMAIN_FULL/wp-admin"
+        DOMAIN_DB="$DOMAIN_FULL.phpmyadmin"
+        DOCKER_CONTAINER_APP="$DOMAIN_NAME-wpnextjs"
+        DOCKER_CONTAINER_DB="$DOMAIN_NAME-mysql"
+        DOCKER_VOLUME_DB="$DOMAIN_NAME"_db_data
+        HOST_EXTRA="$DOMAIN_FULL.phpmyadmin"
+    elif [[ $PROJECT_TYPE -eq 5 || $PROJECT_TYPE == 'nodejs' ]]; then
         PROJECT_DIR="nodejs"
-        PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR
+        PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/docker
+        PROJECT_BACKEND_DIR=$PROJECT_ROOT_DIR/backend
+        PROJECT_FRONTEND_DIR=$PROJECT_ROOT_DIR/frontend
+        DOCKER_CONTAINER_APP="$DOMAIN_NAME-nodejs"
+        DOCKER_CONTAINER_DB="$DOMAIN_NAME-mongo"
+        DOCKER_VOLUME_DB="$DOMAIN_NAME"_db_data
         HOST_EXTRA=""
     fi
 

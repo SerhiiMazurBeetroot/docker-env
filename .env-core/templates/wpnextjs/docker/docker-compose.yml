@@ -1,0 +1,82 @@
+version: '3.6'
+services:
+  #######################################
+  # Database
+  #######################################
+  {DOMAIN_NAME}-mysql:
+    image: mariadb
+    container_name: {DOMAIN_NAME}-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD : ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE : ${MYSQL_DATABASE}
+    restart: always
+    ports:
+      - '${PORT}:3306'
+    volumes:
+      - {DOMAIN_NAME}_db_data:/var/lib/mysql
+    # Set max_allowed_packet to 256M (or any other value)
+    command: ['--max_allowed_packet=32505856']
+
+  #######################################
+  # Backend
+  #######################################
+  {DOMAIN_NAME}-wpnextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: {DOMAIN_NAME}-wpnextjs
+    user: 1000:1000
+    volumes:
+      # WordPress wp-content folder
+      - ./../backend/wp-content/:/var/www/html/wp-content/:rw,cached
+      # Configs
+      - ./../docker/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+      # Debug log
+      - ./../logs/wordpress:/var/log/wordpress/:ro
+    env_file: .env
+    environment:
+      VIRTUAL_HOST : ${VIRTUAL_HOST}
+      WORDPRESS_DB_NAME : ${MYSQL_DATABASE}
+      WORDPRESS_DB_USER : root
+      WORDPRESS_TABLE_PREFIX : ${TABLE_PREFIX}
+      WORDPRESS_DB_HOST : ${MYSQL_HOST}
+      WORDPRESS_DB_PASSWORD : ${MYSQL_ROOT_PASSWORD}
+      WP_VERSION : ${WP_VERSION}
+      APACHE_RUN_USER: '#1000'
+      APACHE_RUN_GROUP: '#1000'
+      WORDPRESS_DEBUG : ${WP_DEBUG}
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'ALTERNATE_WP_CRON', ${ALTERNATE_WP_CRON} );
+        define( 'WP_DEBUG_DISPLAY', ${WP_DEBUG_DISPLAY} );
+        define( 'WP_DEBUG_LOG', '/var/log/wordpress/debug.log' );
+        define( 'FS_METHOD', 'direct' );
+      NEXT_VAR: 0
+    depends_on:
+      - {DOMAIN_NAME}-mysql
+    restart: always
+    # sysctls:
+    #   net.ipv4.ip_unprivileged_port_start: 0
+
+  #######################################
+  # Frontend
+  #######################################
+  {DOMAIN_NAME}-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile-frontend
+    container_name: {DOMAIN_NAME}-frontend
+    restart: always
+    depends_on: 
+      - {DOMAIN_NAME}-wpnextjs
+    ports:
+      - '${PORT_FRONT}:3000'
+    volumes: 
+      - ./../frontend/:/usr/src/app
+
+networks:
+  default:
+    name: dockerwp
+    external: true
+
+volumes:
+  {DOMAIN_NAME}_db_data:

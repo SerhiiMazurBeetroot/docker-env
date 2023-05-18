@@ -8,7 +8,7 @@ FILE_SETTINGS="$DIR_DATA/settings.log"
 FILE_INSTANCES="$DIR_DATA/instances.log"
 FILE_DOCKER_HUB="$DIR_DATA/dockerHub.log"
 
-export AVAILABLE_PROJECTS=(wordpress bedrock php nodejs)
+export AVAILABLE_PROJECTS=(wordpress bedrock php nodejs wpnextjs)
 
 source_files_in() {
   local dir="$1"

@@ -11,6 +11,8 @@ actions_new_project() {
     ECHO_GREEN "1 - Wordpress"
     ECHO_GREEN "2 - BEDROCK"
     ECHO_GREEN "3 - Simple PHP"
+    ECHO_GREEN "4 - WP Next.js"
+    ECHO_GREEN "5 - Node.js"
 
     read -rp "$(ECHO_YELLOW "Please select one of:")" PROJECT_TYPE
 
@@ -28,6 +30,10 @@ actions_new_project() {
       ;;
     3)
       docker_create_php
+      unset_variables "PROJECT_TYPE"
+      ;;
+    4)
+      docker_create_wp_next
       unset_variables "PROJECT_TYPE"
       ;;
     esac

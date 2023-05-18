@@ -47,6 +47,16 @@ get_unique_port() {
     done
 }
 
+get_unique_frontport() {
+    # GET PORT_FRONT [ count port from 5510 ]
+
+    if [[ $PORT ]]; then
+        PORT_FRONT=$(($PORT + 1700))
+    else
+        PORT_FRONT=$(awk '/'" $DOMAIN_NAME "'/{print $15}' "$FILE_INSTANCES" | head -n 1)
+    fi
+}
+
 get_php_versions() {
     QUESTION=$1
 
@@ -149,6 +159,13 @@ env_file_load() {
         sed -i -e 's/{WP_PASSWORD}/'$WP_PASSWORD'/g' $PROJECT_DOCKER_DIR/.env
         sed -i -e 's/{PHP_VERSION}/'$PHP_VERSION'/g' $PROJECT_DOCKER_DIR/.env
 
+        # Headless CMS
+        sed -i -e 's/{PORT_FRONT}/'$PORT_FRONT'/g' $PROJECT_DOCKER_DIR/.env
+
+        # Node.js
+        sed -i -e 's/{MONGODB_LOCAL_PORT}/'$MONGODB_LOCAL_PORT'/g' $PROJECT_DOCKER_DIR/.env
+        sed -i -e 's/{MONGO_EXPRESS_PORT}/'$MONGO_EXPRESS_PORT'/g' $PROJECT_DOCKER_DIR/.env
+
         [[ "yes" = "$MULTISITE" ]] && wp_multisite_env
 
         #Replace only first occurrence in the file
@@ -176,10 +193,24 @@ fix_permissions() {
 
     if [[ $DOMAIN_EXISTS == 1 ]]; then
         get_project_dir "skip_question"
+        fix_permissions_wp
+    else
+        ECHO_ERROR "Site not exists"
+    fi
+
+}
+
+fix_permissions_wp() {
+    if [[ $PROJECT_TYPE == 'wordpress' || $PROJECT_TYPE == 'bedrock' ]]; then
 
         EMPTY_LINE
         ECHO_YELLOW "Fixing Permissions, this can take a while! [$PROJECT_ROOT_DIR]"
         if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]; then
+            # TODO: get current user
+            # whoami
+            # TODO: fix perm for current user
+            # user=$(docker exec -i "$DOCKER_CONTAINER_DB" sh -c 'whoami')
+
             docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec chown -R www-data:www-data /var/www/html/'
             docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec chmod -R 755 /var/www/html/'
         else
@@ -202,9 +233,6 @@ fix_permissions() {
 
             git_config_fileMode
         fi
-
-    else
-        ECHO_ERROR "Site not exists"
     fi
 }
 
