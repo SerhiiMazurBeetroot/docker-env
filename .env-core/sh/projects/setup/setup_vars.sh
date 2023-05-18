@@ -64,6 +64,7 @@ set_project_vars() {
     DOMAIN_NODOT=$(echo "$DOMAIN_NAME" | tr . _)
     PROJECT_ROOT_DIR=$PROJECT_DIR/"$DOMAIN_FULL"
     PROJECT_ARCHIVE_DIR=$PROJECT_DIR"_""$DOMAIN_FULL"
+    COMPOSE_PROJECT_NAME=$(echo "$DOMAIN_FULL" | sed "s/[^a-zA-Z0-9_\-]/'_'/g; s/^-//; s/-$/_/; s/__*/_/g; s/[^a-zA-Z0-9_\-]//g; s/^$/none/")
 
     if [[ $PROJECT_TYPE -eq 1 || $PROJECT_TYPE == 'wordpress' || $PROJECT_TYPE == 'projects' ]]; then
         #WP
