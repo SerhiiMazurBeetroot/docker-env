@@ -36,6 +36,10 @@ actions_new_project() {
       docker_create_wp_next
       unset_variables "PROJECT_TYPE"
       ;;
+    5)
+      docker_create_nodejs
+      unset_variables "PROJECT_TYPE"
+      ;;
     esac
   done
 }

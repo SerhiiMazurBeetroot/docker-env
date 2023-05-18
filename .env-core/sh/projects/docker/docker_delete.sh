@@ -55,5 +55,6 @@ docker_delete() {
         done
     else
         ECHO_ERROR "Site DIR does not exist: $PROJECT_ROOT_DIR"
+        delete_site_data
     fi
 }

@@ -11,10 +11,14 @@ env_migration() {
     if [[ $CORE_VER_CUR == '' ]]; then
         #case v.1.0.0 => v.2.0.0
         replace_old_settings_file
-        replace_old_wp_instances_file
+        replace_wp_instances_file_1_0
         replace_dir_projects_to_wordpress
         replace_docker_compose
         delete_visible_envcore_dir
+    fi
+
+    if [[ $CORE_VER_CUR == '2.0.0' ]]; then
+        replace_wp_instances_file_2_0
     fi
 
     core_version
@@ -32,15 +36,17 @@ replace_old_settings_file() {
     fi
 }
 
-replace_old_wp_instances_file() {
+replace_wp_instances_file_1_0() {
     if [ -f "./wp-instances.log" ]; then
         ECHO_YELLOW "Replacing FILE_INSTANCES ..."
 
         mv "./wp-instances.log" "./.env-core/instances.log"
         while read line; do
             if [[ $line == *"DOMAIN_NAME"* ]]; then
+                # Change to head (DB_TYPE & PROJECT_TYPE)
                 sed -i -e "s/$line/3309 \| STATUS \| DOMAIN_NAME \| DOMAIN_FULL \| DB_NAME \| DB_TYPE \| PROJECT_TYPE \|/g" $FILE_INSTANCES
             else
+                # Add MYSQL & wordpress to previous project
                 sed -i -e "s/$line/$line MYSQL \| wordpress \|/g" $FILE_INSTANCES
             fi
 
@@ -52,6 +58,16 @@ replace_old_wp_instances_file() {
         done <"$FILE_INSTANCES"
     fi
     EMPTY_LINE
+}
+
+replace_wp_instances_file_2_0() {
+    # Add PORT_FRONT to head
+    while read line; do
+        if [[ $line == *"DOMAIN_NAME"* ]]; then
+            sed -i -e "s/$line/3309 \| STATUS \| DOMAIN_NAME \| DOMAIN_FULL \| DB_NAME \| DB_TYPE \| PROJECT_TYPE \| PORT_FRONT \|/g" $FILE_INSTANCES
+        fi
+
+    done <"$FILE_INSTANCES"
 }
 
 replace_dir_projects_to_wordpress() {
