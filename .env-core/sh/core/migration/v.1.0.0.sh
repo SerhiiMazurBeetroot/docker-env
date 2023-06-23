@@ -11,7 +11,7 @@ replace_old_settings_file() {
     if [[ $ENV_THEME != '' && $ENV_VERSION != '' ]]; then
         ECHO_YELLOW "Replacing settings file ..."
 
-        save_settings "$ENV_THEME"
+        save_settings "ENV_THEME=$ENV_THEME"
     fi
 }
 
