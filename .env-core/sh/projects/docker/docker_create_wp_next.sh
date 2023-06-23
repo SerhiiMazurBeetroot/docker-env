@@ -39,7 +39,7 @@ docker_create_wp_next() {
             mkdir -p $PROJECT_ROOT_DIR
 
             # Copy templates files
-            cp -r ./.env-core/templates/wpnextjs/* $PROJECT_ROOT_DIR
+            cp -r $ENV_DIR/.env-core/templates/wpnextjs/* $PROJECT_ROOT_DIR
 
             # Rename files
             replace_templates_files

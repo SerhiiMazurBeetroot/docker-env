@@ -37,10 +37,10 @@ replace_old_settings_file() {
 }
 
 replace_wp_instances_file_1_0() {
-    if [ -f "./wp-instances.log" ]; then
+    if [ -f "$ENV_DIR/wp-instances.log" ]; then
         ECHO_YELLOW "Replacing FILE_INSTANCES ..."
 
-        mv "./wp-instances.log" "./.env-core/instances.log"
+        mv "$ENV_DIR/wp-instances.log" "$ENV_DIR/.env-core/instances.log"
         while read line; do
             if [[ $line == *"DOMAIN_NAME"* ]]; then
                 # Change to head (DB_TYPE & PROJECT_TYPE)
@@ -102,7 +102,7 @@ replace_docker_compose() {
 
                     #Replace old path for adminer.php
                     DOCKER_DIR="$(echo ${FILENAME} | sed -e 's/docker-compose.*.yml//')"
-                    cp -rf ./.env-core/templates/wordpress/adminer.php.example $DOCKER_DIR/adminer.php
+                    cp -rf $ENV_DIR/.env-core/templates/wordpress/adminer.php.example $DOCKER_DIR/adminer.php
                     sed -i -e 's/.\/..\/..\/..\/env-core\/templates\/database\/adminer-template:/.\/..\/wp-docker\/adminer.php:/g' $NEW_FILENAME
                 fi
             done
@@ -118,10 +118,10 @@ delete_visible_envcore_dir() {
 }
 
 move_dir_data() {
-    if [ -f "./.env-core/instances.log" ]; then
+    if [ -f "$ENV_DIR/.env-core/instances.log" ]; then
         ECHO_YELLOW "Replacing FILE_INSTANCES ..."
 
-        mv "./.env-core/settings.log" $FILE_SETTINGS
-        mv "./.env-core/instances.log" $FILE_INSTANCES
+        mv "$ENV_DIR/.env-core/settings.log" $FILE_SETTINGS
+        mv "$ENV_DIR/.env-core/instances.log" $FILE_INSTANCES
     fi
 }

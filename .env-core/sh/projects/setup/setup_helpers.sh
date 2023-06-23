@@ -147,7 +147,7 @@ env_file_load() {
         source $PROJECT_DOCKER_DIR/.env
     else
         ECHO_YELLOW ".env file not found, creating..."
-        cp -rf ./.env-core/templates/"$PROJECT_DIR"/.env.example $PROJECT_DOCKER_DIR/.env
+        cp -rf $ENV_DIR/.env-core/templates/"$PROJECT_DIR"/.env.example $PROJECT_DOCKER_DIR/.env
 
         sed -i -e 's/{DOMAIN_NAME}/'$DOMAIN_NAME'/g' $PROJECT_DOCKER_DIR/.env
         sed -i -e 's/{TABLE_PREFIX}/'$TABLE_PREFIX'/g' $PROJECT_DOCKER_DIR/.env

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # shellcheck disable=SC1091
-DIR_DATA='./.env-core/data'
-DIR_NGINX='./.env-core/nginx'
+DIR_DATA="$ENV_DIR/.env-core/data"
+DIR_NGINX="$ENV_DIR/.env-core/nginx"
 
 FILE_SETTINGS="$DIR_DATA/settings.log"
 FILE_INSTANCES="$DIR_DATA/instances.log"
@@ -13,21 +13,18 @@ export AVAILABLE_PROJECTS=(wordpress bedrock php nodejs wpnextjs)
 source_files_in() {
   local dir="$1"
 
-  if [[ -d "$dir" && -r "$dir" && -x "$dir" ]]; then
+  if [[ -r "$dir" && -x "$dir" ]]; then
     for file in "$dir"/*; do
-      [[ -f "$file" && -r "$file" ]] && . "$file"
+      if [[ -f "$file" && -r "$file" ]]; then
+        . "$file"
+      elif [[ -d "$file" ]]; then
+        source_files_in "$file"
+      fi
     done
   fi
 }
 
-source_files_in "./.env-core/sh/utils"
-source_files_in "./.env-core/sh/core"
-source_files_in "./.env-core/sh/nginx"
-source_files_in "./.env-core/sh/projects/actions"
-source_files_in "./.env-core/sh/projects/archives"
-source_files_in "./.env-core/sh/projects/database"
-source_files_in "./.env-core/sh/projects/docker"
-source_files_in "./.env-core/sh/projects/setup"
-source_files_in "./.env-core/sh/projects/git"
-source_files_in "./.env-core/sh/projects/instances"
-source_files_in "./.env-core/sh/projects/wp"
+source_files_in "$ENV_DIR/.env-core/sh/utils"
+source_files_in "$ENV_DIR/.env-core/sh/core"
+source_files_in "$ENV_DIR/.env-core/sh/nginx"
+source_files_in "$ENV_DIR/.env-core/sh/projects"

@@ -24,7 +24,7 @@ docker_create_wp() {
             mkdir -p $PROJECT_DOCKER_DIR
 
             # Copy templates files
-            cp -r ./.env-core/templates/wordpress/* $PROJECT_DOCKER_DIR
+            cp -r $ENV_DIR/.env-core/templates/wordpress/* $PROJECT_DOCKER_DIR
 
             # Rename files
             replace_templates_files

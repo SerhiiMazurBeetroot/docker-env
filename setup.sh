@@ -3,10 +3,11 @@
 set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
-CORE_VERSION=2.0.0
+export CORE_VERSION=2.0.0
+DEVENV_DIR="${DEVENV_DIR:-.}"
 
 # shellcheck disable=SC1091
-source ./.env-core/sh/scripts.sh
+source "$DEVENV_DIR"/.env-core/sh/scripts.sh
 
 main_actions() {
 	EMPTY_LINE

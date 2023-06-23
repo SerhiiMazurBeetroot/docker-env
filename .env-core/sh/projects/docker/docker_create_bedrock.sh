@@ -26,7 +26,7 @@ docker_create_bedrock() {
             mkdir -p $PROJECT_DOCKER_DIR
 
             # Copy templates files
-            cp -r ./.env-core/templates/bedrock/* $PROJECT_DOCKER_DIR
+            cp -r $ENV_DIR/.env-core/templates/bedrock/* $PROJECT_DOCKER_DIR
 
             # Rename files
             replace_templates_files
