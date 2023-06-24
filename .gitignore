@@ -17,7 +17,6 @@
 ##                                                                              #
 #################################################################################
 
-
 ## OS and Utility Stuff ##
 
 #==================#
@@ -33,7 +32,6 @@ ehthumbs.db
 *[Tt]humbs.db
 *.Trashes
 
-
 #===================#
 #     IDE Files     #
 #===================#
@@ -42,7 +40,6 @@ ehthumbs.db
 *.sublime-workspace
 *.komodoproject
 *.codekit3
-
 
 #===============================#
 #     Log, map files, .env      #
@@ -57,7 +54,6 @@ access_log
 *.LICENSE
 *.lck
 .env
-
 
 ## Vendor, Libs and Content ##
 
@@ -74,12 +70,12 @@ node_modules
 /bedrock/*
 /php/*
 /nodejs/*
+/wpnextjs/*
 
 #===============================#
 #     Certificates              #
 #===============================#
 /.env-core/nginx/certs-root/*
-
 
 #===============================#
 #     NGINX conf                #
