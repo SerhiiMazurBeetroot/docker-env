@@ -45,6 +45,7 @@ change_env_theme() {
 
 check_env_version() {
     env_migration
+    add_alias
 
     ENV_THEME=$(awk '/ENV_THEME/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_THEME='//')
     ENV_VERSION=$(awk '/ENV_VERSION/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_VERSION='//')

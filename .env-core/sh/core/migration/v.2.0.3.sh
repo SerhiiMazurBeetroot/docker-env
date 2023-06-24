@@ -11,6 +11,4 @@ env_update_repo() {
         # Repository exists.
         MAIN_REPO=$MAIN_REPO
     fi
-
-    ECHO_KEY_VALUE "MAIN_REPO:" "$MAIN_REPO"
 }
