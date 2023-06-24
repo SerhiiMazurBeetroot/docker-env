@@ -12,15 +12,12 @@ get_archived_projects() {
             ECHO_INFO "======== UNZIP project ======="
             ECHO_YELLOW "[0] Return to the previous menu"
 
-            for i in "${!ZIP_FILES[@]}"; do
-                ECHO_KEY_VALUE "[$(($i + 1))]" "${ZIP_FILES[$i]}"
-            done
+            print_list "${ZIP_FILES[@]}"
 
-            ((++i))
             read -rp "$(ECHO_YELLOW "Please select one of:")" choice
 
             [ -z "$choice" ] && choice=-1
-            if (("$choice" > 0 && "$choice" <= $i)); then
+            if (("$choice" > 0 && "$choice" <= ${#ZIP_FILES[@]})); then
                 FILENAME=${ZIP_FILES[$(($choice - 1))]}
                 PROJECT_TYPE="$(echo ${FILENAME} | grep -o '/[a-z]*/*' | sed 's/\///g')"
                 DOMAIN_FULL="$(echo ${FILENAME} | grep -o "$PROJECT_TYPE"'_[A-Za-z0-9.-]*_' | sed 's/'$PROJECT_TYPE'_//g' | tr -d _)"

@@ -12,7 +12,13 @@ export ALIAS_CMD="docker-env"
 export OLD_REPO="SerhiiMazurBeetroot/devENV"
 export MAIN_REPO="SerhiiMazurBeetroot/docker-env"
 
-export AVAILABLE_PROJECTS=(wordpress bedrock php nodejs wpnextjs)
+declare -A AVAILABLE_PROJECTS_ARRAY=(
+  [wordpress]=Wordpress
+  [bedrock]=BEDROCK
+  [php]=PHP
+)
+
+export AVAILABLE_PROJECTS=("${!AVAILABLE_PROJECTS_ARRAY[@]}")
 
 source_files_in() {
   local dir="$1"

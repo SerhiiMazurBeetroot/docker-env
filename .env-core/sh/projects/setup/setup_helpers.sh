@@ -66,16 +66,13 @@ get_php_versions() {
         if [[ $QUESTION == "default" ]]; then
             PHP_VERSION="${PHP_LIST[1]}"
         else
-            for i in "${!PHP_LIST[@]}"; do
-                ECHO_KEY_VALUE "[$(($i + 1))]" "${PHP_LIST[$i]}"
-            done
+            print_list "${PHP_LIST[@]}"
 
-            ((++i))
             read -rp "$(ECHO_YELLOW "Please select one of:")" choice
             choice=${choice%.*}
 
             [ -z "$choice" ] && choice=-1
-            if (("$choice" > 0 && "$choice" <= $i)); then
+            if (("$choice" > 0 && "$choice" <= ${#PHP_LIST[@]})); then
                 PHP_VERSION="${PHP_LIST[$(($choice - 1))]}"
             else
                 EMPTY_LINE
@@ -222,7 +219,7 @@ fix_permissions_wp() {
         if [[ $OSTYPE != "windows" ]]; then
             if [ -d $PROJECT_ROOT_DIR ]; then
                 EMPTY_LINE
-                sudo chmod -R 777 "./$PROJECT_ROOT_DIR" # Suggested Permissions 755
+                sudo chmod -R 777 "$PROJECT_ROOT_DIR" # Suggested Permissions 755
             fi
 
             if [ -d $PROJECT_WP_CONTENT_DIR ]; then

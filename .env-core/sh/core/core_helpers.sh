@@ -33,3 +33,16 @@ print_to_file_instances() {
         echo "$PORT | active | $DOMAIN_NAME | $DOMAIN_FULL | $DB_NAME | $DB_TYPE | $PROJECT_TYPE | $PORT_FRONT |" >>"$FILE_INSTANCES.bak"
     fi
 }
+
+# usage array:
+# Call: print_list "${ARRAY[@]}"
+
+print_list() {
+    OPTION_LIST=("$@")
+
+    for ((i = 0; i < ${#OPTION_LIST[@]}; i++)); do
+        index=$((i + 1))
+        option="${OPTION_LIST[i]}"
+        ECHO_KEY_VALUE "[$index]" "$option"
+    done
+}

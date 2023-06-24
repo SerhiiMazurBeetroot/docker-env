@@ -19,15 +19,13 @@ get_existing_domains() {
                 EMPTY_LINE
                 ECHO_INFO "$ACTION"
                 ECHO_YELLOW "[0] Return to the previous menu"
-                for i in "${!OptionList[@]}"; do
-                    ECHO_KEY_VALUE "[$(($i + 1))]" "${OptionList[$i]}"
-                done
 
-                ((++i))
+                print_list "${OptionList[@]}"
+
                 read -rp "$(ECHO_YELLOW "Please select one of:")" choice
 
                 [ -z "$choice" ] && choice=-1
-                if (("$choice" > 0 && "$choice" <= $i)); then
+                if (("$choice" > 0 && "$choice" <= ${#OptionList[@]})); then
                     DOMAIN_NAME="${OptionList[$(($choice - 1))]}"
                     break
                 else

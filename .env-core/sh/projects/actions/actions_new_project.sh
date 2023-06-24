@@ -8,11 +8,8 @@ actions_new_project() {
     EMPTY_LINE
     ECHO_INFO "===== Project type ===="
     ECHO_YELLOW "0 - Return to main menu"
-    ECHO_GREEN "1 - Wordpress"
-    ECHO_GREEN "2 - BEDROCK"
-    ECHO_GREEN "3 - Simple PHP"
-    ECHO_GREEN "4 - WP Next.js"
-    ECHO_GREEN "5 - Node.js"
+
+    print_list "${AVAILABLE_PROJECTS_ARRAY[@]}"
 
     read -rp "$(ECHO_YELLOW "Please select one of:")" PROJECT_TYPE
 
@@ -20,25 +17,38 @@ actions_new_project() {
     0)
       main_actions
       ;;
-    1)
-      docker_create_wp
-      unset_variables "PROJECT_TYPE"
-      ;;
-    2)
-      docker_create_bedrock
-      unset_variables "PROJECT_TYPE"
-      ;;
-    3)
-      docker_create_php
-      unset_variables "PROJECT_TYPE"
-      ;;
-    4)
-      docker_create_wp_next
-      unset_variables "PROJECT_TYPE"
-      ;;
-    5)
-      docker_create_nodejs
-      unset_variables "PROJECT_TYPE"
+    *)
+      # Validate the selected project type
+      if ((PROJECT_TYPE < 1 || PROJECT_TYPE > ${#AVAILABLE_PROJECTS[@]})); then
+        EMPTY_LINE
+        ECHO_WARN_RED "Invalid selection. Please try again."
+        continue
+      fi
+
+      selected_project="${AVAILABLE_PROJECTS[PROJECT_TYPE - 1]}"
+
+      case $selected_project in
+      "wordpress")
+        docker_create_wp
+        unset_variables "PROJECT_TYPE"
+        ;;
+      "bedrock")
+        docker_create_bedrock
+        unset_variables "PROJECT_TYPE"
+        ;;
+      "php")
+        docker_create_php
+        unset_variables "PROJECT_TYPE"
+        ;;
+      "wpnextjs")
+        docker_create_wp_next
+        unset_variables "PROJECT_TYPE"
+        ;;
+      "nodejs")
+        docker_create_nodejs
+        unset_variables "PROJECT_TYPE"
+        ;;
+      esac
       ;;
     esac
   done
