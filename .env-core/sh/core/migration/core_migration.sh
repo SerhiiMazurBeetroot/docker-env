@@ -21,6 +21,9 @@ env_migration() {
         replace_wp_instances_file_2_0
     fi
 
+    # case start v.2.0.1
+    env_update_repo
+
     core_version
 }
 

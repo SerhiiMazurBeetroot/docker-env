@@ -1,12 +1,16 @@
 #!/bin/bash
 
 # shellcheck disable=SC1091
-DIR_DATA="$ENV_DIR/.env-core/data"
-DIR_NGINX="$ENV_DIR/.env-core/nginx"
+export DIR_DATA="$ENV_DIR/.env-core/data"
+export DIR_NGINX="$ENV_DIR/.env-core/nginx"
 
-FILE_SETTINGS="$DIR_DATA/settings.log"
-FILE_INSTANCES="$DIR_DATA/instances.log"
-FILE_DOCKER_HUB="$DIR_DATA/dockerHub.log"
+export FILE_SETTINGS="$DIR_DATA/settings.log"
+export FILE_INSTANCES="$DIR_DATA/instances.log"
+export FILE_DOCKER_HUB="$DIR_DATA/dockerHub.log"
+
+export ALIAS_CMD="docker-env"
+export OLD_REPO="SerhiiMazurBeetroot/devENV"
+export MAIN_REPO="SerhiiMazurBeetroot/docker-env"
 
 export AVAILABLE_PROJECTS=(wordpress bedrock php nodejs wpnextjs)
 
