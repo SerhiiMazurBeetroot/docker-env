@@ -15,7 +15,7 @@ export MAIN_REPO="SerhiiMazurBeetroot/docker-env"
 declare -A AVAILABLE_PROJECTS_ARRAY=(
   [wordpress]=Wordpress
   [bedrock]=BEDROCK
-  [php]=PHP
+  [php]=PHP-Server
 )
 
 export AVAILABLE_PROJECTS=("${!AVAILABLE_PROJECTS_ARRAY[@]}")
