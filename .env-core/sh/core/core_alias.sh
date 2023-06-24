@@ -6,15 +6,16 @@ set -o pipefail
 add_alias() {
     EMPTY_LINE
 
-    ENV_DIR="$PWD"
-    SCRIPT_PATH="$ENV_DIR/setup.sh"
-    local logExist="Alias '$ALIAS_CMD' already exists."
-    local logAdded="Alias '$ALIAS_CMD' added"
     ALIAS_EXISTS=$(awk '/ALIAS_CMD/{print $1}' "$FILE_SETTINGS" | sed 's/'ALIAS_CMD='//')
 
     if [[ -n "$ALIAS_EXISTS" ]]; then
         return
     fi
+
+    ENV_DIR="$PWD"
+    SCRIPT_PATH="$ENV_DIR/setup.sh"
+    local logExist="Alias '$ALIAS_CMD' already exists."
+    local logAdded="Alias '$ALIAS_CMD' added"
 
     if [[ "$OSTYPE" == "windows" ]]; then
         # Command Prompt or PowerShell

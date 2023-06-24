@@ -62,7 +62,7 @@ set_project_vars() {
     get_project_type
     PROJECT_DIR=$PROJECT_TYPE
     DOMAIN_NODOT=$(echo "$DOMAIN_NAME" | tr . _)
-    PROJECT_ROOT_DIR=$PROJECT_DIR/"$DOMAIN_FULL"
+    PROJECT_ROOT_DIR="$ENV_DIR"/"$PROJECT_DIR"/"$DOMAIN_FULL"
     PROJECT_ARCHIVE_DIR=$PROJECT_DIR"_""$DOMAIN_FULL"
     COMPOSE_PROJECT_NAME=$(echo "$DOMAIN_FULL" | sed "s/[^a-zA-Z0-9_\-]/'_'/g; s/^-//; s/-$/_/; s/__*/_/g; s/[^a-zA-Z0-9_\-]//g; s/^$/none/")
 
