@@ -10,6 +10,7 @@ docker_stop_all() {
     OptionList=($string)
     for i in "${!OptionList[@]}"; do
         DOMAIN_NAME="${OptionList[$i]}"
+
         get_project_dir "skip_question"
 
         database_auto_backup

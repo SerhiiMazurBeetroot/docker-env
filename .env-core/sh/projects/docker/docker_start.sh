@@ -5,7 +5,6 @@ set -o pipefail
 
 docker_start() {
     stopped_projects_list "======== START project ========"
-    get_project_dir "skip_question"
 
     if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]; then
         ECHO_WARN_RED "Containers already running for this domain"

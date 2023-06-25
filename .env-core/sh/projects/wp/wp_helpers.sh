@@ -6,7 +6,6 @@ set -o pipefail
 wp_composer_install() {
     if [ "$DOMAIN_NAME" == '' ]; then
         running_projects_list "======= Install Composer ======"
-        get_project_dir "skip_question"
         get_db_name
         wp_get_default_theme
         edit_file_env_setup_beetroot
@@ -38,7 +37,6 @@ wp_composer_package() {
 
     if [ "$DOMAIN_NAME" == '' ]; then
         running_projects_list "======= Install package ======"
-        get_project_dir "skip_question"
         get_db_name
         wp_get_default_theme
     fi
@@ -71,7 +69,6 @@ wp_get_default_theme() {
 wp_npm_install() {
     if [ "$DOMAIN_NAME" == '' ]; then
         running_projects_list "======= Install npm ======"
-        get_project_dir "skip_question"
         wp_get_default_theme
     fi
 

@@ -4,8 +4,6 @@ set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
 database_create_dump() {
-    get_project_dir "skip_question"
-
     mkdir -p $PROJECT_DATABASE_DIR/temp
 
     # Save old files to "/temp" before deleting

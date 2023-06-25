@@ -4,8 +4,6 @@ set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
 database_replace_project_from_db() {
-    get_project_dir "skip_question"
-
     if [[ -d "$PROJECT_DATABASE_DIR" ]]; then
         EMPTY_LINE
         ECHO_YELLOW "Replace project from DB..."

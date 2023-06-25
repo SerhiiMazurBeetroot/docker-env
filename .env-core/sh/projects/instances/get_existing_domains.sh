@@ -27,6 +27,8 @@ get_existing_domains() {
                 [ -z "$choice" ] && choice=-1
                 if (("$choice" > 0 && "$choice" <= ${#OptionList[@]})); then
                     DOMAIN_NAME="${OptionList[$(($choice - 1))]}"
+
+                    get_project_dir "skip_question"
                     break
                 else
                     if [ "$choice" == 0 ]; then

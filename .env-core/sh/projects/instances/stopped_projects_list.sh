@@ -39,6 +39,8 @@ stopped_projects_list() {
             [ -z "$choice" ] && choice=-1
             if (("$choice" > 0 && "$choice" <= ${#stopped_container[@]})); then
                 DOMAIN_NAME="${stopped_container[$(($choice - 1))]}"
+
+                get_project_dir "skip_question"
                 break
             else
                 if [ "$choice" == 0 ]; then

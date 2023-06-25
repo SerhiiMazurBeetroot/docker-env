@@ -22,6 +22,8 @@ get_archived_projects() {
                 PROJECT_TYPE="$(echo ${FILENAME} | grep -o '/[a-z]*/*' | sed 's/\///g')"
                 DOMAIN_FULL="$(echo ${FILENAME} | grep -o "$PROJECT_TYPE"'_[A-Za-z0-9.-]*_' | sed 's/'$PROJECT_TYPE'_//g' | tr -d _)"
                 DOMAIN_NAME=$(awk '/'" $DOMAIN_FULL "'/{print $5}' "$FILE_INSTANCES" | head -n 1)
+
+                get_project_dir "skip_question"
                 break
             else
                 if [ "$choice" == 0 ]; then

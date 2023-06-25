@@ -136,8 +136,6 @@ delete_site_data() {
 
 # Load/Create enviroment variables
 env_file_load() {
-    # get_domain_name
-
     get_project_dir "skip_question"
 
     if [ -f $PROJECT_DOCKER_DIR/.env ]; then
@@ -190,7 +188,6 @@ fix_permissions() {
     check_domain_exists
 
     if [[ $DOMAIN_EXISTS == 1 ]]; then
-        get_project_dir "skip_question"
         fix_permissions_wp
     else
         ECHO_ERROR "Site not exists"

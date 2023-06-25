@@ -7,8 +7,6 @@ unzip_project() {
 	get_archived_projects
 
 	if [[ "$DOMAIN_NAME" ]]; then
-		get_project_dir "skip_question"
-
 		ECHO_YELLOW "Unzipping files ..."
 		mkdir -p $PROJECT_ROOT_DIR
 

@@ -9,7 +9,6 @@ git_clone_repo() {
     check_domain_exists
 
     if [[ $DOMAIN_EXISTS == 1 ]]; then
-        get_project_dir "skip_question"
         EMPTY_LINE
         fix_permissions
 

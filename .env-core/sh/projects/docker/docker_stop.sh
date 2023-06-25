@@ -4,8 +4,6 @@ set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
 docker_stop() {
-    get_project_dir "skip_question"
-
     if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]; then
 
         if [ -f $PROJECT_DOCKER_DIR/docker-compose.yml ]; then
