@@ -13,12 +13,18 @@ export OLD_REPO="SerhiiMazurBeetroot/devENV"
 export MAIN_REPO="SerhiiMazurBeetroot/docker-env"
 
 declare -A AVAILABLE_PROJECTS_ARRAY=(
-  [wordpress]=Wordpress
-  [bedrock]=BEDROCK
-  [php]=PHP-Server
+  [wordpress]="Wordpress"
+  [bedrock]="BEDROCK"
+  [php]="PHP-Server"
+  [wpnextjs]="NextWP"
+  [nodejs]="Node.js"
 )
 
-export AVAILABLE_PROJECTS=("${!AVAILABLE_PROJECTS_ARRAY[@]}")
+export AVAILABLE_PROJECTS=(
+  "wordpress"
+  "bedrock"
+  "php"
+)
 
 source_files_in() {
   local dir="$1"

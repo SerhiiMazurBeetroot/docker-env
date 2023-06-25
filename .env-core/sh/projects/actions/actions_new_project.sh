@@ -9,7 +9,12 @@ actions_new_project() {
     ECHO_INFO "===== Project type ===="
     ECHO_YELLOW "0 - Return to main menu"
 
-    print_list "${AVAILABLE_PROJECTS_ARRAY[@]}"
+    for ((i = 0; i < ${#AVAILABLE_PROJECTS[@]}; i++)); do
+      index=$((i + 1))
+      key="${AVAILABLE_PROJECTS[i]}"
+      option="${AVAILABLE_PROJECTS_ARRAY[$key]}"
+      ECHO_KEY_VALUE "[$index]" "$option"
+    done
 
     read -rp "$(ECHO_YELLOW "Please select one of:")" PROJECT_TYPE
 
@@ -25,9 +30,9 @@ actions_new_project() {
         continue
       fi
 
-      selected_project="${AVAILABLE_PROJECTS[PROJECT_TYPE - 1]}"
+      PROJECT_TYPE="${AVAILABLE_PROJECTS[PROJECT_TYPE - 1]}"
 
-      case $selected_project in
+      case $PROJECT_TYPE in
       "wordpress")
         docker_create_wp
         unset_variables "PROJECT_TYPE"

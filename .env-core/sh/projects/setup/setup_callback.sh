@@ -32,7 +32,6 @@ check_data_before_continue_callback() {
 
 setup_installation_type_callback() {
     unset_variables
-    get_project_type
 
     while true; do
         EMPTY_LINE
