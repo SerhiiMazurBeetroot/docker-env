@@ -21,6 +21,10 @@ env_migration() {
         replace_wp_instances_file_2_0
     fi
 
+    if [[ $CORE_VER_CUR < '2.0.3' ]]; then
+        fix_old_compose_project_name
+    fi
+
     # case start v.2.0.1
     env_update_repo
 
