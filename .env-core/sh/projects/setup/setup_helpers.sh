@@ -47,12 +47,18 @@ get_unique_port() {
     done
 }
 
-get_unique_frontport() {
-    # GET PORT_FRONT [ count port from 5510 ]
+set_unique_frontport() {
+    # SET PORT_FRONT [ count port from 5510 ]
 
     if [[ $PORT ]]; then
         PORT_FRONT=$(($PORT + 1700))
     else
+        get_unique_frontport
+    fi
+}
+
+get_unique_frontport() {
+    if [ -z "$DOMAIN_NAME" ]; then
         PORT_FRONT=$(awk '/'" $DOMAIN_NAME "'/{print $15}' "$FILE_INSTANCES" | head -n 1)
     fi
 }

@@ -29,7 +29,7 @@ docker_create_wp_next() {
             get_unique_port
 
             #GET PORT_FRONT
-            get_unique_frontport
+            set_unique_frontport
 
             get_project_dir "skip_question"
 
