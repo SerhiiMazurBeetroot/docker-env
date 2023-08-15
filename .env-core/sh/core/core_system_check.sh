@@ -4,8 +4,8 @@ set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
 check_package_availability() {
-    command -v docker-compose >/dev/null 2>&1 || {
-        ECHO_ERROR "Please install docker-compose"
+    command -v docker compose >/dev/null 2>&1 || {
+        ECHO_ERROR "Please install docker compose V2"
         exit 1
     }
 }
