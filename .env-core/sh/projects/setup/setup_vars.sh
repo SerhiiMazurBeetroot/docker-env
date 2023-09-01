@@ -102,7 +102,7 @@ set_php_vars() {
     #php
     DB_TYPE="MYSQL"
     DOMAIN_ADMIN=""
-    DOMAIN_DB=""
+    DB_NAME="0"
     DOMAIN_MAIL=""
     PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/docker
     PROJECT_DATABASE_DIR=$PROJECT_ROOT_DIR/database

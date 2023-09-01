@@ -12,7 +12,7 @@ docker_create_php() {
 
         if [[ $DOMAIN_EXISTS == 0 ]]; then
             get_project_dir "$@"
-            setup_default_args
+            set_project_args
         else
             ECHO_ERROR "Site already exists"
 

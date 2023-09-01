@@ -29,6 +29,7 @@ notice_project_urls() {
 	EMPTY_LINE
 	get_unique_frontport
 
+	ECHO_YELLOW "Project URLs:"
 	ECHO_KEY_VALUE "DOMAIN_FULL:" "https://$DOMAIN_FULL"
 	[[ $PORT_FRONT != "-" && $PORT_FRONT != "" ]] && ECHO_KEY_VALUE "DOMAIN_FRONT:" "http://localhost:$PORT_FRONT"
 	[[ $DOMAIN_ADMIN != "" ]] && ECHO_KEY_VALUE "DOMAIN_ADMIN:" "https://$DOMAIN_ADMIN"
@@ -40,10 +41,17 @@ notice_project_urls() {
 notice_project_vars() {
 	ECHO_KEY_VALUE "PROJECT_TYPE:" "$PROJECT_TYPE"
 	ECHO_KEY_VALUE "DOMAIN_NAME:" "$DOMAIN_NAME"
+
+	for arg in "${ARGS[@]}"; do
+		value="${!arg}"
+
+		if [[ -n "$value" ]]; then
+			ECHO_KEY_VALUE "$arg:" "$value"
+		fi
+	done
+
 	notice_project_urls
 	notice_windows_project_vars
-	ECHO_KEY_VALUE "PHP_VERSION:" "$PHP_VERSION"
-	notice_wp_vars
 
 	ECHO_YELLOW "You can find this info in the file /"$PROJECT_DOCKER_DIR"/.env"
 	EMPTY_LINE
@@ -63,21 +71,6 @@ notice_composer() {
 		ECHO_INFO "Please update composer.json file in your theme."
 		ECHO_INFO "Choose Docker actions and update composer"
 		EMPTY_LINE
-	fi
-}
-
-notice_wp_vars() {
-	if [[ $PROJECT_TYPE == "wordpress" || $PROJECT_TYPE == "bedrock" || $PROJECT_TYPE == "wpnextjs" ]]; then
-		ECHO_KEY_VALUE "WP_VERSION:" "$WP_VERSION"
-		ECHO_KEY_VALUE "WP_USER:" "$WP_USER"
-		ECHO_KEY_VALUE "WP_PASSWORD:" "$WP_PASSWORD"
-		ECHO_KEY_VALUE "DB_NAME:" "$DB_NAME"
-		ECHO_KEY_VALUE "TABLE_PREFIX:" "$TABLE_PREFIX"
-	fi
-
-	if [[ $PROJECT_TYPE == "wordpress" ]]; then
-		ECHO_KEY_VALUE "MULTISITE:" "$MULTISITE"
-		ECHO_KEY_VALUE "EMPTY_CONTENT:" "$EMPTY_CONTENT"
 	fi
 }
 
