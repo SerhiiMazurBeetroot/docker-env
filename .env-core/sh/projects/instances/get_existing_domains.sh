@@ -9,12 +9,11 @@ get_existing_domains() {
     if [ -z "$DOMAIN_NAME" ]; then
         string=$(awk '{print $3 $4 $5}' "$FILE_INSTANCES" | tail -n +2)
 
-        #Check project status is active
-        string="$(echo ${string} | grep -o 'active|[A-Za-z0-9.-]*' | sed 's/active|//g')"
-
-        OptionList=($string)
-
         if [ "$string" ]; then
+            #Check project status is active
+            string="$(echo ${string} | grep -o 'active|[A-Za-z0-9.-]*' | sed 's/active|//g')"
+            OptionList=($string)
+
             while true; do
                 EMPTY_LINE
                 ECHO_INFO "$ACTION"
