@@ -1,0 +1,46 @@
+@import "@/styles/mixins/rem";
+@import "@/styles/mixins/breakpoints";
+
+.menu {
+  display: flex;
+  justify-content: center;
+  gap: _rem(16);
+
+  a {
+    white-space: nowrap;
+    text-decoration: none;
+    color: var(--black-400);
+    transition: var(--transition-base);
+
+    &:hover span {
+      color: var(--green-600);
+    }
+
+    &[data-active="true"] span {
+      font-weight: 600;
+    }
+  }
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &[data-relative="true"] {
+    position: relative;
+  }
+
+  &:hover {
+    color: var(--red-500);
+  }
+
+  > a {
+    display: flex;
+    align-items: center;
+
+    > svg {
+      margin-right: _rem(4);
+    }
+  }
+}

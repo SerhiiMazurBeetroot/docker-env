@@ -1,0 +1,76 @@
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  margin: 0 0 _rem(16) 0;
+}
+
+h2,
+h3,
+h4,
+h5,
+h6 {
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: var(--text--h1);
+  line-height: var(--line-height--h1);
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: var(--text--h2);
+  line-height: var(--line-height--h2);
+}
+
+h3 {
+  font-size: var(--text--h3);
+  line-height: var(--line-height--h3);
+}
+
+h4 {
+  font-size: var(--text--h4);
+  line-height: var(--line-height--h4);
+}
+
+h5 {
+  font-size: var(--text--h5);
+  line-height: var(--line-height--h5);
+}
+
+h6 {
+  font-size: var(--text--h6);
+  line-height: var(--line-height--h6);
+}
+
+p {
+  font-size: var(--text--m);
+  line-height: var(--line-height--m);
+  margin: 0 0 _rem(24) 0;
+
+  @include breakpoint-down(sm) {
+    margin: 0 0 _rem(16) 0;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+p a {
+  text-decoration: none;
+  color: var(--green-600);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+ul,
+ol {
+  margin: 0;
+}

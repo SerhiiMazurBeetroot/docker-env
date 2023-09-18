@@ -53,6 +53,10 @@ actions_new_project() {
         docker_create_nodejs
         unset_variables "PROJECT_TYPE"
         ;;
+      "nextjs")
+        docker_create_nextjs
+        unset_variables "PROJECT_TYPE"
+        ;;
       esac
       ;;
     esac

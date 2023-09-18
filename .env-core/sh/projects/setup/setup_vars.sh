@@ -62,6 +62,9 @@ set_project_vars() {
     "nodejs")
         set_nodejs_vars
         ;;
+    "nextjs")
+        set_nextjs_vars
+        ;;
     *)
         echo "Unknown PROJECT_TYPE: $PROJECT_TYPE"
         return 1
@@ -142,6 +145,14 @@ set_nodejs_vars() {
     DOCKER_CONTAINER_DB="$DOMAIN_NAME-mongo"
     DOCKER_VOLUME_DB="$DOMAIN_NAME"_db_data
     HOST_EXTRA=""
+}
+
+set_nextjs_vars() {
+    #Next.js
+    DB_TYPE="0"
+    DB_NAME="0"
+    PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/docker
+    DOCKER_CONTAINER_APP="$DOMAIN_NAME-nextjs"
 }
 
 get_compose_project_name() {

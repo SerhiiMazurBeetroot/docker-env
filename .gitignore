@@ -71,6 +71,7 @@ node_modules
 /php/*
 /nodejs/*
 /wpnextjs/*
+/nextjs/*
 
 #===============================#
 #     Certificates              #

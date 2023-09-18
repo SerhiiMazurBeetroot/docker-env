@@ -1,0 +1,19 @@
+.themeChanger {
+  position: relative;
+  display: inline-block;
+  margin: 24px 0;
+
+  svg {
+    height: 22px;
+    width: 22px;
+    z-index: 2;
+
+    &:nth-child(1) {
+      color: var(--color-inactive-icon);
+    }
+
+    &:nth-child(2) {
+      color: var(--color-active-icon);
+    }
+  }
+}

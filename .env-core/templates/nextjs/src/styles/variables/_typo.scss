@@ -1,0 +1,49 @@
+:root {
+  //line height / font size
+  --line-height--base: #{(26/16)};
+  --line-height--m: #{(24/14)};
+  --line-height--s: #{(18/12)};
+  --line-height--sm: #{(12/10)};
+  --line-height--h1: #{(40/32)};
+  --line-height--h2: #{(32/24)};
+  --line-height--h3: #{(24/20)};
+  --line-height--h4: #{(24/18)};
+  --line-height--h5: #{(19/16)};
+  --line-height--h6: #{(17/14)};
+
+  --text--base: 16px;
+  --text--m: #{_rem(14)};
+  --text--s: #{_rem(12)};
+  --text--sm: #{_rem(10)};
+  --text--h1: #{_rem(32)};
+  --text--h2: #{_rem(24)};
+  --text--h3: #{_rem(20)};
+  --text--h4: #{_rem(18)};
+  --text--h5: #{_rem(16)};
+  --text--h6: #{_rem(14)};
+}
+
+// TODO: mobile sizes
+@include breakpoint-down(sm) {
+  :root {
+    --line-height--base: #{(24/14)};
+    --line-height--m: #{(24/14)};
+    --line-height--sm: #{(12/10)};
+    --line-height--h1: #{(32/24)};
+    --line-height--h2: #{(28/20)};
+    --line-height--h3: #{(22/18)};
+    --line-height--h4: #{(22/16)};
+    --line-height--h5: #{(19/16)};
+    --line-height--h6: #{(17/14)};
+
+    --text--base: 14px;
+    --text--m: #{_rem(14)};
+    --text--sm: #{_rem(10)};
+    --text--h1: #{_rem(32)};
+    --text--h2: #{_rem(20)};
+    --text--h3: #{_rem(18)};
+    --text--h4: #{_rem(16)};
+    --text--h5: #{_rem(16)};
+    --text--h6: #{_rem(14)};
+  }
+}

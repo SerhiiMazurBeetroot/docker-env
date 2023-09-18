@@ -18,12 +18,14 @@ declare -A AVAILABLE_PROJECTS_ARRAY=(
   [php]="PHP-Server"
   [wpnextjs]="NextWP"
   [nodejs]="Node.js"
+  [nextjs]="Next.js"
 )
 
 export AVAILABLE_PROJECTS=(
   "wordpress"
   "bedrock"
   "php"
+  "nextjs"
 )
 
 source_files_in() {

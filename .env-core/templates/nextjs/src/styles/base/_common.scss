@@ -1,0 +1,29 @@
+body {
+  color: var(--black-400);
+  font-size: var(--text--base);
+  line-height: var(--line-height--base);
+  background: var(--color-bg-body);
+  transition: var(--transition-base);
+}
+
+main {
+  padding-top: calc(var(--header-height) * 2);
+  min-height: calc(100vh - var(--header-height));
+
+  &[data-page-template="Page"] {
+    padding-bottom: _rem(24);
+
+    @include breakpoint-down(md-s) {
+      padding-bottom: _rem(16);
+    }
+  }
+}
+
+blockquote {
+  padding: _rem(10) _rem(20);
+  margin: 0 0 _rem(20);
+  font-size: _rem(24);
+  line-height: (32/24);
+  font-style: italic;
+  border-left: _rem(5) solid var(--grey-100);
+}
