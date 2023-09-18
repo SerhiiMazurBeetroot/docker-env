@@ -175,6 +175,9 @@ env_file_load() {
 
         #Replace only first occurrence in the file
         sed -i -e '0,/{MYSQL_DATABASE}/s//'$DB_NAME'/' $PROJECT_DOCKER_DIR/.env
+
+        # delete .env.example
+        cd "$PROJECT_ROOT_DIR" && rm -rf .env.example && cd ../../
     fi
 }
 
@@ -190,53 +193,6 @@ replace_templates_files() {
                 mv "${FILENAME}" "${NEW_FILENAME}"
             done
         done
-    fi
-}
-
-fix_permissions() {
-    check_domain_exists
-
-    if [[ $DOMAIN_EXISTS == 1 ]]; then
-        fix_permissions_wp
-    else
-        ECHO_ERROR "Site not exists"
-    fi
-
-}
-
-fix_permissions_wp() {
-    if [[ $PROJECT_TYPE == 'wordpress' || $PROJECT_TYPE == 'bedrock' ]]; then
-
-        EMPTY_LINE
-        ECHO_YELLOW "Fixing Permissions, this can take a while! [$PROJECT_ROOT_DIR]"
-        if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]; then
-            # TODO: get current user
-            # whoami
-            # TODO: fix perm for current user
-            # user=$(docker exec -i "$DOCKER_CONTAINER_DB" sh -c 'whoami')
-
-            docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec chown -R www-data:www-data /var/www/html/'
-            docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec chmod -R 755 /var/www/html/'
-        else
-            ECHO_ERROR "Docker container doesn't exist [$PROJECT_ROOT_DIR]"
-        fi
-
-        #Fix WP permissions
-        if [[ $OSTYPE != "windows" ]]; then
-            if [ -d $PROJECT_ROOT_DIR ]; then
-                EMPTY_LINE
-                sudo chmod -R 777 "$PROJECT_ROOT_DIR" # Suggested Permissions 755
-            fi
-
-            if [ -d $PROJECT_WP_CONTENT_DIR ]; then
-                sudo chmod -R 777 "$PROJECT_WP_CONTENT_DIR"                                                       # Suggested Permissions 755
-                [[ -d "$PROJECT_WP_CONTENT_DIR"/themes ]] && sudo chmod -R 777 "$PROJECT_WP_CONTENT_DIR"/themes   # Suggested Permissions 755
-                [[ -d "$PROJECT_WP_CONTENT_DIR"/plugins ]] && sudo chmod -R 777 "$PROJECT_WP_CONTENT_DIR"/plugins # Suggested Permissions 755
-                [[ -d "$PROJECT_WP_CONTENT_DIR"/uploads ]] && sudo chmod -R 777 "$PROJECT_WP_CONTENT_DIR"/uploads # Suggested Permissions 755
-            fi
-
-            git_config_fileMode
-        fi
     fi
 }
 
