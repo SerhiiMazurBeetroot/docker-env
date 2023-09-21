@@ -5,9 +5,12 @@ services:
     container_name: {DOMAIN_NAME}-nextjs
     build:
       context: ../
-      dockerfile: docker/Dockerfile.dev
+      dockerfile: docker/Dockerfile
       target: deps
+      args:
+        NODE_VERSION: ${NODE_VERSION}
     command: npm run dev
+    env_file: .env
     environment:
       VIRTUAL_HOST: ${VIRTUAL_HOST}
     volumes:

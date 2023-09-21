@@ -1,4 +1,7 @@
-FROM node:18-alpine AS base
+# default version if empty 
+ARG NODE_VERSION=18
+
+FROM node:${NODE_VERSION}-alpine AS base
 
 # 1. Install dependencies only when needed
 FROM base AS deps
