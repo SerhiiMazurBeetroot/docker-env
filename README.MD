@@ -12,7 +12,7 @@
 
 This environment was created to automate your local development.
 
-Spin up a local environment on Linux, Mac, and Windows using CLI, just type <strong>docker-env</strong>.
+Spin up a local environment on Linux, Mac, and Windows using CLI command <strong>docker-env</strong>.
 
 <br>
 
@@ -21,17 +21,21 @@ Spin up a local environment on Linux, Mac, and Windows using CLI, just type <str
 - Wordpress
 - Bedrock
 - PHP-Server
+- Next.js
 
 <br>
 
 # 1. What's inside the containers
-<p align="left">
+<p align="center">
   <a href="https://hub.docker.com/r/jwilder/nginx-proxy">
     <img alt="Proxy" src="https://img.shields.io/badge/jwilder-latest-00a652">
   </a>
     <a href="https://github.com/aegypius/mkcert-for-nginx-proxy">
     <img alt="Mkcert" src="https://img.shields.io/badge/mkcert-v1.0.2-f99d0f">
   </a>
+</p>
+
+<p align="center">
   <a href="https://hub.docker.com/_/php">
     <img alt="PHP" src="https://img.shields.io/badge/PHP%20fpm-option-8892bf">
   </a>
@@ -89,9 +93,10 @@ Spin up a local environment on Linux, Mac, and Windows using CLI, just type <str
 |     └── nginx           # Nginx-proxy
 |     └── sh              # Bash scripts
 |     └── templates       # Global templates
-└── wordpress             # WordPress sites go here
-└── bedrock               # Bedrock sites go here
-└── php                   # PHP-Server sites go here
+└── wordpress             # WordPress sites
+└── bedrock               # Bedrock sites
+└── php                   # PHP-Server sites
+└── nextjs                # Next.js sites
 ```
 
 <br>
