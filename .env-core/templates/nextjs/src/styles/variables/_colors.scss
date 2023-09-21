@@ -1,0 +1,29 @@
+:root {
+  --white: #ffffff;
+  --black: #000000;
+  --black-01: rgb(17 24 39/1);
+  --green-400: #0C9062;
+  --grey-400: #D7D9DE;
+  --yellow-100: #fde047;
+  --orange-400: #f97316;
+  --cyan-400: #2cdde8;
+  --brown-400: #711d1d;
+  --teal-400: #1a968e;
+  --pink-400: #da3cae;
+  --blue-100: #0e73cc;
+  --purple-500: #624bbb;
+  --red-500: #ef4444;
+
+
+  // gradients
+  --main-gradient: linear-gradient(135deg, var(--blue-100) 1.93%, var(--purple-500) 14.86%, var(--red-500) 48.09%, var(--orange-400) 77.82%, var(--yellow-100) 97.3%);
+
+  //
+  --color-bg-body: var(--white);
+  --text-color: var(--black-01)
+}
+
+:root[data-theme="dark"] {
+  --color-bg-body: var(--black-01);
+  --text-color: var(--white)
+}

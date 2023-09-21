@@ -7,22 +7,6 @@ get_project_type() {
     if [[ "$PROJECT_TYPE" == '' ]]; then
         PROJECT_TYPE=$(awk '/'"$DOMAIN_NAME"'/{print $13}' "$FILE_INSTANCES" | head -n 1)
     fi
-
-    if [[ $PROJECT_TYPE -eq 1 || "$PROJECT_TYPE" == '' ]]; then
-        PROJECT_TYPE="wordpress"
-        DB_TYPE="MYSQL"
-    elif [[ $PROJECT_TYPE -eq 2 ]]; then
-        PROJECT_TYPE="bedrock"
-        DB_TYPE="MYSQL"
-    elif [[ $PROJECT_TYPE -eq 3 ]]; then
-        PROJECT_TYPE="php"
-        DB_TYPE="MYSQL"
-    elif [[ $PROJECT_TYPE -eq 4 ]]; then
-        PROJECT_TYPE="nodejs"
-        DB_TYPE="MONGO"
-        DB_NAME="db"
-    fi
-
 }
 
 get_project_dir() {
@@ -54,54 +38,125 @@ get_project_dir() {
 }
 
 set_project_vars() {
-
     get_project_type
+
     PROJECT_DIR=$PROJECT_TYPE
     DOMAIN_NODOT=$(echo "$DOMAIN_NAME" | tr . _)
-    PROJECT_ROOT_DIR=$PROJECT_DIR/"$DOMAIN_FULL"
+    PROJECT_ROOT_DIR="$ENV_DIR"/"$PROJECT_DIR"/"$DOMAIN_FULL"
     PROJECT_ARCHIVE_DIR=$PROJECT_DIR"_""$DOMAIN_FULL"
-    COMPOSE_PROJECT_NAME=$(echo "$DOMAIN_FULL" | sed "s/[^a-zA-Z0-9_\-]/'_'/g; s/^-//; s/-$/_/; s/__*/_/g; s/[^a-zA-Z0-9_\-]//g; s/^$/none/")
+    get_compose_project_name
 
-    if [[ $PROJECT_TYPE -eq 1 || $PROJECT_TYPE == 'wordpress' || $PROJECT_TYPE == 'projects' ]]; then
-        #WP
-        DOMAIN_ADMIN="$DOMAIN_FULL/wp-admin"
-        DOMAIN_DB="$DOMAIN_FULL.phpmyadmin"
-        PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/wp-docker
-        PROJECT_DATABASE_DIR=$PROJECT_ROOT_DIR/wp-database
-        PROJECT_WP_CONTENT_DIR=$PROJECT_ROOT_DIR/wp-content
-        DOCKER_CONTAINER_APP="$DOMAIN_NAME-wordpress"
-        DOCKER_CONTAINER_DB="$DOMAIN_NAME-mysql"
-        DOCKER_VOLUME_DB="$DOMAIN_NAME"_db_data
-        HOST_EXTRA="$DOMAIN_FULL.phpmyadmin"
-    elif [[ $PROJECT_TYPE -eq 2 || $PROJECT_TYPE == 'bedrock' ]]; then
-        #BEDROCK
-        DOMAIN_ADMIN="$DOMAIN_FULL/wp/wp-admin"
-        DOMAIN_DB="$DOMAIN_FULL.phpmyadmin"
-        DOMAIN_MAIL="$DOMAIN_FULL.mail"
-        PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/docker
-        PROJECT_DATABASE_DIR=$PROJECT_ROOT_DIR/database
-        PROJECT_WP_CONTENT_DIR=$PROJECT_ROOT_DIR/app/web/app
-        DOCKER_CONTAINER_APP="$DOMAIN_NAME-bedrock"
-        DOCKER_CONTAINER_DB="$DOMAIN_NAME-mysql"
-        DOCKER_VOLUME_DB="$DOMAIN_NAME"_db_data
-        HOST_EXTRA="$DOMAIN_FULL.phpmyadmin $DOMAIN_FULL.mail"
-    elif [[ $PROJECT_TYPE -eq 3 || $PROJECT_TYPE == 'php' ]]; then
-        #php
-        DOMAIN_ADMIN=""
-        DOMAIN_DB=""
-        DOMAIN_MAIL=""
-        PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/docker
-        PROJECT_DATABASE_DIR=$PROJECT_ROOT_DIR/database
-        PROJECT_WP_CONTENT_DIR=$PROJECT_ROOT_DIR/app
-        DOCKER_CONTAINER_APP="$DOMAIN_NAME-php"
-        DOCKER_CONTAINER_DB="$DOMAIN_NAME-mysql"
-        DOCKER_VOLUME_DB="$DOMAIN_NAME"_db_datac
-        HOST_EXTRA=""
-    elif [[ $PROJECT_TYPE -eq 4 || $PROJECT_TYPE == 'nodejs' ]]; then
-        PROJECT_DIR="nodejs"
-        PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR
-        HOST_EXTRA=""
+    case $PROJECT_TYPE in
+    "wordpress" | "projects")
+        set_wordpress_vars
+        ;;
+    "bedrock")
+        set_bedrock_vars
+        ;;
+    "php")
+        set_php_vars
+        ;;
+    "wpnextjs")
+        set_wpnextjs_vars
+        ;;
+    "nodejs")
+        set_nodejs_vars
+        ;;
+    "nextjs")
+        set_nextjs_vars
+        ;;
+    *)
+        echo "Unknown PROJECT_TYPE: $PROJECT_TYPE"
+        return 1
+        ;;
+    esac
+}
+
+set_wordpress_vars() {
+    #WP
+    DB_TYPE="MYSQL"
+    DOMAIN_ADMIN="$DOMAIN_FULL/wp-admin"
+    DOMAIN_DB="$DOMAIN_FULL.phpmyadmin"
+    PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/wp-docker
+    PROJECT_DATABASE_DIR=$PROJECT_ROOT_DIR/wp-database
+    PROJECT_WP_CONTENT_DIR=$PROJECT_ROOT_DIR/wp-content
+    DOCKER_CONTAINER_APP="$DOMAIN_NAME-wordpress"
+    DOCKER_CONTAINER_DB="$DOMAIN_NAME-mysql"
+    DOCKER_VOLUME_DB="$DOMAIN_NAME"_db_data
+    HOST_EXTRA="$DOMAIN_FULL.phpmyadmin"
+}
+
+set_bedrock_vars() {
+    #BEDROCK
+    DB_TYPE="MYSQL"
+    DOMAIN_ADMIN="$DOMAIN_FULL/wp/wp-admin"
+    DOMAIN_DB="$DOMAIN_FULL.phpmyadmin"
+    DOMAIN_MAIL="$DOMAIN_FULL.mail"
+    PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/docker
+    PROJECT_DATABASE_DIR=$PROJECT_ROOT_DIR/database
+    PROJECT_WP_CONTENT_DIR=$PROJECT_ROOT_DIR/app/web/app
+    DOCKER_CONTAINER_APP="$DOMAIN_NAME-bedrock"
+    DOCKER_CONTAINER_DB="$DOMAIN_NAME-mysql"
+    DOCKER_VOLUME_DB="$DOMAIN_NAME"_db_data
+    HOST_EXTRA="$DOMAIN_FULL.phpmyadmin $DOMAIN_FULL.mail"
+}
+
+set_php_vars() {
+    #php
+    DB_TYPE="MYSQL"
+    DOMAIN_ADMIN=""
+    DB_NAME="0"
+    DOMAIN_MAIL=""
+    PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/docker
+    PROJECT_DATABASE_DIR=$PROJECT_ROOT_DIR/database
+    PROJECT_WP_CONTENT_DIR=$PROJECT_ROOT_DIR/app
+    DOCKER_CONTAINER_APP="$DOMAIN_NAME-php"
+    DOCKER_CONTAINER_DB="$DOMAIN_NAME-mysql"
+    DOCKER_VOLUME_DB="$DOMAIN_NAME"_db_data
+    HOST_EXTRA=""
+}
+
+set_wpnextjs_vars() {
+    #WP-Next
+    DB_TYPE="MYSQL"
+    DB_NAME="db"
+    PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/docker
+    PROJECT_BACKEND_DIR=$PROJECT_ROOT_DIR/backend
+    PROJECT_FRONTEND_DIR=$PROJECT_ROOT_DIR/frontend
+    PROJECT_DATABASE_DIR=$PROJECT_BACKEND_DIR/wp-database
+    PROJECT_WP_CONTENT_DIR=$PROJECT_BACKEND_DIR/wp-content
+    DOMAIN_ADMIN="$DOMAIN_FULL/wp-admin"
+    DOMAIN_DB="$DOMAIN_FULL.phpmyadmin"
+    DOCKER_CONTAINER_APP="$DOMAIN_NAME-wpnextjs"
+    DOCKER_CONTAINER_DB="$DOMAIN_NAME-mysql"
+    DOCKER_VOLUME_DB="$DOMAIN_NAME"_db_data
+    HOST_EXTRA="$DOMAIN_FULL.phpmyadmin"
+}
+
+set_nodejs_vars() {
+    #nodejs
+    DB_TYPE="MONGO"
+    DB_NAME="db"
+    PROJECT_DIR="nodejs"
+    PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/docker
+    PROJECT_BACKEND_DIR=$PROJECT_ROOT_DIR/backend
+    PROJECT_FRONTEND_DIR=$PROJECT_ROOT_DIR/frontend
+    DOCKER_CONTAINER_APP="$DOMAIN_NAME-nodejs"
+    DOCKER_CONTAINER_DB="$DOMAIN_NAME-mongo"
+    DOCKER_VOLUME_DB="$DOMAIN_NAME"_db_data
+    HOST_EXTRA=""
+}
+
+set_nextjs_vars() {
+    #Next.js
+    DB_TYPE="0"
+    DB_NAME="0"
+    PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/docker
+    DOCKER_CONTAINER_APP="$DOMAIN_NAME-nextjs"
+}
+
+get_compose_project_name() {
+    if [ -n "$DOMAIN_FULL" ]; then
+        COMPOSE_PROJECT_NAME=$(echo "$DOMAIN_FULL" | sed "s/[^a-zA-Z0-9_\-]/_/g; s/^-//; s/-$/_/; s/-/_/g; s/[^a-zA-Z0-9_\-]//g; s/^$/none/")
     fi
-
-    # EMPTY_LINE
 }

@@ -25,14 +25,12 @@ git_actions() {
             ;;
         2)
             get_existing_domains "====== Create Github Repo ====="
-            get_project_dir "skip_question"
             git_create_repo_github
             unset_variables
             git_actions
             ;;
         3)
             get_existing_domains "====== Create GitLab Repo ====="
-            get_project_dir "skip_question"
             git_create_repo_gitlab
             unset_variables
             git_actions

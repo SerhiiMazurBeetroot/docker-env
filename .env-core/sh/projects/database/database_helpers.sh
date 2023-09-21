@@ -23,5 +23,25 @@ get_db_name() {
 }
 
 check_db_exists() {
-    DB_EXISTS=$(docker exec -i "$DOCKER_CONTAINER_DB" sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" --execute "show databases"' | grep -Eo $DB_NAME || true)
+    get_mysql_cmd
+
+    DB_EXISTS=$(docker exec -i "$DOCKER_CONTAINER_DB" sh -c "$MYSQL_CMD -uroot -p\"$MYSQL_ROOT_PASSWORD\" --execute \"SHOW DATABASES\" | grep -Eo \"$DB_NAME\" || true")
+}
+
+get_mysql_cmd() {
+    # mariadb v.11.0 (mysql is deprecated)
+    # https://mariadb.com/kb/en/mariadb-dump/
+    # https://i.imgur.com/4ElZqbd.png
+
+    MYSQL_EXISTS=$(docker exec -i "$DOCKER_CONTAINER_DB" sh -c "command -v mysql || true")
+
+    if [ -n "$MYSQL_EXISTS" ]; then
+        export MYSQL_CMD="mysql"
+        export MYSQL_DUMP_CMD="mysqldump"
+        export MYSQL_ADMIN_CMD="mysqladmin"
+    else
+        export MYSQL_CMD="mariadb"
+        export MYSQL_DUMP_CMD="mariadb-dump"
+        export MYSQL_ADMIN_CMD="mariadb-admin"
+    fi
 }

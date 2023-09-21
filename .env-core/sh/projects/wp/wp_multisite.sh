@@ -6,7 +6,6 @@ set -o pipefail
 wp_multisite_convert() {
 	if [ "$DOMAIN_NAME" == '' ]; then
 		running_projects_list "======= Enabling multisite ======"
-		get_project_dir "skip_question"
 	fi
 
 	IS_MULTISITE=$(awk '/WP_ALLOW_MULTISITE=/{print $1}' "$PROJECT_DOCKER_DIR"/.env | tr -d WP_ALLOW_MULTISITE=)

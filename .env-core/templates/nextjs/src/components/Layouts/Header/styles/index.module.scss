@@ -1,0 +1,73 @@
+@import "@/styles/mixins/rem";
+@import "@/styles/mixins/breakpoints";
+
+.header {
+  width: 100%;
+  min-height: var(--header-height);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--header-index);
+  gap: 0 _rem(16);
+  padding: 0 _rem(11) 0 _rem(16);
+  background-color: var(--color-bg-body);
+  box-shadow: 0 _rem(1) _rem(1) _rem(1) rgba(84, 105, 125, 0.08);
+  font-size: var(--text--m);
+  display: flex;
+  align-items: center;
+
+  @include breakpoint-down(xs) {
+    padding: 0 _rem(8);
+  }
+}
+
+.wrap {
+  width: 100% !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  @include breakpoint-down(md-s) {
+    justify-content: end;
+  }
+}
+
+.left,
+.right {
+  display: flex;
+  align-items: center;
+  gap: 0 _rem(16);
+}
+
+.left {
+  @include breakpoint-down(md) {
+    width: 100%;
+  }
+
+  label {
+    margin: unset;
+  }
+}
+
+.right {
+  gap: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  color: var(--white);
+
+  [data-theme='dark'] & {
+    filter: invert(1);
+  }
+
+  @include breakpoint-down(md) {
+    margin-right: auto;
+  }
+}
+
+.link {
+  padding: _rem(10) _rem(20);
+  color: var(--color-white);
+}

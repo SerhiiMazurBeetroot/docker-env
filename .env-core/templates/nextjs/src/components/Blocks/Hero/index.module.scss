@@ -1,0 +1,30 @@
+@import "@/styles/mixins/rem";
+@import "@/styles/mixins/breakpoints";
+
+.h1 {
+  line-height: 1.3;
+  font-weight: 500;
+  letter-spacing: -.001em;
+  font-size: _rem(60);
+}
+
+.h2 {
+  line-height: 1.3;
+  font-weight: 500;
+  letter-spacing: -.001em;
+  font-size: _rem(40);
+}
+
+.gradientText {
+  background: var(--main-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.content {
+  margin-bottom: _rem(16);
+}
+
+.button {
+  margin: 0 auto;
+}

@@ -1,0 +1,15 @@
+:root {
+  --border-radius--m: #{_rem(16)};
+  --border-radius--s: #{_rem(12)};
+  --border-radius--xs: #{_rem(8)};
+  --primary-box-shadow: 0 #{_rem(1)} #{_rem(1)} #{_rem(1)} rgba(84, 105, 125, 0.08);
+  --second-box-shadow: 0 #{_rem(12)} #{_rem(16)} #{_rem(1)} rgba(84, 105, 125, 0.16);
+  --header-height: #{_rem(64)};
+  --header-index: 999;
+
+  @include breakpoint-down(xs) {
+    --header-height: #{_rem(48)};
+  }
+
+  --base-transition: all 0.5s ease;
+}

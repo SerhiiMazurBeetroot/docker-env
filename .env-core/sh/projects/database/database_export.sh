@@ -4,8 +4,6 @@ set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
 database_export() {
-    get_project_dir "skip_question"
-
     if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_DB'($)')" ]; then
         get_db_name
 

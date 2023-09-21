@@ -19,13 +19,13 @@ setup_beetroot_args() {
         1)
             get_domain_name
             get_project_dir "$@"
-            setup_default_args
+            set_project_args
             break
             ;;
         2)
             get_domain_name
             get_project_dir "$@"
-            setup_custom_args
+            set_custom_args
             break
             ;;
         esac

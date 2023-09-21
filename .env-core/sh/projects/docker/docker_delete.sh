@@ -6,8 +6,6 @@ set -o pipefail
 docker_delete() {
     get_existing_domains "======== DELETE project ======="
 
-    get_project_dir "skip_question"
-
     if [ -d $PROJECT_ROOT_DIR ]; then
         EMPTY_LINE
         ECHO_ATTENTION "You can't restore the site after it has been deleted."
@@ -55,5 +53,6 @@ docker_delete() {
         done
     else
         ECHO_ERROR "Site DIR does not exist: $PROJECT_ROOT_DIR"
+        delete_site_data
     fi
 }

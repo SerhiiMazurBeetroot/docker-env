@@ -6,13 +6,11 @@ set -o pipefail
 zip_project() {
 	get_existing_domains "======== ZIP project ======="
 
-	get_project_dir "skip_question"
-
 	if [ -d $PROJECT_ROOT_DIR ]; then
 		#First of all save DB
 		database_auto_backup
 
-	    #Delete "vendor" and "node_modules"
+		#Delete "vendor" and "node_modules"
 		if [ -d $PROJECT_ROOT_DIR/vendor ]; then
 			VENDOR_DIR=($(find $PROJECT_ROOT_DIR/vendor -type d -name "vendor"))
 

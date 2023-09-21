@@ -8,7 +8,7 @@
 
 ## [5.3 Create new project Bedrock](./5-doc-new-wordpress.MD#create-new-project)
 
-## [5.4 Create new project Simple PHP](./5-doc-new-php.MD#54-create-new-simple-php)
+## [5.4 Create new project PHP-Server](./5-doc-new-php.MD#54-create-new-php)
 
 <br>
 
@@ -47,7 +47,7 @@
 
         3 - beetroot
 
-    3 - Simple PHP
+    3 - PHP-Server
 
 3 - Existing project
 
@@ -103,7 +103,7 @@
 
         2 - Unzip
 
-4 - ENV settings
+4 - Settings
 
     1 - ENV_UPDATES
 

@@ -19,14 +19,30 @@ check_instances_file_exists() {
         mkdir $DIR_DATA
 
         PORT=3309
-        echo "$PORT | STATUS | DOMAIN_NAME | DOMAIN_FULL | DB_NAME | DB_TYPE | PROJECT_TYPE | " >>"$FILE_INSTANCES"
+        echo "$PORT | STATUS | DOMAIN_NAME | DOMAIN_FULL | DB_NAME | DB_TYPE | PROJECT_TYPE | PORT_FRONT | " >>"$FILE_INSTANCES"
     fi
 }
 
 print_to_file_instances() {
     if [[ $PORT && $DOMAIN_NAME ]]; then
-        echo "$PORT | active | $DOMAIN_NAME | $DOMAIN_FULL | $DB_NAME | $DB_TYPE | $PROJECT_TYPE |" >>"$FILE_INSTANCES"
+
+        [[ $PORT_FRONT == "" ]] && PORT_FRONT='-'
+
+        echo "$PORT | active | $DOMAIN_NAME | $DOMAIN_FULL | $DB_NAME | $DB_TYPE | $PROJECT_TYPE | $PORT_FRONT |" >>"$FILE_INSTANCES"
         # Save backup
-        echo "$PORT | active | $DOMAIN_NAME | $DOMAIN_FULL | $DB_NAME | $DB_TYPE | $PROJECT_TYPE |" >>"$FILE_INSTANCES.bak"
+        echo "$PORT | active | $DOMAIN_NAME | $DOMAIN_FULL | $DB_NAME | $DB_TYPE | $PROJECT_TYPE | $PORT_FRONT |" >>"$FILE_INSTANCES.bak"
     fi
+}
+
+# usage array:
+# Call: print_list "${ARRAY[@]}"
+
+print_list() {
+    OPTION_LIST=("$@")
+
+    for ((i = 0; i < ${#OPTION_LIST[@]}; i++)); do
+        index=$((i + 1))
+        option="${OPTION_LIST[i]}"
+        ECHO_KEY_VALUE "[$index]" "$option"
+    done
 }

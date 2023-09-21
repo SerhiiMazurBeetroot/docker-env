@@ -1,0 +1,63 @@
+$boxShadow: 0 _rem(1) _rem(1) _rem(1) rgba(84, 105, 125, 0.08);
+$boxBorder: 0 0 0 _rem(1) var(--grey-300);
+
+// basic wrap class with max-width restriction (used for all blocks)
+.wrap {
+  margin: 0 auto;
+  width: var(--wrap-width);
+  max-width: var(--wrap-max-width);
+
+  &.right {
+    text-align: right;
+  }
+
+  &.left {
+    text-align: left;
+  }
+
+  &.center {
+    text-align: center;
+  }
+
+  &[data-size="l"] {
+    --wrap-max-width: #{_rem(1032)};
+    --wrap-width: calc(#{var(--vw)} - #{_rem(80)});
+
+    @media screen and (max-width: #{_rem(1032)}) {
+      --wrap-max-width: 100%;
+    }
+
+    @include breakpoint-down(md-s) {
+      --wrap-width: calc(#{var(--vw)} - #{_rem(32)});
+    }
+  }
+
+  &[data-size="m"] {
+    --wrap-max-width: #{_rem(856)};
+
+    @media screen and (max-width: #{_rem(856)}) {
+      --wrap-max-width: 100%;
+    }
+  }
+
+  &[data-size="ms"] {
+    --wrap-max-width: #{_rem(728)};
+
+    @media screen and (max-width: #{_rem(728)}) {
+      --wrap-max-width: 100%;
+    }
+  }
+
+  &[data-size="s"] {
+    --wrap-max-width: #{_rem(680)};
+
+    @media screen and (max-width: #{_rem(680)}) {
+      --wrap-max-width: 100%;
+    }
+  }
+}
+
+.content {
+  padding-top: _rem(40);
+  padding-bottom: _rem(40);
+}

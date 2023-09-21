@@ -4,7 +4,8 @@ set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
 database_create_dump() {
-    get_project_dir "skip_question"
+    env_file_load
+    get_mysql_cmd
 
     mkdir -p $PROJECT_DATABASE_DIR/temp
 
@@ -20,7 +21,7 @@ database_create_dump() {
     file=$PROJECT_DATABASE_DIR/$DUMP_FILE
 
     # Create dump
-    docker exec -i "$DOCKER_CONTAINER_DB" sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' >"$file"
+    docker exec -i "$DOCKER_CONTAINER_DB" sh -c "$MYSQL_DUMP_CMD -uroot -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE" >"$file"
 
     # Check if new backup was created
     if [ -e "$file" ]; then

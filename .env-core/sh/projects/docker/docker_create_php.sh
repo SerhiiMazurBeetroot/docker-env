@@ -12,7 +12,7 @@ docker_create_php() {
 
         if [[ $DOMAIN_EXISTS == 0 ]]; then
             get_project_dir "$@"
-            setup_default_args
+            set_project_args
         else
             ECHO_ERROR "Site already exists"
 
@@ -36,7 +36,7 @@ docker_create_php() {
             mkdir -p $PROJECT_DOCKER_DIR
 
             # Copy templates files
-            cp -r ./.env-core/templates/php/* $PROJECT_DOCKER_DIR
+            cp -r $ENV_DIR/.env-core/templates/php/* $PROJECT_DOCKER_DIR
             mv $PROJECT_DOCKER_DIR/app $PROJECT_ROOT_DIR
 
             # Rename files

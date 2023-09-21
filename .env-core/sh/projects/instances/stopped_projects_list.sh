@@ -32,16 +32,15 @@ stopped_projects_list() {
             ECHO_INFO "$ACTION"
             ECHO_YELLOW "[0] Return to the previous menu"
 
-            for i in "${!stopped_container[@]}"; do
-                ECHO_KEY_VALUE "[$(($i + 1))]" "${stopped_container[$i]}"
-            done
+            print_list "${stopped_container[@]}"
 
-            ((++i))
             read -rp "$(ECHO_YELLOW "Please select one of:")" choice
 
             [ -z "$choice" ] && choice=-1
-            if (("$choice" > 0 && "$choice" <= $i)); then
+            if (("$choice" > 0 && "$choice" <= ${#stopped_container[@]})); then
                 DOMAIN_NAME="${stopped_container[$(($choice - 1))]}"
+
+                get_project_dir "skip_question"
                 break
             else
                 if [ "$choice" == 0 ]; then

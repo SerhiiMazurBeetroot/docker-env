@@ -1,0 +1,12 @@
+@import "@/styles/mixins/rem";
+@import "@/styles/mixins/breakpoints";
+
+.wrap {
+  display: flex;
+  justify-content: space-between;
+}
+
+.footer {
+  border-top: solid 2px var(--text-color);
+  padding: _rem(32) _rem(20);
+}

@@ -1,0 +1,99 @@
+@import "@/styles/mixins/rem";
+@import "@/styles/mixins/breakpoints";
+
+.button {
+  max-width: fit-content;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  border: none;
+  font-size: _rem(16);
+  font-weight: 600;
+  line-height: _rem(26);
+  padding: _rem(7) _rem(16);
+  border-radius: _rem(8);
+  transition: var(--transition-base);
+  text-decoration: none;
+  color: var(--black-400);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  gap: _rem(8);
+
+  svg {
+    max-width: _rem(24);
+    max-height: _rem(24);
+  }
+
+  span + svg,
+  svg + span {
+    margin-left: _rem(4);
+  }
+
+  &:has(svg + span) {
+    padding-left: _rem(8);
+  }
+
+  &:has(span + svg) {
+    padding-right: _rem(8);
+  }
+
+  &[data-loading="true"] {
+    pointer-events: none;
+    user-select: none;
+  }
+
+  &[data-disabled="true"] {
+    opacity: 0.32;
+    pointer-events: none;
+    user-select: none;
+  }
+}
+
+.default {
+  border: 1px solid var(--grey-400);
+
+  &:active,
+  &[data-active="true"] {
+    border: 1px solid var(--grey-400);
+  }
+
+  &:hover {
+    background: var(--main-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+.transparent {
+  background-color: transparent;
+
+  &[data-active="true"],
+  &:active {
+    color: var(--red-500);
+  }
+
+  &:hover {
+    background-color: var(--main-gradient);
+  }
+}
+
+.loader {
+  display: none;
+  animation: spin 1.5s infinite linear;
+
+  [data-loading="true"] & {
+    display: block;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}

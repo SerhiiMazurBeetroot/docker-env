@@ -14,7 +14,6 @@ wp_site_empty() {
             [[ $AGREE == "n" ]] && actions_existing_project
 
             running_projects_list "==== Delete site content ===="
-            get_project_dir "skip_question"
 
             read -rp "$(ECHO_YELLOW "Do you want to remove posts?") y/n " EMPTY_POSTS
             read -rp "$(ECHO_YELLOW "Do you want to remove default themes?") y/n " EMPTY_THEMES

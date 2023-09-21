@@ -1,0 +1,27 @@
+version: '3.6'
+
+services:
+  {DOMAIN_NAME}-nextjs:
+    container_name: {DOMAIN_NAME}-nextjs
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+      target: deps
+      args:
+        NODE_VERSION: ${NODE_VERSION}
+    command: npm run dev
+    env_file: .env
+    environment:
+      VIRTUAL_HOST: ${VIRTUAL_HOST}
+    volumes:
+      - ../:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - '${PORT}:3000'
+    restart: always
+
+networks:
+  default:
+    name: dockerwp
+    external: true

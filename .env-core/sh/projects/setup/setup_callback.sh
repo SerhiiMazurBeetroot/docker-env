@@ -6,6 +6,7 @@ set -o pipefail
 check_data_before_continue_callback() {
     EMPTY_LINE
     ECHO_YELLOW "Check everything before proceeding:"
+    EMPTY_LINE
 
     while true; do
         notice_project_vars
@@ -32,7 +33,6 @@ check_data_before_continue_callback() {
 
 setup_installation_type_callback() {
     unset_variables
-    get_project_type
 
     while true; do
         EMPTY_LINE
@@ -53,7 +53,7 @@ setup_installation_type_callback() {
 
             if [[ $DOMAIN_EXISTS == 0 ]]; then
                 get_project_dir "$@"
-                setup_default_args
+                set_project_args
             else
                 ECHO_ERROR "Site already exists"
 
@@ -69,7 +69,7 @@ setup_installation_type_callback() {
 
             if [[ $DOMAIN_EXISTS == 0 ]]; then
                 get_project_dir "$@"
-                setup_custom_args "$@"
+                set_custom_args
             else
                 ECHO_ERROR "Site already exists"
 

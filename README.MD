@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="devENV" src="./.env-core/docs/images/featured-new.png" height="100%" width="50%">
+  <img alt="docker-env" src="./.env-core/docs/images/docker-env.webp" height="100%" width="50%">
 </p>
 
 <p align="center" dir="auto">
@@ -12,7 +12,7 @@
 
 This environment was created to automate your local development.
 
-Spin up a local environment on Linux, Mac, and Windows using CLI.
+Spin up a local environment on Linux, Mac, and Windows using CLI command <strong>docker-env</strong>.
 
 <br>
 
@@ -20,18 +20,22 @@ Spin up a local environment on Linux, Mac, and Windows using CLI.
 
 - Wordpress
 - Bedrock
-- PHP simple
+- PHP-Server
+- Next.js
 
 <br>
 
 # 1. What's inside the containers
-<p align="left">
+<p align="center">
   <a href="https://hub.docker.com/r/jwilder/nginx-proxy">
     <img alt="Proxy" src="https://img.shields.io/badge/jwilder-latest-00a652">
   </a>
     <a href="https://github.com/aegypius/mkcert-for-nginx-proxy">
     <img alt="Mkcert" src="https://img.shields.io/badge/mkcert-v1.0.2-f99d0f">
   </a>
+</p>
+
+<p align="center">
   <a href="https://hub.docker.com/_/php">
     <img alt="PHP" src="https://img.shields.io/badge/PHP%20fpm-option-8892bf">
   </a>
@@ -66,6 +70,7 @@ Spin up a local environment on Linux, Mac, and Windows using CLI.
 
 | Name          | Description                                         |
 |---------------|-----------------------------------------------------|
+| Alias         | docker-env  (need to reload you terminal 1-st time) |
 | Nginx-proxy   | Automated Nginx reverse proxy for docker containers |
 | Certificates  | Automatic creation/renewal  SSL certificates        |
 | Logs          | Follow log output for Nginx, WP instance            |
@@ -82,15 +87,16 @@ Spin up a local environment on Linux, Mac, and Windows using CLI.
 # 4. Project tree
 
 ```
-├── setup.sh              # Run devENV
-├── .env-core             # devENV core files
+├── setup.sh              # Run environments
+├── .env-core             # Core files
 |     └── data            # Data about sites, settings, docker images
 |     └── nginx           # Nginx-proxy
 |     └── sh              # Bash scripts
 |     └── templates       # Global templates
-└── wordpress             # WordPress sites go here
-└── bedrock               # Bedrock sites go here
-└── php                   # PHP simple sites go here
+└── wordpress             # WordPress sites
+└── bedrock               # Bedrock sites
+└── php                   # PHP-Server sites
+└── nextjs                # Next.js sites
 ```
 
 <br>
@@ -103,7 +109,7 @@ Spin up a local environment on Linux, Mac, and Windows using CLI.
 
 ## [5.3 Create new project Bedrock](./.env-core/docs/5-doc-new-wordpress.MD#create-new-project)
 
-## [5.4 Create new project Simple PHP](./.env-core/docs/5-doc-new-php.MD#54-create-new-simple-php)
+## [5.4 Create new project PHP-Server](./.env-core/docs/5-doc-new-php.MD#54-create-new-php)
 
 ## [5.5 Environment options](./.env-core/docs/5-doc-environment-options.MD#55-environment-options)
 <br>

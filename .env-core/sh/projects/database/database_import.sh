@@ -4,8 +4,6 @@ set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
 database_import() {
-    get_project_dir "skip_question"
-
     if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_DB'($)')" ]; then
         ECHO_GREEN "Wordpress and DB container exists"
 
@@ -31,13 +29,13 @@ database_import() {
                         docker cp "$PROJECT_DATABASE_DIR/$DB_FILE" "$DOCKER_CONTAINER_DB":/docker-entrypoint-initdb.d/dump.sql
 
                         # Drop DB
-                        docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "mysqladmin drop $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
+                        docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "$MYSQL_ADMIN_CMD drop $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
 
                         # Create empty DB
-                        docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "mysqladmin create $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
+                        docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "$MYSQL_ADMIN_CMD create $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
 
                         # Import DB
-                        docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < /docker-entrypoint-initdb.d/dump.sql"
+                        docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "$MYSQL_CMD -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < /docker-entrypoint-initdb.d/dump.sql"
 
                         ECHO_SUCCESS "DB dump for inserted [$PROJECT_ROOT_DIR]"
 
@@ -49,12 +47,12 @@ database_import() {
 
                         if [ $DB_EXISTS ]; then
                             # Drop DB
-                            docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "mysqladmin drop $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
+                            docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "$MYSQL_ADMIN_CMD drop $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
                         fi
 
                         if [ ! $DB_EXISTS ]; then
                             # Create empty DB
-                            docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "mysqladmin create $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
+                            docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "$MYSQL_ADMIN_CMD create $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
                         fi
                     fi
                 done

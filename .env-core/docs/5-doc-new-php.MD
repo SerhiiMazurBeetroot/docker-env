@@ -9,11 +9,11 @@
 
 <br>
 
-## 5.4 Create new Simple PHP
+## 5.4 Create new PHP-Server
 
 | Step | Option  | Description               | Example        |   |
 |------|---------|---------------------------|----------------|---|
-| 1    | 3       | Simple PHP                |                |   |
+| 1    | 3       | PHP-Server                |                |   |
 | 2    |         | Enter Domain Name         | test           |   |
 | 3    |         | Enter DOMAIN_FULL         | test.local     | * |
 | 4    | [y/n]   | Is correct?               |                |   |
