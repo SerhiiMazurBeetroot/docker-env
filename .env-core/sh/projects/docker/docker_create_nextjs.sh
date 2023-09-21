@@ -10,17 +10,19 @@ docker_create_nextjs() {
         get_domain_name
         check_domain_exists
 
+        # if [[ $DOMAIN_EXISTS == 0 ]]; then
+        #     get_project_dir "$@"
+        #     set_project_args
+        # else
+        #     ECHO_ERROR "Site already exists"
+
+        #     # Run next function again
+        #     get_domain_name
+        # fi
+
         if [[ $DOMAIN_EXISTS == 0 ]]; then
             get_project_dir "$@"
             set_project_args
-        else
-            ECHO_ERROR "Site already exists"
-
-            # Run next function again
-            get_domain_name
-        fi
-
-        if [[ $DOMAIN_EXISTS == 0 ]]; then
             check_data_before_continue_callback docker_create_nextjs
 
             ECHO_INFO "Setting up Docker containers for $DOMAIN_FULL"

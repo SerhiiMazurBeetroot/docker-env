@@ -67,11 +67,15 @@ get_php_versions() {
     QUESTION=$1
 
     PHP_LIST=($(curl -s 'https://www.php.net/releases/active.php' | grep -Eo '[0-9]\.[0-9]' | awk '!a[$0]++'))
+    PHP_LATEST_VERSION="${PHP_LIST[1]}"
 
     if [ ! $PHP_VERSION ]; then
         if [[ $QUESTION == "default" ]]; then
             PHP_VERSION="${PHP_LIST[1]}"
         else
+            EMPTY_LINE
+            ECHO_YELLOW "Enter PHP_VERSION [default '$PHP_LATEST_VERSION']"
+
             print_list "${PHP_LIST[@]}"
 
             read -rp "$(ECHO_YELLOW "Please select one of:")" choice
@@ -101,8 +105,40 @@ get_latest_wp_version() {
     WP_PREV_VER=$(echo ${WP[1]} | grep -Eo '[0-9]+\.[0-9]+\.?[0-9]+' || echo "${WP[1]}.0")
 }
 
+get_nodejs_version() {
+    NODE_VERSIONS=($(curl -sL 'https://raw.githubusercontent.com/nodejs/docker-node/main/versions.json' | grep -o '"[0-9]\+": {' | cut -d'"' -f2 | sed 's/: {//'))
+    NODE_LATEST_VERSION="${NODE_VERSIONS[-1]}"
+
+    if [ ! $NODE_VERSION ]; then
+        if [[ $QUESTION == "default" ]]; then
+            NODE_VERSION="${NODE_VERSIONS[1]}"
+        else
+            EMPTY_LINE
+            ECHO_YELLOW "Enter NODE_VERSION [default '$NODE_LATEST_VERSION']"
+
+            print_list "${NODE_VERSIONS[@]}"
+
+            read -rp "$(ECHO_YELLOW "Please select one of:")" choice
+            choice=${choice%.*}
+
+            if [ -z "$choice" ]; then
+                choice=-1
+            else
+                if (("$choice" > 0 && "$choice" <= ${#NODE_VERSIONS[@]})); then
+                    NODE_VERSION="${NODE_VERSIONS[$(($choice - 1))]}"
+                else
+                    EMPTY_LINE
+                    NODE_VERSION="${NODE_VERSIONS[1]}"
+                    ECHO_GREEN "Set default version: $NODE_VERSION"
+                    EMPTY_LINE
+                fi
+            fi
+        fi
+    fi
+}
+
 unset_variables() {
-    unset DOMAIN_NAME DB_NAME TABLE_PREFIX PHP_VERSION MULTISITE EMPTY_CONTENT $1
+    unset DOMAIN_NAME DB_NAME TABLE_PREFIX PHP_VERSION MULTISITE EMPTY_CONTENT NODE_VERSIONS $1
 }
 
 update_file_instances() {
@@ -170,6 +206,7 @@ env_file_load() {
         # Node.js
         sed -i -e 's/{MONGODB_LOCAL_PORT}/'$MONGODB_LOCAL_PORT'/g' $PROJECT_DOCKER_DIR/.env
         sed -i -e 's/{MONGO_EXPRESS_PORT}/'$MONGO_EXPRESS_PORT'/g' $PROJECT_DOCKER_DIR/.env
+        sed -i -e 's/{NODE_VERSION}/'$NODE_VERSION'/g' $PROJECT_DOCKER_DIR/.env
 
         [[ "yes" = "$MULTISITE" ]] && wp_multisite_env
 
