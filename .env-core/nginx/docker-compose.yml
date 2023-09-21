@@ -25,6 +25,30 @@ services:
       - ${CA_STORE:-/usr/local/share/ca-certificates}:/usr/local/share/ca-certificates
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
+  nginx-db:
+    image: mariadb
+    container_name: nginx-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    restart: unless-stopped
+    volumes:
+      - ./../db/init-scripts:/docker-entrypoint-initdb.d
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: nginx-phpmyadmin
+    environment:
+      - VIRTUAL_PORT=80
+      - VIRTUAL_HOST=${PMA_VIRTUAL_HOST}
+      - PMA_ABSOLUTE_URI=${PMA_ABSOLUTE_URI}
+      - PMA_ARBITRARY=${PMA_ARBITRARY}
+      - PMA_HOST=${PMA_HOST}
+      - PMA_PORT=${PMA_PORT}
+      - PMA_USER=${PMA_USER}
+      - PMA_PASSWORD=${PMA_PASSWORD}
+    restart: unless-stopped
+
 networks:
   default:
     name: dockerwp
