@@ -21,7 +21,7 @@ docker_create_php() {
         fi
 
         if [[ $DOMAIN_EXISTS == 0 ]]; then
-            check_data_before_continue_callback docker_create_custom
+            check_data_before_continue_callback docker_create_php
 
             ECHO_INFO "Setting up Docker containers for $DOMAIN_FULL"
 
