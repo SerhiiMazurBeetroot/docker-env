@@ -6,6 +6,9 @@ services:
   {DOMAIN_NAME}-wordpress:
     build:
       context: .
+      args:
+        WP_VERSION: ${WP_VERSION}
+        PHP_VERSION: ${PHP_VERSION}
     container_name: {DOMAIN_NAME}-wordpress
     volumes:
       # WordPress wp-content folder
