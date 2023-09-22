@@ -11,12 +11,8 @@ fix_permissions() {
         "wordpress" | "bedrock" | "wpnextjs")
             fix_permissions_wp
             ;;
-        "nextjs")
-            fix_permissions_nextjs
-            ;;
         *)
-            echo "Unknown PROJECT_TYPE: $PROJECT_TYPE"
-            return 1
+            fix_permissions_project_root
             ;;
         esac
     else
@@ -53,7 +49,7 @@ fix_permissions_wp() {
     fi
 }
 
-fix_permissions_nextjs() {
+fix_permissions_project_root() {
     if [[ $OSTYPE != "windows" ]]; then
         if [ -d $PROJECT_ROOT_DIR ]; then
             EMPTY_LINE
