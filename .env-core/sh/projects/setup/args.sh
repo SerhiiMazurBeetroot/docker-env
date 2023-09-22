@@ -93,7 +93,7 @@ set_custom_args() {
             ;;
         'PHP_VERSION')
             get_php_versions
-            default_value="$PHP_LATEST_VERSION"
+            default_value="$PHP_VERSION"
             skip_user_input=true
             ;;
         'NODE_VERSION')

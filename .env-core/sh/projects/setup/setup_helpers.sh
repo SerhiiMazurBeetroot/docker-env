@@ -67,14 +67,14 @@ get_php_versions() {
     QUESTION=$1
 
     PHP_LIST=($(curl -s 'https://www.php.net/releases/active.php' | grep -Eo '[0-9]\.[0-9]' | awk '!a[$0]++'))
-    PHP_LATEST_VERSION="${PHP_LIST[1]}"
+    PHP_VERSION="${PHP_LIST[1]}"
 
     if [ ! $PHP_VERSION ]; then
         if [[ $QUESTION == "default" ]]; then
             PHP_VERSION="${PHP_LIST[1]}"
         else
             EMPTY_LINE
-            ECHO_YELLOW "Enter PHP_VERSION [default '$PHP_LATEST_VERSION']"
+            ECHO_YELLOW "Enter PHP_VERSION [default '$PHP_VERSION']"
 
             print_list "${PHP_LIST[@]}"
 
