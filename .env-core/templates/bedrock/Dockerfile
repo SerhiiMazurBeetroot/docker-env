@@ -1,4 +1,7 @@
-FROM php:{PHP_VERSION}-apache
+# default version if empty
+ARG PHP_VERSION=8.1
+
+FROM php:${PHP_VERSION}-apache
 
 # ENV
 ENV PROJECT_ROOT=/var/www/html
