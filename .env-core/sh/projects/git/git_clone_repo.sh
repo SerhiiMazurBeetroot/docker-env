@@ -82,6 +82,7 @@ git_clone_repo() {
 
                 case $yn in
                 [Yy]*)
+                    git_switch_branch
                     database_replace_project_from_db
                     docker_rebuild
                     docker_restart

@@ -57,3 +57,42 @@ git_config_fileMode() {
         fi
     fi
 }
+
+git_switch_branch() {
+    local PROJECT_DIR="${PWD}/$PROJECT_TYPE/$DOMAIN_FULL/"
+
+    EMPTY_LINE
+    read -rp "$(ECHO_YELLOW "Switch from master branch?") y/n " yn
+
+    case $yn in
+    [Yy]*)
+        if [ -d "$PROJECT_DIR/.git" ]; then
+            EMPTY_LINE
+
+            default_branch='develop'
+            read -rp "$(ECHO_YELLOW "Enter branch [default '$default_branch']: ")" user_input
+            BRANCH="${user_input:-$default_branch}"
+
+            if git show-ref --quiet --verify "refs/heads/$BRANCH"; then
+                ECHO_YELLOW "Switching to branch '$BRANCH'"
+
+                (
+                    cd "$PROJECT_DIR" || exit
+                    git stash && git switch "$BRANCH"
+                )
+                cd ../../ || exit
+            else
+                EMPTY_LINE
+                ECHO_YELLOW "Branch '$BRANCH' does not exist."
+            fi
+
+        else
+            ECHO_YELLOW "Branch '$BRANCH' does not exist."
+            ECHO_YELLOW "No Git repository found in [$PROJECT_DIR]"
+        fi
+        ;;
+    *)
+        ECHO_YELLOW "Aborted branch switch."
+        ;;
+    esac
+}
