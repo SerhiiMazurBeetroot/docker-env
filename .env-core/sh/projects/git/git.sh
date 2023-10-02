@@ -44,9 +44,16 @@ git_save_access() {
 }
 
 git_config_fileMode() {
+    local PROJECT_DIR="${PWD}/$PROJECT_TYPE/$DOMAIN_FULL/"
+
     if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
         git config core.fileMode false
-        cd "${PWD}/$PROJECT_TYPE/$DOMAIN_FULL" && git config core.fileMode false
-        cd ../../
+
+        if [ -d "$PROJECT_DIR/.git" ] && git config core.fileMode false 2>/dev/null; then
+            cd "$PROJECT_DIR" && git config core.fileMode false
+            cd ../../
+        else
+            ECHO_YELLOW "No Git repository found in [$PROJECT_DIR]"
+        fi
     fi
 }
