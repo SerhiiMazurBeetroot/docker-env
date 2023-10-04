@@ -10,7 +10,7 @@ stopped_projects_list() {
     ACTION=$1
 
     for PROJECT in "${AVAILABLE_PROJECTS[@]}"; do
-        running_container+=($(docker ps --format '{{.Names}}' | grep -E "*-$PROJECT($)" | sed -r 's/'-$PROJECT'/''/')) || true
+        running_container+=($(docker ps --format '{{.Names}}' | grep -E ".*-$PROJECT(\$)" | sed -r 's/'-$PROJECT'/''/')) || true
     done
 
     existing_string=$(awk '{print $3 $4 $5}' "$FILE_INSTANCES" | tail -n +2)
