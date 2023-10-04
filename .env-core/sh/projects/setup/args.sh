@@ -44,6 +44,7 @@ get_project_args() {
             "EMPTY_CONTENT"
             "MULTISITE"
             "PHP_VERSION"
+            "NODE_VERSION"
         )
         ;;
     'nodejs')
@@ -93,12 +94,10 @@ set_custom_args() {
             ;;
         'PHP_VERSION')
             get_php_versions
-            default_value="$PHP_VERSION"
             skip_user_input=true
             ;;
         'NODE_VERSION')
             get_nodejs_version
-            default_value="$NODE_LATEST_VERSION"
             skip_user_input=true
             ;;
         *)
@@ -121,8 +120,6 @@ set_custom_args() {
         fi
 
     done
-
-    get_project_args
 }
 
 set_project_args() {

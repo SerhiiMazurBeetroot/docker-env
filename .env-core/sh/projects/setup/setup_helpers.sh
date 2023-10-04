@@ -83,6 +83,7 @@ get_php_versions() {
 
             if [ -z "$choice" ]; then
                 choice=-1
+                PHP_VERSION="${PHP_LIST[1]}"
             else
                 if (("$choice" > 0 && "$choice" <= ${#PHP_LIST[@]})); then
                     PHP_VERSION="${PHP_LIST[$(($choice - 1))]}"
@@ -123,12 +124,13 @@ get_nodejs_version() {
 
             if [ -z "$choice" ]; then
                 choice=-1
+                NODE_VERSION="$NODE_LATEST_VERSION"
             else
                 if (("$choice" > 0 && "$choice" <= ${#NODE_VERSIONS[@]})); then
                     NODE_VERSION="${NODE_VERSIONS[$(($choice - 1))]}"
                 else
                     EMPTY_LINE
-                    NODE_VERSION="${NODE_VERSIONS[1]}"
+                    NODE_VERSION="${NODE_LATEST_VERSION}"
                     ECHO_GREEN "Set default version: $NODE_VERSION"
                     EMPTY_LINE
                 fi
