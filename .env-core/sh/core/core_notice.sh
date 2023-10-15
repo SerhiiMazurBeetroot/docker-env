@@ -26,19 +26,21 @@ notice_windows_host() {
 }
 
 notice_project_urls() {
-	EMPTY_LINE
 	get_unique_frontport
 
-	ECHO_YELLOW "Project URLs:"
+	ECHO_INFO "Project URLs:"
 	ECHO_KEY_VALUE "DOMAIN_FULL:" "https://$DOMAIN_FULL"
 	[[ $PORT_FRONT != "-" && $PORT_FRONT != "" ]] && ECHO_KEY_VALUE "DOMAIN_FRONT:" "http://localhost:$PORT_FRONT"
 	[[ $DOMAIN_ADMIN != "" ]] && ECHO_KEY_VALUE "DOMAIN_ADMIN:" "https://$DOMAIN_ADMIN"
 	[[ $DOMAIN_ADMIN != "" ]] && ECHO_KEY_VALUE "DOMAIN_DB:" "https://$DOMAIN_DB"
 	[[ $DOMAIN_MAIL != "" ]] && ECHO_KEY_VALUE "DOMAIN_MAIL:" "https://$DOMAIN_MAIL"
-	EMPTY_LINE
+
+	ECHO_SUCCESS "Done!"
 }
 
 notice_project_vars() {
+	ECHO_INFO "Project variables:"
+
 	ECHO_KEY_VALUE "PROJECT_TYPE:" "$PROJECT_TYPE"
 	ECHO_KEY_VALUE "DOMAIN_NAME:" "$DOMAIN_NAME"
 
@@ -54,7 +56,6 @@ notice_project_vars() {
 	notice_windows_project_vars
 
 	ECHO_YELLOW "You can find this info in the file ["$PROJECT_DOCKER_DIR"/.env"]
-	EMPTY_LINE
 }
 
 notice_windows_project_vars() {

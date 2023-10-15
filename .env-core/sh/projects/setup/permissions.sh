@@ -22,7 +22,7 @@ fix_permissions() {
 
 fix_permissions_wp() {
     EMPTY_LINE
-    ECHO_YELLOW "Fixing Permissions, this can take a while! [$PROJECT_ROOT_DIR]"
+    ECHO_YELLOW "Fixing Permissions [wp], this can take a while! [$PROJECT_ROOT_DIR]"
 
     if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]; then
         docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec chown -R www-data:www-data /var/www/html/'
@@ -53,7 +53,7 @@ fix_permissions_project_root() {
     if [[ $OSTYPE != "windows" ]]; then
         if [ -d $PROJECT_ROOT_DIR ]; then
             EMPTY_LINE
-            ECHO_YELLOW "Fixing Permissions, this can take a while! [$PROJECT_ROOT_DIR]"
+            ECHO_YELLOW "Fixing Permissions [root], this can take a while! [$PROJECT_ROOT_DIR]"
             sudo chmod -R 777 "$PROJECT_ROOT_DIR"/
         fi
     fi

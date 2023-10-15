@@ -13,7 +13,7 @@ docker_delete() {
 
         while true; do
             ECHO_WARN_YELLOW "Removing now... [$PROJECT_ROOT_DIR]"
-            read -rp "$(ECHO_WARN_RED "Do you wish to proceed?") [y/n] " yn
+            yn=$(GET_USER_INPUT "question" "Do you wish to proceed?")
 
             case $yn in
             [Yy]*)

@@ -10,16 +10,6 @@ docker_create_nextjs() {
         get_domain_name
         check_domain_exists
 
-        # if [[ $DOMAIN_EXISTS == 0 ]]; then
-        #     get_project_dir "$@"
-        #     set_project_args
-        # else
-        #     ECHO_ERROR "Site already exists"
-
-        #     # Run next function again
-        #     get_domain_name
-        # fi
-
         if [[ $DOMAIN_EXISTS == 0 ]]; then
             get_project_dir "$@"
             set_project_args
@@ -68,8 +58,6 @@ docker_create_nextjs() {
             # TODO: clone from repo
 
             # Print for user project info
-            EMPTY_LINE
-            ECHO_INFO "Project variables:"
             notice_project_vars
 
         else

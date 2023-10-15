@@ -6,13 +6,14 @@ set -o pipefail
 git_actions() {
     while true; do
         EMPTY_LINE
-        ECHO_INFO "========= GIT actions ========="
+        ECHO_CYAN "========= GIT actions ========="
         ECHO_YELLOW "0 - Return to the previous menu"
         ECHO_GREEN "1 - Clone from repo"
         ECHO_GREEN "2 - Create Github repo"
         ECHO_GREEN "3 - Create Gitlab repo"
         ECHO_GREEN "4 - Repo access"
-        read -rp "$(ECHO_YELLOW "Please select one of:")" actions
+
+        actions=$(GET_USER_INPUT "select_one_of")
 
         case $actions in
         0)

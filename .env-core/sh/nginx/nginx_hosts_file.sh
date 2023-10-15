@@ -17,7 +17,6 @@ setup_hosts_file() {
 
 			if [ -n "$(grep $DOMAIN_FULL /etc/hosts)" ]; then
 				ECHO_WARN_RED "$DOMAIN_FULL already exists: $(grep $DOMAIN_FULL $ETC_HOSTS)"
-				EMPTY_LINE
 			else
 				ECHO_GREEN "Adding $DOMAIN_FULL to your $ETC_HOSTS"
 				EMPTY_LINE
@@ -40,7 +39,6 @@ setup_hosts_file() {
 				EMPTY_LINE
 			else
 				ECHO_ERROR "$DOMAIN_FULL was not found in your $ETC_HOSTS"
-				EMPTY_LINE
 			fi
 
 		fi

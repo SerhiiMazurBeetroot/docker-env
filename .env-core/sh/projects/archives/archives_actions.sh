@@ -8,12 +8,12 @@ archives_actions() {
 
 	while true; do
 		EMPTY_LINE
-		ECHO_INFO "===== Archives actions ===="
+		ECHO_CYAN "===== Archives actions ===="
 		ECHO_YELLOW "0 - Return to main menu"
 		ECHO_GREEN "1 - ZIP"
 		ECHO_GREEN "2 - Unzip"
 
-		read -rp "$(ECHO_YELLOW "Please select one of:")" action
+		action=$(GET_USER_INPUT "select_one_of")
 
 		case $action in
 		0)

@@ -54,7 +54,6 @@ zip_project() {
 
 		delete_site_data
 
-		EMPTY_LINE
 		ECHO_SUCCESS "Archive $DOMAIN_FULL successfully created."
 	else
 		ECHO_ATTENTION "Directory name doesn't exists."

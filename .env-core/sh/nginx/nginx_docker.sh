@@ -10,9 +10,7 @@ docker_nginx_setup() {
     else
         if [ -f "$DIR_NGINX/docker-compose.yml" ]; then
             if [ $NGINX_EXISTS -eq 1 ]; then
-                EMPTY_LINE
-                ECHO_SUCCESS "Nginx-proxy already setup and running"
-                EMPTY_LINE
+                ECHO_ATTENTION "Nginx already setup and running"
             else
                 ECHO_YELLOW "Container is not running"
 
@@ -56,12 +54,18 @@ docker_nginx_setup() {
 }
 
 docker_nginx_start() {
-    docker_compose_runner "up -d" "$DIR_NGINX"
+    if [ $NGINX_EXISTS -eq 0 ]; then
+        docker_compose_runner "up -d" "$DIR_NGINX"
+        ECHO_SUCCESS "Nginx started"
+    else
+        ECHO_ATTENTION "Nginx already setup and running"
+    fi
 }
 
 docker_nginx_stop() {
     if [ $NGINX_EXISTS -eq 1 ]; then
         docker_compose_runner "down" "$DIR_NGINX"
+        ECHO_SUCCESS "Nginx container stopped"
     else
         ECHO_ERROR "Nginx container not running"
     fi

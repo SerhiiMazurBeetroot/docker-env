@@ -108,8 +108,7 @@ set_custom_args() {
         if [[ "$skip_user_input" != true ]]; then
             # Print user choice
 
-            EMPTY_LINE
-            read -rp "$(ECHO_YELLOW "Enter $arg [default '$default_value']")" user_input
+            read -rp "$(ECHO_ENTER "Enter $arg [default '$default_value']")" user_input
             if [[ -n "$user_input" ]]; then
                 eval "$arg=\"$user_input\""
             else

@@ -30,11 +30,11 @@ git_create_repo_github() {
 
     if [[ $TOKEN_GITHUB && $USER_GITHUB ]]; then
         #REPO_TYPE
-        EMPTY_LINE
-        ECHO_YELLOW "Enter REPO_TYPE [default '1']"
+        ECHO_ENTER "Enter REPO_TYPE [default '1']"
         ECHO_GREEN "1 - Private"
         ECHO_GREEN "2 - Public"
-        read -rp "$(ECHO_YELLOW "Please select one of:")" REPO_TYPE
+
+        REPO_TYPE=$(GET_USER_INPUT "select_one_of")
 
         #REPO_NAME
         REPO_NAME="$DOMAIN_NAME"

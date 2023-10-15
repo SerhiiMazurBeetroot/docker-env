@@ -29,12 +29,12 @@ stopped_projects_list() {
 
         while true; do
             EMPTY_LINE
-            ECHO_INFO "$ACTION"
+            ECHO_CYAN "$ACTION"
             ECHO_YELLOW "[0] Return to the previous menu"
 
             print_list "${stopped_container[@]}"
 
-            read -rp "$(ECHO_YELLOW "Please select one of:")" choice
+            choice=$(GET_USER_INPUT "select_one_of")
 
             [ -z "$choice" ] && choice=-1
             if (("$choice" > 0 && "$choice" <= ${#stopped_container[@]})); then

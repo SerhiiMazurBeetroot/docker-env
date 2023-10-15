@@ -5,13 +5,13 @@ set -o pipefail
 
 check_data_before_continue_callback() {
     EMPTY_LINE
-    ECHO_YELLOW "Check everything before proceeding:"
+    ECHO_INFO "Check everything before proceeding:"
     EMPTY_LINE
 
     while true; do
         notice_project_vars
 
-        read -rp "Is that correct? [y/n] " yn
+        yn=$(GET_USER_INPUT "question" "Is that correct?")
 
         case $yn in
         [Yy]*)
@@ -36,12 +36,12 @@ setup_installation_type_callback() {
 
     while true; do
         EMPTY_LINE
-        ECHO_INFO "==== $PROJECT_TYPE type ==="
+        ECHO_CYAN "==== $PROJECT_TYPE type ==="
         ECHO_YELLOW "[0] Return to main menu"
         ECHO_KEY_VALUE "[1]" "default"
         ECHO_KEY_VALUE "[2]" "custom"
         ECHO_KEY_VALUE "[3]" "beetroot"
-        read -rp "$(ECHO_YELLOW "Please select one of:")" SETUP_TYPE
+        SETUP_TYPE=$(GET_USER_INPUT "select_one_of")
 
         case $SETUP_TYPE in
         0)

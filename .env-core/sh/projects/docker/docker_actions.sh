@@ -8,15 +8,16 @@ docker_actions() {
 
     while true; do
         EMPTY_LINE
-        ECHO_INFO "======== Docker actions ======="
+        ECHO_CYAN "======== Docker actions ======="
         ECHO_YELLOW "0 - Return to the previous menu"
-        ECHO_ATTENTION "1 - Permanently Remove"
+        ECHO_RED "1 - Permanently Remove"
         ECHO_GREEN "2 - Stop"
         ECHO_GREEN "3 - Start"
         ECHO_GREEN "4 - Restart"
         ECHO_GREEN "5 - Rebuild"
-        ECHO_INFO "6 - Fix permissions"
-        read -rp "$(ECHO_YELLOW "Please select one of:")" actions
+        ECHO_CYAN "6 - Fix permissions"
+
+        actions=$(GET_USER_INPUT "select_one_of")
 
         case $actions in
         0)

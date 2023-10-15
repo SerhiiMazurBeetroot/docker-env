@@ -6,8 +6,7 @@ set -o pipefail
 git_save_access() {
     #Github
     while true; do
-        EMPTY_LINE
-        read -rp "$(ECHO_YELLOW "Save/update Github access?") y/n " yn
+        yn=$(GET_USER_INPUT "question" "Save/update Github access?")
 
         case $yn in
         [Yy]*)
@@ -25,8 +24,7 @@ git_save_access() {
 
     #Gitlab
     while true; do
-        EMPTY_LINE
-        read -rp "$(ECHO_YELLOW "Save/update Gitlab access?") y/n " yn
+        yn=$(GET_USER_INPUT "question" "Save/update Gitlab access?")
 
         case $yn in
         [Yy]*)
@@ -61,16 +59,14 @@ git_config_fileMode() {
 git_switch_branch() {
     local PROJECT_DIR="${PWD}/$PROJECT_TYPE/$DOMAIN_FULL/"
 
-    EMPTY_LINE
-    read -rp "$(ECHO_YELLOW "Switch from master branch?") y/n " yn
+    yn=$(GET_USER_INPUT "question" "Switch from master branch?")
 
     case $yn in
     [Yy]*)
         if [ -d "$PROJECT_DIR/.git" ]; then
-            EMPTY_LINE
 
             default_branch='develop'
-            read -rp "$(ECHO_YELLOW "Enter branch [default '$default_branch']: ")" user_input
+            read -rp "$(ECHO_ENTER "Enter branch [default '$default_branch']: ")" user_input
             BRANCH="${user_input:-$default_branch}"
 
             if git show-ref --quiet --verify "refs/heads/$BRANCH"; then
@@ -88,7 +84,7 @@ git_switch_branch() {
 
         else
             ECHO_YELLOW "Branch '$BRANCH' does not exist."
-            ECHO_YELLOW "No Git repository found in [$PROJECT_DIR]"
+            ECHO_INFO "No Git repository found in [$PROJECT_DIR]"
         fi
         ;;
     *)

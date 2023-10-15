@@ -9,12 +9,12 @@ get_archived_projects() {
     if [[ $ZIP_FILES ]]; then
         while true; do
             EMPTY_LINE
-            ECHO_INFO "======== UNZIP project ======="
+            ECHO_CYAN "======== UNZIP project ======="
             ECHO_YELLOW "[0] Return to the previous menu"
 
             print_list "${ZIP_FILES[@]}"
 
-            read -rp "$(ECHO_YELLOW "Please select one of:")" choice
+            choice=$(GET_USER_INPUT "select_one_of")
 
             [ -z "$choice" ] && choice=-1
             if (("$choice" > 0 && "$choice" <= ${#ZIP_FILES[@]})); then

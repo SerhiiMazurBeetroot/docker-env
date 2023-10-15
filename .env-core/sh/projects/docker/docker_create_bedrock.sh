@@ -51,8 +51,6 @@ docker_create_bedrock() {
             # TODO: add clone
 
             # Print for user project info
-            EMPTY_LINE
-            ECHO_INFO "Project variables:"
             notice_project_vars
 
         fi

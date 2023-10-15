@@ -5,8 +5,7 @@ set -o pipefail
 
 get_domain_name() {
     if [ -z "$DOMAIN_NAME" ]; then
-        EMPTY_LINE
-        ECHO_YELLOW "Enter Domain Name without subdomain:"
+        ECHO_ENTER "Enter Domain Name without subdomain:"
         read -rp 'Domain: ' DOMAIN_NAME
 
         while [ -z "$DOMAIN_NAME" ]; do
@@ -73,12 +72,11 @@ get_php_versions() {
         if [[ $QUESTION == "default" ]]; then
             PHP_VERSION="${PHP_LIST[1]}"
         else
-            EMPTY_LINE
-            ECHO_YELLOW "Enter PHP_VERSION [default '$PHP_VERSION']"
+            ECHO_ENTER "Enter PHP_VERSION [default '$PHP_VERSION']"
 
             print_list "${PHP_LIST[@]}"
 
-            read -rp "$(ECHO_YELLOW "Please select one of:")" choice
+            choice=$(GET_USER_INPUT "select_one_of")
             choice=${choice%.*}
 
             if [ -z "$choice" ]; then
@@ -88,7 +86,6 @@ get_php_versions() {
                 if (("$choice" > 0 && "$choice" <= ${#PHP_LIST[@]})); then
                     PHP_VERSION="${PHP_LIST[$(($choice - 1))]}"
                 else
-                    EMPTY_LINE
                     PHP_VERSION="${PHP_LIST[1]}"
                     ECHO_WARN_RED "This version of PHP does not support"
                     ECHO_GREEN "Set default version: $PHP_VERSION"
@@ -114,12 +111,11 @@ get_nodejs_version() {
         if [[ $QUESTION == "default" ]]; then
             NODE_VERSION="${NODE_VERSIONS[1]}"
         else
-            EMPTY_LINE
-            ECHO_YELLOW "Enter NODE_VERSION [default '$NODE_LATEST_VERSION']"
+            ECHO_ENTER "Enter NODE_VERSION [default '$NODE_LATEST_VERSION']"
 
             print_list "${NODE_VERSIONS[@]}"
 
-            read -rp "$(ECHO_YELLOW "Please select one of:")" choice
+            choice=$(GET_USER_INPUT "select_one_of")
             choice=${choice%.*}
 
             if [ -z "$choice" ]; then

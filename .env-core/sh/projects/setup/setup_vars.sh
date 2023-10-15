@@ -21,8 +21,7 @@ get_project_dir() {
     if [[ $QUESTION == "skip_question" ]]; then
         DOMAIN_FULL=$(awk '/'" $DOMAIN_NAME "'/{print $7}' "$FILE_INSTANCES" | head -n 1)
     else
-        EMPTY_LINE
-        ECHO_YELLOW "Enter DOMAIN_FULL [default $DOMAIN_NAME_DEFAULT]"
+        ECHO_ENTER "Enter DOMAIN_FULL [default $DOMAIN_NAME_DEFAULT]"
         read -rp "DOMAIN_FULL: " DOMAIN_FULL
     fi
 
@@ -153,6 +152,8 @@ set_nextjs_vars() {
     DB_NAME="0"
     PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/docker
     DOCKER_CONTAINER_APP="$DOMAIN_NAME-nextjs"
+    DOMAIN_ADMIN=""
+    HOST_EXTRA=""
 }
 
 get_compose_project_name() {
