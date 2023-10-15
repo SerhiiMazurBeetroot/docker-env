@@ -61,6 +61,7 @@ services:
   #######################################
   {DOMAIN_NAME}-phpmyadmin:
     image: phpmyadmin/phpmyadmin
+    container_name: {DOMAIN_NAME}-phpmyadmin
     depends_on:
       - {DOMAIN_NAME}-mysql
     links:
