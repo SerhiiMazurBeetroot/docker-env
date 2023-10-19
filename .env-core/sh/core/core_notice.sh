@@ -30,12 +30,10 @@ notice_project_urls() {
 
 	ECHO_INFO "Project URLs:"
 	ECHO_KEY_VALUE "DOMAIN_FULL:" "https://$DOMAIN_FULL"
-	[[ $PORT_FRONT != "-" && $PORT_FRONT != "" ]] && ECHO_KEY_VALUE "DOMAIN_FRONT:" "http://localhost:$PORT_FRONT"
+	[[ $PORT_FRONT =~ ^[0-9]+$ && $PORT_FRONT -ne 0 ]] && ECHO_KEY_VALUE "DOMAIN_FRONT:" "http://localhost:$PORT_FRONT"
 	[[ $DOMAIN_ADMIN != "" ]] && ECHO_KEY_VALUE "DOMAIN_ADMIN:" "https://$DOMAIN_ADMIN"
 	[[ $DOMAIN_ADMIN != "" ]] && ECHO_KEY_VALUE "DOMAIN_DB:" "https://$DOMAIN_DB"
 	[[ $DOMAIN_MAIL != "" ]] && ECHO_KEY_VALUE "DOMAIN_MAIL:" "https://$DOMAIN_MAIL"
-
-	ECHO_SUCCESS "Done!"
 }
 
 notice_project_vars() {
