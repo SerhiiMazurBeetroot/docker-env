@@ -9,6 +9,7 @@ get_db_file() {
 
     for file in "${SQL_FILES[@]}"; do
         DB_FILE="$(basename "$file")"
+        db_file_find_and_replace
     done
 }
 
@@ -44,4 +45,9 @@ get_mysql_cmd() {
         export MYSQL_DUMP_CMD="mariadb-dump"
         export MYSQL_ADMIN_CMD="mariadb-admin"
     fi
+}
+
+db_file_find_and_replace()
+{
+    sed -i -e 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_520_ci/g' "$PROJECT_DATABASE_DIR/$DB_FILE"
 }
