@@ -13,14 +13,6 @@ docker_create_wp_next() {
         if [[ $DOMAIN_EXISTS == 0 ]]; then
             get_project_dir "$@"
             set_project_args
-        else
-            ECHO_ERROR "Site already exists"
-
-            # Run next function again
-            get_domain_name
-        fi
-
-        if [[ $DOMAIN_EXISTS == 0 ]]; then
             check_data_before_continue_callback docker_create_wp_next
 
             ECHO_INFO "Setting up Docker containers for $DOMAIN_FULL"
@@ -61,6 +53,9 @@ docker_create_wp_next() {
             notice_windows_host add
             docker_restart
 
+            # install local node_modules
+            cd "$PROJECT_ROOT_DIR/frontend" && npm i && cd ../../
+
             wp_core_install
             wp_site_empty
 
@@ -70,8 +65,6 @@ docker_create_wp_next() {
             #clone from repo
 
             # Print for user project info
-            EMPTY_LINE
-            ECHO_INFO "Project variables:"
             notice_project_vars
 
             # COMPOSER_ISSUE exists

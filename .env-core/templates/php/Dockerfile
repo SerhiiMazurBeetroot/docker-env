@@ -1,4 +1,7 @@
-FROM php:{PHP_VERSION}-apache
+# default version if empty
+ARG PHP_VERSION=8.2
+
+FROM php:${PHP_VERSION}-apache
 
 # Get latest Composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \

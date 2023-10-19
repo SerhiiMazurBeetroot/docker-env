@@ -12,7 +12,7 @@ ECHO_KEY_VALUE() {
     echo -e "${WHITE}${1} ${GREEN}${2} ${NC}"
 }
 
-ECHO_INFO() {
+ECHO_CYAN() {
     echo -e "${CYAN}${1} ${NC}"
 }
 
@@ -24,24 +24,60 @@ ECHO_GREEN() {
     echo -e "${GREEN}${1} ${NC}"
 }
 
-ECHO_ATTENTION() {
+ECHO_RED() {
     echo -e "${RED}${1} ${NC}"
 }
 
+ECHO_INFO() {
+    echo -e "➤ ${CYAN}${1} ${NC}"
+}
+
+ECHO_ENTER() {
+    EMPTY_LINE
+    echo -e "✍️ ${YELLOW} ${1} ${NC}"
+}
+
+ECHO_ATTENTION() {
+    echo -e "⚠️ ${RED} ${1} ${NC}"
+    EMPTY_LINE
+}
+
 ECHO_SUCCESS() {
-    echo -e "${GREEN}[SUCCESS]" "${NC}""${1}"
+    echo -e "✅ ${GREEN}[SUCCESS]" "${NC}""${1}"
+    EMPTY_LINE
 }
 
 ECHO_WARN_YELLOW() {
-    echo -e "${YELLOW}[WARNING]" "${NC}""${1}"
+    echo -e "📦 ${YELLOW}[WARNING]" "${NC}""${1}"
+    EMPTY_LINE
 }
 
 ECHO_WARN_RED() {
-    echo -e "\033[0;101m[WARNING]${RED}" "${1}""${NC}"
+    EMPTY_LINE
+    echo -e "📦 \033[0;101m[WARNING]${RED}" "${1}""${NC}"
+    EMPTY_LINE
 }
 
 ECHO_ERROR() {
     EMPTY_LINE
-    echo -e "\033[0;101m[ERROR]${RED}" "${1}""${NC}"
+    echo -e "🛑 \033[0;101m[ERROR]${RED}" "${1}""${NC}"
     EMPTY_LINE
+}
+
+GET_USER_INPUT() {
+    local prompt_type=$1
+    local msg=$2
+
+    case $prompt_type in
+    'select_one_of')
+        read -rp "$(ECHO_YELLOW "Please select one of:")" choice
+        ;;
+    'question')
+        read -rp "$(ECHO_YELLOW "❓ $msg") [y/n] " choice
+        ;;
+    *) # Default case
+        read -rp "$(ECHO_YELLOW "$msg")" choice
+        ;;
+    esac
+    echo "$choice"
 }

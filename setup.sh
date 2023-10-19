@@ -10,7 +10,6 @@ export ENV_DIR="${DOCKER_ENV_DIR:-.}"
 source "$ENV_DIR"/.env-core/sh/scripts.sh
 
 main_actions() {
-	EMPTY_LINE
 	healthcheck
 
 	# Notice about updates to main menu
@@ -18,14 +17,14 @@ main_actions() {
 	[[ $ENV_UPDATES == "Everything up-to-date" ]] && ENV_UPDATES=""
 
 	while true; do
-		ECHO_INFO "======== docker-env ======="
+		ECHO_CYAN "======== docker-env ======="
 		ECHO_YELLOW "0 - Exit and do nothing"
 		ECHO_GREEN "1 - Nginx"
 		ECHO_GREEN "2 - New project"
 		ECHO_GREEN "3 - Existing project"
 		ECHO_KEY_VALUE "4 - Settings" "$ENV_UPDATES"
 
-		read -rp "$(ECHO_YELLOW "Please select one of:")" userChoice
+		userChoice=$(GET_USER_INPUT "select_one_of")
 
 		case "$userChoice" in
 		0)

@@ -6,13 +6,13 @@ set -o pipefail
 setup_beetroot_args() {
     EMPTY_LINE
     while true; do
-        ECHO_INFO "==== Use variables ===="
+        ECHO_CYAN "==== Use variables ===="
         ECHO_YELLOW "[0] Return to main menu"
         ECHO_KEY_VALUE "[1]" "default"
         ECHO_KEY_VALUE "[2]" "custom"
-        read -rp "$(ECHO_YELLOW "Please select one of:")" choise
+        choice=$(GET_USER_INPUT "select_one_of")
 
-        case $choise in
+        case $choice in
         0)
             main_actions
             ;;

@@ -5,7 +5,7 @@ services:
     container_name: {DOMAIN_NAME}-nextjs
     build:
       context: ../
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/Dockerfile.dev
       target: deps
       args:
         NODE_VERSION: ${NODE_VERSION}
@@ -18,7 +18,7 @@ services:
       - /app/node_modules
       - /app/.next
     ports:
-      - '${PORT}:3000'
+      - '${PORT_FRONT}:3000'
     restart: always
 
 networks:

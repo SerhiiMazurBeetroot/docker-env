@@ -21,7 +21,7 @@ docker_create_php() {
         fi
 
         if [[ $DOMAIN_EXISTS == 0 ]]; then
-            check_data_before_continue_callback docker_create_custom
+            check_data_before_continue_callback docker_create_php
 
             ECHO_INFO "Setting up Docker containers for $DOMAIN_FULL"
 
@@ -62,8 +62,6 @@ docker_create_php() {
             # TODO: add clone
 
             # Print for user project info
-            EMPTY_LINE
-            ECHO_INFO "Project variables:"
             notice_project_vars
 
         fi

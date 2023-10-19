@@ -8,6 +8,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        PHP_VERSION: ${PHP_VERSION}
     container_name: {DOMAIN_NAME}-php
     volumes:
       - ./../app:/var/www/html/

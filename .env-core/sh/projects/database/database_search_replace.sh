@@ -6,8 +6,7 @@ set -o pipefail
 database_search_replace() {
     while true; do
 
-        EMPTY_LINE
-        read -rp "$(ECHO_YELLOW "Run search-replace? y/n ")" yn
+        yn=$(GET_USER_INPUT "question" "Run search-replace?")
 
         case $yn in
         [Yy]*)

@@ -1,7 +1,11 @@
-FROM wordpress:{WP_VERSION}-php{PHP_VERSION}-apache
+# default version if empty
+ARG WP_VERSION=6.3.1
+ARG PHP_VERSION=8.1
+
+FROM wordpress:${WP_VERSION}-php${PHP_VERSION}-apache
 
 # Install system dependencies
-# Add sudo in order to run wp-cli as the www-data user 
+# Add sudo in order to run wp-cli as the www-data user
 RUN apt-get -y update && apt-get install -y sudo --no-install-recommends \
     git \
     curl \
@@ -39,7 +43,7 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
     && rm composer-setup.php
 
-#Add WP-CLI 
+# Add WP-CLI 
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
     chmod +x wp-cli.phar && \
     mv wp-cli.phar /usr/local/bin/wp-cli.phar && \

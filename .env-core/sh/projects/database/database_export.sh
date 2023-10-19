@@ -16,7 +16,9 @@ database_export() {
             file2=dump-$DB_NAME-$TIMESTAMP.sql
             ECHO_GREEN "1 - $file1"
             ECHO_GREEN "2 - $file2 [default]"
-            read -rp "$(ECHO_YELLOW "Please select one of:")" DUMP_FILE
+
+            DUMP_FILE=$(GET_USER_INPUT "select_one_of")
+
             if [[ ! "$DUMP_FILE" =~ [1-2] ]]; then
                 DUMP_FILE="$file2"
             elif [[ "$DUMP_FILE" -eq 1 ]]; then

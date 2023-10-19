@@ -54,8 +54,7 @@ docker_create_wp() {
 
             #clone from repo
             while true; do
-                EMPTY_LINE
-                read -rp "$(ECHO_YELLOW "Start Clone?") y/n " yn
+                yn=$(GET_USER_INPUT "question" "Start Clone?")
 
                 case $yn in
                 [Yy]*)
@@ -71,8 +70,6 @@ docker_create_wp() {
             done
 
             # Print for user project info
-            EMPTY_LINE
-            ECHO_INFO "Project variables:"
             notice_project_vars
 
             # COMPOSER_ISSUE exists

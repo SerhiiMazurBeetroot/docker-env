@@ -6,16 +6,16 @@ set -o pipefail
 actions_existing_project() {
     while true; do
         EMPTY_LINE
-        ECHO_INFO "==== Existing sites ==="
+        ECHO_CYAN "==== Existing sites ==="
         ECHO_YELLOW "0 - Return to main menu"
         ECHO_GREEN "1 - Docker actions"
         ECHO_GREEN "2 - Database actions"
         ECHO_GREEN "3 - WP actions"
-        ECHO_INFO "4 - List of existing projects"
+        ECHO_CYAN "4 - List of existing projects"
         ECHO_GREEN "5 - GIT actions"
         ECHO_GREEN "6 - Archives actions"
 
-        read -rp "$(ECHO_YELLOW "Please select one of:")" actions
+        actions=$(GET_USER_INPUT "select_one_of")
 
         case $actions in
         0)

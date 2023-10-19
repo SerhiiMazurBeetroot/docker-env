@@ -21,7 +21,6 @@ wp_multisite_convert() {
 
 		docker_rebuild
 	else
-		EMPTY_LINE
 		ECHO_WARN_YELLOW "This site is already a multisite"
 	fi
 

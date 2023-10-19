@@ -77,11 +77,11 @@ git_clone_repo() {
             ECHO_YELLOW "Themes and plugins copied"
 
             while true; do
-                EMPTY_LINE
-                read -rp "$(ECHO_YELLOW "Start importing DB?") y/n " yn
+                yn=$(GET_USER_INPUT "question" "Start importing DB?")
 
                 case $yn in
                 [Yy]*)
+                    git_switch_branch
                     database_replace_project_from_db
                     docker_rebuild
                     docker_restart

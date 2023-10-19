@@ -10,7 +10,7 @@ stopped_projects_list() {
     ACTION=$1
 
     for PROJECT in "${AVAILABLE_PROJECTS[@]}"; do
-        running_container+=($(docker ps --format '{{.Names}}' | grep -E "*-$PROJECT($)" | sed -r 's/'-$PROJECT'/''/')) || true
+        running_container+=($(docker ps --format '{{.Names}}' | grep -E ".*-$PROJECT(\$)" | sed -r 's/'-$PROJECT'/''/')) || true
     done
 
     existing_string=$(awk '{print $3 $4 $5}' "$FILE_INSTANCES" | tail -n +2)
@@ -29,12 +29,12 @@ stopped_projects_list() {
 
         while true; do
             EMPTY_LINE
-            ECHO_INFO "$ACTION"
+            ECHO_CYAN "$ACTION"
             ECHO_YELLOW "[0] Return to the previous menu"
 
             print_list "${stopped_container[@]}"
 
-            read -rp "$(ECHO_YELLOW "Please select one of:")" choice
+            choice=$(GET_USER_INPUT "select_one_of")
 
             [ -z "$choice" ] && choice=-1
             if (("$choice" > 0 && "$choice" <= ${#stopped_container[@]})); then

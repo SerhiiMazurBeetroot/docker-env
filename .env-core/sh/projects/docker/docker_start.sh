@@ -31,14 +31,18 @@ docker_start() {
             ECHO_ERROR "Site image or volume was not found"
             ECHO_YELLOW "Checking for Docker-compose file exist"
 
-            DOCKER_FILES=($(find $PROJECT_DOCKER_DIR -type f -name '*.yml'))
+            if [ -d "$PROJECT_DOCKER_DIR" ]; then
+                DOCKER_FILES=($(find $PROJECT_DOCKER_DIR -type f -name '*.yml'))
 
-            if [ -f "$DOCKER_FILES" ]; then
-                echo "Starting Container"
-                docker_compose_runner "up -d"
+                if [ -f "$DOCKER_FILES" ]; then
+                    echo "Starting Container"
+                    docker_compose_runner "up -d"
+                else
+                    ECHO_ERROR "Docker-compose file not found"
+                    exit
+                fi
             else
-                ECHO_ERROR "Docker-compose file not found"
-                exit
+                ECHO_ERROR "DOCKER_DIR not found"
             fi
         fi
     fi

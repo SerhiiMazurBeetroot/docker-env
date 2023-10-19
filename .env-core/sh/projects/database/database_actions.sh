@@ -6,13 +6,14 @@ set -o pipefail
 database_actions() {
     while true; do
         EMPTY_LINE
-        ECHO_INFO "========== DB actions ========="
+        ECHO_CYAN "========== DB actions ========="
         ECHO_YELLOW "0 - Return to the previous menu"
         ECHO_GREEN "1 - Update DB (import)"
         ECHO_GREEN "2 - Dump DB (export)"
         ECHO_GREEN "3 - Search-Replace"
         ECHO_GREEN "4 - Replace project from DB"
-        read -rp "$(ECHO_YELLOW "Please select one of:")" actions
+
+        actions=$(GET_USER_INPUT "select_one_of")
 
         case $actions in
         0)

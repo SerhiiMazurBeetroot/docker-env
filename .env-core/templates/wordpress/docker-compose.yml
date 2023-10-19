@@ -6,6 +6,9 @@ services:
   {DOMAIN_NAME}-wordpress:
     build:
       context: .
+      args:
+        WP_VERSION: ${WP_VERSION}
+        PHP_VERSION: ${PHP_VERSION}
     container_name: {DOMAIN_NAME}-wordpress
     volumes:
       # WordPress wp-content folder
@@ -52,29 +55,6 @@ services:
       - {DOMAIN_NAME}_db_data:/var/lib/mysql
     # Set max_allowed_packet to 256M (or any other value)
     command: ['--max_allowed_packet=32505856']
-
-  #######################################
-  # phpMyAdmin
-  #######################################
-  {DOMAIN_NAME}-phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    depends_on:
-      - {DOMAIN_NAME}-mysql
-    links:
-      - {DOMAIN_NAME}-mysql
-    environment:
-      - VIRTUAL_PORT=80
-      - VIRTUAL_HOST=${PMA_VIRTUAL_HOST}
-      - PMA_ABSOLUTE_URI=${PMA_ABSOLUTE_URI}
-      - PMA_ARBITRARY=${PMA_ARBITRARY}
-      - PMA_HOST=${PMA_HOST}
-      - PMA_PORT=${PMA_PORT}
-      - PMA_USER=${PMA_USER}
-      - PMA_PASSWORD=${PMA_PASSWORD}
-    restart: always
-    volumes:
-      # Configs
-      - ./../wp-docker/phpmyadmin.ini:/usr/local/etc/php/conf.d/phpmyadmin.ini
 
 networks:
   default:

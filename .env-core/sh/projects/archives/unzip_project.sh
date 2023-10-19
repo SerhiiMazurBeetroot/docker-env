@@ -19,14 +19,11 @@ unzip_project() {
 			docker_rebuild
 			database_import
 
-			EMPTY_LINE
 			ECHO_SUCCESS "Successfully restored."
 		else
-			EMPTY_LINE
 			ECHO_WARN_RED "Directory name doesn't exists: $PROJECT_DIR"
 		fi
 	else
-		EMPTY_LINE
 		ECHO_WARN_RED "Archives doesn't exists"
 	fi
 }

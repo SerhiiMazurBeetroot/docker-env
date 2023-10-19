@@ -1,5 +1,6 @@
 {
-  "name": "Nextjs 13 starter-kit",
+  "name": "starter-kit",
+  "description": "Next.js 13 starter-kit",
   "version": "1.0.0",
   "private": true,
   "scripts": {

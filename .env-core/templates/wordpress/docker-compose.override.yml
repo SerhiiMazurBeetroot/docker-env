@@ -5,6 +5,7 @@ services:
   #######################################
   {DOMAIN_NAME}-phpmyadmin:
     image: phpmyadmin/phpmyadmin
+    container_name: {DOMAIN_NAME}-phpmyadmin
     depends_on:
       - {DOMAIN_NAME}-mysql
     links:
@@ -18,11 +19,22 @@ services:
       - PMA_PORT=${PMA_PORT}
       - PMA_USER=${PMA_USER}
       - PMA_PASSWORD=${PMA_PASSWORD}
+    restart: always
+    volumes:
+      # Configs
+      - ./../wp-docker/phpmyadmin.ini:/usr/local/etc/php/conf.d/phpmyadmin.ini
+
+  #######################################
+  # Mailhog
+  #######################################
+  {DOMAIN_NAME}-mail:
+    image: mailhog/mailhog
+    environment:
+      - VIRTUAL_PORT=8025
+      - VIRTUAL_HOST=${SMTP_VIRTUAL_HOST}
+    restart: always
 
 networks:
   default:
     name: dockerwp
     external: true
-
-volumes:
-  {DOMAIN_NAME}_db_data:

@@ -8,7 +8,7 @@ nginx_actions() {
 
     while true; do
         EMPTY_LINE
-        ECHO_INFO "===== Nginx server ===="
+        ECHO_CYAN "===== Nginx server ===="
         ECHO_YELLOW "0 - Return to main menu"
         ECHO_GREEN "1 - Setup"
         ECHO_GREEN "2 - Stop"
@@ -17,7 +17,7 @@ nginx_actions() {
         ECHO_GREEN "5 - Rebuild"
         ECHO_GREEN "6 - Re-Setup"
 
-        read -rp "$(ECHO_YELLOW "Please select one of:")" proxy_actions
+        proxy_actions=$(GET_USER_INPUT "select_one_of")
 
         case $proxy_actions in
         0)

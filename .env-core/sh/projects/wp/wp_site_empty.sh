@@ -4,20 +4,18 @@ set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
 wp_site_empty() {
-    EMPTY_LINE
-
     if [[ $EMPTY_CONTENT != "no" ]]; then
         if [[ $EMPTY_CONTENT == "" ]]; then
             ECHO_ATTENTION "The following command will remove default posts, pages, plugins, themes"
-            read -rp "$(ECHO_YELLOW "Are you sure?") y/n " AGREE
+            AGREE=$(GET_USER_INPUT "question" "Are you sure?")
 
             [[ $AGREE == "n" ]] && actions_existing_project
 
             running_projects_list "==== Delete site content ===="
 
-            read -rp "$(ECHO_YELLOW "Do you want to remove posts?") y/n " EMPTY_POSTS
-            read -rp "$(ECHO_YELLOW "Do you want to remove default themes?") y/n " EMPTY_THEMES
-            read -rp "$(ECHO_YELLOW "Do you want to remove default plugins?") y/n " EMPTY_PLUGINS
+            EMPTY_POSTS=$(GET_USER_INPUT "question" "Do you want to remove posts?")
+            EMPTY_THEMES=$(GET_USER_INPUT "question" "Do you want to remove default themes?")
+            EMPTY_PLUGINS=$(GET_USER_INPUT "question" "Do you want to remove default plugins?")
         fi
 
         WP_IS_INSTALLED=$(docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'wp core is-installed --allow-root | echo $?')

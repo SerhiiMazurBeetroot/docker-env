@@ -52,7 +52,6 @@ wp_get_default_theme() {
         if [[ -f "$PROJECT_DATABASE_DIR/$DB_FILE" ]]; then
             #1 => find in file | #2 => replace 'stylesheet' | #3 => replace character '' | #4 => replace , | #5 => replace space
             WP_DEFAULT_THEME=$(grep -o "'stylesheet',\s*'[A-Za-z0-9.,-]*\+'" "$PROJECT_DATABASE_DIR/$DB_FILE" | sed 's/'stylesheet'//g' | sed 's/'\''//g' | sed 's/,//g' | sed 's/^[ \t]*//;s/[ \t]*$//')
-            EMPTY_LINE
 
             # Replace variable WP_DEFAULT_THEME .env file
             PREV_THEME="$(grep -o "WP_DEFAULT_THEME=[A-Za-z0-9.,-]*\+" "$PROJECT_DOCKER_DIR"/.env)"
@@ -80,8 +79,7 @@ wp_npm_install() {
 }
 
 wp_core_install() {
-    EMPTY_LINE
-    ECHO_YELLOW "wp_core_install..."
+    ECHO_WARN_YELLOW "wp_core_install..."
     if [[ "yes" = "$MULTISITE" || "2" = "$MULTISITE" ]]; then
         docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec wp core multisite-install --url=https://'$DOMAIN_FULL' --title='$DOMAIN_NAME' --admin_user='$WP_USER' --admin_password="'$WP_PASSWORD'" --admin_email=example@example.com --skip-email --allow-root'
 

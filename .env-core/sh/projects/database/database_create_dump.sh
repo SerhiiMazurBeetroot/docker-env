@@ -32,5 +32,4 @@ database_create_dump() {
         mv $PROJECT_DATABASE_DIR/temp/*.sql $PROJECT_DATABASE_DIR/
         rm -rf $PROJECT_DATABASE_DIR/temp
     fi
-    EMPTY_LINE
 }
