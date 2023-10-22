@@ -18,7 +18,7 @@ git_save_access() {
             break
             ;;
 
-        *) echo "Please answer yes or no" ;;
+        *) echo "Please answer [y/n]" ;;
         esac
     done
 
@@ -36,7 +36,7 @@ git_save_access() {
             break
             ;;
 
-        *) echo "Please answer yes or no" ;;
+        *) echo "Please answer [y/n]" ;;
         esac
     done
 }
