@@ -24,7 +24,7 @@ docker_actions() {
             actions_existing_project
             ;;
         1)
-            STATUS="remove"
+            INSTANCES_STATUS="remove"
             docker_delete
             unset_variables "PROJECT_TYPE"
             ;;
@@ -35,18 +35,18 @@ docker_actions() {
             ;;
         3)
             docker_start
-            notice_project_urls
+            notice_project_urls "open"
             unset_variables "PROJECT_TYPE"
             ;;
         4)
             docker_restart
-            notice_project_urls
+            notice_project_urls "open"
             unset_variables "PROJECT_TYPE"
             ;;
         5)
             docker_rebuild
             docker_restart
-            notice_project_urls
+            notice_project_urls "open"
             unset_variables "PROJECT_TYPE"
             ;;
         6)

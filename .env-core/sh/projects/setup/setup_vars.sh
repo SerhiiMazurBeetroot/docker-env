@@ -21,8 +21,10 @@ get_project_dir() {
     if [[ $QUESTION == "skip_question" ]]; then
         DOMAIN_FULL=$(awk '/'" $DOMAIN_NAME "'/{print $7}' "$FILE_INSTANCES" | head -n 1)
     else
-        ECHO_ENTER "Enter DOMAIN_FULL [default $DOMAIN_NAME_DEFAULT]"
-        read -rp "DOMAIN_FULL: " DOMAIN_FULL
+        if [[ $TEST_RUNNING -ne 1 ]]; then
+            ECHO_ENTER "Enter DOMAIN_FULL [default $DOMAIN_NAME_DEFAULT]"
+            read -rp "DOMAIN_FULL: " DOMAIN_FULL
+        fi
     fi
 
     [[ $DOMAIN_FULL == '' ]] && DOMAIN_FULL="$DOMAIN_NAME_DEFAULT"
@@ -79,6 +81,7 @@ set_default_vars() {
     DOCKER_VOLUME_DB="$DOMAIN_NAME"_db_data
     DOCKER_CONTAINER_DB="$DOMAIN_NAME-mysql"
     DB_TYPE="MYSQL"
+    PORT_FRONT=0
 }
 
 set_wordpress_vars() {
@@ -147,6 +150,7 @@ set_nextjs_vars() {
     PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/docker
     DOCKER_CONTAINER_APP="$DOMAIN_NAME-nextjs"
     DOMAIN_ADMIN=""
+    DOMAIN_MAIL=""
     HOST_EXTRA=""
 }
 

@@ -29,6 +29,7 @@ ECHO_RED() {
 }
 
 ECHO_INFO() {
+    EMPTY_LINE
     echo -e "➤ ${CYAN}${1} ${NC}"
 }
 
@@ -67,17 +68,27 @@ ECHO_ERROR() {
 GET_USER_INPUT() {
     local prompt_type=$1
     local msg=$2
+    local default_choice=$3
+    local choice
 
-    case $prompt_type in
-    'select_one_of')
-        read -rp "$(ECHO_YELLOW "Please select one of:")" choice
-        ;;
-    'question')
-        read -rp "$(ECHO_YELLOW "❓ $msg") [y/n] " choice
-        ;;
-    *) # Default case
-        read -rp "$(ECHO_YELLOW "$msg")" choice
-        ;;
-    esac
+    if [[ $TEST_RUNNING -eq 1 ]]; then
+        choice=${choice:-$default_choice}
+    else
+        case $prompt_type in
+        'select_one_of')
+            read -rp "$(ECHO_YELLOW "Please select one of:")" choice
+            ;;
+        'question')
+            read -rp "$(ECHO_YELLOW "❓ $msg") [y/n] " choice
+            ;;
+        'enter')
+            read -rp "$(ECHO_ENTER "$msg")" choice
+            ;;
+        *) # Default case
+            read -rp "$(ECHO_YELLOW "$msg")" choice
+            ;;
+        esac
+    fi
+
     echo "$choice"
 }

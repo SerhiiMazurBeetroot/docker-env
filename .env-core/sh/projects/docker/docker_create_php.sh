@@ -62,7 +62,7 @@ docker_create_php() {
             # TODO: add clone
 
             # Print for user project info
-            notice_project_vars
+            notice_project_vars "open"
 
         fi
 

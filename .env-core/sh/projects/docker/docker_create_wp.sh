@@ -52,25 +52,11 @@ docker_create_wp() {
             edit_file_compose_setup_beetroot
             edit_file_gitignore
 
-            #clone from repo
-            while true; do
-                yn=$(GET_USER_INPUT "question" "Start Clone?")
-
-                case $yn in
-                [Yy]*)
-                    git_clone_repo
-                    break
-                    ;;
-                [Nn]*)
-                    break
-                    ;;
-
-                *) echo "Please answer yes or no" ;;
-                esac
-            done
+            #clone root or theme
+            git_clone_actions
 
             # Print for user project info
-            notice_project_vars
+            notice_project_vars "open"
 
             # COMPOSER_ISSUE exists
             notice_composer

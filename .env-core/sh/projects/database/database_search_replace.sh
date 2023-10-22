@@ -26,7 +26,7 @@ database_search_replace() {
             break
             ;;
 
-        *) echo "Please answer yes or no" ;;
+        *) echo "Please answer [y/n]" ;;
         esac
     done
 }

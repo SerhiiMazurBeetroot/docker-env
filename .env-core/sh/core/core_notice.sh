@@ -26,17 +26,32 @@ notice_windows_host() {
 }
 
 notice_project_urls() {
+	OPEN_LINK=$1
 	get_unique_frontport
 
 	ECHO_INFO "Project URLs:"
 	ECHO_KEY_VALUE "DOMAIN_FULL:" "https://$DOMAIN_FULL"
-	[[ $PORT_FRONT =~ ^[0-9]+$ && $PORT_FRONT -ne 0 ]] && ECHO_KEY_VALUE "DOMAIN_FRONT:" "http://localhost:$PORT_FRONT"
-	[[ $DOMAIN_ADMIN != "" ]] && ECHO_KEY_VALUE "DOMAIN_ADMIN:" "https://$DOMAIN_ADMIN"
-	[[ $DOMAIN_ADMIN != "" ]] && ECHO_KEY_VALUE "DOMAIN_DB:" "https://$DOMAIN_DB"
-	[[ $DOMAIN_MAIL != "" ]] && ECHO_KEY_VALUE "DOMAIN_MAIL:" "https://$DOMAIN_MAIL"
+
+	if [[ $PORT_FRONT =~ ^[0-9]+$ && $PORT_FRONT -ne 0 ]]; then
+		ECHO_KEY_VALUE "DOMAIN_FRONT:" "http://localhost:$PORT_FRONT"
+	fi
+
+	if [[ $DOMAIN_ADMIN != "" ]]; then
+		ECHO_KEY_VALUE "DOMAIN_ADMIN:" "https://$DOMAIN_ADMIN"
+		ECHO_KEY_VALUE "DOMAIN_DB:" "https://$DOMAIN_DB"
+	fi
+
+	if [[ $DOMAIN_MAIL != "" ]]; then
+		ECHO_KEY_VALUE "DOMAIN_MAIL:" "https://$DOMAIN_MAIL"
+	fi
+
+	if [[ $OPEN_LINK == 'open' ]]; then
+		google-chrome $DOMAIN_FULL || true
+	fi
 }
 
 notice_project_vars() {
+	OPEN_LINK=$1
 	ECHO_INFO "Project variables:"
 
 	ECHO_KEY_VALUE "PROJECT_TYPE:" "$PROJECT_TYPE"
@@ -50,10 +65,11 @@ notice_project_vars() {
 		fi
 	done
 
-	notice_project_urls
+	notice_project_urls "$OPEN_LINK"
 	notice_windows_project_vars
 
 	ECHO_YELLOW "You can find this info in the file ["$PROJECT_DOCKER_DIR"/.env"]
+	EMPTY_LINE
 }
 
 notice_windows_project_vars() {

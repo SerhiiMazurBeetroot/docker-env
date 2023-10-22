@@ -46,6 +46,10 @@ docker_compose_version() {
     [[ $COMPOSE_VERSION == 2 ]] && DOCKER_COMPOSE_CMD="docker compose" || DOCKER_COMPOSE_CMD="docker-compose"
 }
 
+env_mode() {
+    export ENV_MODE=$(awk '/ENV_MODE/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_MODE='//')
+}
+
 function versions() {
     ECHO_KEY_VALUE "- docker: " "$(docker --version | awk '{print $3}' | sed -e 's/,//g')"
     ECHO_KEY_VALUE "- compose:" "$(docker-compose --version | awk '{print $3}' | sed -e 's/,//g')"

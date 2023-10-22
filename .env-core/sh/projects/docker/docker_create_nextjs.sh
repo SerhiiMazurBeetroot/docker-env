@@ -58,7 +58,7 @@ docker_create_nextjs() {
             # TODO: clone from repo
 
             # Print for user project info
-            notice_project_vars
+            notice_project_vars "open"
 
         else
             ECHO_ERROR "Site already exists"
