@@ -39,6 +39,7 @@ ECHO_ENTER() {
 }
 
 ECHO_ATTENTION() {
+    EMPTY_LINE
     echo -e "⚠️ ${RED} ${1} ${NC}"
     EMPTY_LINE
 }
