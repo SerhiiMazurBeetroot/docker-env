@@ -13,7 +13,7 @@ docker_delete() {
 
         while true; do
             ECHO_WARN_YELLOW "Removing now... [$PROJECT_ROOT_DIR]"
-            yn=$(GET_USER_INPUT "question" "Do you wish to proceed?")
+            yn=$(GET_USER_INPUT "question" "Do you wish to proceed?" "y")
 
             case $yn in
             [Yy]*)
@@ -48,7 +48,7 @@ docker_delete() {
                 actions_existing_project
                 ;;
 
-            *) echo "Please answer yes or no" ;;
+            *) echo "Please answer [y/n]" ;;
             esac
         done
     else

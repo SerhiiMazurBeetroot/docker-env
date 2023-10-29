@@ -136,22 +136,24 @@ get_nodejs_version() {
 }
 
 unset_variables() {
-    unset DOMAIN_NAME DB_NAME TABLE_PREFIX PHP_VERSION MULTISITE EMPTY_CONTENT NODE_VERSIONS $1
+    if [[ $TEST_RUNNING -ne 1 ]]; then
+        unset DOMAIN_NAME DB_NAME TABLE_PREFIX PHP_VERSION MULTISITE EMPTY_CONTENT NODE_VERSIONS $1
+    fi
 }
 
 update_file_instances() {
-    if [[ $STATUS == "remove" ]]; then
+    if [[ $INSTANCES_STATUS == "remove" ]]; then
         #Remove
         sed -i -e '/'"| $DOMAIN_NAME |"'/d' "$FILE_INSTANCES"
         sed -i'.bak' -e '/'"| $DOMAIN_NAME |"'/d' "$FILE_INSTANCES"
-    elif [[ $STATUS == 'archive' ]]; then
+    elif [[ $INSTANCES_STATUS == 'archive' ]]; then
         #Change status to "archive"
         PREV_INSTANCES=$(awk '/'" $DOMAIN_NAME "'/{print}' "$FILE_INSTANCES" | head -n 1)
         NEW_INSTANCES=$(echo $PREV_INSTANCES | sed -r 's/active/archive/')
 
         sed -i -e 's/'"$PREV_INSTANCES"'/'"$NEW_INSTANCES"'/g' "$FILE_INSTANCES"
         sed -i'.bak' -e 's/'"$PREV_INSTANCES"'/'"$NEW_INSTANCES"'/g' "$FILE_INSTANCES"
-    elif [[ $STATUS == 'active' ]]; then
+    elif [[ $INSTANCES_STATUS == 'active' ]]; then
         #Change status to "active"
         PREV_INSTANCES=$(awk '/'" $DOMAIN_NAME "'/{print}' "$FILE_INSTANCES" | head -n 1)
         NEW_INSTANCES=$(echo $PREV_INSTANCES | sed -r 's/archive/active/')

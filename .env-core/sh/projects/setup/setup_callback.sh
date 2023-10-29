@@ -6,12 +6,11 @@ set -o pipefail
 check_data_before_continue_callback() {
     EMPTY_LINE
     ECHO_INFO "Check everything before proceeding:"
-    EMPTY_LINE
 
     while true; do
         notice_project_vars
 
-        yn=$(GET_USER_INPUT "question" "Is that correct?")
+        yn=$(GET_USER_INPUT "question" "Is that correct?" "y")
 
         case $yn in
         [Yy]*)
@@ -26,7 +25,7 @@ check_data_before_continue_callback() {
             break
             ;;
 
-        *) echo "Please answer yes or no" ;;
+        *) echo "Please answer [y/n]" ;;
         esac
     done
 }
@@ -41,7 +40,7 @@ setup_installation_type_callback() {
         ECHO_KEY_VALUE "[1]" "default"
         ECHO_KEY_VALUE "[2]" "custom"
         ECHO_KEY_VALUE "[3]" "beetroot"
-        SETUP_TYPE=$(GET_USER_INPUT "select_one_of")
+        SETUP_TYPE=$(GET_USER_INPUT "select_one_of" "" "1")
 
         case $SETUP_TYPE in
         0)

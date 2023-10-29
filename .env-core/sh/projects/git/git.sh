@@ -18,7 +18,7 @@ git_save_access() {
             break
             ;;
 
-        *) echo "Please answer yes or no" ;;
+        *) echo "Please answer [y/n]" ;;
         esac
     done
 
@@ -36,7 +36,7 @@ git_save_access() {
             break
             ;;
 
-        *) echo "Please answer yes or no" ;;
+        *) echo "Please answer [y/n]" ;;
         esac
     done
 }
@@ -47,11 +47,28 @@ git_config_fileMode() {
     if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
         git config core.fileMode false
 
-        if [ -d "$PROJECT_DIR/.git" ] && git config core.fileMode false 2>/dev/null; then
-            cd "$PROJECT_DIR" && git config core.fileMode false
-            cd ../../
+        #TODO: find a solution in the future without using '*'
+        safe_directories=$(git config --global --get-all safe.directory)
+        patterns=("*" "$PROJECT_DIR")
+
+        for pattern in "${patterns[@]}"; do
+            if echo "$safe_directories" | grep -q "$pattern"; then
+                ECHO_TEXT "Pattern [$pattern] is already in the global Git configuration."
+            else
+                git config --global --add safe.directory "$pattern"
+                ECHO_TEXT "Pattern [$pattern] has been added to the global Git configuration."
+            fi
+        done
+
+        if [ -d "$PROJECT_DIR" ]; then
+            cd "$PROJECT_DIR" || return
+
+            if [ -d ".git" ]; then
+                git config core.fileMode false
+            fi
+            cd ../../ || return
         else
-            ECHO_YELLOW "No Git repository found in [$PROJECT_DIR]"
+            ECHO_INFO "No Git repository found in [$PROJECT_DIR]"
         fi
     fi
 }
