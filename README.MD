@@ -106,53 +106,25 @@ docker-env
   <img src="./.env-core/docs/gifs/docker-env.gif?raw=true"/>
 </details>
 
-<br>
-
->
-
-<br>
-
 <details>
   <summary style="font-size: 1.6rem; font-weight: bold;">1 Running an Nginx Server</summary>
   <img src="./.env-core/docs/gifs/nginx.gif?raw=true"/>
 </details>
-
-<br>
-
->
-
-<br>
 
 <details>
   <summary style="font-size: 1.6rem; font-weight: bold;">2.1 Create new project Wordpress</summary>
   <img src="./.env-core/docs/gifs/wordpress.gif?raw=true"/>
 </details>
 
-<br>
-
->
-
-<br>
-
 <details>
   <summary style="font-size: 1.6rem; font-weight: bold;">2.2 Create new project Bedrock</summary>
   <img src="./.env-core/docs/gifs/bedrock.gif?raw=true"/>
 </details>
 
-<br>
-
->
-<br>
-
 <details>
   <summary style="font-size: 1.6rem; font-weight: bold;">2.3 Create new project PHP-Server</summary>
   <img src="./.env-core/docs/gifs/php.gif?raw=true"/>
 </details>
-<br>
-
->
-
-<br>
 
 <details>
   <summary style="font-size: 1.6rem; font-weight: bold;">2.4 Create new Next.js</summary>
@@ -161,13 +133,7 @@ docker-env
 
 <br>
 
->
-
-<br>
-
 # [FAQ](./.env-core/docs/6-doc.MD#6-how-to)
-
-<br>
 
 ## Related projects
 1. [Nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy)
