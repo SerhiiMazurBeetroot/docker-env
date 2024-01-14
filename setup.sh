@@ -23,7 +23,8 @@ main_actions() {
 		ECHO_GREEN "2 - New project"
 		ECHO_GREEN "3 - Existing project"
 		ECHO_KEY_VALUE "4 - Settings" "$ENV_UPDATES"
-		[[ $ENV_MODE == 'development' ]] && ECHO_RED "5 - Run tests"
+
+		[[ $ENV_MODE == 'development' ]] && ECHO_RED "* - Run tests"
 
 		userChoice=$(GET_USER_INPUT "select_one_of")
 
@@ -43,7 +44,7 @@ main_actions() {
 		4)
 			env_settings
 			;;
-		5)
+		*)
 			[[ $ENV_MODE == 'development' ]] && tests_actions
 			;;
 		esac
