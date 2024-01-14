@@ -83,24 +83,42 @@ check_env_version() {
 save_settings() {
     local settings=("$@")
 
-    # Read existing settings from file into an associative array
-    declare -A existing_settings
+    # Read existing settings from file into separate arrays
+    local existing_keys=()
+    local existing_values=()
+
     if [[ -f "$FILE_SETTINGS" ]]; then
-        while IFS='=' read -r key value; do
-            existing_settings["$key"]=$value
+        while IFS='=' read -r existing_key existing_value; do
+            existing_keys+=("$existing_key")
+            existing_values+=("$existing_value")
         done <"$FILE_SETTINGS"
     fi
 
-    # Update existing settings and add new settings to the associative array
+    # Update existing settings and add new settings to the separate arrays
     for setting in "${settings[@]}"; do
         key="${setting%=*}"
         value="${setting#*=}"
-        existing_settings["$key"]=$value
+
+        # Check if the key already exists in the array
+        index=""
+        for ((i = 0; i < ${#existing_keys[@]}; i++)); do
+            if [[ "${existing_keys[i]}" == "$key" ]]; then
+                index=$i
+                break
+            fi
+        done
+
+        if [[ -n $index ]]; then
+            existing_values[index]="$value"
+        else
+            existing_keys+=("$key")
+            existing_values+=("$value")
+        fi
     done
 
     # Save the updated settings to the file
-    printf "%s\n" "${!existing_settings[@]}" | while IFS= read -r key; do
-        echo "$key=${existing_settings[$key]}"
+    for ((i = 0; i < ${#existing_keys[@]}; i++)); do
+        echo "${existing_keys[i]}=${existing_values[i]}"
     done >"$FILE_SETTINGS"
 }
 

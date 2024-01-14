@@ -12,13 +12,14 @@ export ALIAS_CMD="docker-env"
 export OLD_REPO="SerhiiMazurBeetroot/devENV"
 export MAIN_REPO="SerhiiMazurBeetroot/docker-env"
 
-declare -A AVAILABLE_PROJECTS_ARRAY=(
-  [wordpress]="Wordpress"
-  [bedrock]="BEDROCK"
-  [php]="PHP-Server"
-  [wpnextjs]="NextWP"
-  [nodejs]="Node.js"
-  [nextjs]="Next.js"
+# BASH_VERSION 3.2.57 (default macOS)
+export PROJECT_TITLES=(
+  "Wordpress"
+  "BEDROCK"
+  "PHP-Server"
+  "Next.js"
+  "Next.WP"
+  "Node.js"
 )
 
 export AVAILABLE_PROJECTS=(

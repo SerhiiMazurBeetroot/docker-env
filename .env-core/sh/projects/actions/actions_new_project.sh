@@ -11,8 +11,7 @@ actions_new_project() {
 
     for ((i = 0; i < ${#AVAILABLE_PROJECTS[@]}; i++)); do
       index=$((i + 1))
-      key="${AVAILABLE_PROJECTS[i]}"
-      option="${AVAILABLE_PROJECTS_ARRAY[$key]}"
+      option="${PROJECT_TITLES[index - 1]}"
       ECHO_KEY_VALUE "[$index]" "$option"
     done
 
