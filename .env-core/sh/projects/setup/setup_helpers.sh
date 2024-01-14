@@ -105,7 +105,7 @@ get_latest_wp_version() {
 
 get_nodejs_version() {
     NODE_VERSIONS=($(curl -sL 'https://raw.githubusercontent.com/nodejs/docker-node/main/versions.json' | grep -o '"[0-9]\+": {' | cut -d'"' -f2 | sed 's/: {//'))
-    NODE_LATEST_VERSION="${NODE_VERSIONS[-1]}"
+    NODE_LATEST_VERSION="${NODE_VERSIONS}"
 
     if [ ! $NODE_VERSION ]; then
         if [[ $QUESTION == "default" ]]; then
