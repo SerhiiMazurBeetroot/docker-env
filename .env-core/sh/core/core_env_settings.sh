@@ -12,6 +12,7 @@ env_settings() {
         ECHO_YELLOW "0 - Return to main menu"
         ECHO_KEY_VALUE "1 - ENV_UPDATES:" "$ENV_UPDATES"
         ECHO_KEY_VALUE "2 - ENV_THEME:" "$ENV_THEME"
+        ECHO_KEY_VALUE "3 - Versions"
 
         settings=$(GET_USER_INPUT "select_one_of")
 
@@ -24,6 +25,9 @@ env_settings() {
             ;;
         2)
             change_env_theme
+            ;;
+        3)
+            versions
             ;;
         esac
     done
