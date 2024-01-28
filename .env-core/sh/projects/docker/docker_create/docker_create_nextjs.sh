@@ -3,7 +3,7 @@
 set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
-docker_create_wp_next() {
+docker_create_nextjs() {
     unset_variables
 
     if [ $NGINX_EXISTS -eq 1 ]; then
@@ -13,15 +13,13 @@ docker_create_wp_next() {
         if [[ $DOMAIN_EXISTS == 0 ]]; then
             get_project_dir "$@"
             set_project_args
-            check_data_before_continue_callback docker_create_wp_next
+            check_data_before_continue_callback docker_create_nextjs
 
             ECHO_INFO "Setting up Docker containers for $DOMAIN_FULL"
 
             #GET PORT
             get_unique_port
-
-            #GET PORT_FRONT
-            set_unique_frontport
+            export PORT_FRONT=$PORT
 
             get_project_dir "skip_question"
 
@@ -31,7 +29,7 @@ docker_create_wp_next() {
             mkdir -p $PROJECT_ROOT_DIR
 
             # Copy templates files
-            cp -r $ENV_DIR/.env-core/templates/wpnextjs/* $PROJECT_ROOT_DIR
+            cp -r $ENV_DIR/.env-core/templates/nextjs/* $ENV_DIR/.env-core/templates/nextjs/* $PROJECT_ROOT_DIR
 
             # Rename files
             replace_templates_files
@@ -45,7 +43,6 @@ docker_create_wp_next() {
             ECHO_GREEN "Docker compose file set and container can be built and started"
             ECHO_TEXT "Starting Container"
             docker_compose_runner "up -d --build"
-
             ECHO_SUCCESS "Containers Started"
 
             setup_hosts_file add
@@ -54,25 +51,18 @@ docker_create_wp_next() {
             docker_restart
 
             # install local node_modules
-            cd "$PROJECT_ROOT_DIR/frontend" && npm i && cd ../../
+            cd "$PROJECT_ROOT_DIR" && npm i && cd ../../
 
-            wp_core_install
-            wp_site_empty
-
-            edit_file_compose_setup_beetroot
             edit_file_gitignore
 
-            #clone from repo
+            # TODO: clone from repo
 
             # Print for user project info
-            notice_project_vars
-
-            # COMPOSER_ISSUE exists
-            notice_composer
+            notice_project_vars "open"
 
         else
             ECHO_ERROR "Site already exists"
-            docker_create_wp
+            docker_create_nextjs "$@"
         fi
     else
         ECHO_ERROR "Nginx container not running"

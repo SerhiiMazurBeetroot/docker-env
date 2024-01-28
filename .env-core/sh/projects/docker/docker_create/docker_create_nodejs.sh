@@ -3,13 +3,12 @@
 set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
-docker_create_nodejs () {
+docker_create_nodejs() {
 	unset_variables
 	get_domain_name
 	check_domain_exists
 
-	if [[ $DOMAIN_EXISTS == 0 ]];
-	then
+	if [[ $DOMAIN_EXISTS == 0 ]]; then
 		check_data_before_continue_callback docker_create_nodejs
 
 		ECHO_INFO "Setting up Docker containers for $DOMAIN_FULL"
@@ -24,7 +23,6 @@ docker_create_nodejs () {
 		MONGODB_DOCKER_PORT=$(($PORT + 23707)) # TODO: check if this is correct
 		MONGODB_LOCAL_PORT=$(($PORT + 3707))
 		MONGO_EXPRESS_PORT=$(($PORT + 4771))
-
 
 		mkdir -p $PROJECT_ROOT_DIR/
 
@@ -55,52 +53,49 @@ docker_create_nodejs () {
 
 }
 
-docker_nodejs_delete () {
+docker_nodejs_delete() {
 
-
-	if [ -d $PROJECT_ROOT_DIR ];
-	then
+	if [ -d $PROJECT_ROOT_DIR ]; then
 		EMPTY_LINE
 		ECHO_ATTENTION "You can't restore the site after it has been deleted."
 		ECHO_ATTENTION "This operation will remove the localhost containers, volumes, and the WordPress core files."
 		while true; do
 			ECHO_WARN_YELLOW "Removing now... $DOMAIN_FULL"
-			read -rp "$(ECHO_WARN_RED "Do you wish to proceed?") [y/n] " yn
+			yn=$(GET_USER_INPUT "question" "Do you wish to proceed?")
+
 			case $yn in
-				[Yy]*)
-					ECHO_YELLOW "Deleting site"
-					fix_permissions
-					docker_stop
-					
-					if [ $( docker image ls --format '{{.Repository}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)' ) ];
-					then
-						EMPTY_LINE
-						imageid=$( docker image ls --format '{{.Repository}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)' )
-						[ -n "$imageid" ] && docker rmi "$imageid" --force && ECHO_YELLOW "Deleting images" || ECHO_WARN_YELLOW "Image not found"
-					else
-						ECHO_ERROR "Docker image does not exist"
-					fi
+			[Yy]*)
+				ECHO_YELLOW "Deleting site"
+				fix_permissions
+				docker_stop
 
-					if [ $( docker volume ls --format '{{.Name}}' | grep -E '(^|_|-)'$DOCKER_VOLUME_DB'($)' ) ];
-					then
-						EMPTY_LINE
-						volumename=$( docker volume ls --format '{{.Name}}' | grep -E '(^|_|-)'$DOCKER_VOLUME_DB'($)' )
-						[ -n "$volumename" ] && docker volume rm "$volumename" && ECHO_YELLOW "Deleting Volume" || echo "Volume not found"
-					else
-						ECHO_ERROR "Docker volume does not exist"
-					fi
+				if [ $(docker image ls --format '{{.Repository}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)') ]; then
+					EMPTY_LINE
+					imageid=$(docker image ls --format '{{.Repository}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')
+					[ -n "$imageid" ] && docker rmi "$imageid" --force && ECHO_YELLOW "Deleting images" || ECHO_WARN_YELLOW "Image not found"
+				else
+					ECHO_ERROR "Docker image does not exist"
+				fi
 
-					delete_site_data
-					notice_windows_host rem
-					
-					break
-					;;
-				[Nn]*) 
-					unset_variables
-					actions_existing_project
-					;;
+				if [ $(docker volume ls --format '{{.Name}}' | grep -E '(^|_|-)'$DOCKER_VOLUME_DB'($)') ]; then
+					EMPTY_LINE
+					volumename=$(docker volume ls --format '{{.Name}}' | grep -E '(^|_|-)'$DOCKER_VOLUME_DB'($)')
+					[ -n "$volumename" ] && docker volume rm "$volumename" && ECHO_YELLOW "Deleting Volume" || ECHO_TEXT "Volume not found"
+				else
+					ECHO_ERROR "Docker volume does not exist"
+				fi
 
-				*) echo "Please answer yes or no" ;;
+				delete_site_data
+				notice_windows_host rem
+
+				break
+				;;
+			[Nn]*)
+				unset_variables
+				actions_existing_project
+				;;
+
+			*) echo "Please answer [y/n]" ;;
 			esac
 		done
 	else

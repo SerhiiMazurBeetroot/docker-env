@@ -3,7 +3,7 @@
 set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
-docker_create_nextjs() {
+docker_create_wp_next() {
     unset_variables
 
     if [ $NGINX_EXISTS -eq 1 ]; then
@@ -13,13 +13,15 @@ docker_create_nextjs() {
         if [[ $DOMAIN_EXISTS == 0 ]]; then
             get_project_dir "$@"
             set_project_args
-            check_data_before_continue_callback docker_create_nextjs
+            check_data_before_continue_callback docker_create_wp_next
 
             ECHO_INFO "Setting up Docker containers for $DOMAIN_FULL"
 
             #GET PORT
             get_unique_port
-            export PORT_FRONT=$PORT
+
+            #GET PORT_FRONT
+            set_unique_frontport
 
             get_project_dir "skip_question"
 
@@ -29,7 +31,7 @@ docker_create_nextjs() {
             mkdir -p $PROJECT_ROOT_DIR
 
             # Copy templates files
-            cp -r $ENV_DIR/.env-core/templates/nextjs/.* $ENV_DIR/.env-core/templates/nextjs/* $PROJECT_ROOT_DIR
+            cp -r $ENV_DIR/.env-core/templates/wpnextjs/* $PROJECT_ROOT_DIR
 
             # Rename files
             replace_templates_files
@@ -51,18 +53,25 @@ docker_create_nextjs() {
             docker_restart
 
             # install local node_modules
-            cd "$PROJECT_ROOT_DIR" && npm i && cd ../../
+            cd "$PROJECT_ROOT_DIR/frontend" && npm i && cd ../../
 
+            wp_core_install
+            wp_site_empty
+
+            edit_file_compose_setup_beetroot
             edit_file_gitignore
 
-            # TODO: clone from repo
+            #clone from repo
 
             # Print for user project info
             notice_project_vars "open"
 
+            # COMPOSER_ISSUE exists
+            notice_composer
+
         else
             ECHO_ERROR "Site already exists"
-            docker_create_nextjs "$@"
+            docker_create_wp
         fi
     else
         ECHO_ERROR "Nginx container not running"
