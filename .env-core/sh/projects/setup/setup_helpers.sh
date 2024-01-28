@@ -181,13 +181,17 @@ delete_site_data() {
 
 # Load/Create enviroment variables
 env_file_load() {
+    local CREATE_FILE=$1
     get_project_dir "skip_question"
 
-    if [ -f $PROJECT_DOCKER_DIR/.env ]; then
+    if [[ $CREATE_FILE == '' && -f $PROJECT_DOCKER_DIR/.env ]]; then
         source $PROJECT_DOCKER_DIR/.env
     else
         ECHO_YELLOW ".env file not found, creating..."
-        cp -rf $ENV_DIR/.env-core/templates/"$PROJECT_DIR"/.env.example $PROJECT_DOCKER_DIR/.env
+
+        if [ -f $PROJECT_DOCKER_DIR/.env.example ]; then
+            cp -rf $ENV_DIR/.env-core/templates/"$PROJECT_DIR"/.env.example $PROJECT_DOCKER_DIR/.env
+        fi
 
         sed -i -e 's/{DOMAIN_NAME}/'$DOMAIN_NAME'/g' $PROJECT_DOCKER_DIR/.env
         sed -i -e 's/{TABLE_PREFIX}/'$TABLE_PREFIX'/g' $PROJECT_DOCKER_DIR/.env
