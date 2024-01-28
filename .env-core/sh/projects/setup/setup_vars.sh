@@ -68,6 +68,9 @@ set_project_vars() {
     "nextjs")
         set_nextjs_vars
         ;;
+    "directus")
+        set_directus_vars
+        ;;
     *)
         echo "Unknown PROJECT_TYPE: $PROJECT_TYPE"
         return 1
@@ -81,7 +84,10 @@ set_default_vars() {
     DOCKER_VOLUME_DB="$DOMAIN_NAME"_db_data
     DOCKER_CONTAINER_DB="$DOMAIN_NAME-mysql"
     DB_TYPE="MYSQL"
-    PORT_FRONT=0
+
+    if [[ -z "$PORT_FRONT" ]]; then
+        PORT_FRONT=0
+    fi
 }
 
 set_wordpress_vars() {
@@ -152,6 +158,19 @@ set_nextjs_vars() {
     DOMAIN_ADMIN=""
     DOMAIN_MAIL=""
     HOST_EXTRA=""
+}
+
+set_directus_vars() {
+    #Directus
+    DOMAIN_ADMIN=""
+    DB_NAME="directus"
+    DOMAIN_FRONT=""
+    PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/docker
+    PROJECT_BACKEND_DIR=$PROJECT_ROOT_DIR/backend
+    PROJECT_DATABASE_DIR=$PROJECT_ROOT_DIR/database
+    DOCKER_CONTAINER_APP="$DOMAIN_NAME-directus"
+    DOMAIN_MAIL=""
+    HOST_EXTRA="$DOMAIN_DB"
 }
 
 get_compose_project_name() {

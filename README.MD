@@ -8,14 +8,14 @@
   </a>
 </p>
 
-# Docker Local Environment
+# Local Docker Environment
 
 <p align="center">
   <img alt="jwilder" src="https://img.shields.io/badge/jwilder-23009639?style=for-the-badge&logo=nginx&logoColor=white">
   <img alt="mkcert" src="https://img.shields.io/badge/mkcert-F46D01?style=for-the-badge&logo=security&logoColor=white">
 </p>
 
-## Compatible with various Operating Systems
+## Cross-platform compatible
 
 <p align="center">
   <img alt="Linux" src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black">
@@ -23,13 +23,14 @@
   <img alt="Windows" src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white">
 </p>
 
-## Automatic installation for the following projects:
+## Automatic installation of projects
 
 <p align="center">
   <img alt="WordPress" src="https://img.shields.io/badge/wordpress-blue?style=for-the-badge&logo=wordpress&logoColor=white">
   <img alt="bedrock" src="https://img.shields.io/badge/bedrock-525ddc?style=for-the-badge&logo=roots&logoColor=white">
   <img alt="PHP" src="https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white">
   <img alt="nextjs" src="https://img.shields.io/badge/next.js-white?style=for-the-badge&logo=nextdotjs&logoColor=black">
+  <img alt="directus" src="https://img.shields.io/badge/directus-%2364f.svg?style=for-the-badge&logo=directus&logoColor=black">
 </p>
 
 ## What's inside the containers

@@ -18,6 +18,7 @@ export PROJECT_TITLES=(
   "BEDROCK"
   "PHP-Server"
   "Next.js"
+  "Directus"
   "Next.WP"
   "Node.js"
 )
@@ -27,6 +28,7 @@ export AVAILABLE_PROJECTS=(
   "bedrock"
   "php"
   "nextjs"
+  "directus"
 )
 
 source_files_in() {

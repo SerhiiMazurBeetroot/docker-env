@@ -55,6 +55,10 @@ actions_new_project() {
         docker_create_nextjs
         unset_variables "PROJECT_TYPE"
         ;;
+      "directus")
+        docker_create_directus
+        unset_variables "PROJECT_TYPE"
+        ;;
       esac
       ;;
     esac

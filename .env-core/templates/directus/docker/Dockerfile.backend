@@ -1,0 +1,10 @@
+FROM directus/directus:10.8.2
+
+USER root
+RUN corepack enable \
+  && corepack prepare pnpm@8.9.0 --activate
+
+EXPOSE 80
+
+USER node
+RUN pnpm install directus-extension-api-viewer

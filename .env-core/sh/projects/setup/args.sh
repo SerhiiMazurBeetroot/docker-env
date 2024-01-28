@@ -57,6 +57,11 @@ get_project_args() {
             "NODE_VERSION"
         )
         ;;
+    'directus')
+        ARGS=(
+            "DB_NAME"
+        )
+        ;;
     *)
         echo "Unsupported project type: $PROJECT_TYPE"
         ;;
