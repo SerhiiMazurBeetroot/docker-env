@@ -8,6 +8,8 @@ services:
     build: 
       context: ../
       dockerfile: docker/Dockerfile.backend
+      args:
+        DIRECTUS_VERSION: ${DIRECTUS_VERSION}
     volumes:
       - ./../backend/uploads:/directus/uploads
       - ./../backend/extensions:/directus/extensions
@@ -27,44 +29,38 @@ services:
     env_file:
       - .env
     depends_on:
-      - {DOMAIN_NAME}-mysql
+      - {DOMAIN_NAME}-postgres
     restart: unless-stopped
 
   #######################################
   # Database
   #######################################
-  {DOMAIN_NAME}-mysql:
-    container_name: {DOMAIN_NAME}-mysql
-    image: mariadb
+  {DOMAIN_NAME}-postgres:
+    container_name: {DOMAIN_NAME}-postgres
+    image: postgres:14-alpine
     environment:
-      - MARIADB_DATABASE=${DB_NAME}
-      - MARIADB_USER=${DB_USER}
-      - MARIADB_PASSWORD=${DB_PASSWORD}
-      - MARIADB_ROOT_PASSWORD=root
-    ports:
-      - "${DB_PORT}:3306"
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - {DOMAIN_NAME}_db_data:/var/lib/mysql
+      - {DOMAIN_NAME}_db_data:/var/lib/postgresql/data
     restart: unless-stopped
 
   #######################################
-  # phpMyAdmin
+  # pgAdmin
   #######################################
-  {DOMAIN_NAME}-phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: {DOMAIN_NAME}-phpmyadmin
+  {DOMAIN_NAME}-pgadmin:
+    image: dpage/pgadmin4:8.2
+    container_name: {DOMAIN_NAME}-pgadmin
     environment:
-      - VIRTUAL_PORT=80
-      - VIRTUAL_HOST=${PMA_VIRTUAL_HOST}
-      - PMA_ABSOLUTE_URI=${PMA_ABSOLUTE_URI}
-      - PMA_ARBITRARY=${PMA_ARBITRARY}
-      - PMA_HOST=${PMA_HOST}
-      - PMA_PORT=${PMA_PORT}
-      - PMA_USER=${PMA_USER}
-      - PMA_PASSWORD=${PMA_PASSWORD}
-      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      VIRTUAL_PORT: 80
+      VIRTUAL_HOST: ${DB_VIRTUAL_HOST}
+      PGADMIN_DEFAULT_EMAIL: ${ADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${ADMIN_PASSWORD}
+    volumes:
+      - ./servers.json:/pgadmin4/servers.json
     depends_on:
-      - {DOMAIN_NAME}-mysql
+      - {DOMAIN_NAME}-postgres
     restart: unless-stopped
 
 networks:
