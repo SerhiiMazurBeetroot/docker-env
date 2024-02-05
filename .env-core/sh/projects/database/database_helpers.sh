@@ -19,14 +19,32 @@ get_db_name() {
     if [ "$DB_NAME" ]; then
         DOMAIN_NAME=$(awk '/'" $DOMAIN_NAME "'/{print $5}' "$FILE_INSTANCES" | head -n 1)
     else
-        ECHO_ERROR "Dite not exists"
+        ECHO_ERROR "Site not exists"
+    fi
+}
+
+get_db_info() {
+    DB_NAME=$(awk '/'" $DOMAIN_NAME "'/{print $9}' "$FILE_INSTANCES" | head -n 1)
+    DB_TYPE=$(awk '/'" $DOMAIN_NAME "'/{print $11}' "$FILE_INSTANCES" | head -n 1)
+
+    if [ "$DB_NAME" ]; then
+        DOMAIN_NAME=$(awk '/'" $DOMAIN_NAME "'/{print $5}' "$FILE_INSTANCES" | head -n 1)
+    else
+        ECHO_ERROR "Site not exists"
     fi
 }
 
 check_db_exists() {
-    get_mysql_cmd
+    case $DB_TYPE in
+    "MYSQL")
+        get_mysql_cmd
 
-    DB_EXISTS=$(docker exec -i "$DOCKER_CONTAINER_DB" sh -c "$MYSQL_CMD -uroot -p\"$MYSQL_ROOT_PASSWORD\" --execute \"SHOW DATABASES\" | grep -Eo \"$DB_NAME\" || true")
+        DB_EXISTS=$(docker exec -i "$DOCKER_CONTAINER_DB" sh -c "$MYSQL_CMD -uroot -p\"$MYSQL_ROOT_PASSWORD\" --execute \"SHOW DATABASES\" | grep -Eo \"$DB_NAME\" || true")
+        ;;
+    "POSTGRES")
+        DB_EXISTS=$(docker exec -i "$DOCKER_CONTAINER_DB" psql -U "$DB_USER" -d "$DB_NAME" -tAc "SELECT 1 FROM pg_database WHERE datname='$DB_NAME'" | grep -q "1" && echo true || echo false)
+        ;;
+    esac
 }
 
 get_mysql_cmd() {
@@ -47,7 +65,6 @@ get_mysql_cmd() {
     fi
 }
 
-db_file_find_and_replace()
-{
+db_file_find_and_replace() {
     sed -i -e 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_520_ci/g' "$PROJECT_DATABASE_DIR/$DB_FILE"
 }
