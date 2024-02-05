@@ -38,6 +38,9 @@ notice_project_urls() {
 
 	if [[ $DOMAIN_ADMIN != "" ]]; then
 		ECHO_KEY_VALUE "DOMAIN_ADMIN:" "https://$DOMAIN_ADMIN"
+	fi
+
+	if [[ $DOMAIN_DB != "" ]]; then
 		ECHO_KEY_VALUE "DOMAIN_DB:" "https://$DOMAIN_DB"
 	fi
 

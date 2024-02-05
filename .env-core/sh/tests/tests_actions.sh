@@ -9,6 +9,7 @@ tests_actions() {
         ECHO_CYAN "======== TESTS actions ========"
         ECHO_YELLOW "0 - Return to the previous menu"
         ECHO_GREEN "1 - Create all AVAILABLE_PROJECTS"
+        ECHO_GREEN "2 - Delete all AVAILABLE_PROJECTS"
 
         actions=$(GET_USER_INPUT "select_one_of")
 
@@ -18,6 +19,9 @@ tests_actions() {
             ;;
         1)
             tests_create_all_projects
+            ;;
+        2)
+            tests_delete_all_projects
             ;;
         esac
     done
