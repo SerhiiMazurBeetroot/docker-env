@@ -75,3 +75,36 @@ get_nodejs_version() {
         fi
     fi
 }
+
+get_directus_version() {
+    # shellcheck disable=SC2207
+    LIST=($(curl -s 'https://api.github.com/repos/directus/directus/tags' | grep -oP '"name": "\Kv[0-9]+\.[0-9]+\.[0-9]+' | head -n 3 | tr -d v))
+
+    if [ -z "$DIRECTUS_VERSION" ]; then
+        if [[ $QUESTION == "default" ]]; then
+            DIRECTUS_VERSION="${LIST[1]}"
+        else
+            DIRECTUS_VERSION="${LIST[1]}"
+            ECHO_ENTER "Enter DIRECTUS_VERSION [default '$DIRECTUS_VERSION']"
+
+            print_list "${LIST[@]}"
+
+            choice=$(GET_USER_INPUT "select_one_of")
+            choice=${choice%.*}
+
+            if [ -z "$choice" ]; then
+                choice=-1
+                DIRECTUS_VERSION="${LIST[1]}"
+            else
+                if (("$choice" > 0 && "$choice" <= ${#LIST[@]})); then
+                    DIRECTUS_VERSION="${LIST[$(($choice - 1))]}"
+                else
+                    ECHO_WARN_RED "Invalid choice or version. Using default version: $DIRECTUS_VERSION"
+                    ECHO_GREEN "Set default version: $DIRECTUS_VERSION"
+                    EMPTY_LINE
+                fi
+            fi
+        fi
+    fi
+
+}

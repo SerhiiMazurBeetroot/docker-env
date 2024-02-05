@@ -139,6 +139,9 @@ env_file_load() {
         sed -i -e 's/{MONGO_EXPRESS_PORT}/'$MONGO_EXPRESS_PORT'/g' $PROJECT_DOCKER_DIR/.env
         sed -i -e 's/{NODE_VERSION}/'$NODE_VERSION'/g' $PROJECT_DOCKER_DIR/.env
 
+        # Directus
+        sed -i -e 's/{DIRECTUS_VERSION}/'$DIRECTUS_VERSION'/g' $PROJECT_DOCKER_DIR/.env
+
         [[ "yes" = "$MULTISITE" ]] && wp_multisite_env
 
         #Replace only first occurrence in the file

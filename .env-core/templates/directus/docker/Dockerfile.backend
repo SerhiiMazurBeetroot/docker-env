@@ -1,4 +1,7 @@
-FROM directus/directus:10.8.2
+# default version if empty 
+ARG DIRECTUS_VERSION=10.8.2
+
+FROM directus/directus:${DIRECTUS_VERSION}
 
 USER root
 RUN corepack enable \

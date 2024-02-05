@@ -60,6 +60,7 @@ get_project_args() {
     'directus')
         ARGS=(
             "DB_NAME"
+            "DIRECTUS_VERSION"
         )
         ;;
     *)
@@ -103,6 +104,10 @@ set_custom_args() {
             ;;
         'NODE_VERSION')
             get_nodejs_version
+            skip_user_input=true
+            ;;
+        'DIRECTUS_VERSION')
+            get_directus_version
             skip_user_input=true
             ;;
         *)
@@ -188,6 +193,9 @@ set_project_args() {
             ;;
         'NODE_VERSION')
             get_nodejs_version "default"
+            ;;
+        'DIRECTUS_VERSION')
+            get_directus_version "default"
             ;;
         *)
             echo "Unsupported argument: $arg"
