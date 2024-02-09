@@ -3,7 +3,7 @@
 set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
-setup_beetroot_args() {
+wp_beetroot_args() {
     EMPTY_LINE
     while true; do
         ECHO_CYAN "==== Use variables ===="
