@@ -3,18 +3,14 @@
 set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
-export CORE_VERSION=2.0.3
+export CORE_VERSION=2.0.4
 export ENV_DIR="${DOCKER_ENV_DIR:-.}"
 
 # shellcheck disable=SC1091
-source "$ENV_DIR"/.env-core/sh/scripts.sh
+source "$ENV_DIR"/.env-core/sh/autoloader.sh
 
 main_actions() {
 	healthcheck
-
-	# Notice about updates to main menu
-	[[ ! $ENV_UPDATES ]] && check_env_version "daily"
-	[[ $ENV_UPDATES == "Everything up-to-date" ]] && ENV_UPDATES=""
 
 	while true; do
 		ECHO_CYAN "======== docker-env ======="
@@ -23,8 +19,7 @@ main_actions() {
 		ECHO_GREEN "2 - New project"
 		ECHO_GREEN "3 - Existing project"
 		ECHO_KEY_VALUE "4 - Settings" "$ENV_UPDATES"
-
-		[[ $ENV_MODE == 'development' ]] && ECHO_RED "* - Run tests"
+		echo_tests_actions
 
 		userChoice=$(GET_USER_INPUT "select_one_of")
 
@@ -44,8 +39,11 @@ main_actions() {
 		4)
 			env_settings
 			;;
+		9)
+			tests_actions
+			;;
 		*)
-			[[ $ENV_MODE == 'development' ]] && tests_actions
+			ECHO_WARN_RED "Invalid selection. Please try again."
 			;;
 		esac
 	done

@@ -127,3 +127,12 @@ core_version() {
         save_settings "CORE_VERSION=$CORE_VERSION"
     fi
 }
+
+env_check_updates() {
+    # Notice about updates to main menu
+    if [[ ! $ENV_UPDATES ]]; then
+        check_env_version "daily"
+    elif [[ $ENV_UPDATES == "Everything up-to-date" ]]; then
+        ENV_UPDATES=""
+    fi
+}
