@@ -83,7 +83,7 @@ setup_installation_type_callback() {
             check_domain_exists
 
             if [[ $DOMAIN_EXISTS == 0 ]]; then
-                setup_beetroot_args "$@"
+                wp_beetroot_args "$@"
             else
                 ECHO_ERROR "Site already exists"
 

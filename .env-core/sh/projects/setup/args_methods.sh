@@ -203,3 +203,75 @@ set_project_args() {
         esac
     done
 }
+
+set_project_vars() {
+    get_project_type
+
+    PROJECT_DIR=$PROJECT_TYPE
+    DOMAIN_NODOT=$(echo "$DOMAIN_NAME" | tr . _)
+    PROJECT_ROOT_DIR="$ENV_DIR"/"$PROJECT_DIR"/"$DOMAIN_FULL"
+    PROJECT_ARCHIVE_DIR=$PROJECT_DIR"_""$DOMAIN_FULL"
+
+    set_default_vars
+    get_compose_project_name
+
+    case $PROJECT_TYPE in
+    "wordpress" | "projects")
+        set_wordpress_vars
+        ;;
+    "bedrock")
+        set_bedrock_vars
+        ;;
+    "php")
+        set_php_vars
+        ;;
+    "wpnextjs")
+        set_wpnextjs_vars
+        ;;
+    "nodejs")
+        set_nodejs_vars
+        ;;
+    "nextjs")
+        set_nextjs_vars
+        ;;
+    "directus")
+        set_directus_vars
+        ;;
+    "directus_nextjs")
+        set_directus_nextjs_vars
+        ;;
+    *)
+        echo "Unknown PROJECT_TYPE: $PROJECT_TYPE"
+        return 1
+        ;;
+    esac
+}
+
+get_project_dir() {
+    QUESTION=$1
+
+    DOMAIN_NAME_DEFAULT="dev.$DOMAIN_NAME.local"
+
+    #Beetroot project - DOMAIN_NAME_DEFAULT
+    [[ "$SETUP_TYPE" -eq 3 ]] && DOMAIN_NAME_DEFAULT="$DOMAIN_NAME.local"
+
+    #DOMAIN_FULL
+    if [[ $QUESTION == "skip_question" ]]; then
+        DOMAIN_FULL=$(awk '/'" $DOMAIN_NAME "'/{print $7}' "$FILE_INSTANCES" | head -n 1)
+    else
+        if [[ $TEST_RUNNING -ne 1 ]]; then
+            ECHO_ENTER "Enter DOMAIN_FULL [default $DOMAIN_NAME_DEFAULT]"
+            read -rp "DOMAIN_FULL: " DOMAIN_FULL
+        fi
+    fi
+
+    [[ $DOMAIN_FULL == '' ]] && DOMAIN_FULL="$DOMAIN_NAME_DEFAULT"
+
+    # Remove non printing chars from DOMAIN_FULL
+    DOMAIN_FULL=$(echo $DOMAIN_FULL | tr -dc '[[:print:]]' | tr -d ' ' | tr -d '[A' | tr -d '[C' | tr -d '[B' | tr -d '[D')
+
+    # Replace "_" to "-"
+    DOMAIN_FULL=$(echo $DOMAIN_FULL | sed 's/_/-/g')
+
+    set_project_vars
+}
