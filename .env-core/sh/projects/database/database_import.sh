@@ -48,7 +48,7 @@ database_import() {
                             docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "$MYSQL_CMD -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < /docker-entrypoint-initdb.d/dump.sql"
                             ;;
                         "POSTGRES")
-                            cat "$PROJECT_DATABASE_DIR/$DB_FILE" | docker exec -i "$DOCKER_CONTAINER_DB" pg_restore --clean --if-exists -U "$DB_USER" -F t -d "$DB_NAME"
+                            docker exec -i "$DOCKER_CONTAINER_DB" bash -c "$(declare -f database_import_postgres); database_import_postgres $DB_NAME $DB_USER"
                             ;;
                         esac
 
