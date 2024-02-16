@@ -18,5 +18,4 @@ export AVAILABLE_PROJECTS=(
     "php"
     "nextjs"
     "directus"
-    "directus_nextjs"
 )

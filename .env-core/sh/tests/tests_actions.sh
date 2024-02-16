@@ -34,6 +34,6 @@ tests_actions() {
 echo_tests_actions() {
 	if [[ $ENV_MODE == 'development' ]]; then
 		TEST_MODE=true
-		ECHO_RED "* - Run tests"
+		ECHO_RED "9 - Run tests"
 	fi
 }

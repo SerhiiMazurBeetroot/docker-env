@@ -20,15 +20,18 @@ docker_create_directus() {
             #GET PORT
             get_unique_port
 
+            #GET PORT_FRONT
+            set_unique_frontport
+
             get_project_dir "skip_question"
 
             print_to_file_instances
 
             # Create DIR
-            mkdir -p $PROJECT_DOCKER_DIR
+            mkdir -p $PROJECT_ROOT_DIR
 
             # Copy templates files
-            cp -r $ENV_DIR/.env-core/templates/directus/* $ENV_DIR/.env-core/templates/directus/* $PROJECT_ROOT_DIR
+            cp -r $ENV_DIR/.env-core/templates/$PROJECT_TYPE/* $PROJECT_ROOT_DIR
 
             # Rename files
             replace_templates_files

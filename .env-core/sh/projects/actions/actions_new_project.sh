@@ -29,6 +29,7 @@ actions_new_project() {
       fi
 
       PROJECT_TYPE="${AVAILABLE_PROJECTS[PROJECT_TYPE - 1]}"
+      SETUP_ACTION="create"
 
       case $PROJECT_TYPE in
       "wordpress")
