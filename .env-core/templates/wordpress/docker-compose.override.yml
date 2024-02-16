@@ -29,6 +29,7 @@ services:
   #######################################
   {DOMAIN_NAME}-mail:
     image: mailhog/mailhog
+    container_name: {DOMAIN_NAME}-mail
     environment:
       - VIRTUAL_PORT=8025
       - VIRTUAL_HOST=${SMTP_VIRTUAL_HOST}
