@@ -1,9 +1,6 @@
 #################################################################################
 ##                                                                              #
 ##    GIT IGNORE                                                                #
-##    ------------------------------                                            #
-##    Adapted from: http://bigwilliam.com/gitignore-for-wordpress-projects/     #
-##    and https://github.com/github/gitignore/blob/master/WordPress.gitignore   #
 ##                                                                              #
 #################################################################################
 
@@ -17,21 +14,6 @@
 ##                                                                              #
 #################################################################################
 
-## OS and Utility Stuff ##
-
-#==================#
-#     OS Files     #
-#==================#
-*.DS_Store
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-*[Tt]humbs.db
-*.Trashes
-
 #===================#
 #     IDE Files     #
 #===================#
@@ -41,46 +23,15 @@ ehthumbs.db
 *.komodoproject
 *.codekit3
 
-#===============================#
-#     Log, map files, .env      #
-#===============================#
-*.log
-*.log.bak
-error_log
-access_log
-.sass-cache
-*.css.map
-*.js.map
-*.LICENSE
-*.lck
-.env
-
-## Vendor, Libs and Content ##
+#===================================#
+#    ignore all directories         #
+#===================================#
+*/*
 
 #===================================#
-#       Vendor and npm Files        #
+#             env-core              #
 #===================================#
-node_modules
-
-#===================================#
-#               Sites               #
-#===================================#
-/projects/*
-/wordpress/*
-/bedrock/*
-/php/*
-/nodejs/*
-/wpnextjs/*
-/nextjs/*
-/directus/*
-
-#===============================#
-#     Certificates              #
-#===============================#
-/.env-core/nginx/certs-root/*
-
-#===============================#
-#     NGINX conf                #
-#===============================#
-!/.env-core/nginx/conf.d/default.conf
-/.env-core/nginx/conf.d/*
+!/.env-core/*
+/.env-core/data/*
+/.env-core/nginx/*
+/.env-core/dev/*
