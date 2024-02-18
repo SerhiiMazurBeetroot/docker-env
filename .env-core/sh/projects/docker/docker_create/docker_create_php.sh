@@ -33,11 +33,10 @@ docker_create_php() {
             print_to_file_instances
 
             # Create DIR
-            mkdir -p $PROJECT_DOCKER_DIR
+            mkdir -p $PROJECT_ROOT_DIR
 
-            # Copy templates files
-            cp -r $ENV_DIR/.env-core/templates/php/* $PROJECT_DOCKER_DIR
-            mv $PROJECT_DOCKER_DIR/app $PROJECT_ROOT_DIR
+            # Clone templates files
+            git clone $TEMPLATES_REPO-$PROJECT_TYPE.git $PROJECT_ROOT_DIR --depth 1
 
             # Rename files
             replace_templates_files
@@ -46,7 +45,7 @@ docker_create_php() {
             replace_variables
 
             # Load env
-            env_file_load
+            env_file_load "create"
 
             ECHO_GREEN "Docker compose file set and container can be built and started"
             ECHO_TEXT "Starting Container"

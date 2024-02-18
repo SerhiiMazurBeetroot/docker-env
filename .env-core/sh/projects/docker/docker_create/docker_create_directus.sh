@@ -30,8 +30,8 @@ docker_create_directus() {
             # Create DIR
             mkdir -p $PROJECT_ROOT_DIR
 
-            # Copy templates files
-            cp -r $ENV_DIR/.env-core/templates/$PROJECT_TYPE/* $PROJECT_ROOT_DIR
+            # Clone templates files
+            git clone $TEMPLATES_REPO-$PROJECT_TYPE.git $PROJECT_ROOT_DIR --depth 1
 
             # Rename files
             replace_templates_files

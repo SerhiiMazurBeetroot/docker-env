@@ -27,18 +27,12 @@ update_file_instances() {
 
 # Load/Create enviroment variables
 env_file_load() {
-  local CREATE_FILE=$1
+  local ACTION=$1
   get_project_dir "skip_question"
 
-  if [[ $CREATE_FILE == '' && -f $PROJECT_DOCKER_DIR/.env ]]; then
+  if [[ $ACTION == '' && -f $PROJECT_DOCKER_DIR/.env ]]; then
     source $PROJECT_DOCKER_DIR/.env
-  else
-    ECHO_YELLOW ".env file not found, creating..."
-
-    if [ ! -f $PROJECT_DOCKER_DIR/.env.example ]; then
-      cp -rf $ENV_DIR/.env-core/templates/"$PROJECT_DIR"/.env.example $PROJECT_DOCKER_DIR/.env
-    fi
-
+  elif [[ $ACTION == 'create' ]]; then
     sed -i -e 's/{DOMAIN_NAME}/'$DOMAIN_NAME'/g' $PROJECT_DOCKER_DIR/.env
     sed -i -e 's/{TABLE_PREFIX}/'$TABLE_PREFIX'/g' $PROJECT_DOCKER_DIR/.env
     sed -i -e 's/{DOMAIN_FULL}/'$DOMAIN_FULL'/g' $PROJECT_DOCKER_DIR/.env
@@ -68,6 +62,9 @@ env_file_load() {
 
     # delete .env.example
     cd "$PROJECT_ROOT_DIR" && rm -rf .env.example && cd ../../
+  else
+    ECHO_YELLOW ".env file not found, creating..."
+    env_file_load "create"
   fi
 }
 
