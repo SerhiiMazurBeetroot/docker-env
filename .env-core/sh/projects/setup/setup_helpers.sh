@@ -62,104 +62,21 @@ get_unique_frontport() {
     fi
 }
 
-get_php_versions() {
-    QUESTION=$1
-
-    PHP_LIST=($(curl -s 'https://www.php.net/releases/active.php' | grep -Eo '[0-9]\.[0-9]' | awk '!a[$0]++'))
-    PHP_VERSION="${PHP_LIST[1]}"
-
-    if [ ! $PHP_VERSION ]; then
-        if [[ $QUESTION == "default" ]]; then
-            PHP_VERSION="${PHP_LIST[1]}"
-        else
-            ECHO_ENTER "Enter PHP_VERSION [default '$PHP_VERSION']"
-
-            print_list "${PHP_LIST[@]}"
-
-            choice=$(GET_USER_INPUT "select_one_of")
-            choice=${choice%.*}
-
-            if [ -z "$choice" ]; then
-                choice=-1
-                PHP_VERSION="${PHP_LIST[1]}"
-            else
-                if (("$choice" > 0 && "$choice" <= ${#PHP_LIST[@]})); then
-                    PHP_VERSION="${PHP_LIST[$(($choice - 1))]}"
-                else
-                    PHP_VERSION="${PHP_LIST[1]}"
-                    ECHO_WARN_RED "This version of PHP does not support"
-                    ECHO_GREEN "Set default version: $PHP_VERSION"
-                    EMPTY_LINE
-                fi
-            fi
-        fi
-    fi
-}
-
-get_latest_wp_version() {
-    WP=$(curl -s 'https://api.github.com/repos/wordpress/wordpress/tags' | grep "name" | head -n 2 | awk '$0=$2' | grep -E '[0-9]+\.[0-9]+?' | tr -d \",)
-    WP=($WP)
-    WP_LATEST_VER=$(echo ${WP[0]} | grep -Eo '[0-9]+\.[0-9]+\.?[0-9]+' || echo "${WP[0]}.0")
-    WP_PREV_VER=$(echo ${WP[1]} | grep -Eo '[0-9]+\.[0-9]+\.?[0-9]+' || echo "${WP[1]}.0")
-}
-
-get_nodejs_version() {
-    NODE_VERSIONS=($(curl -sL 'https://raw.githubusercontent.com/nodejs/docker-node/main/versions.json' | grep -o '"[0-9]\+": {' | cut -d'"' -f2 | sed 's/: {//'))
-    NODE_LATEST_VERSION="${NODE_VERSIONS[-1]}"
-
-    if [ ! $NODE_VERSION ]; then
-        if [[ $QUESTION == "default" ]]; then
-            NODE_VERSION="${NODE_VERSIONS[1]}"
-        else
-            ECHO_ENTER "Enter NODE_VERSION [default '$NODE_LATEST_VERSION']"
-
-            print_list "${NODE_VERSIONS[@]}"
-
-            choice=$(GET_USER_INPUT "select_one_of")
-            choice=${choice%.*}
-
-            if [ -z "$choice" ]; then
-                choice=-1
-                NODE_VERSION="$NODE_LATEST_VERSION"
-            else
-                if (("$choice" > 0 && "$choice" <= ${#NODE_VERSIONS[@]})); then
-                    NODE_VERSION="${NODE_VERSIONS[$(($choice - 1))]}"
-                else
-                    EMPTY_LINE
-                    NODE_VERSION="${NODE_LATEST_VERSION}"
-                    ECHO_GREEN "Set default version: $NODE_VERSION"
-                    EMPTY_LINE
-                fi
-            fi
-        fi
-    fi
-}
-
 unset_variables() {
     if [[ $TEST_RUNNING -ne 1 ]]; then
-        unset DOMAIN_NAME DB_NAME TABLE_PREFIX PHP_VERSION MULTISITE EMPTY_CONTENT NODE_VERSIONS $1
+        unset DOMAIN_NAME DB_NAME TABLE_PREFIX PHP_VERSION MULTISITE EMPTY_CONTENT NODE_VERSIONS SETUP_ACTION $1
     fi
 }
 
-update_file_instances() {
-    if [[ $INSTANCES_STATUS == "remove" ]]; then
-        #Remove
-        sed -i -e '/'"| $DOMAIN_NAME |"'/d' "$FILE_INSTANCES"
-        sed -i'.bak' -e '/'"| $DOMAIN_NAME |"'/d' "$FILE_INSTANCES"
-    elif [[ $INSTANCES_STATUS == 'archive' ]]; then
-        #Change status to "archive"
-        PREV_INSTANCES=$(awk '/'" $DOMAIN_NAME "'/{print}' "$FILE_INSTANCES" | head -n 1)
-        NEW_INSTANCES=$(echo $PREV_INSTANCES | sed -r 's/active/archive/')
+get_project_type() {
+    if [[ "$PROJECT_TYPE" == '' ]]; then
+        PROJECT_TYPE=$(awk '/'"$DOMAIN_NAME"'/{print $13}' "$FILE_INSTANCES" | head -n 1)
+    fi
+}
 
-        sed -i -e 's/'"$PREV_INSTANCES"'/'"$NEW_INSTANCES"'/g' "$FILE_INSTANCES"
-        sed -i'.bak' -e 's/'"$PREV_INSTANCES"'/'"$NEW_INSTANCES"'/g' "$FILE_INSTANCES"
-    elif [[ $INSTANCES_STATUS == 'active' ]]; then
-        #Change status to "active"
-        PREV_INSTANCES=$(awk '/'" $DOMAIN_NAME "'/{print}' "$FILE_INSTANCES" | head -n 1)
-        NEW_INSTANCES=$(echo $PREV_INSTANCES | sed -r 's/archive/active/')
-
-        sed -i -e 's/'"$PREV_INSTANCES"'/'"$NEW_INSTANCES"'/g' "$FILE_INSTANCES"
-        sed -i'.bak' -e 's/'"$PREV_INSTANCES"'/'"$NEW_INSTANCES"'/g' "$FILE_INSTANCES"
+get_compose_project_name() {
+    if [ -n "$DOMAIN_FULL" ]; then
+        COMPOSE_PROJECT_NAME=$(echo "$DOMAIN_FULL" | sed "s/[^a-zA-Z0-9_\-]/_/g; s/^-//; s/-$/_/; s/-/_/g; s/[^a-zA-Z0-9_\-]//g; s/^$/none/")
     fi
 }
 
@@ -177,91 +94,6 @@ delete_site_data() {
 
     #Remove from /etc/hosts
     setup_hosts_file rem
-}
-
-# Load/Create enviroment variables
-env_file_load() {
-    get_project_dir "skip_question"
-
-    if [ -f $PROJECT_DOCKER_DIR/.env ]; then
-        source $PROJECT_DOCKER_DIR/.env
-    else
-        ECHO_YELLOW ".env file not found, creating..."
-        cp -rf $ENV_DIR/.env-core/templates/"$PROJECT_DIR"/.env.example $PROJECT_DOCKER_DIR/.env
-
-        sed -i -e 's/{DOMAIN_NAME}/'$DOMAIN_NAME'/g' $PROJECT_DOCKER_DIR/.env
-        sed -i -e 's/{TABLE_PREFIX}/'$TABLE_PREFIX'/g' $PROJECT_DOCKER_DIR/.env
-        sed -i -e 's/{DOMAIN_FULL}/'$DOMAIN_FULL'/g' $PROJECT_DOCKER_DIR/.env
-        sed -i -e 's/{WP_VERSION}/'$WP_VERSION'/g' $PROJECT_DOCKER_DIR/.env
-        sed -i -e 's/{PORT}/'$PORT'/g' $PROJECT_DOCKER_DIR/.env
-        sed -i -e 's/{WP_VERSION}/'$WP_VERSION'/g' $PROJECT_DOCKER_DIR/.env
-        sed -i -e 's/{WP_USER}/'$WP_USER'/g' $PROJECT_DOCKER_DIR/.env
-        sed -i -e 's/{WP_PASSWORD}/'$WP_PASSWORD'/g' $PROJECT_DOCKER_DIR/.env
-        sed -i -e 's/{PHP_VERSION}/'$PHP_VERSION'/g' $PROJECT_DOCKER_DIR/.env
-        sed -i -e 's/{COMPOSE_PROJECT_NAME}/'$COMPOSE_PROJECT_NAME'/g' $PROJECT_DOCKER_DIR/.env
-
-        # Headless CMS
-        sed -i -e 's/{PORT_FRONT}/'$PORT_FRONT'/g' $PROJECT_DOCKER_DIR/.env
-
-        # Node.js
-        sed -i -e 's/{MONGODB_LOCAL_PORT}/'$MONGODB_LOCAL_PORT'/g' $PROJECT_DOCKER_DIR/.env
-        sed -i -e 's/{MONGO_EXPRESS_PORT}/'$MONGO_EXPRESS_PORT'/g' $PROJECT_DOCKER_DIR/.env
-        sed -i -e 's/{NODE_VERSION}/'$NODE_VERSION'/g' $PROJECT_DOCKER_DIR/.env
-
-        [[ "yes" = "$MULTISITE" ]] && wp_multisite_env
-
-        #Replace only first occurrence in the file
-        sed -i -e '0,/{MYSQL_DATABASE}/s//'$DB_NAME'/' $PROJECT_DOCKER_DIR/.env
-
-        # delete .env.example
-        cd "$PROJECT_ROOT_DIR" && rm -rf .env.example && cd ../../
-    fi
-}
-
-replace_templates_files() {
-    EXAMPLE_FILES=($(find "$PROJECT_DOCKER_DIR" -type f -name '*.example'))
-
-    if [[ $EXAMPLE_FILES ]]; then
-        for EXAMPLE_FILE in "${EXAMPLE_FILES[@]}"; do
-            echo $EXAMPLE_FILE | while read FILENAME; do
-                NEW_FILENAME="$(echo ${FILENAME} | sed -e 's/.example//')"
-                ECHO_KEY_VALUE "$FILENAME   =>   " "$NEW_FILENAME"
-
-                mv "${FILENAME}" "${NEW_FILENAME}"
-            done
-        done
-    fi
-}
-
-edit_file_gitignore() {
-    if [[ -f "$PROJECT_ROOT_DIR/.gitignore" ]]; then
-        GITIGNORE_EDITED=$(awk '/wp-docker/{print $1}' "$PROJECT_ROOT_DIR/.gitignore" | head -n 1)
-
-        if [ "$GITIGNORE_EDITED" == '' ]; then
-            EMPTY_LINE
-            ECHO_YELLOW "eidt .gitignore file..."
-            ex "$PROJECT_ROOT_DIR/.gitignore" <<EOF
-1 insert
-/wp-docker/
-/logs/
-/vendor/
-adminer.php
-wp-config-docker.php
-.
-xit
-EOF
-        fi
-    else
-        EMPTY_LINE
-        ECHO_YELLOW "create .gitignore file..."
-        cat <<-EOF >$PROJECT_ROOT_DIR/.gitignore
-/wp-docker/
-/logs/
-/vendor/
-adminer.php
-wp-config-docker.php
-EOF
-    fi
 }
 
 randpassword() {

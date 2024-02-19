@@ -11,4 +11,6 @@ healthcheck() {
     docker_nginx_container
     notice_compose_v2
     env_mode
+    clear_nginx_logs
+    env_check_updates
 }

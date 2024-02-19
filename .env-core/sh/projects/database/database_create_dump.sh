@@ -21,7 +21,14 @@ database_create_dump() {
     file=$PROJECT_DATABASE_DIR/$DUMP_FILE
 
     # Create dump
-    docker exec -i "$DOCKER_CONTAINER_DB" sh -c "$MYSQL_DUMP_CMD -uroot -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE" >"$file"
+    case $DB_TYPE in
+    "MYSQL")
+        docker exec -i "$DOCKER_CONTAINER_DB" sh -c "$MYSQL_DUMP_CMD -uroot -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE" >"$file"
+        ;;
+    "POSTGRES")
+        docker exec -i "$DOCKER_CONTAINER_DB" pg_dump -U "$DB_USER" -d "$DB_NAME" -F t >"$file"
+        ;;
+    esac
 
     # Check if new backup was created
     if [ -e "$file" ]; then

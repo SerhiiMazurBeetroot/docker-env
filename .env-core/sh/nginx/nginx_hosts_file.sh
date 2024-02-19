@@ -6,8 +6,16 @@ set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
 setup_hosts_file() {
-	if [[ $OSTYPE != "windows" ]]; then
-		ETC_HOSTS=/etc/hosts
+	case $OSTYPE in
+	"linux" | "darwin")
+		ETC_HOSTS="/etc/hosts"
+		;;
+	"windows")
+		ETC_HOSTS="/c/Windows/System32/drivers/etc/hosts"
+		;;
+	esac
+
+	if [[ $ETC_HOSTS ]]; then
 		IP="127.0.0.1"
 		QUESTION=$1
 

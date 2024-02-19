@@ -11,8 +11,7 @@ actions_new_project() {
 
     for ((i = 0; i < ${#AVAILABLE_PROJECTS[@]}; i++)); do
       index=$((i + 1))
-      key="${AVAILABLE_PROJECTS[i]}"
-      option="${AVAILABLE_PROJECTS_ARRAY[$key]}"
+      option="${PROJECT_TITLES[index - 1]}"
       ECHO_KEY_VALUE "[$index]" "$option"
     done
 
@@ -30,6 +29,7 @@ actions_new_project() {
       fi
 
       PROJECT_TYPE="${AVAILABLE_PROJECTS[PROJECT_TYPE - 1]}"
+      SETUP_ACTION="create"
 
       case $PROJECT_TYPE in
       "wordpress")
@@ -54,6 +54,10 @@ actions_new_project() {
         ;;
       "nextjs")
         docker_create_nextjs
+        unset_variables "PROJECT_TYPE"
+        ;;
+      "directus")
+        docker_create_directus
         unset_variables "PROJECT_TYPE"
         ;;
       esac

@@ -8,14 +8,14 @@
   </a>
 </p>
 
-# Docker Local Environment
+# Local Docker Environment
 
 <p align="center">
   <img alt="jwilder" src="https://img.shields.io/badge/jwilder-23009639?style=for-the-badge&logo=nginx&logoColor=white">
   <img alt="mkcert" src="https://img.shields.io/badge/mkcert-F46D01?style=for-the-badge&logo=security&logoColor=white">
 </p>
 
-## Compatible with various Operating Systems
+## Cross-platform compatible
 
 <p align="center">
   <img alt="Linux" src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black">
@@ -23,22 +23,14 @@
   <img alt="Windows" src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white">
 </p>
 
-## Automatic installation for the following projects:
+## Automatic installation of projects
 
 <p align="center">
   <img alt="WordPress" src="https://img.shields.io/badge/wordpress-blue?style=for-the-badge&logo=wordpress&logoColor=white">
   <img alt="bedrock" src="https://img.shields.io/badge/bedrock-525ddc?style=for-the-badge&logo=roots&logoColor=white">
   <img alt="PHP" src="https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white">
   <img alt="nextjs" src="https://img.shields.io/badge/next.js-white?style=for-the-badge&logo=nextdotjs&logoColor=black">
-</p>
-
-## What's inside the containers
-<p align="center">
-  <img alt="Node" src="https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white">
-  <img alt="MariaDB" src="https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white">
-  <img alt="Mailhog" src="https://img.shields.io/badge/Mailhog-D14836?style=for-the-badge&logo=gmail&logoColor=white">
-  <img alt="Adminer" src="https://img.shields.io/badge/Adminer-02569B?style=for-the-badge&logo=Adminer&logoColor=white">
-  <img alt="phpMyAdmin" src="https://img.shields.io/badge/phpMyAdmin-59666C?style=for-the-badge&logo=phpMyAdmin&logoColor=white">
+  <img alt="directus" src="https://img.shields.io/badge/directus-%2364f.svg?style=for-the-badge&logo=directus&logoColor=black">
 </p>
 
 <br>
@@ -56,20 +48,19 @@
 
 # Key Features
 
-| Name          | Description                                         |
-|---------------|-----------------------------------------------------|
-| Alias         | `docker-env`                                        |
-| Nginx-proxy   | Automated Nginx reverse proxy                       |
-| Certificates  | Automatic SSL certificate creation/renewal          |
-| Logs          | Easily monitor log outputs                          |
-| PHP           | Choose the active PHP version                       |
-| Wordpress     | Choose a version or use the latest                  |
-| Multisite     | Support for Wordpress multisite or single site      |
-| Database      | Database import, export, search-replace             |
-| Composer      | Composer inside the container                       |
-| GIT           | Clone themes and projects during installation       |
-| Archive       | Archive and restore unused projects                 |
-| Mailhog       | Email testing tool                                  |
+| | ![WordPress](https://img.shields.io/badge/wordpress-blue?style=for-the-badge&logo=wordpress&logoColor=white) | ![bedrock](https://img.shields.io/badge/bedrock-525ddc?style=for-the-badge&logo=roots&logoColor=white) | ![php](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white) | ![next.js](https://img.shields.io/badge/next.js-white?style=for-the-badge&logo=nextdotjs&logoColor=black) | ![directus](https://img.shields.io/badge/directus-%2364f.svg?style=for-the-badge&logo=directus&logoColor=black) |
+|---|---|---|---|---|---|
+| ![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white) | ![plus](https://img.shields.io/badge/+-blue?style=for-the-badge&logo=''logoColor=white) | ![plus](https://img.shields.io/badge/+-blue?style=for-the-badge&logo=''logoColor=white) | |  |
+| ![php](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white) | ![plus](https://img.shields.io/badge/+-blue?style=for-the-badge&logo=''logoColor=white) | ![plus](https://img.shields.io/badge/+-blue?style=for-the-badge&logo=''logoColor=white) | ![plus](https://img.shields.io/badge/+-blue?style=for-the-badge&logo=''logoColor=white) |  |
+| ![Mailhog](https://img.shields.io/badge/Mailhog-D14836?style=for-the-badge&logo=gmail&logoColor=white)            | ![plus](https://img.shields.io/badge/+-blue?style=for-the-badge&logo=''logoColor=white) | | |  |
+| ![phpMyAdmin](https://img.shields.io/badge/phpMyAdmin-59666C?style=for-the-badge&logo=phpMyAdmin&logoColor=white) | ![plus](https://img.shields.io/badge/+-blue?style=for-the-badge&logo=''logoColor=white) | | |  |
+| ![Adminer](https://img.shields.io/badge/Adminer-02569B?style=for-the-badge&logo=Adminer&logoColor=white) | ![plus](https://img.shields.io/badge/+-blue?style=for-the-badge&logo=''logoColor=white) | | |  |
+| ![node.js](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)          | | | | ![plus](https://img.shields.io/badge/+-blue?style=for-the-badge&logo=''logoColor=white) |
+| ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white) | | | |  | ![plus](https://img.shields.io/badge/+-blue?style=for-the-badge&logo=''logoColor=white) |
+| ![pgAdmin](https://img.shields.io/badge/pgAdmin-593D88?style=for-the-badge&logo=Adminer&logoColor=white)       | | | |  | ![plus](https://img.shields.io/badge/+-blue?style=for-the-badge&logo=''logoColor=white) |
+| ![Composer](https://img.shields.io/badge/Composer-1abc9c?style=for-the-badge&logo=Composer&logoColor=white)       | ![plus](https://img.shields.io/badge/+-blue?style=for-the-badge&logo=''logoColor=white) | ![plus](https://img.shields.io/badge/+-blue?style=for-the-badge&logo=''logoColor=white) | |  |  |
+| ![Multisite](https://img.shields.io/badge/Multisite-18BFFF?style=for-the-badge&logo=Multisite&logoColor=white) | ![plus](https://img.shields.io/badge/+-blue?style=for-the-badge&logo=''logoColor=white) | | |  |  |
+| ![Logs](https://img.shields.io/badge/Logs-A4373A?style=for-the-badge&logo=logs&logoColor=white) | ![plus](https://img.shields.io/badge/+-blue?style=for-the-badge&logo=''logoColor=white) | ![plus](https://img.shields.io/badge/+-blue?style=for-the-badge&logo=''logoColor=white) | |  |  |
 
 <br>
 
@@ -82,8 +73,6 @@ If you're new to this environment, start by navigating to the environment direct
 ```
 
 <br>
-
-
 
 <img src="./.env-core/docs/gifs/setup.gif?raw=true"/>
 

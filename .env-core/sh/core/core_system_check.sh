@@ -51,9 +51,11 @@ env_mode() {
 }
 
 function versions() {
+    ECHO_CYAN "===== Versions ===="
     ECHO_KEY_VALUE "- docker: " "$(docker --version | awk '{print $3}' | sed -e 's/,//g')"
-    ECHO_KEY_VALUE "- compose:" "$(docker-compose --version | awk '{print $3}' | sed -e 's/,//g')"
+    ECHO_KEY_VALUE "- compose:" "$COMPOSE_VERSION"
     ECHO_KEY_VALUE "- nodejs: " "$(node --version)"
+    ECHO_KEY_VALUE "- bash: " "$BASH_VERSION"
 }
 
 function is_file() {

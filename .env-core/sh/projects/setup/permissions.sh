@@ -32,7 +32,7 @@ fix_permissions_wp() {
     fi
 
     #Fix WP_CONTENT permissions
-    if [[ $OSTYPE != "windows" ]]; then
+    if [[ $OSTYPE == "linux" ]]; then
         if [ -d $PROJECT_ROOT_DIR ]; then
             EMPTY_LINE
             sudo chmod -R 777 "$PROJECT_ROOT_DIR"
@@ -44,17 +44,20 @@ fix_permissions_wp() {
             [[ -d "$PROJECT_WP_CONTENT_DIR"/plugins ]] && sudo chmod -R 777 "$PROJECT_WP_CONTENT_DIR"/plugins
             [[ -d "$PROJECT_WP_CONTENT_DIR"/uploads ]] && sudo chmod -R 777 "$PROJECT_WP_CONTENT_DIR"/uploads
         fi
+    fi
 
+    # Run only when creating a new one
+    if [[ $SETUP_ACTION == "create" ]]; then
         git_config_fileMode
     fi
 }
 
 fix_permissions_project_root() {
-    if [[ $OSTYPE != "windows" ]]; then
+    if [[ $OSTYPE == "linux" ]]; then
         if [ -d $PROJECT_ROOT_DIR ]; then
             EMPTY_LINE
             ECHO_YELLOW "Fixing Permissions [root], this can take a while! [$PROJECT_ROOT_DIR]"
-            sudo chmod -R 777 "$PROJECT_ROOT_DIR"/
+            sudo chmod -R 777 "$ENV_DIR"/
         fi
     fi
 }

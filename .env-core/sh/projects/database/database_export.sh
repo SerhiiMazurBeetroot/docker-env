@@ -5,7 +5,7 @@ set -o pipefail
 
 database_export() {
     if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_DB'($)')" ]; then
-        get_db_name
+        get_db_info
 
         if [ "$DB_NAME" ]; then
             TIMESTAMP=$(date +"%Y-%m-%d-%H%M%S")
