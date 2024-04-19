@@ -27,34 +27,71 @@ notice_windows_host() {
 
 notice_project_urls() {
 	OPEN_LINK=$1
-	get_unique_frontport
 
-	ECHO_INFO "Project URLs:"
-	ECHO_KEY_VALUE "DOMAIN_FULL:" "https://$DOMAIN_FULL"
+	if [[ "$OPEN_LINK" == 'open' ]]; then
+		ECHO_INFO "Project URLs:"
 
-	if [[ $PORT_FRONT =~ ^[0-9]+$ && $PORT_FRONT -ne 0 ]]; then
-		ECHO_KEY_VALUE "DOMAIN_FRONT:" "http://localhost:$PORT_FRONT"
-	fi
+		URLkeys=("DOMAIN_FULL" "DOMAIN_FRONT" "DOMAIN_ADMIN" "DOMAIN_DB" "DOMAIN_MAIL")
+		for key in "${URLkeys[@]}"; do
+			value="${!key}"
 
-	if [[ $DOMAIN_ADMIN != "" ]]; then
-		ECHO_KEY_VALUE "DOMAIN_ADMIN:" "https://$DOMAIN_ADMIN"
-	fi
+			if [[ -n "$value" ]]; then
+				ECHO_KEY_VALUE "$key:" "https://$value"
+			fi
+		done
 
-	if [[ $DOMAIN_DB != "" ]]; then
-		ECHO_KEY_VALUE "DOMAIN_DB:" "https://$DOMAIN_DB"
-	fi
+		notice_project_ips "$OPEN_LINK"
 
-	if [[ $DOMAIN_MAIL != "" ]]; then
-		ECHO_KEY_VALUE "DOMAIN_MAIL:" "https://$DOMAIN_MAIL"
-	fi
-
-	if [[ $OPEN_LINK == 'open' ]]; then
-		google-chrome $DOMAIN_FULL || true
+		if command -v google-chrome &>/dev/null; then
+			google-chrome "https://$DOMAIN_FULL" || true
+		else
+			echo "Google Chrome is not installed. Skipping opening URL."
+		fi
 	fi
 }
 
-notice_project_vars() {
+notice_project_ips() {
 	OPEN_LINK=$1
+
+	ECHO_INFO "Project IPs:"
+
+	case $PROJECT_TYPE in
+	"wordpress" | "projects")
+		services=(
+			"wordpress:" #don't need port here
+		)
+		;;
+	"elasticsearch")
+		services=(
+			"elasticsearch:9200"
+			"kibana:5601"
+		)
+		;;
+	esac
+
+	for service_info in "${services[@]}"; do
+		service=${service_info%%:*}
+		port=${service_info#*:}
+
+		get_docker_ip "$DOMAIN_NAME-$service"
+
+		if [[ -n "$DOCKER_IP" ]]; then
+			DOMAIN=$(echo "$service" | tr '[:lower:]' '[:upper:]')
+
+			if [ -n "$port" ]; then
+				URL="$DOCKER_IP:$port"
+			else
+				URL="$DOCKER_IP"
+			fi
+			ECHO_KEY_VALUE "DOMAIN_$DOMAIN:" "http://$URL"
+		fi
+	done
+
+	env_file_load "update"
+}
+
+notice_project_vars() {
+	local OPEN_LINK=$1
 	ECHO_INFO "Project variables:"
 
 	ECHO_KEY_VALUE "PROJECT_TYPE:" "$PROJECT_TYPE"
