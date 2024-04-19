@@ -26,7 +26,7 @@ docker_create_php() {
             ECHO_INFO "Setting up Docker containers for $DOMAIN_FULL"
 
             #GET PORT
-            get_unique_port
+            get_all_ports
 
             get_project_dir "skip_question"
 

@@ -16,7 +16,7 @@ docker_create_wp() {
             ECHO_INFO "Setting up Docker containers for $DOMAIN_FULL"
 
             #GET PORT
-            get_unique_port
+            get_all_ports
 
             print_to_file_instances
 

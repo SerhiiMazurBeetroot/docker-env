@@ -18,7 +18,7 @@ docker_create_nextjs() {
             ECHO_INFO "Setting up Docker containers for $DOMAIN_FULL"
 
             #GET PORT
-            get_unique_port
+            get_all_ports
             export PORT_FRONT=$PORT
 
             get_project_dir "skip_question"
