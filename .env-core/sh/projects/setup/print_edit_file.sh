@@ -33,16 +33,18 @@ env_file_load() {
   if [[ $ACTION == '' && -f $PROJECT_DOCKER_DIR/.env ]]; then
     source $PROJECT_DOCKER_DIR/.env
   elif [[ $ACTION == 'create' ]]; then
+    sed -i -e 's/{COMPOSE_PROJECT_NAME}/'$COMPOSE_PROJECT_NAME'/g' $PROJECT_DOCKER_DIR/.env
     sed -i -e 's/{DOMAIN_NAME}/'$DOMAIN_NAME'/g' $PROJECT_DOCKER_DIR/.env
-    sed -i -e 's/{TABLE_PREFIX}/'$TABLE_PREFIX'/g' $PROJECT_DOCKER_DIR/.env
     sed -i -e 's/{DOMAIN_FULL}/'$DOMAIN_FULL'/g' $PROJECT_DOCKER_DIR/.env
-    sed -i -e 's/{WP_VERSION}/'$WP_VERSION'/g' $PROJECT_DOCKER_DIR/.env
     sed -i -e 's/{PORT}/'$PORT'/g' $PROJECT_DOCKER_DIR/.env
+
+    #WP
+    sed -i -e 's/{WP_VERSION}/'$WP_VERSION'/g' $PROJECT_DOCKER_DIR/.env
+    sed -i -e 's/{TABLE_PREFIX}/'$TABLE_PREFIX'/g' $PROJECT_DOCKER_DIR/.env
     sed -i -e 's/{WP_VERSION}/'$WP_VERSION'/g' $PROJECT_DOCKER_DIR/.env
     sed -i -e 's/{WP_USER}/'$WP_USER'/g' $PROJECT_DOCKER_DIR/.env
     sed -i -e 's/{WP_PASSWORD}/'$WP_PASSWORD'/g' $PROJECT_DOCKER_DIR/.env
     sed -i -e 's/{PHP_VERSION}/'$PHP_VERSION'/g' $PROJECT_DOCKER_DIR/.env
-    sed -i -e 's/{COMPOSE_PROJECT_NAME}/'$COMPOSE_PROJECT_NAME'/g' $PROJECT_DOCKER_DIR/.env
 
     # Headless CMS
     sed -i -e 's/{PORT_FRONT}/'$PORT_FRONT'/g' $PROJECT_DOCKER_DIR/.env
@@ -55,6 +57,12 @@ env_file_load() {
     # Directus
     sed -i -e 's/{DIRECTUS_VERSION}/'$DIRECTUS_VERSION'/g' $PROJECT_DOCKER_DIR/.env
 
+    # Elasticsearch
+    sed -i -e 's/{ELASTIC_VERSION}/'$ELASTIC_VERSION'/g' $PROJECT_DOCKER_DIR/.env
+    sed -i -e 's/{ELASTIC_PORT}/'$ELASTIC_PORT'/g' $PROJECT_DOCKER_DIR/.env
+    sed -i -e 's/{KIBANA_PORT}/'$KIBANA_PORT'/g' $PROJECT_DOCKER_DIR/.env
+    sed -i -e 's/{LOGSTASH_PORT}/'$LOGSTASH_PORT'/g' $PROJECT_DOCKER_DIR/.env
+
     [[ "yes" = "$MULTISITE" ]] && wp_multisite_env
 
     #Replace only first occurrence in the file
@@ -62,6 +70,11 @@ env_file_load() {
 
     # delete .env.example
     cd "$PROJECT_ROOT_DIR" && rm -rf .env.example && cd ../../
+  elif [[ $ACTION == 'update' ]]; then
+    # Elasticsearch
+    sed -i "s/^DOMAIN_ELASTIC=.*$/DOMAIN_ELASTIC='$DOMAIN_ELASTIC'/g" "$PROJECT_DOCKER_DIR/.env"
+    sed -i "s/^DOMAIN_KIBANA=.*$/DOMAIN_KIBANA='$DOMAIN_KIBANA'/g" "$PROJECT_DOCKER_DIR/.env"
+
   else
     ECHO_YELLOW ".env file not found, creating..."
     env_file_load "create"
