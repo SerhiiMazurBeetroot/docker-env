@@ -63,6 +63,11 @@ get_project_args() {
             "DIRECTUS_VERSION"
         )
         ;;
+    'elasticsearch')
+        ARGS=(
+            "ELASTIC_VERSION"
+        )
+        ;;
     *)
         echo "Unsupported project type: $PROJECT_TYPE"
         ;;
@@ -108,6 +113,10 @@ set_custom_args() {
             ;;
         'DIRECTUS_VERSION')
             get_directus_version
+            skip_user_input=true
+            ;;
+        'ELASTIC_VERSION')
+            get_elastic_version
             skip_user_input=true
             ;;
         *)
@@ -197,6 +206,9 @@ set_project_args() {
         'DIRECTUS_VERSION')
             get_directus_version "default"
             ;;
+        'ELASTIC_VERSION')
+            get_elastic_version
+            ;;
         *)
             echo "Unsupported argument: $arg"
             ;;
@@ -204,53 +216,10 @@ set_project_args() {
     done
 }
 
-set_project_vars() {
-    get_project_type
-
-    PROJECT_DIR=$PROJECT_TYPE
-    DOMAIN_NODOT=$(echo "$DOMAIN_NAME" | tr . _)
-    PROJECT_ROOT_DIR="$ENV_DIR"/"$PROJECT_DIR"/"$DOMAIN_FULL"
-    PROJECT_ARCHIVE_DIR=$PROJECT_DIR"_""$DOMAIN_FULL"
-
-    set_default_vars
-    get_compose_project_name
-
-    case $PROJECT_TYPE in
-    "wordpress" | "projects")
-        set_wordpress_vars
-        ;;
-    "bedrock")
-        set_bedrock_vars
-        ;;
-    "php")
-        set_php_vars
-        ;;
-    "wpnextjs")
-        set_wpnextjs_vars
-        ;;
-    "nodejs")
-        set_nodejs_vars
-        ;;
-    "nextjs")
-        set_nextjs_vars
-        ;;
-    "directus")
-        set_directus_vars
-        ;;
-    "directus_nextjs")
-        set_directus_nextjs_vars
-        ;;
-    *)
-        echo "Unknown PROJECT_TYPE: $PROJECT_TYPE"
-        return 1
-        ;;
-    esac
-}
-
 get_project_dir() {
     QUESTION=$1
 
-    DOMAIN_NAME_DEFAULT="dev.$DOMAIN_NAME.local"
+    get_domain_default_name
 
     #Beetroot project - DOMAIN_NAME_DEFAULT
     [[ "$SETUP_TYPE" -eq 3 ]] && DOMAIN_NAME_DEFAULT="$DOMAIN_NAME.local"

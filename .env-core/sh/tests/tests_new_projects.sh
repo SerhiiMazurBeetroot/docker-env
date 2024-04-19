@@ -35,6 +35,9 @@ tests_create_all_projects() {
 		"directus")
 			docker_create_directus
 			;;
+		"elasticsearch")
+			docker_create_elastic
+			;;
 		esac
 
 		TEST_RUNNING=0

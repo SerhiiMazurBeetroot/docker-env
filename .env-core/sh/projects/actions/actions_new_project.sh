@@ -60,6 +60,10 @@ actions_new_project() {
         docker_create_directus
         unset_variables "PROJECT_TYPE"
         ;;
+      "elasticsearch")
+        docker_create_elastic
+        unset_variables "PROJECT_TYPE"
+        ;;
       esac
       ;;
     esac
