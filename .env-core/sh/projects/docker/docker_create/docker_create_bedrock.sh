@@ -26,7 +26,7 @@ docker_create_bedrock() {
             mkdir -p $PROJECT_ROOT_DIR
 
             # Clone templates files
-            git clone $TEMPLATES_REPO-$PROJECT_TYPE.git $PROJECT_ROOT_DIR --depth 1
+            git_clone_templates_files
 
             # Rename files
             replace_templates_files
@@ -47,6 +47,9 @@ docker_create_bedrock() {
             fix_permissions
             notice_windows_host add
             docker_restart
+
+            # wp_core_install
+            # docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec wp core install --url=https://'$DOMAIN_FULL' --title='$DOMAIN_NAME' --admin_user='$WP_USER' --admin_password="'$WP_PASSWORD'" --admin_email=example@example.com --skip-email --allow-root'
 
             # TODO: add clone
 

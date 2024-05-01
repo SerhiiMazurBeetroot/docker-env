@@ -28,7 +28,7 @@ docker_create_directus() {
             mkdir -p $PROJECT_ROOT_DIR
 
             # Clone templates files
-            git clone $TEMPLATES_REPO-$PROJECT_TYPE.git $PROJECT_ROOT_DIR --depth 1
+            git_clone_templates_files
 
             # Rename files
             replace_templates_files

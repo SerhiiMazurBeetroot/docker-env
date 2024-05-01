@@ -81,3 +81,18 @@ delete_site_data() {
 randpassword() {
     WP_PASSWORD=$(LC_CTYPE=C tr -dc A-Za-z0-9_\!\@\#\$\%\^\&\*\(\)-+= </dev/urandom | head -c 20) || true
 }
+
+git_clone_templates_files() {
+    local action=$1
+
+    if [[ $action == "copy" ]]; then
+        # for development
+        if [ -d "$ENV_DIR/../docker-env-templates/docker-env-template-$PROJECT_TYPE/" ]; then
+            cp -r $ENV_DIR/../docker-env-templates/docker-env-template-$PROJECT_TYPE/* $PROJECT_ROOT_DIR
+        else
+            ECHO_ERROR "Please check you templates"
+        fi
+    else
+        git clone $TEMPLATES_REPO-$PROJECT_TYPE.git $PROJECT_ROOT_DIR --depth 1
+    fi
+}
