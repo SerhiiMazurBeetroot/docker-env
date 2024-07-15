@@ -46,6 +46,7 @@ docker_create_wp() {
             notice_windows_host add
             docker_restart
 
+            wait_for_db
             wp_core_install
             wp_site_empty
 
