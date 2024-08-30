@@ -31,6 +31,7 @@
   <img alt="PHP" src="https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white">
   <img alt="nextjs" src="https://img.shields.io/badge/next.js-white?style=for-the-badge&logo=nextdotjs&logoColor=black">
   <img alt="directus" src="https://img.shields.io/badge/directus-%2364f.svg?style=for-the-badge&logo=directus&logoColor=black">
+  <img alt="elasticsearch" src="https://img.shields.io/badge/-ElasticSearch-ffcd00?style=for-the-badge&logo=elasticsearch&logoColor=000000">
 </p>
 
 <br>
