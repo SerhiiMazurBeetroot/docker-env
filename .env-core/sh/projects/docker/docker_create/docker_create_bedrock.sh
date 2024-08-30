@@ -46,10 +46,12 @@ docker_create_bedrock() {
             setup_hosts_file add
             fix_permissions
             notice_windows_host add
-            docker_restart
 
-            # wp_core_install
-            # docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec wp core install --url=https://'$DOMAIN_FULL' --title='$DOMAIN_NAME' --admin_user='$WP_USER' --admin_password="'$WP_PASSWORD'" --admin_email=example@example.com --skip-email --allow-root'
+            wait_for_db
+            wp_core_install
+            wp_site_empty
+
+            docker_restart
 
             # TODO: add clone
 
