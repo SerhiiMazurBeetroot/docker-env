@@ -13,11 +13,11 @@ wp_multisite_convert() {
 		wp_multisite_htaccess
 		wp_multisite_env
 
-		docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec wp core multisite-convert'
+		docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'wp core multisite-convert'
 
 		# Set pretty urls
-		docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec wp rewrite structure '/%postname%/' --hard --allow-root'
-		docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec wp rewrite flush --hard --allow-root'
+		docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'wp rewrite structure '/%postname%/' --hard --allow-root'
+		docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'wp rewrite flush --hard --allow-root'
 
 		docker_rebuild
 	else

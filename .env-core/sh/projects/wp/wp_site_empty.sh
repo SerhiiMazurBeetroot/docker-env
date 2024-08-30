@@ -30,16 +30,16 @@ wp_site_empty() {
 
             if [[ "y" = "$EMPTY_THEMES" || $EMPTY_CONTENT == "yes" ]]; then
                 # Remove themes
-                docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec wp theme delete twentynineteen twentytwenty twentytwentyone twentytwentytwo --allow-root'
+                docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'wp theme delete twentynineteen twentytwenty twentytwentyone twentytwentytwo --allow-root'
 
                 # Set pretty urls
-                docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec wp rewrite structure '/%postname%/' --hard --allow-root'
-                docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec wp rewrite flush --hard --allow-root'
+                docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'wp rewrite structure '/%postname%/' --hard --allow-root'
+                docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'wp rewrite flush --hard --allow-root'
             fi
 
             if [[ "y" = "$EMPTY_PLUGINS" || $EMPTY_CONTENT == "yes" ]]; then
                 # Remove plugins and themes
-                docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec wp plugin delete hello akismet --allow-root'
+                docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'wp plugin delete hello akismet --allow-root'
             fi
         fi
     fi
