@@ -3,7 +3,7 @@
 set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
-docker_create_php() {
+docker_create_elastic() {
     unset_variables
 
     if [ $NGINX_EXISTS -eq 1 ]; then
@@ -11,24 +11,14 @@ docker_create_php() {
         check_domain_exists
 
         if [[ $DOMAIN_EXISTS == 0 ]]; then
-            get_project_dir "$@"
+            get_project_dir ""
             set_project_args
-        else
-            ECHO_ERROR "Site already exists"
-
-            # Run next function again
-            get_domain_name
-        fi
-
-        if [[ $DOMAIN_EXISTS == 0 ]]; then
-            check_data_before_continue_callback docker_create_php
+            check_data_before_continue_callback docker_create_elastic
 
             ECHO_INFO "Setting up Docker containers for $DOMAIN_FULL"
 
             #GET PORT
             get_all_ports
-
-            get_project_dir "skip_question"
 
             print_to_file_instances
 
@@ -58,13 +48,14 @@ docker_create_php() {
             notice_windows_host add
             docker_restart
 
-            # TODO: add clone
+            edit_file_gitignore
 
             # Print for user project info
-            notice_project_vars "open"
-
+            notice_project_vars "open" "ip"
+        else
+            ECHO_ERROR "Site already exists"
+            docker_create_elastic
         fi
-
     else
         ECHO_ERROR "Nginx container not running"
         nginx_actions

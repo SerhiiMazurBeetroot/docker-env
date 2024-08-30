@@ -68,3 +68,16 @@ get_mysql_cmd() {
 db_file_find_and_replace() {
     sed -i -e 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_520_ci/g' "$PROJECT_DATABASE_DIR/$DB_FILE"
 }
+
+wait_for_db() {
+    EMPTY_LINE
+    env_file_load
+    get_mysql_cmd
+
+    docker exec -i "$DOCKER_CONTAINER_DB" sh -c "
+        until $MYSQL_CMD -uroot -p\"$MYSQL_ROOT_PASSWORD\" -D $DB_NAME -e '\q'; do
+            >&2 echo '$MYSQL_CMD is unavailable - waiting...'
+            sleep 2
+        done
+    "
+}

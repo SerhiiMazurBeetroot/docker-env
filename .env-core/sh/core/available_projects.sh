@@ -7,6 +7,7 @@ export PROJECT_TITLES=(
     "PHP-Server"
     "Next.js"
     "Directus"
+    "Elastic Stack"
     "Directus + Next.js"
     "Next.WP"
     "Node.js"
@@ -18,4 +19,5 @@ export AVAILABLE_PROJECTS=(
     "php"
     "nextjs"
     "directus"
+    "elasticsearch"
 )

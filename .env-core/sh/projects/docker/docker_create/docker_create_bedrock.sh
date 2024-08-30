@@ -16,7 +16,7 @@ docker_create_bedrock() {
             ECHO_INFO "Setting up Docker containers for $DOMAIN_FULL"
 
             #GET PORT
-            get_unique_port
+            get_all_ports
 
             get_project_dir "skip_question"
 
@@ -26,7 +26,7 @@ docker_create_bedrock() {
             mkdir -p $PROJECT_ROOT_DIR
 
             # Clone templates files
-            git clone $TEMPLATES_REPO-$PROJECT_TYPE.git $PROJECT_ROOT_DIR --depth 1
+            git_clone_templates_files
 
             # Rename files
             replace_templates_files
@@ -46,6 +46,11 @@ docker_create_bedrock() {
             setup_hosts_file add
             fix_permissions
             notice_windows_host add
+
+            wait_for_db
+            wp_core_install
+            wp_site_empty
+
             docker_restart
 
             # TODO: add clone

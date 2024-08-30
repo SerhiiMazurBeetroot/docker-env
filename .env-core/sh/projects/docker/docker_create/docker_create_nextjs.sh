@@ -18,7 +18,7 @@ docker_create_nextjs() {
             ECHO_INFO "Setting up Docker containers for $DOMAIN_FULL"
 
             #GET PORT
-            get_unique_port
+            get_all_ports
             export PORT_FRONT=$PORT
 
             get_project_dir "skip_question"
@@ -29,7 +29,7 @@ docker_create_nextjs() {
             mkdir -p $PROJECT_ROOT_DIR
 
             # Clone templates files
-            git clone $TEMPLATES_REPO-$PROJECT_TYPE.git $PROJECT_ROOT_DIR --depth 1
+            git_clone_templates_files
 
             # Rename files
             replace_templates_files

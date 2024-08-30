@@ -23,6 +23,17 @@ get_domain_name() {
     fi
 }
 
+get_domain_default_name() {
+    case $PROJECT_TYPE in
+    "elasticsearch")
+        DOMAIN_NAME_DEFAULT="dev.$DOMAIN_NAME.elastic"
+        ;;
+    *)
+        DOMAIN_NAME_DEFAULT="dev.$DOMAIN_NAME.local"
+        ;;
+    esac
+}
+
 check_domain_exists() {
     DOMAIN_CHECK=$(awk '/'" $DOMAIN_NAME "'/{print $5}' "$FILE_INSTANCES" | head -n 1)
 
@@ -33,44 +44,15 @@ check_domain_exists() {
     fi
 }
 
-get_unique_port() {
-    # GET PORT [ count port from 3309 ]
-    PORT=3309
-    while true; do
-        port_exist=$(awk '/'"$PORT"'/{print $1}' "$FILE_INSTANCES" | head -n 2 | tail -n 1)
-
-        if [[ ! "$port_exist" ]]; then
-            break
-        fi
-        ((PORT++))
-    done
-}
-
-set_unique_frontport() {
-    # SET PORT_FRONT [ count port from 5510 ]
-
-    if [[ $PORT ]]; then
-        PORT_FRONT=$(($PORT + 1700))
-    else
-        get_unique_frontport
-    fi
-}
-
-get_unique_frontport() {
-    if [ -z "$DOMAIN_NAME" ]; then
-        PORT_FRONT=$(awk '/'" $DOMAIN_NAME "'/{print $15}' "$FILE_INSTANCES" | head -n 1)
-    fi
-}
-
 unset_variables() {
     if [[ $TEST_RUNNING -ne 1 ]]; then
-        unset DOMAIN_NAME DB_NAME TABLE_PREFIX PHP_VERSION MULTISITE EMPTY_CONTENT NODE_VERSIONS SETUP_ACTION $1
+        unset DOMAIN_NAME DB_NAME TABLE_PREFIX PHP_VERSION MULTISITE EMPTY_CONTENT NODE_VERSIONS SETUP_ACTION DOMAIN_MAIL $1
     fi
 }
 
 get_project_type() {
-    if [[ "$PROJECT_TYPE" == '' ]]; then
-        PROJECT_TYPE=$(awk '/'"$DOMAIN_NAME"'/{print $13}' "$FILE_INSTANCES" | head -n 1)
+    if [[ -z "$PROJECT_TYPE" ]]; then
+        PROJECT_TYPE=$(awk '/'" $DOMAIN_NAME "'/{print $13}' "$FILE_INSTANCES" | head -n 1)
     fi
 }
 
@@ -98,4 +80,19 @@ delete_site_data() {
 
 randpassword() {
     WP_PASSWORD=$(LC_CTYPE=C tr -dc A-Za-z0-9_\!\@\#\$\%\^\&\*\(\)-+= </dev/urandom | head -c 20) || true
+}
+
+git_clone_templates_files() {
+    local action=$1
+
+    if [[ $action == "copy" ]]; then
+        # for development
+        if [ -d "$ENV_DIR/../docker-env-templates/docker-env-template-$PROJECT_TYPE/" ]; then
+            cp -r $ENV_DIR/../docker-env-templates/docker-env-template-$PROJECT_TYPE/* $PROJECT_ROOT_DIR
+        else
+            ECHO_ERROR "Please check you templates"
+        fi
+    else
+        git clone $TEMPLATES_REPO-$PROJECT_TYPE.git $PROJECT_ROOT_DIR --depth 1
+    fi
 }

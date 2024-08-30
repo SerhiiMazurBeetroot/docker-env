@@ -16,7 +16,7 @@ docker_create_wp() {
             ECHO_INFO "Setting up Docker containers for $DOMAIN_FULL"
 
             #GET PORT
-            get_unique_port
+            get_all_ports
 
             print_to_file_instances
 
@@ -24,7 +24,7 @@ docker_create_wp() {
             mkdir -p $PROJECT_ROOT_DIR
 
             # Clone templates files
-            git clone $TEMPLATES_REPO-$PROJECT_TYPE.git $PROJECT_ROOT_DIR --depth 1
+            git_clone_templates_files
 
             # Rename files
             replace_templates_files
@@ -46,6 +46,7 @@ docker_create_wp() {
             notice_windows_host add
             docker_restart
 
+            wait_for_db
             wp_core_install
             wp_site_empty
 
