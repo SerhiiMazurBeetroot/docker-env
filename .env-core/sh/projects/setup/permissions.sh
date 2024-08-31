@@ -25,8 +25,8 @@ fix_permissions_wp() {
     ECHO_YELLOW "Fixing Permissions [wp], this can take a while! [$PROJECT_ROOT_DIR]"
 
     if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]; then
-        docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec chown -R www-data:www-data /var/www/html/'
-        docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'exec chmod -R 777 /var/www/html/'
+        docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'chown -R www-data:www-data /var/www/html/'
+        docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'chmod -R 777 /var/www/html/'
     else
         ECHO_ERROR "Docker container doesn't exist [$PROJECT_ROOT_DIR]"
     fi
