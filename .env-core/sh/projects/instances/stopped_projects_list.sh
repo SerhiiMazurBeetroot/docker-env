@@ -16,7 +16,7 @@ stopped_projects_list() {
     existing_string=$(awk '{print $3 $4 $5}' "$FILE_INSTANCES" | tail -n +2)
 
     #Check project status is active
-    existing_string="$(echo ${existing_string} | grep -o 'active|[A-Za-z0-9.-]*' | sed 's/active|//g')"
+    existing_string="$(echo $existing_string | grep -o ' active|[A-Za-z0-9.-]*' | sed 's/active|//g')"
 
     for I in $existing_string; do
         existing_container=${existing_container:+$existing_container }$I
