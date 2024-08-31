@@ -13,7 +13,7 @@ actions_existing_project() {
         ECHO_GREEN "3 - WP actions"
         ECHO_CYAN "4 - List of existing projects"
         ECHO_GREEN "5 - GIT actions"
-        ECHO_GREEN "6 - Archives actions"
+        ECHO_GREEN "6 - Project Workflow"
 
         actions=$(GET_USER_INPUT "select_one_of")
 
@@ -47,7 +47,7 @@ actions_existing_project() {
             git_actions
             ;;
         6)
-            archives_actions
+            project_workflow
             ;;
         esac
     done
