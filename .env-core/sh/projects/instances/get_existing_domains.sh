@@ -11,7 +11,7 @@ get_existing_domains() {
 
         if [ "$string" ]; then
             #Check project status is active
-            string="$(echo ${string} | grep -o 'active|[A-Za-z0-9.-]*' | sed 's/active|//g')"
+            string="$(echo "${string}" | grep -oE '(active|inactive)\|[A-Za-z0-9.-]*')"
             OptionList=($string)
 
             while true; do
@@ -25,7 +25,8 @@ get_existing_domains() {
 
                 [ -z "$choice" ] && choice=-1
                 if (("$choice" > 0 && "$choice" <= ${#OptionList[@]})); then
-                    DOMAIN_NAME="${OptionList[$(($choice - 1))]}"
+                    userChoice="${OptionList[$(($choice - 1))]}"
+                    DOMAIN_NAME="$(echo "${userChoice}" | sed -E 's/(active|inactive)\|//g')"
 
                     get_project_dir "skip_question"
                     break
