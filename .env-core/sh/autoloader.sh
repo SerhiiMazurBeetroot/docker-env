@@ -16,6 +16,6 @@ source_files_in() {
 
 source_files_in "$ENV_DIR/.env-core/sh/utils"
 source_files_in "$ENV_DIR/.env-core/sh/core"
-source_files_in "$ENV_DIR/.env-core/sh/nginx"
-source_files_in "$ENV_DIR/.env-core/sh/projects"
-source_files_in "$ENV_DIR/.env-core/sh/tests"
+source_files_in "$ENV_DIR/.env-core/sh/menus"
+source_files_in "$ENV_DIR/.env-core/sh/project"
+source_files_in "$ENV_DIR/.env-core/sh/system_services"
