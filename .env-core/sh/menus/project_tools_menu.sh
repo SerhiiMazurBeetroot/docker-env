@@ -14,6 +14,7 @@ project_tools_menu() {
 		ECHO_GREEN "2 - GIT"
 		ECHO_GREEN "3 - Archiving the project"
 		ECHO_GREEN "4 - Ngrok [Add New Endpoint]"
+		ECHO_CYAN "5 - Other Services"
 
 		action=$(GET_USER_INPUT "select_one_of")
 
@@ -42,6 +43,9 @@ project_tools_menu() {
 			;;
 		4)
 			ngrok_add_endpoint
+			;;
+		5)
+			other_services_menu
 			;;
 		esac
 	done

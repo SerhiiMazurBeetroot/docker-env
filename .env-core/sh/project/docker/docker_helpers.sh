@@ -64,6 +64,6 @@ docker_official_image_exists() {
 
 get_docker_ip() {
 	if [ -n "$1" ]; then
-		export DOCKER_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' b4002c9c6fdb)
+		export DOCKER_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $1)
 	fi
 }

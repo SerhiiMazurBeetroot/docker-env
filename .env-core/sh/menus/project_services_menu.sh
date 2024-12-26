@@ -13,7 +13,6 @@ project_services_menu() {
         ECHO_GREEN "3 - CLI"
         ECHO_CYAN "4 - List of existing projects"
         ECHO_GREEN "5 - Tools and Integrations"
-        ECHO_GREEN "6 - Other Services"
 
         actions=$(GET_USER_INPUT "select_one_of")
 
@@ -48,9 +47,6 @@ project_services_menu() {
             ;;
         5)
             project_tools_menu
-            ;;
-        6)
-            other_services_menu
             ;;
         esac
     done
