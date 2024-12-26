@@ -16,6 +16,7 @@ docker_menu() {
         ECHO_GREEN "4 - Restart"
         ECHO_GREEN "5 - Rebuild"
         ECHO_CYAN "6 - Fix permissions"
+        ECHO_GREEN "7 - Project URLs"
 
         actions=$(GET_USER_INPUT "select_one_of")
 
@@ -53,6 +54,11 @@ docker_menu() {
             get_existing_domains "======= Fix permissions ======="
             fix_permissions
             unset_variables
+            ;;
+        7)
+            get_existing_domains "======= Project URLs ======="
+            notice_project_urls "preview"
+            unset_variables "PROJECT_TYPE"
             ;;
         esac
     done
