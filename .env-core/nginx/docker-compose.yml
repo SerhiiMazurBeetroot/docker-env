@@ -32,6 +32,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 7007:8080
+    restart: always
 
 networks:
   default:
