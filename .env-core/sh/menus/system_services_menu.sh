@@ -9,7 +9,7 @@ system_services_menu() {
 		ECHO_CYAN "======== System Services ======="
 		ECHO_YELLOW "0 - Return to main menu"
 		ECHO_GREEN "1 - Nginx"
-		ECHO_GREEN "2 - Ngrok"
+		# ECHO_GREEN "2 - Ngrok"
 		ECHO_KEY_VALUE "9 - Settings" "$ENV_UPDATES"
 
 		echo_tests_actions
@@ -24,7 +24,7 @@ system_services_menu() {
 			nginx_menu
 			;;
 		2)
-			ngrok_menu
+			# ngrok_menu
 			;;
 		9)
 			env_settings

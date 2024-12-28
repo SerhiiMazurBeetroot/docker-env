@@ -1,0 +1,16 @@
+version: 3
+agent:
+  authtoken: "authtoken"
+  web_addr: 0.0.0.0:4040
+  web_allow_hosts:
+    - endpoint.loc
+    - 127.0.0.1
+endpoints:
+  # endpoint.loc START #
+  - name: endpoint
+    description: endpoint description
+    metadata: endpoint metadata
+    upstream:
+      url: endpoint-wordpress:80
+      protocol: http1
+  # endpoint.loc END #
