@@ -11,15 +11,16 @@
 # Local Docker Environment
 
 <p align="center">
-  <img alt="jwilder" src="https://img.shields.io/badge/jwilder-23009639?style=for-the-badge&logo=nginx&logoColor=white">
+  <img alt="nginx-proxy" src="https://img.shields.io/badge/nginx--proxy-23009639?style=for-the-badge&logo=nginx&logoColor=white">
   <img alt="mkcert" src="https://img.shields.io/badge/mkcert-F46D01?style=for-the-badge&logo=security&logoColor=white">
+  <img alt="dozzle" src="https://img.shields.io/badge/dozzle-478061?style=for-the-badge&logo=ozzle&logoColor=white">
 </p>
 
 ## Cross-platform compatible
 
 <p align="center">
   <img alt="Linux" src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black">
-  <img alt="macos" src="https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=apple&logoColor=white">
+  <img alt="macos" src="https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=apple&logoColor=F0F0F0">
   <img alt="Windows" src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white">
 </p>
 
@@ -31,6 +32,12 @@
   <img alt="PHP" src="https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white">
   <img alt="nextjs" src="https://img.shields.io/badge/next.js-white?style=for-the-badge&logo=nextdotjs&logoColor=black">
   <img alt="directus" src="https://img.shields.io/badge/directus-%2364f.svg?style=for-the-badge&logo=directus&logoColor=black">
+
+</p>
+
+## Additional services
+
+<p align="center">
   <img alt="elasticsearch" src="https://img.shields.io/badge/-ElasticSearch-ffcd00?style=for-the-badge&logo=elasticsearch&logoColor=000000">
 </p>
 
@@ -39,15 +46,32 @@
 # Requirements
 
 1. Install Docker v20.10+ for your platform:
-   - [Linux](https://docs.docker.com/engine/installation)
-   - [Docker for Mac](https://docs.docker.com/engine/installation/mac)
-   - [Docker for Windows](https://docs.docker.com/engine/installation/windows)
+
+    - [Linux](https://docs.docker.com/engine/installation)
+    - [Docker for Mac](https://docs.docker.com/engine/installation/mac)
+    - [Docker for Windows](https://docs.docker.com/engine/installation/windows)
 
 2. For Linux additionally install [Docker Compose](https://docs.docker.com/compose/install) v1.29+
 
 <br>
 
 # Key Features
+
+- #### Nginx-proxy
+  Automated Nginx reverse proxy for Docker containers, enabling seamless routing and management of services.
+
+- #### Mkcert
+  Allows the creation/renewal of self-signed certificate with a root certificate authority.
+
+- #### Dozzle
+  A lightweight log viewer accessible directly in your [browser](http://localhost:7007), designed for real-time inspection of container logs.
+
+- #### MailHog
+  A web-based email testing tool that captures all outgoing emails, allowing you to view and debug them easily.
+
+<br>
+
+# Projects Features
 
 | | ![WordPress](https://img.shields.io/badge/wordpress-blue?style=for-the-badge&logo=wordpress&logoColor=white) | ![bedrock](https://img.shields.io/badge/bedrock-525ddc?style=for-the-badge&logo=roots&logoColor=white) | ![php](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white) | ![next.js](https://img.shields.io/badge/next.js-white?style=for-the-badge&logo=nextdotjs&logoColor=black) | ![directus](https://img.shields.io/badge/directus-%2364f.svg?style=for-the-badge&logo=directus&logoColor=black) |
 |---|---|---|---|---|---|
@@ -66,8 +90,8 @@
 <br>
 
 # Step-by-Step Tutorial
-If you're new to this environment, start by navigating to the environment directory and run the following command:
 
+If you're new to this environment, start by navigating to the environment directory and run the following command:
 
 ```bash
 ./setup.sh
@@ -125,8 +149,14 @@ docker-env
 
 # [FAQ](./.env-core/docs/6-doc.MD#6-how-to)
 
+## Links
+
+1. [Docker best practices](https://docs.docker.com/build/building/best-practices/)
+
 ## Related projects
+
 1. [Nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy)
 
-
 2. [Mkcert-for-nginx-proxy](https://github.com/aegypius/mkcert-for-nginx-proxy)
+
+3. [Dozzle](https://dozzle.dev/)

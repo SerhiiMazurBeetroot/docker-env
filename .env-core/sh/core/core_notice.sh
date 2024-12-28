@@ -28,7 +28,7 @@ notice_windows_host() {
 notice_project_urls() {
 	OPEN_LINK=$1
 
-	if [[ "$OPEN_LINK" == 'open' ]]; then
+	if [[ "$OPEN_LINK" == 'open' || "$OPEN_LINK" == 'preview' ]]; then
 		ECHO_INFO "Project URLs:"
 
 		URLkeys=("DOMAIN_FULL" "DOMAIN_FRONT" "DOMAIN_ADMIN" "DOMAIN_DB" "DOMAIN_MAIL")
@@ -42,10 +42,12 @@ notice_project_urls() {
 
 		notice_project_ips "$OPEN_LINK"
 
-		if command -v google-chrome &>/dev/null; then
-			google-chrome "https://$DOMAIN_FULL" || true
-		else
-			echo "Google Chrome is not installed. Skipping opening URL."
+		if [[ "$OPEN_LINK" == 'open' ]]; then
+			if command -v google-chrome &>/dev/null; then
+				google-chrome "https://$DOMAIN_FULL" || true
+			else
+				echo "Google Chrome is not installed. Skipping opening URL."
+			fi
 		fi
 	fi
 }
@@ -65,6 +67,11 @@ notice_project_ips() {
 		services=(
 			"elasticsearch:9200"
 			"kibana:5601"
+		)
+		;;
+	"directus")
+		services=(
+			"directus:8055"
 		)
 		;;
 	esac

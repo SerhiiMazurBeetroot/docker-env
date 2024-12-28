@@ -25,6 +25,15 @@ services:
       - ${CA_STORE:-/usr/local/share/ca-certificates}:/usr/local/share/ca-certificates
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: nginx-dozzle
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 7007:8080
+    restart: always
+
 networks:
   default:
     name: dockerwp
