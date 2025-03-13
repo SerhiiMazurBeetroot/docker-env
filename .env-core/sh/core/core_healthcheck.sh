@@ -13,4 +13,5 @@ healthcheck() {
     env_mode
     clear_nginx_logs
     env_check_updates
+    update_core_env_file
 }

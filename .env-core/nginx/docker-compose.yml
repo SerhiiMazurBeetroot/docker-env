@@ -34,6 +34,15 @@ services:
       - 7007:8080
     restart: always
 
+  nghost:
+    build:
+      context: ../nghost/
+    container_name: nginx-hosts
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ${HOSTS_FILE:-/etc/hosts}:/tmp/hosts
+    restart: always
+
 networks:
   default:
     name: dockerwp
