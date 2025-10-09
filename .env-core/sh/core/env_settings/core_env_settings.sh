@@ -129,6 +129,12 @@ core_version() {
 }
 
 env_check_updates() {
+    # Check for internet
+    if ! ping -c 1 google.com &>/dev/null; then
+        ECHO_WARN_YELLOW "No internet connection. Skipping update check."
+        return 0
+    fi
+
     # Notice about updates to main menu
     if [[ ! $ENV_UPDATES ]]; then
         check_env_version "daily"
