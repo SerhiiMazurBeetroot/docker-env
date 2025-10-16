@@ -84,6 +84,8 @@ docker_nginx_rebuild() {
 }
 
 docker_nginx_container() {
+    docker_nginx_env
+
     if [ "$(docker ps --format '{{.Names}}' | grep -E '(^)nginx-proxy($)')" ]; then
         NGINX_EXISTS=1
     else
@@ -103,5 +105,13 @@ docker_nginx_resetup() {
         docker_nginx_setup
     else
         ECHO_ERROR "Nginx container not running"
+    fi
+}
+
+docker_nginx_env() {
+    if [[ ! -f "$DIR_NGINX/.env" && -f "$DIR_NGINX/.env.example" ]]; then
+        EMPTY_LINE
+        ECHO_YELLOW "creating NGINX .env file..."
+        cp -rf "$DIR_NGINX/.env.example" "$DIR_NGINX/.env"
     fi
 }

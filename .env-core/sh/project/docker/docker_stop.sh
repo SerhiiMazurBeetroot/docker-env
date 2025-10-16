@@ -14,6 +14,6 @@ docker_stop() {
 
         ECHO_SUCCESS "Docker container stopped [$PROJECT_ROOT_DIR]"
     else
-        ECHO_ERROR "Docker container doesn't exist [$PROJECT_ROOT_DIR]"
+        ECHO_ERROR "Docker container doesn't exist [docker_stop] [$PROJECT_ROOT_DIR]"
     fi
 }

@@ -11,6 +11,6 @@ docker_restart() {
 
         docker_nginx_restart
     else
-        ECHO_ERROR "Docker container doesn't exist [$PROJECT_ROOT_DIR]"
+        ECHO_ERROR "Docker container doesn't exist [docker_restart] [$PROJECT_ROOT_DIR]"
     fi
 }

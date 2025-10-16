@@ -46,3 +46,19 @@ print_list() {
         ECHO_KEY_VALUE "[$index]" "$option"
     done
 }
+
+update_core_env_file() {
+    local sed_flag="-i"
+    local HOSTS_FILE="/etc/hosts"
+
+    if [[ $OSTYPE == "darwin" ]]; then
+        sed_flag="-i ''"
+    fi
+
+    if [[ $OSTYPE == "windows" ]]; then
+        HOSTS_FILE="C:/Windows/System32/drivers/etc/hosts"
+    fi
+
+    # Update the .env file
+    sed $sed_flag "s|^HOSTS_FILE=.*$|HOSTS_FILE=${HOSTS_FILE}|g" "$DIR_NGINX/.env"
+}

@@ -28,7 +28,7 @@ fix_permissions_wp() {
         docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'chown -R www-data:www-data /var/www/html/'
         docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'chmod -R 777 /var/www/html/'
     else
-        ECHO_ERROR "Docker container doesn't exist [$PROJECT_ROOT_DIR]"
+        ECHO_ERROR "Docker container doesn't exist [fix_permissions_wp] [$PROJECT_ROOT_DIR]"
     fi
 
     #Fix WP_CONTENT permissions
