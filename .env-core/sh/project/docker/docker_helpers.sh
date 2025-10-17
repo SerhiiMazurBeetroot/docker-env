@@ -16,17 +16,17 @@ replace_variables() {
 docker_compose_runner() {
 	local COMMAND=$1
 	local DIR_DOCKER=$2
+	local DIR_ENV
 
-	if [[ "$DIR_DOCKER" == *"nginx"* ]]; then
-		DIR_DOCKER=$DIR_DOCKER
-		DIR_ENV=../../
-	elif [[ "$DIR_DOCKER" == *"ngrok"* ]]; then
-		DIR_DOCKER=$DIR_DOCKER
-		DIR_ENV=../../
-	else
-		DIR_DOCKER=$PROJECT_DOCKER_DIR
-		DIR_ENV=../../../
-	fi
+	case "$DIR_DOCKER" in
+	*nginx* | *ngrok* | *nghost*)
+		DIR_ENV="../../../"
+		;;
+	*)
+		DIR_DOCKER="$PROJECT_DOCKER_DIR"
+		DIR_ENV="../../../"
+		;;
+	esac
 
 	cd $DIR_DOCKER || exit
 	($DOCKER_COMPOSE_CMD $COMMAND)

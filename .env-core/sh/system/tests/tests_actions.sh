@@ -16,7 +16,7 @@ tests_actions() {
 
 			case $actions in
 			0)
-				system_services_menu
+				system_menu
 				;;
 			1)
 				tests_create_all_projects

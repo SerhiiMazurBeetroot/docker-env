@@ -3,9 +3,9 @@
 set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
-export DIR_NGROK="$ENV_DIR/.env-core/ngrok"
+export DIR_NGROK="$DIR_SYSTEM/ngrok"
 NGROK_CONFIG_FILE="$DIR_NGROK/.ngrok2/ngrok.yml"
-NGROK_ENV_FILE="$DIR_NGROK/.env"
+NGROK_ENV_FILE="$FILE_ENV"
 
 docker_ngrok_setup() {
     ECHO_SUCCESS "docker_ngrok_setup: $DIR_NGROK"
@@ -22,8 +22,6 @@ docker_ngrok_setup() {
             sed -i "s/^  authtoken:.*$/  authtoken: '$NGROK_AUTH'/g" "$NGROK_CONFIG_FILE"
 
             docker_ngrok_start
-
-            ECHO_SUCCESS "Container started"
         else
             ECHO_ERROR "Docker compose file for Ngrok not here"
         fi

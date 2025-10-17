@@ -24,8 +24,12 @@ docker_nginx_setup() {
 
                 #Fix certs DIR permissions
                 if [[ $OSTYPE != "windows" ]]; then
-                    sudo chmod -R 777 .env-core/nginx/certs-root/
+                    sudo chmod -R 777 "$DIR_NGINX"/certs-root/
                 fi
+
+				if [[ $OSTYPE == "linux" ]]; then
+					docker_nghost_setup
+				fi
                 ECHO_SUCCESS "Container started"
             fi
         else
@@ -56,6 +60,10 @@ docker_nginx_setup() {
 docker_nginx_start() {
     if [ $NGINX_EXISTS -eq 0 ]; then
         docker_compose_runner "up -d" "$DIR_NGINX"
+
+		if [[ $OSTYPE == "linux" ]]; then
+			docker_nghost_start
+		fi
         ECHO_SUCCESS "Nginx started"
     else
         ECHO_ATTENTION "Nginx already setup and running"
@@ -65,6 +73,10 @@ docker_nginx_start() {
 docker_nginx_stop() {
     if [ $NGINX_EXISTS -eq 1 ]; then
         docker_compose_runner "down" "$DIR_NGINX"
+
+		if [[ $OSTYPE == "linux" ]]; then
+			docker_nghost_stop
+		fi
         ECHO_SUCCESS "Nginx container stopped"
     else
         ECHO_ERROR "Nginx container not running"
@@ -74,6 +86,10 @@ docker_nginx_stop() {
 docker_nginx_restart() {
     if [ $NGINX_EXISTS -eq 1 ]; then
         docker_compose_runner "restart" "$DIR_NGINX"
+
+		if [[ $OSTYPE == "linux" ]]; then
+			docker_nghost_restart
+		fi
     else
         ECHO_ERROR "Nginx container not running"
     fi
@@ -81,6 +97,10 @@ docker_nginx_restart() {
 
 docker_nginx_rebuild() {
     docker_compose_runner "up -d --force-recreate --no-deps --build" "$DIR_NGINX"
+
+	if [[ $OSTYPE == "linux" ]]; then
+		docker_nghost_rebuild
+	fi
 }
 
 docker_nginx_container() {
@@ -109,9 +129,9 @@ docker_nginx_resetup() {
 }
 
 docker_nginx_env() {
-    if [[ ! -f "$DIR_NGINX/.env" && -f "$DIR_NGINX/.env.example" ]]; then
+    if [[ ! -f "$DIR_SYSTEM/.env" && -f "$DIR_SYSTEM/.env.example" ]]; then
         EMPTY_LINE
         ECHO_YELLOW "creating NGINX .env file..."
-        cp -rf "$DIR_NGINX/.env.example" "$DIR_NGINX/.env"
+        cp -rf "$DIR_SYSTEM/.env.example" "$DIR_SYSTEM/.env"
     fi
 }

@@ -22,11 +22,16 @@ env_migration() {
 		"2.0.0")
 			replace_wp_instances_file_2_0
 			;;
+		"2.0.4")
+			update_system_2_0_8
+			;;
 		esac
 
 		if [[ $CORE_VER_CUR < '2.0.3' ]]; then
 			fix_old_compose_project_name
 		fi
+
+		export DIR_NGINX="$ENV_DIR/.env-core/system/nginx"
 	fi
 
 	# case start v.2.0.1

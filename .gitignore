@@ -34,5 +34,8 @@
 !/.env-core/*
 /.env-core/data/*
 /.env-core/nginx/*
-!/.env-core/nginx/.env.example
+/.env-core/system/*
+!/.env-core/system/.env.example
 /.env-core/dev/*
+.env-core/sh/dev/*
+

@@ -4,12 +4,12 @@ set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
 nginx_menu() {
-    docker_nginx_container
-
     while true; do
+		docker_nginx_container
+
         EMPTY_LINE
         ECHO_CYAN "===== Nginx server ===="
-        ECHO_YELLOW "0 - Return to main menu"
+        ECHO_YELLOW "0 - Return to previous menu"
         ECHO_GREEN "1 - Setup"
         ECHO_GREEN "2 - Stop"
         ECHO_GREEN "3 - Start"
@@ -21,7 +21,7 @@ nginx_menu() {
 
         case $proxy_actions in
         0)
-            main_actions
+            system_menu
             ;;
         1)
             docker_nginx_setup

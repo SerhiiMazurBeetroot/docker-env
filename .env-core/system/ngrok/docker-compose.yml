@@ -1,4 +1,5 @@
 version: "3.6"
+name: ${COMPOSE_PROJECT_NAME:-docker-env}
 services:
   ngrok:
     image: ngrok/ngrok:latest

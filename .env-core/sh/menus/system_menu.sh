@@ -3,10 +3,10 @@
 set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
-system_services_menu() {
+system_menu() {
 	while true; do
 		EMPTY_LINE
-		ECHO_CYAN "======== System Services ======="
+		ECHO_CYAN "======== System  ======="
 		ECHO_YELLOW "0 - Return to main menu"
 		ECHO_GREEN "1 - Nginx"
 		# ECHO_GREEN "2 - Ngrok"

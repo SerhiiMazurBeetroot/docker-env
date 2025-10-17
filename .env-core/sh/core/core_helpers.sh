@@ -60,5 +60,5 @@ update_core_env_file() {
     fi
 
     # Update the .env file
-    sed $sed_flag "s|^HOSTS_FILE=.*$|HOSTS_FILE=${HOSTS_FILE}|g" "$DIR_NGINX/.env"
+    sed $sed_flag "s|^HOSTS_FILE=.*$|HOSTS_FILE=${HOSTS_FILE}|g" "$FILE_ENV"
 }

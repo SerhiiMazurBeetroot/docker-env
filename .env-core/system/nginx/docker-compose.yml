@@ -1,4 +1,5 @@
 version: '3.6'
+name: ${COMPOSE_PROJECT_NAME:-docker-env}
 services:
   nginx:
     image: jwilder/nginx-proxy
@@ -32,15 +33,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 7007:8080
-    restart: always
-
-  nghost:
-    build:
-      context: ../nghost/
-    container_name: nginx-hosts
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ${HOSTS_FILE:-/etc/hosts}:/tmp/hosts
     restart: always
 
 networks:

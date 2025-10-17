@@ -17,7 +17,7 @@ You need one time manually add root certs:
 
 | Step | Action                | Description                               |
 |------|-----------------------|-------------------------------------------|
-| 1    | Open directory        | env-core/nginx/certs-root/                |
+| 1    | Open directory        | env-core/system/nginx/certs-root/                |
 | 2    | Rename file           | rootCA.pem => rootCA.crt                  |
 | 3    | Open certificate      | rootCA.crt                                |
 | 4    | Install certificate   | [screen 1](./.env-core/docs/images/certs-1.jpg) |

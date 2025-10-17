@@ -2,11 +2,13 @@
 
 # shellcheck disable=SC1091
 export DIR_DATA="$ENV_DIR/.env-core/data"
-export DIR_NGINX="$ENV_DIR/.env-core/nginx"
+export DIR_NGINX="$ENV_DIR/.env-core/nginx" # reassign [env_migration]
+export DIR_SYSTEM="$ENV_DIR/.env-core/system"
 
 export FILE_SETTINGS="$DIR_DATA/settings.log"
 export FILE_INSTANCES="$DIR_DATA/instances.log"
 export FILE_DOCKER_HUB="$DIR_DATA/dockerHub.log"
+export FILE_ENV="$DIR_SYSTEM/.env"
 
 export ALIAS_CMD="docker-env"
 export GITHUB_USER="SerhiiMazurBeetroot"

@@ -1,0 +1,17 @@
+version: '3.6'
+name: ${COMPOSE_PROJECT_NAME:-docker-env}
+services:
+
+  nghost:
+    build:
+      context: .
+    container_name: nginx-hosts
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ${HOSTS_FILE:-/etc/hosts}:/tmp/hosts
+    restart: always
+
+networks:
+  default:
+    name: dockerwp
+    external: true
