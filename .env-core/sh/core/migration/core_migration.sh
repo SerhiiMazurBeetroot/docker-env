@@ -30,9 +30,9 @@ env_migration() {
 		if [[ $CORE_VER_CUR < '2.0.3' ]]; then
 			fix_old_compose_project_name
 		fi
-
-		export DIR_NGINX="$ENV_DIR/.env-core/system/nginx"
 	fi
+
+	export DIR_NGINX="$ENV_DIR/.env-core/system/nginx"
 
 	# case start v.2.0.1
 	env_update_repo
