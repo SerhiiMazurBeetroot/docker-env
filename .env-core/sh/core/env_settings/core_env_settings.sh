@@ -123,7 +123,7 @@ save_settings() {
 }
 
 core_version() {
-	if [ ! -f "$FILE_SETTINGS" ]; then
+	if [ -f "$FILE_SETTINGS" ]; then
 		if [[ $CORE_VER_CUR != $CORE_VERSION || $CORE_VER_CUR == '' ]]; then
 			save_settings "CORE_VERSION=$CORE_VERSION"
 		fi
