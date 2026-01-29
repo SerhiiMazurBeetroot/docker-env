@@ -8,7 +8,7 @@ git_clone_theme() {
     check_domain_exists
 
     if [[ $DOMAIN_EXISTS == 1 ]]; then
-        case $PROJECT_TYPE in
+        case ${PROJECT_TYPE:-} in
         "wordpress" | "bedrock" | "wpnextjs")
             git_can_clone "Getting themes from the repository"
 

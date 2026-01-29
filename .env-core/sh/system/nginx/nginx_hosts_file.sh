@@ -17,11 +17,11 @@ setup_hosts_file() {
 
 	if [[ $ETC_HOSTS ]]; then
 		IP="127.0.0.1"
-		QUESTION=$1
+		QUESTION=${1:-}
 
 		if [[ $QUESTION == "add" ]]; then
 
-			HOSTS_LINE="$IP $DOMAIN_FULL $HOST_EXTRA"
+			HOSTS_LINE="${IP:-} ${DOMAIN_FULL:-} ${HOST_EXTRA:-}"
 
 			if [ -n "$(grep $DOMAIN_FULL /etc/hosts)" ]; then
 				ECHO_WARN_RED "$DOMAIN_FULL already exists: $(grep $DOMAIN_FULL $ETC_HOSTS)"

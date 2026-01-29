@@ -19,7 +19,7 @@ tests_create_all_projects() {
 		INSTANCES_STATUS="remove"
 		docker_delete
 
-		case $PROJECT_TYPE in
+		case ${PROJECT_TYPE:-} in
 		"wordpress")
 			docker_create_wp
 			;;

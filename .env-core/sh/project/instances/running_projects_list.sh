@@ -8,7 +8,7 @@ running_projects_list() {
     unset_variables
     unset existing_container
     unset running_container
-    ACTION=$1
+    ACTION=${1:-}
 
     for PROJECT in "${AVAILABLE_PROJECTS[@]}"; do
         running_container+=($(docker ps --format '{{.Names}}' | grep -E ".*-$PROJECT($)" | sed -r 's/'-$PROJECT'/''/')) || true

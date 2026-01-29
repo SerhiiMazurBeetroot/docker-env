@@ -48,6 +48,7 @@ change_env_theme() {
 }
 
 check_env_version() {
+    local action=${1:-}
     env_migration
     add_alias
 
@@ -63,7 +64,7 @@ check_env_version() {
         echo "ENV_DATE_CHECK=$DATE_NOW" >>"$FILE_SETTINGS"
     else
         #Run only once a day
-        if [[ $ENV_DATE_CHECK != $DATE_NOW || $1 != 'daily' ]]; then
+        if [[ $ENV_DATE_CHECK != $DATE_NOW || $action != 'daily' ]]; then
             check_git_version
 
             #Replace ENV_DATE_CHECK

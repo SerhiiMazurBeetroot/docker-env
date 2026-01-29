@@ -14,8 +14,8 @@ replace_variables() {
 }
 
 docker_compose_runner() {
-	local COMMAND=$1
-	local DIR_DOCKER=$2
+	local COMMAND=${1:-}
+	local DIR_DOCKER=${2:-}
 	local DIR_ENV
 
 	case "$DIR_DOCKER" in
@@ -63,7 +63,8 @@ docker_official_image_exists() {
 }
 
 get_docker_ip() {
-	if [ -n "$1" ]; then
-		export DOCKER_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $1)
+	local container=${1:-}
+	if [ -n "$container" ]; then
+		export DOCKER_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $container)
 	fi
 }

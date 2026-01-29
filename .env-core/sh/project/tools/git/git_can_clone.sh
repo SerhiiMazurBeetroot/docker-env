@@ -4,7 +4,7 @@ set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
 git_can_clone() {
-    msg=$1
+    msg=${1:-}
 
     EMPTY_LINE
     fix_permissions

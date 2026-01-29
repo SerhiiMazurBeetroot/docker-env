@@ -4,7 +4,7 @@ set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
 notice_windows_host() {
-	QUESTION=$1
+	QUESTION=${1:-}
 
 	if [[ $OSTYPE == "windows" ]]; then
 		if [[ $QUESTION == "add" ]]; then
@@ -26,7 +26,7 @@ notice_windows_host() {
 }
 
 notice_project_urls() {
-	OPEN_LINK=$1
+	OPEN_LINK=${1:-}
 
 	if [[ "$OPEN_LINK" == 'open' || "$OPEN_LINK" == 'preview' ]]; then
 		ECHO_INFO "Project URLs:"
@@ -53,43 +53,53 @@ notice_project_urls() {
 }
 
 notice_project_ips() {
-	OPEN_LINK=$1
+	OPEN_LINK=${1:-}
 
-	ECHO_INFO "Project IPs:"
+	local services=()
 
-	case $PROJECT_TYPE in
-	"wordpress" | "projects")
+	case "${PROJECT_TYPE:-}" in
+	wordpress | projects)
 		services=(
 			"wordpress:" #don't need port here
 		)
 		;;
-	"elasticsearch")
+	elasticsearch)
 		services=(
 			"elasticsearch:9200"
 			"kibana:5601"
 		)
 		;;
-	"directus")
+	directus)
 		services=(
 			"directus:8055"
 		)
 		;;
+	*)
+		services=()
+		;;
 	esac
 
-	for service_info in "${services[@]}"; do
+	ECHO_INFO "Project IPs:"
+
+	for service_info in "${services[@]:-}"; do
+		[[ -z "$service_info" ]] && continue # skip empty entries
+
 		service=${service_info%%:*}
 		port=${service_info#*:}
 
+		[[ -z "$service" ]] && continue # skip if service still empty
+
 		get_docker_ip "$DOMAIN_NAME-$service"
 
-		if [[ -n "$DOCKER_IP" ]]; then
+		if [[ -n "${DOCKER_IP-}" ]]; then
 			DOMAIN=$(echo "$service" | tr '[:lower:]' '[:upper:]')
 
-			if [ -n "$port" ]; then
+			if [[ "$port" != "$service" ]]; then
 				URL="$DOCKER_IP:$port"
 			else
 				URL="$DOCKER_IP"
 			fi
+
 			ECHO_KEY_VALUE "DOMAIN_$DOMAIN:" "http://$URL"
 		fi
 	done
@@ -98,17 +108,15 @@ notice_project_ips() {
 }
 
 notice_project_vars() {
-	local OPEN_LINK=$1
+	local OPEN_LINK=${1:-}
 	ECHO_INFO "Project variables:"
 
 	ECHO_KEY_VALUE "PROJECT_TYPE:" "$PROJECT_TYPE"
 	ECHO_KEY_VALUE "DOMAIN_NAME:" "$DOMAIN_NAME"
 
 	for arg in "${ARGS[@]}"; do
-		value="${!arg}"
-
-		if [[ -n "$value" ]]; then
-			ECHO_KEY_VALUE "$arg:" "$value"
+		if [[ -n "${!arg:-}" ]]; then
+			ECHO_KEY_VALUE "$arg:" "${!arg}"
 		fi
 	done
 

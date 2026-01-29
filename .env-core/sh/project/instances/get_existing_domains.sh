@@ -4,9 +4,9 @@ set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
 get_existing_domains() {
-    ACTION=$1
+    ACTION=${1:-}
 
-    if [ -z "$DOMAIN_NAME" ]; then
+    if [ -z "${DOMAIN_NAME:-}" ]; then
         EMPTY_LINE
         ECHO_CYAN "======== Project Status ======="
         ECHO_YELLOW "[0] Return to the services menu"

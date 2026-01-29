@@ -7,7 +7,7 @@ fix_permissions() {
     check_domain_exists
 
     if [[ $DOMAIN_EXISTS == 1 ]]; then
-        case $PROJECT_TYPE in
+        case ${PROJECT_TYPE:-} in
         "wordpress" | "bedrock" | "wpnextjs")
             fix_permissions_wp
             ;;
@@ -47,7 +47,7 @@ fix_permissions_wp() {
     fi
 
     # Run only when creating a new one
-    if [[ $SETUP_ACTION == "create" ]]; then
+    if [[ ${SETUP_ACTION:-} == "create" ]]; then
         git_config_fileMode
     fi
 }
