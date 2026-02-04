@@ -4,10 +4,9 @@ set -o errexit #to stop the script when an error occurs
 set -o pipefail
 
 check_package_availability() {
-    command -v docker compose >/dev/null 2>&1 || {
-        ECHO_ERROR "Please install docker compose V2"
-        exit 1
-    }
+    require_command docker "Docker is not installed."
+    require_command jq "jq is required."
+    require_command node "Node.js is required."
 }
 
 detect_os() {
@@ -50,13 +49,47 @@ env_mode() {
     export ENV_MODE=$(awk '/ENV_MODE/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_MODE='//')
 }
 
-function versions() {
-    ECHO_CYAN "===== Versions ===="
-    ECHO_KEY_VALUE "- docker: " "$(docker --version | awk '{print $3}' | sed -e 's/,//g')"
-    ECHO_KEY_VALUE "- compose:" "$COMPOSE_VERSION"
-    ECHO_KEY_VALUE "- nodejs: " "$(node --version)"
-    ECHO_KEY_VALUE "- bash: " "$BASH_VERSION"
+get_cmd_version() {
+    local cmd="$1"
+    local version_cmd="$2"
+
+    if command -v "$cmd" >/dev/null 2>&1; then
+        eval "$version_cmd"
+    else
+        echo "not installed"
+    fi
 }
+
+require_command() {
+    local cmd="$1"
+    local message="$2"
+
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+        ECHO_ERROR "$message"
+        exit 1
+    fi
+}
+
+versions() {
+    ECHO_CYAN "===== Versions ===="
+
+    ECHO_KEY_VALUE "- docker:" \
+        "$(get_cmd_version docker "docker --version | awk '{print \$3}' | sed 's/,//g'")"
+
+    ECHO_KEY_VALUE "- compose:" \
+        "$(get_cmd_version docker "docker compose version --short 2>/dev/null || docker-compose --version | awk '{print \$3}'")"
+
+    if [[ -s "$HOME/.nvm/nvm.sh" ]]; then
+        source "$HOME/.nvm/nvm.sh"
+    fi
+
+    ECHO_KEY_VALUE "- nodejs:" \
+        "$(get_cmd_version node "node --version")"
+
+    ECHO_KEY_VALUE "- bash:" \
+        "${BASH_VERSION-unknown}"
+}
+
 
 function is_file() {
     local file=$1
