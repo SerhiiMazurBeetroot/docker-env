@@ -14,7 +14,6 @@ source_files_in() {
 	fi
 }
 
-source_files_in "$ENV_DIR/.env-core/sh/utils"
 source_files_in "$ENV_DIR/.env-core/sh/core"
 source_files_in "$ENV_DIR/.env-core/sh/menus"
 source_files_in "$ENV_DIR/.env-core/sh/project"

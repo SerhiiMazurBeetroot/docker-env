@@ -9,7 +9,9 @@ ECHO_TEXT() {
 }
 
 ECHO_KEY_VALUE() {
-	echo -e "${WHITE}${1} ${GREEN}${2} ${NC}"
+	local key=${1:-}
+	local value=${2:-}
+	echo -e "${WHITE}${key} ${GREEN}${value} ${NC}"
 }
 
 ECHO_CYAN() {
@@ -76,9 +78,9 @@ ECHO_ERROR() {
 }
 
 GET_USER_INPUT() {
-	local prompt_type=$1
-	local msg=$2
-	local default_choice=$3
+	local prompt_type=${1:-}      # required
+	local msg=${2:-}              # optional, default empty string
+	local default_choice=${3:-}   # optional
 	local choice
 
 	if [[ $TEST_RUNNING -eq 1 ]]; then
