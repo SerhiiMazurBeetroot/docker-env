@@ -16,7 +16,7 @@ fix_linux_watchers() {
 
 check_instances_file_exists() {
 	if [ ! -f "$FILE_INSTANCES" ]; then
-		mkdir $DIR_DATA
+		mkdir -p "$DIR_DATA"
 
 		PORT=3309
 		echo "$PORT | STATUS | DOMAIN_NAME | DOMAIN_FULL | DB_NAME | DB_TYPE | PROJECT_TYPE | PORT_FRONT | " >>"$FILE_INSTANCES"
@@ -25,12 +25,9 @@ check_instances_file_exists() {
 
 print_to_file_instances() {
 	if [[ $PORT && $DOMAIN_NAME ]]; then
-
 		[[ $PORT_FRONT == "" ]] && PORT_FRONT=0
 
-		echo "$PORT | active | $DOMAIN_NAME | $DOMAIN_FULL | $DB_NAME | $DB_TYPE | $PROJECT_TYPE | $PORT_FRONT |" >>"$FILE_INSTANCES"
-		# Save backup
-		echo "$PORT | active | $DOMAIN_NAME | $DOMAIN_FULL | $DB_NAME | $DB_TYPE | $PROJECT_TYPE | $PORT_FRONT |" >>"$FILE_INSTANCES.bak"
+		instances_append "$PORT | active | $DOMAIN_NAME | $DOMAIN_FULL | $DB_NAME | $DB_TYPE | $PROJECT_TYPE | $PORT_FRONT |"
 	fi
 }
 
@@ -48,19 +45,14 @@ print_list() {
 }
 
 update_core_env_file() {
-	local sed_flag="-i"
 	local HOSTS_FILE="/etc/hosts"
-
-	if [[ $OSTYPE == "darwin" ]]; then
-		sed_flag="-i ''"
-	fi
 
 	if [[ $OSTYPE == "windows" ]]; then
 		HOSTS_FILE="C:/Windows/System32/drivers/etc/hosts"
 	fi
 
 	# Update the .env file
-	sed $sed_flag "s|^HOSTS_FILE=.*$|HOSTS_FILE=${HOSTS_FILE}|g" "$FILE_ENV"
+	sed_inplace "s|^HOSTS_FILE=.*$|HOSTS_FILE=${HOSTS_FILE}|g" "$FILE_ENV"
 }
 
 get_bash_version() {

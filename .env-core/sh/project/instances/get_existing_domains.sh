@@ -20,21 +20,17 @@ get_existing_domains() {
 			project_services_menu
 		fi
 
-		filter=""
+		status_filter="active"
 		case "$first_choice" in
-		1) filter="^active\|" ;;            # starting with "active|"
-		2) filter="^inactive\|" ;;          # starting with "inactive|"
-		3) filter="^(active|inactive)\|" ;; # both "active|" and "inactive|"
-		*)
-			filter="^active\|"
-			;;
+		1) status_filter="active" ;;
+		2) status_filter="inactive" ;;
+		3) status_filter="all" ;;
 		esac
 
-		string=$(awk '{print $3 $4 $5}' "$FILE_INSTANCES" | tail -n +2)
+		local string
+		string=$(instances_domains "$status_filter")
 
 		if [ "$string" ]; then
-			#Check project status is active
-			string="$(echo "${string}" | grep -E "$filter")"
 			OptionList=($string)
 
 			while true; do

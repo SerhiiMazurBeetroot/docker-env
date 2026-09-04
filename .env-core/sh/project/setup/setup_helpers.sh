@@ -40,7 +40,7 @@ check_domain_exists() {
 		return 1
 	fi
 
-	DOMAIN_CHECK=$(awk -v domain="$DOMAIN_NAME" '$5 == domain {print $5}' "$FILE_INSTANCES" | head -n 1)
+	DOMAIN_CHECK=$(instances_get domain_name)
 
 	if [[ "$DOMAIN_NAME" == "$DOMAIN_CHECK" ]]; then
 		DOMAIN_EXISTS=1
@@ -60,7 +60,7 @@ unset_variables() {
 
 get_project_type() {
 	if [[ -z "${PROJECT_TYPE:-}" ]]; then
-		PROJECT_TYPE=$(awk '/'" $DOMAIN_NAME "'/{print $13}' "$FILE_INSTANCES" | head -n 1)
+		PROJECT_TYPE=$(instances_get project_type)
 	fi
 }
 
@@ -96,11 +96,11 @@ git_clone_templates_files() {
 	if [[ $action == "copy" ]]; then
 		# for development
 		if [ -d "$ENV_DIR/../docker-env-templates/docker-env-template-$PROJECT_TYPE/" ]; then
-			cp -r $ENV_DIR/../docker-env-templates/docker-env-template-$PROJECT_TYPE/* $PROJECT_ROOT_DIR
+			cp -r "$ENV_DIR/../docker-env-templates/docker-env-template-$PROJECT_TYPE/"* "$PROJECT_ROOT_DIR"
 		else
 			ECHO_ERROR "Please check you templates"
 		fi
 	else
-		git clone $TEMPLATES_REPO-$PROJECT_TYPE.git $PROJECT_ROOT_DIR --depth 1
+		git clone "$TEMPLATES_REPO-$PROJECT_TYPE.git" "$PROJECT_ROOT_DIR" --depth 1
 	fi
 }

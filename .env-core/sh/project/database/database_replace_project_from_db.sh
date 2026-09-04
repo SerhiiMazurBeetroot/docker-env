@@ -8,10 +8,10 @@ database_replace_project_from_db() {
 		EMPTY_LINE
 		ECHO_YELLOW "Replace project from DB..."
 
-		DOMAIN_FULL=$(awk '/'" $DOMAIN_NAME "'/{print $7}' "$FILE_INSTANCES" | head -n 1)
+		DOMAIN_FULL=$(instances_get domain_full)
 
-		PREV_INSTANCES=$(awk '/'" $DOMAIN_NAME "'/{print}' "$FILE_INSTANCES" | head -n 1)
-		PREV_DB_NAME=$(awk '/'" $DOMAIN_NAME "'/{print $9}' "$FILE_INSTANCES" | head -n 1)
+		PREV_INSTANCES=$(instances_line)
+		PREV_DB_NAME=$(instances_get db_name)
 
 		# DB_FILE
 		get_db_file
@@ -33,19 +33,16 @@ database_replace_project_from_db() {
 		NEW_TABLE_PREFIX=$(grep 'CREATE TABLE' "$PROJECT_DATABASE_DIR/$DB_FILE" | grep -o '[`][A-Za-z0-9_]\+[_comments]\+[`]' | awk '/'_comments'/{print}' | head -n 1 | sed 's/comments//g' | tr -d \`)
 
 		# Replace instances.log
-		FIND_DB_NAME='\| '"$PREV_DB_NAME"' \|'
-		REPLACE_DB_NAME='\| '"$NEW_DB_NAME"' |'
-		NEW_INSTANCES=$(echo $PREV_INSTANCES | sed -r 's/'"$FIND_DB_NAME"'/'"$REPLACE_DB_NAME"'/')
-		sed -i -e 's/'"$PREV_INSTANCES"'/'"$NEW_INSTANCES"'/g' "$FILE_INSTANCES"
+		instances_set_field db_name "$NEW_DB_NAME"
 
 		# Replace .env
 		PREV_DB_ENV=$(awk '/'MYSQL_DATABASE'/{print}' $PROJECT_DOCKER_DIR/.env | head -n 1)
 		PREV_TABLE_PREFIX=$(awk '/'TABLE_PREFIX'/{print}' $PROJECT_DOCKER_DIR/.env | head -n 1)
-		sed -i -e 's/'"$PREV_DB_ENV"'/'"MYSQL_DATABASE='$NEW_DB_NAME'"'/g' $PROJECT_DOCKER_DIR/.env
-		sed -i -e 's/'"$PREV_TABLE_PREFIX"'/'"TABLE_PREFIX='$NEW_TABLE_PREFIX'"'/g' $PROJECT_DOCKER_DIR/.env
+		sed_inplace "s|^MYSQL_DATABASE=.*$|MYSQL_DATABASE='$NEW_DB_NAME'|" "$PROJECT_DOCKER_DIR/.env"
+		sed_inplace "s|^TABLE_PREFIX=.*$|TABLE_PREFIX='$NEW_TABLE_PREFIX'|" "$PROJECT_DOCKER_DIR/.env"
 
 		ECHO_KEY_VALUE "PREV_INSTANCES:" "$PREV_INSTANCES"
-		ECHO_KEY_VALUE "NEW_INSTANCES:" "$NEW_INSTANCES"
+		ECHO_KEY_VALUE "NEW_INSTANCES:" "$(instances_line)"
 	else
 		ECHO_ERROR "DB DIR doesn't exists"
 

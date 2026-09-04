@@ -59,6 +59,12 @@ get_project_args() {
 			ELASTIC_VERSION
 		)
 		;;
+	laravel)
+		ARGS=(
+			PHP_VERSION
+			DB_NAME
+		)
+		;;
 	*)
 		ARGS=()
 		echo "Unsupported project type: ${PROJECT_TYPE-}"
@@ -125,9 +131,9 @@ set_custom_args() {
 
 			read -rp "$(ECHO_ENTER "Enter $arg [default '$default_value']")" user_input
 			if [[ -n "$user_input" ]]; then
-				eval "$arg=\"$user_input\""
+				printf -v "$arg" '%s' "$user_input"
 			else
-				eval "$arg=\"$default_value\""
+				printf -v "$arg" '%s' "$default_value"
 			fi
 
 			skip_user_input=false
@@ -225,7 +231,7 @@ get_project_dir() {
 
 	#DOMAIN_FULL
 	if [[ $QUESTION == "skip_question" ]]; then
-		DOMAIN_FULL=$(awk '/'" $DOMAIN_NAME "'/{print $7}' "$FILE_INSTANCES" | head -n 1)
+		DOMAIN_FULL=$(instances_get domain_full)
 	else
 		if [[ $TEST_RUNNING -ne 1 ]]; then
 			ECHO_ENTER "Enter DOMAIN_FULL [default $DOMAIN_NAME_DEFAULT]"

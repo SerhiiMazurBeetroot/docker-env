@@ -24,7 +24,7 @@ project_tools_menu() {
 			;;
 		1)
 			get_existing_domains "======= Change Status ======="
-			CURRENT_STATUS=$(awk '/'" $DOMAIN_NAME "'/{print $3}' "$FILE_INSTANCES" | head -n 1)
+			CURRENT_STATUS=$(instances_get status)
 
 			if [[ "$CURRENT_STATUS" == 'active' ]]; then
 				INSTANCES_STATUS="inactive"

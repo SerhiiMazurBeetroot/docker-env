@@ -9,6 +9,8 @@ new_project_menu() {
 		ECHO_CYAN "===== Project type ===="
 		ECHO_YELLOW "0 - Return to main menu"
 
+		build_visible_projects
+
 		for ((i = 0; i < ${#AVAILABLE_PROJECTS[@]}; i++)); do
 			index=$((i + 1))
 			option="${PROJECT_TITLES[index - 1]}"
@@ -22,7 +24,6 @@ new_project_menu() {
 			main_actions
 			;;
 		*)
-			# Validate the selected project type
 			if ((PROJECT_TYPE < 1 || PROJECT_TYPE > ${#AVAILABLE_PROJECTS[@]})); then
 				ECHO_WARN_RED "Invalid selection. Please try again."
 				continue
@@ -30,45 +31,8 @@ new_project_menu() {
 
 			PROJECT_TYPE="${AVAILABLE_PROJECTS[PROJECT_TYPE - 1]}"
 			SETUP_ACTION="create"
-
-			case ${PROJECT_TYPE:-} in
-			"wordpress")
-				docker_create_wp
-				unset_variables "PROJECT_TYPE"
-				;;
-			"bedrock")
-				docker_create_bedrock
-				unset_variables "PROJECT_TYPE"
-				;;
-			"php")
-				docker_create_php
-				unset_variables "PROJECT_TYPE"
-				;;
-			"wpnextjs")
-				docker_create_wp_next
-				unset_variables "PROJECT_TYPE"
-				;;
-			"nodejs")
-				docker_create_nodejs
-				unset_variables "PROJECT_TYPE"
-				;;
-			"nextjs")
-				create_nextjs
-				unset_variables "PROJECT_TYPE"
-				;;
-			"directus")
-				docker_create_directus
-				unset_variables "PROJECT_TYPE"
-				;;
-			"elasticsearch")
-				docker_create_elastic
-				unset_variables "PROJECT_TYPE"
-				;;
-			"directus_nextjs")
-				docker_create_directus_nextjs
-				unset_variables "PROJECT_TYPE"
-				;;
-			esac
+			create_project_by_type
+			unset_variables "PROJECT_TYPE"
 			;;
 		esac
 	done

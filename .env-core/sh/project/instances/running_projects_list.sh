@@ -12,7 +12,7 @@ running_projects_list() {
 	# unset_variables
 
 	# Find running containers matching available projects
-	for PROJECT in "${AVAILABLE_PROJECTS[@]}"; do
+	for PROJECT in "${ALL_PROJECT_TYPES[@]}"; do
 		while IFS= read -r container; do
 			running_container+=("$container")
 		done < <(docker ps --format '{{.Names}}' | grep -E ".*-${PROJECT}\$" | sed -E "s/-${PROJECT}\$//")
@@ -21,7 +21,7 @@ running_projects_list() {
 	# Verify containers exist in this environment
 	for container in "${running_container[@]+"${running_container[@]}"}"; do
 		# macOS awk compatibility - use POSIX syntax
-		DOMAIN_EXISTS=$(awk -v cont="$container" '$0 ~ cont {print $5; exit}' "$FILE_INSTANCES" 2>/dev/null || true)
+		DOMAIN_EXISTS=$(instances_domain_for_container "$container")
 		[[ -n "$DOMAIN_EXISTS" ]] && existing_container+=("$DOMAIN_EXISTS")
 	done
 

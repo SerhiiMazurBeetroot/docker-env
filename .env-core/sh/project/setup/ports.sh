@@ -7,7 +7,10 @@ get_unique_port() {
 	# GET PORT [ count port from 3309 ]
 	PORT=3309
 	while true; do
-		port_exist=$(awk '/'"$PORT"'/{print $1}' "$FILE_INSTANCES" | head -n 2 | tail -n 1)
+		port_exist=""
+		if instances_port_taken "$PORT"; then
+			port_exist="$PORT"
+		fi
 
 		if [[ ! "$port_exist" ]]; then
 			break

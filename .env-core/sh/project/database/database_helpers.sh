@@ -14,21 +14,21 @@ get_db_file() {
 }
 
 get_db_name() {
-	DB_NAME=$(awk '/'" $DOMAIN_NAME "'/{print $9}' "$FILE_INSTANCES" | head -n 1)
+	DB_NAME=$(instances_get db_name)
 
 	if [ "$DB_NAME" ]; then
-		DOMAIN_NAME=$(awk '/'" $DOMAIN_NAME "'/{print $5}' "$FILE_INSTANCES" | head -n 1)
+		DOMAIN_NAME=$(instances_get domain_name)
 	else
 		ECHO_ERROR "Site not exists"
 	fi
 }
 
 get_db_info() {
-	DB_NAME=$(awk '/'" $DOMAIN_NAME "'/{print $9}' "$FILE_INSTANCES" | head -n 1)
-	DB_TYPE=$(awk '/'" $DOMAIN_NAME "'/{print $11}' "$FILE_INSTANCES" | head -n 1)
+	DB_NAME=$(instances_get db_name)
+	DB_TYPE=$(instances_get db_type)
 
 	if [ "$DB_NAME" ]; then
-		DOMAIN_NAME=$(awk '/'" $DOMAIN_NAME "'/{print $5}' "$FILE_INSTANCES" | head -n 1)
+		DOMAIN_NAME=$(instances_get domain_name)
 	else
 		ECHO_ERROR "Site not exists"
 	fi
@@ -66,7 +66,7 @@ get_mysql_cmd() {
 }
 
 db_file_find_and_replace() {
-	sed -i -e 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_520_ci/g' "$PROJECT_DATABASE_DIR/$DB_FILE"
+	sed_inplace 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_520_ci/g' "$PROJECT_DATABASE_DIR/$DB_FILE"
 }
 
 wait_for_db() {

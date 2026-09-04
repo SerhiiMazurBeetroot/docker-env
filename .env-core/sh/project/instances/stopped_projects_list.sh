@@ -11,14 +11,14 @@ stopped_projects_list() {
 	local existing_string DOMAIN_NAME choice
 
 	# Find running containers matching available projects
-	for PROJECT in "${AVAILABLE_PROJECTS[@]}"; do
+	for PROJECT in "${ALL_PROJECT_TYPES[@]}"; do
 		while IFS= read -r container; do
 			running_container+=("$container")
 		done < <(docker ps --format '{{.Names}}' | grep -E ".*-${PROJECT}\$" | sed -E "s/-${PROJECT}\$//")
 	done
 
 	# Get active projects from instances file
-	existing_string=$(awk 'NR > 1 {print $3 $4 $5}' "$FILE_INSTANCES" 2>/dev/null || true)
+	existing_string=$(instances_domains "active")
 
 	# Filter for active projects only
 	while IFS= read -r line; do
