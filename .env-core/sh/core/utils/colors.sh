@@ -36,7 +36,7 @@ if [ "$ENV_THEME" = 'light' ]; then
     DARKGRAY="$BLACK"
     LIGHTRED="$BLACK"
     LIGHTGREEN="$BLACK"
-    LIGHTBLUE=BLUE
+    LIGHTBLUE="$BLUE"
     LIGHTPURPLE="$BLACK"
     LIGHTCYAN="$BLACK"
 fi
