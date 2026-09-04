@@ -20,11 +20,11 @@ You need one time manually add root certs:
 | 1    | Open directory        | env-core/system/nginx/certs-root/                |
 | 2    | Rename file           | rootCA.pem => rootCA.crt                  |
 | 3    | Open certificate      | rootCA.crt                                |
-| 4    | Install certificate   | [screen 1](./.env-core/docs/images/certs-1.jpg) |
-| 5    | Choose store location | [screen 2](./.env-core/docs/images/certs-2.jpg) |
-| 6    | Select store          | [screen 3](./.env-core/docs/images/certs-3.jpg) |
-| 7    | Import certificate    | [screen 4](./.env-core/docs/images/certs-4.jpg) |
-| 8    | Confirm install       | [screen 5](./.env-core/docs/images/certs-5.jpg) |
+| 4    | Install certificate   | [screen 1](/.env-core/docs/images/certs-1.jpg) |
+| 5    | Choose store location | [screen 2](/.env-core/docs/images/certs-2.jpg) |
+| 6    | Select store          | [screen 3](/.env-core/docs/images/certs-3.jpg) |
+| 7    | Import certificate    | [screen 4](/.env-core/docs/images/certs-4.jpg) |
+| 8    | Confirm install       | [screen 5](/.env-core/docs/images/certs-5.jpg) |
 | 9    | Restart browser       |                                           |
 
 

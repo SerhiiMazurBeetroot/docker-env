@@ -3,43 +3,39 @@
 # shellcheck disable=SC1091
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
-nginx_menu() {
-	while true; do
-		docker_nginx_container
+nghost_menu() {
+	docker_nginx_container
 
+	while true; do
 		EMPTY_LINE
-		ECHO_CYAN "===== Nginx server ===="
-		ECHO_YELLOW "0 - Return to previous menu"
+		ECHO_CYAN "======= NgHost ========"
+		ECHO_YELLOW "0 - Return to main menu"
 		ECHO_GREEN "1 - Setup"
 		ECHO_GREEN "2 - Stop"
 		ECHO_GREEN "3 - Start"
 		ECHO_GREEN "4 - Restart"
 		ECHO_GREEN "5 - Rebuild"
-		ECHO_GREEN "6 - Re-Setup"
 
 		proxy_actions=$(GET_USER_INPUT "select_one_of")
 
 		case $proxy_actions in
 		0)
-			system_menu
+			main_actions
 			;;
 		1)
-			docker_nginx_setup
+			docker_nghost_setup
 			;;
 		2)
-			docker_nginx_stop
+			docker_nghost_stop
 			;;
 		3)
-			docker_nginx_start
+			docker_nghost_start
 			;;
 		4)
-			docker_nginx_restart
+			docker_nghost_restart
 			;;
 		5)
-			docker_nginx_rebuild
-			;;
-		6)
-			docker_nginx_resetup
+			docker_nghost_rebuild
 			;;
 		esac
 	done

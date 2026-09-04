@@ -1,7 +1,7 @@
 #!/bin/bash
 
-set -o errexit #to stop the script when an error occurs
-set -o pipefail
+# shellcheck disable=SC1091
+source "${ENV_DIR}/.env-core/sh/common.sh"
 
 notice_windows_host() {
 	QUESTION=${1:-}
@@ -91,7 +91,7 @@ notice_project_ips() {
 
 		get_docker_ip "$DOMAIN_NAME-$service"
 
-		if [[ -n "${DOCKER_IP-}" ]]; then
+		if [[ -n "${DOCKER_IP:-}" ]]; then
 			DOMAIN=$(echo "$service" | tr '[:lower:]' '[:upper:]')
 
 			if [[ "$port" != "$service" ]]; then
@@ -104,7 +104,7 @@ notice_project_ips() {
 		fi
 	done
 
-	env_file_load "update"
+	env_file_load # TODO: why was "update" ?
 }
 
 notice_project_vars() {
@@ -128,7 +128,7 @@ notice_project_vars() {
 }
 
 notice_windows_project_vars() {
-	if [[ $OSTYPE == "windows" ]]; then
+	if [[ ${OSTYPE:-} == "windows" ]]; then
 		ECHO_KEY_VALUE "HOST_NAME:" "127.0.0.1 $DOMAIN_FULL"
 		realpath "C:\Windows\System32\drivers\etc\hosts"
 
@@ -136,7 +136,7 @@ notice_windows_project_vars() {
 }
 
 notice_composer() {
-	if [[ $COMPOSER_ISSUE ]]; then
+	if [[ ${COMPOSER_ISSUE:-} ]]; then
 		ECHO_ERROR "There are problems with composer.json"
 		ECHO_INFO "Please update composer.json file in your theme."
 		ECHO_INFO "Choose Docker actions and update composer"
@@ -147,7 +147,7 @@ notice_composer() {
 notice_compose_v2() {
 	docker_compose_version
 
-	if [[ $COMPOSE_VERSION == 1 ]]; then
+	if [[ ${COMPOSE_VERSION:-} == 1 ]]; then
 		ECHO_INFO "Please install docker compose V2."
 		ECHO_INFO "Help readme 6.5"
 		EMPTY_LINE

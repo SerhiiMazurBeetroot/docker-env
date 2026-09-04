@@ -2,8 +2,8 @@
 
 # Add or remove a vhost ex. dev.example.local. This will modify /etc/hosts
 
-set -o errexit #to stop the script when an error occurs
-set -o pipefail
+# shellcheck disable=SC1091
+source "${ENV_DIR}/.env-core/sh/common.sh"
 
 setup_hosts_file() {
 	case $OSTYPE in

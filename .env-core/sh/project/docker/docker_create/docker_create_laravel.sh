@@ -3,15 +3,17 @@
 # shellcheck disable=SC1091
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
-docker_create_wp() {
+docker_create_laravel() {
 	unset_variables
 
 	if [ $NGINX_EXISTS -eq 1 ]; then
-		setup_installation_type_callback docker_create_wp
+		get_domain_name
 		check_domain_exists
 
 		if [[ $DOMAIN_EXISTS == 0 ]]; then
-			check_data_before_continue_callback docker_create_wp
+			get_project_dir ""
+			set_project_args
+			check_data_before_continue_callback docker_create_laravel
 
 			ECHO_INFO "Setting up Docker containers for $DOMAIN_FULL"
 
@@ -24,7 +26,8 @@ docker_create_wp() {
 			mkdir -p $PROJECT_ROOT_DIR
 
 			# Clone templates files
-			git_clone_templates_files
+			# TODO: use from github
+			git_clone_templates_files "copy"
 
 			# Rename files
 			replace_templates_files
@@ -33,14 +36,10 @@ docker_create_wp() {
 			replace_variables
 
 			# Load env
-			# env_file_load "create"
-			env_create
+			env_file_load "create"
 
-			EMPTY_LINE
 			ECHO_GREEN "Docker compose file set and container can be built and started"
 			ECHO_TEXT "Starting Container"
-			EMPTY_LINE
-
 			docker_compose_runner "up -d --build"
 
 			ECHO_SUCCESS "Containers Started"
@@ -50,28 +49,36 @@ docker_create_wp() {
 			notice_windows_host add
 			docker_restart
 
-			wait_for_db
-			wp_core_install
-			wp_site_empty
+			install_laravel
 
-			edit_file_compose_setup_beetroot
 			edit_file_gitignore
 
-			#clone root or theme
-			git_clone_menu
-
 			# Print for user project info
-			notice_project_vars "open"
-
-			# COMPOSER_ISSUE exists
-			notice_composer
-
+			notice_project_vars "open" "ip"
 		else
 			ECHO_ERROR "Site already exists"
-			docker_create_wp
+			docker_create_laravel
 		fi
 	else
 		ECHO_ERROR "Nginx container not running"
 		nginx_menu
 	fi
+}
+
+install_laravel() {
+	# Scaffold Laravel (ONLY if not exists)
+	if [ ! -f "$PROJECT_ROOT_DIR/artisan" ]; then
+		ECHO_INFO "Creating Laravel app..."
+
+		docker run --rm \
+			-v "$PROJECT_ROOT_DIR/src":/app \
+			-w /app \
+			laravelsail/php82-composer:latest \
+			composer create-project laravel/laravel .
+
+		ECHO_SUCCESS "Laravel app created in $PROJECT_ROOT_DIR"
+	else
+		ECHO_INFO "Laravel app already exists, skipping creation"
+	fi
+
 }

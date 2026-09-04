@@ -1,57 +1,78 @@
 #!/bin/bash
 
-set -o errexit #to stop the script when an error occurs
-set -o pipefail
+# shellcheck disable=SC1091
+source "${ENV_DIR}/.env-core/sh/common.sh"
 
 stopped_projects_list() {
-    unset existing_container
-    unset stopped_container
-    unset running_container
-    ACTION=${1:-}
+	local ACTION="${1:-}"
+	local -a running_container=()
+	local -a existing_container=()
+	local -a stopped_container=()
+	local existing_string DOMAIN_NAME choice
 
-    for PROJECT in "${AVAILABLE_PROJECTS[@]}"; do
-        running_container+=($(docker ps --format '{{.Names}}' | grep -E ".*-$PROJECT(\$)" | sed -r 's/'-$PROJECT'/''/')) || true
-    done
+	# Find running containers matching available projects
+	for PROJECT in "${AVAILABLE_PROJECTS[@]}"; do
+		while IFS= read -r container; do
+			running_container+=("$container")
+		done < <(docker ps --format '{{.Names}}' | grep -E ".*-${PROJECT}\$" | sed -E "s/-${PROJECT}\$//")
+	done
 
-    existing_string=$(awk '{print $3 $4 $5}' "$FILE_INSTANCES" | tail -n +2)
+	# Get active projects from instances file
+	existing_string=$(awk 'NR > 1 {print $3 $4 $5}' "$FILE_INSTANCES" 2>/dev/null || true)
 
-    #Check project status is active
-    existing_string="$(echo $existing_string | grep -o ' active|[A-Za-z0-9.-]*' | sed 's/active|//g')"
+	# Filter for active projects only
+	while IFS= read -r line; do
+		if [[ "$line" =~ active\|([A-Za-z0-9.-]+) ]]; then
+			existing_container+=("${BASH_REMATCH[1]}")
+		fi
+	done < <(echo "$existing_string" | grep -o 'active|[A-Za-z0-9.-]*' || true)
 
-    for I in $existing_string; do
-        existing_container=${existing_container:+$existing_container }$I
-    done
+	# Check if we have any containers to work with
+	if ((${#existing_container[@]} == 0)); then
+		ECHO_ERROR "No active sites found"
+		project_services_menu
+		return
+	fi
 
-    if [[ "$running_container" || "$existing_container" ]]; then
-        running_container=$(printf "%s\|" "${running_container[@]}")
+	# Find stopped containers (in existing but not running)
+	for container in "${existing_container[@]}"; do
+		local is_running=false
+		for running in "${running_container[@]+"${running_container[@]}"}"; do
+			if [[ "$container" == "$running" ]]; then
+				is_running=true
+				break
+			fi
+		done
+		[[ "$is_running" == false ]] && stopped_container+=("$container")
+	done
 
-        stopped_container=($(echo "$existing_container" | sed "s/\($running_container\)//g"))
+	# Check if we have stopped containers
+	if ((${#stopped_container[@]} == 0)); then
+		ECHO_ERROR "No stopped sites found"
+		project_services_menu
+		return
+	fi
 
-        while true; do
-            EMPTY_LINE
-            ECHO_CYAN "$ACTION"
-            ECHO_YELLOW "[0] Return to the previous menu"
+	# Interactive selection loop
+	while true; do
+		EMPTY_LINE
+		ECHO_CYAN "$ACTION"
+		ECHO_YELLOW "[0] Return to the previous menu"
 
-            print_list "${stopped_container[@]}"
+		print_list "${stopped_container[@]}"
 
-            choice=$(GET_USER_INPUT "select_one_of")
+		choice=$(GET_USER_INPUT "select_one_of")
+		choice="${choice:-0}"
 
-            [ -z "$choice" ] && choice=-1
-            if (("$choice" > 0 && "$choice" <= ${#stopped_container[@]})); then
-                DOMAIN_NAME="${stopped_container[$(($choice - 1))]}"
-
-                get_project_dir "skip_question"
-                break
-            else
-                if [ "$choice" == 0 ]; then
-                    project_services_menu
-                else
-                    ECHO_WARN_RED "Wrong option"
-                fi
-            fi
-        done
-    else
-        ECHO_ERROR "Sites not running"
-        project_services_menu
-    fi
+		if ((choice > 0 && choice <= ${#stopped_container[@]})); then
+			DOMAIN_NAME="${stopped_container[$((choice - 1))]}"
+			get_project_dir "skip_question"
+			break
+		elif ((choice == 0)); then
+			project_services_menu
+			return
+		else
+			ECHO_WARN_RED "Wrong option"
+		fi
+	done
 }

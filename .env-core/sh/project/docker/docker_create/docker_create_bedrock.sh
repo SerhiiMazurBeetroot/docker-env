@@ -1,67 +1,67 @@
 #!/bin/bash
 
-set -o errexit #to stop the script when an error occurs
-set -o pipefail
+# shellcheck disable=SC1091
+source "${ENV_DIR}/.env-core/sh/common.sh"
 
 docker_create_bedrock() {
-    unset_variables
+	unset_variables
 
-    if [ $NGINX_EXISTS -eq 1 ]; then
-        setup_installation_type_callback docker_create_bedrock
-        check_domain_exists
+	if [ $NGINX_EXISTS -eq 1 ]; then
+		setup_installation_type_callback docker_create_bedrock
+		check_domain_exists
 
-        if [[ $DOMAIN_EXISTS == 0 ]]; then
-            check_data_before_continue_callback docker_create_bedrock
+		if [[ $DOMAIN_EXISTS == 0 ]]; then
+			check_data_before_continue_callback docker_create_bedrock
 
-            ECHO_INFO "Setting up Docker containers for $DOMAIN_FULL"
+			ECHO_INFO "Setting up Docker containers for $DOMAIN_FULL"
 
-            #GET PORT
-            get_all_ports
+			#GET PORT
+			get_all_ports
 
-            get_project_dir "skip_question"
+			get_project_dir "skip_question"
 
-            print_to_file_instances
+			print_to_file_instances
 
-            # Create DIR
-            mkdir -p $PROJECT_ROOT_DIR
+			# Create DIR
+			mkdir -p $PROJECT_ROOT_DIR
 
-            # Clone templates files
-            git_clone_templates_files
+			# Clone templates files
+			git_clone_templates_files
 
-            # Rename files
-            replace_templates_files
+			# Rename files
+			replace_templates_files
 
-            # Replace Variables
-            replace_variables
+			# Replace Variables
+			replace_variables
 
-            # Load env
-            env_file_load "create"
+			# Load env
+			env_file_load "create"
 
-            ECHO_GREEN "Docker compose file set and container can be built and started"
-            ECHO_TEXT "Starting Container"
-            docker_compose_runner "up -d --build"
+			ECHO_GREEN "Docker compose file set and container can be built and started"
+			ECHO_TEXT "Starting Container"
+			docker_compose_runner "up -d --build"
 
-            ECHO_SUCCESS "Containers Started"
+			ECHO_SUCCESS "Containers Started"
 
-            setup_hosts_file add
-            fix_permissions
-            notice_windows_host add
+			setup_hosts_file add
+			fix_permissions
+			notice_windows_host add
 
-            wait_for_db
-            wp_core_install
-            wp_site_empty
+			wait_for_db
+			wp_core_install
+			wp_site_empty
 
-            docker_restart
+			docker_restart
 
-            # TODO: add clone
+			# TODO: add clone
 
-            # Print for user project info
-            notice_project_vars "open"
+			# Print for user project info
+			notice_project_vars "open"
 
-        fi
+		fi
 
-    else
-        ECHO_ERROR "Nginx container not running"
-        nginx_menu
-    fi
+	else
+		ECHO_ERROR "Nginx container not running"
+		nginx_menu
+	fi
 }

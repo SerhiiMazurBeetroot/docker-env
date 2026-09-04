@@ -1,51 +1,58 @@
 #!/bin/bash
 
-set -o errexit #to stop the script when an error occurs
-set -o pipefail
+# shellcheck disable=SC1091
+source "${ENV_DIR}/.env-core/sh/common.sh"
 
 running_projects_list() {
-    # TODO: some issue here when print 2 the same items?
-    unset_variables
-    unset existing_container
-    unset running_container
-    ACTION=${1:-}
+	local ACTION="${1:-}"
+	local -a running_container=()
+	local -a existing_container=()
+	local DOMAIN_EXISTS DOMAIN_NAME choice
 
-    for PROJECT in "${AVAILABLE_PROJECTS[@]}"; do
-        running_container+=($(docker ps --format '{{.Names}}' | grep -E ".*-$PROJECT($)" | sed -r 's/'-$PROJECT'/''/')) || true
-    done
+	# unset_variables
 
-    #Check if running_container is from this environment
-    for I in "${running_container[@]}"; do
-        DOMAIN_EXISTS=$(awk '/'" $I "'/{print $5}' "$FILE_INSTANCES" | head -n 1) || true
-        existing_container=${existing_container:+$existing_container }$DOMAIN_EXISTS
-    done
-    running_container=($existing_container)
-    if [ "$running_container" ]; then
-        while true; do
-            EMPTY_LINE
-            ECHO_CYAN "$ACTION"
-            ECHO_YELLOW "[0] Return to the previous menu"
+	# Find running containers matching available projects
+	for PROJECT in "${AVAILABLE_PROJECTS[@]}"; do
+		while IFS= read -r container; do
+			running_container+=("$container")
+		done < <(docker ps --format '{{.Names}}' | grep -E ".*-${PROJECT}\$" | sed -E "s/-${PROJECT}\$//")
+	done
 
-            print_list "${running_container[@]}"
+	# Verify containers exist in this environment
+	for container in "${running_container[@]+"${running_container[@]}"}"; do
+		# macOS awk compatibility - use POSIX syntax
+		DOMAIN_EXISTS=$(awk -v cont="$container" '$0 ~ cont {print $5; exit}' "$FILE_INSTANCES" 2>/dev/null || true)
+		[[ -n "$DOMAIN_EXISTS" ]] && existing_container+=("$DOMAIN_EXISTS")
+	done
 
-            choice=$(GET_USER_INPUT "select_one_of")
+	running_container=("${existing_container[@]+"${existing_container[@]}"}")
 
-            [ -z "$choice" ] && choice=-1
-            if (("$choice" > 0 && "$choice" <= ${#running_container[@]})); then
-                DOMAIN_NAME="${running_container[$(($choice - 1))]}"
+	if ((${#running_container[@]} == 0)); then
+		ECHO_ERROR "Sites not running"
+		project_services_menu
+		return
+	fi
 
-                get_project_dir "skip_question"
-                break
-            else
-                if [ "$choice" == 0 ]; then
-                    project_services_menu
-                else
-                    ECHO_WARN_RED "Wrong option"
-                fi
-            fi
-        done
-    else
-        ECHO_ERROR "Sites not running"
-        project_services_menu
-    fi
+	# Interactive selection loop
+	while true; do
+		EMPTY_LINE
+		ECHO_CYAN "$ACTION"
+		ECHO_YELLOW "[0] Return to the previous menu"
+
+		print_list "${running_container[@]}"
+
+		choice=$(GET_USER_INPUT "select_one_of")
+		choice="${choice:-0}"
+
+		if ((choice > 0 && choice <= ${#running_container[@]})); then
+			DOMAIN_NAME="${running_container[$((choice - 1))]}"
+			get_project_dir "skip_question"
+			break
+		elif ((choice == 0)); then
+			project_services_menu
+			return
+		else
+			ECHO_WARN_RED "Wrong option"
+		fi
+	done
 }
