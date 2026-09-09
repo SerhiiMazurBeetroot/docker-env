@@ -49,15 +49,30 @@ env_mode() {
 	export ENV_MODE=$(awk '/ENV_MODE/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_MODE='//')
 }
 
-get_cmd_version() {
-	local cmd="$1"
-	local version_cmd="$2"
+versions() {
+	EMPTY_LINE
+	ECHO_CYAN "===== Versions ===="
 
-	if command -v "$cmd" >/dev/null 2>&1; then
-		eval "$version_cmd"
+	if command -v docker >/dev/null 2>&1; then
+		ECHO_KEY_VALUE "- docker:" "$(docker --version | awk '{print $3}' | sed 's/,//g')"
+		ECHO_KEY_VALUE "- compose:" "$(docker compose version --short 2>/dev/null || docker-compose --version | awk '{print $3}')"
 	else
-		echo "not installed"
+		ECHO_KEY_VALUE "- docker:" "not installed"
+		ECHO_KEY_VALUE "- compose:" "not installed"
 	fi
+
+	if [[ -s "$HOME/.nvm/nvm.sh" ]]; then
+		# shellcheck disable=SC1090
+		source "$HOME/.nvm/nvm.sh"
+	fi
+
+	if command -v node >/dev/null 2>&1; then
+		ECHO_KEY_VALUE "- nodejs:" "$(node --version)"
+	else
+		ECHO_KEY_VALUE "- nodejs:" "not installed"
+	fi
+
+	ECHO_KEY_VALUE "- bash:" "${BASH_VERSION-unknown}"
 }
 
 require_command() {
@@ -68,26 +83,6 @@ require_command() {
 		ECHO_ERROR "$message"
 		exit 1
 	fi
-}
-
-versions() {
-	ECHO_CYAN "===== Versions ===="
-
-	ECHO_KEY_VALUE "- docker:" \
-		"$(get_cmd_version docker "docker --version | awk '{print \$3}' | sed 's/,//g'")"
-
-	ECHO_KEY_VALUE "- compose:" \
-		"$(get_cmd_version docker "docker compose version --short 2>/dev/null || docker-compose --version | awk '{print \$3}'")"
-
-	if [[ -s "$HOME/.nvm/nvm.sh" ]]; then
-		source "$HOME/.nvm/nvm.sh"
-	fi
-
-	ECHO_KEY_VALUE "- nodejs:" \
-		"$(get_cmd_version node "node --version")"
-
-	ECHO_KEY_VALUE "- bash:" \
-		"${BASH_VERSION-unknown}"
 }
 
 function is_file() {
