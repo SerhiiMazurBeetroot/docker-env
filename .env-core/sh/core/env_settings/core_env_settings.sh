@@ -121,6 +121,7 @@ save_settings() {
 	for ((i = 0; i < ${#existing_keys[@]}; i++)); do
 		echo "${existing_keys[i]}=${existing_values[i]}"
 	done >"$FILE_SETTINGS"
+	protect_settings_file
 }
 
 core_version() {
