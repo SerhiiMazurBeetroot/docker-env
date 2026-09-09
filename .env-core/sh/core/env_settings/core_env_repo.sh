@@ -47,14 +47,20 @@ check_git_version() {
 }
 
 update_env() {
-	if [ $ENV_VERSION != $GIT_VERSION ]; then
-		ECHO_GREEN "Getting updates..."
-		git fetch
-		git reset --hard origin/master
-
-		sed -i -e 's/'$ENV_VERSION'/'$GIT_VERSION'/g' "$FILE_SETTINGS"
-
-		exit
+	if [ "$ENV_VERSION" != "$GIT_VERSION" ]; then
+		yn=$(GET_USER_INPUT "question" "Reset this checkout to origin/master? Uncommitted changes will be lost.")
+		case $yn in
+		[Yy]*)
+			ECHO_GREEN "Getting updates..."
+			git fetch
+			git reset --hard origin/master
+			save_settings "ENV_VERSION=$GIT_VERSION"
+			exit
+			;;
+		*)
+			ECHO_YELLOW "Update cancelled."
+			;;
+		esac
 	else
 		ECHO_GREEN "Already up to date."
 		EMPTY_LINE
