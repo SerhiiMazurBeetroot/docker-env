@@ -6,7 +6,7 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 zip_project() {
 	get_existing_domains "======== ZIP project ======="
 
-	if [ -d $PROJECT_ROOT_DIR ]; then
+	if [ -d "$PROJECT_ROOT_DIR" ]; then
 		#First of all save DB
 		database_auto_backup
 
@@ -15,14 +15,14 @@ zip_project() {
 			VENDOR_DIR=($(find $PROJECT_ROOT_DIR/vendor -type d -name "vendor"))
 
 			for i in "${!VENDOR_DIR[@]}"; do
-				rm -rf ${VENDOR_DIR[$i]}
+				rm -rf "${VENDOR_DIR[$i]}"
 			done
 		fi
 
 		NM_DIR=($(find $PROJECT_ROOT_DIR -type d -name "node_modules"))
 		if [ "$NM_DIR" ]; then
 			for i in "${!NM_DIR[@]}"; do
-				rm -rf ${NM_DIR[$i]}
+				rm -rf "${NM_DIR[$i]}"
 			done
 		fi
 
