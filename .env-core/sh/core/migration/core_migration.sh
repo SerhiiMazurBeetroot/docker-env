@@ -43,8 +43,8 @@ move_dir_data() {
 	if [ -f "$ENV_DIR/.env-core/instances.log" ]; then
 		ECHO_YELLOW "Replacing FILE_INSTANCES ..."
 
-		mv "$ENV_DIR/.env-core/settings.log" $FILE_SETTINGS
-		mv "$ENV_DIR/.env-core/instances.log" $FILE_INSTANCES
+		mv "$ENV_DIR/.env-core/settings.log" "$FILE_SETTINGS"
+		mv "$ENV_DIR/.env-core/instances.log" "$FILE_INSTANCES"
 	fi
 }
 

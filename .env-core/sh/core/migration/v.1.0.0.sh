@@ -71,7 +71,7 @@ replace_docker_compose() {
 
 					#Replace old path for adminer.php
 					DOCKER_DIR="$(echo ${FILENAME} | sed -e 's/docker-compose.*.yml//')"
-					cp -rf $ENV_DIR/.env-core/templates/wordpress/adminer.php.example $DOCKER_DIR/adminer.php
+					cp -rf "$ENV_DIR/.env-core/templates/wordpress/adminer.php.example" "$DOCKER_DIR/adminer.php"
 					sed -i -e 's/.\/..\/..\/..\/env-core\/templates\/database\/adminer-template:/.\/..\/wp-docker\/adminer.php:/g' $NEW_FILENAME
 				fi
 			done

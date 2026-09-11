@@ -84,7 +84,7 @@ GET_USER_INPUT() {
 	local choice
 
 	if [[ $TEST_RUNNING -eq 1 ]]; then
-		choice=${choice:-$default_choice}
+		choice="${default_choice:-}"
 	else
 		case $prompt_type in
 		'select_one_of')
