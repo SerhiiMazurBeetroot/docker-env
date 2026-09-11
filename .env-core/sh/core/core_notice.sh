@@ -55,6 +55,8 @@ notice_project_urls() {
 notice_project_ips() {
 	OPEN_LINK=${1:-}
 
+	load_project_modules
+
 	local services=()
 
 	case "${PROJECT_TYPE:-}" in

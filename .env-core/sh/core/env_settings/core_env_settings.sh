@@ -49,6 +49,8 @@ change_env_theme() {
 
 check_env_version() {
 	local action=${1:-}
+
+	load_project_modules
 	env_migration
 	add_alias
 
@@ -140,7 +142,7 @@ env_check_updates() {
 	fi
 
 	# Notice about updates to main menu
-	if [[ ! $ENV_UPDATES ]]; then
+	if [[ -z "${ENV_UPDATES:-}" ]]; then
 		check_env_version "daily"
 	elif [[ $ENV_UPDATES == "Everything up-to-date" ]]; then
 		ENV_UPDATES=""

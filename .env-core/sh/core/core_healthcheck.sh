@@ -9,6 +9,7 @@ healthcheck() {
 	check_instances_file_exists
 	check_env_settings
 	protect_settings_file
+	load_system_modules
 	docker_nginx_container
 	notice_compose_v2
 	env_mode

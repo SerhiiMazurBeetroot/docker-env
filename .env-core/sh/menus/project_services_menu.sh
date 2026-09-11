@@ -4,6 +4,8 @@
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
 project_services_menu() {
+	load_project_modules
+
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "==== Project Services ==="
@@ -21,7 +23,7 @@ project_services_menu() {
 			main_actions
 			;;
 		1)
-			if [ $NGINX_EXISTS -eq 1 ]; then
+			if [[ "${NGINX_EXISTS:-0}" -eq 1 ]]; then
 				docker_menu
 			else
 				ECHO_ERROR "Nginx container not running"
@@ -29,7 +31,7 @@ project_services_menu() {
 			fi
 			;;
 		2)
-			if [ $NGINX_EXISTS -eq 1 ]; then
+			if [[ "${NGINX_EXISTS:-0}" -eq 1 ]]; then
 				database_menu
 			else
 				ECHO_ERROR "Nginx container not running"

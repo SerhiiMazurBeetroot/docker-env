@@ -61,7 +61,9 @@ build_visible_projects() {
 }
 
 create_project_by_type() {
-	local type="${1:-$PROJECT_TYPE}"
+	local type="${1:-${PROJECT_TYPE:-}}"
+
+	load_project_modules
 
 	case "${type:-}" in
 	"wordpress")

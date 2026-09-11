@@ -4,6 +4,8 @@
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
 system_menu() {
+	load_system_modules
+
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "======== System  ======="
@@ -30,6 +32,7 @@ system_menu() {
 			env_settings
 			;;
 		10)
+			load_system_tests
 			tests_actions
 			;;
 		*)
@@ -38,4 +41,11 @@ system_menu() {
 		esac
 	done
 
+}
+
+echo_tests_actions() {
+	if [[ ${ENV_MODE:-} == 'development' ]]; then
+		TEST_MODE=true
+		ECHO_RED "10 - Run tests"
+	fi
 }

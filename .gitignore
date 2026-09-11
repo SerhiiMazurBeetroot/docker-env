@@ -38,4 +38,5 @@
 !/.env-core/system/.env.example
 /.env-core/dev/*
 .env-core/sh/dev/*
+!.env-core/sh/dev/README.md
 
