@@ -6,7 +6,7 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 docker_stop_all() {
 	ECHO_YELLOW "Stoping all containers..."
 
-	string=$(awk '{print $5}' "$FILE_INSTANCES" | tail -n +2)
+	string=$(instances_domain_names)
 	OptionList=($string)
 	for i in "${!OptionList[@]}"; do
 		DOMAIN_NAME="${OptionList[$i]}"
@@ -18,7 +18,7 @@ docker_stop_all() {
 		if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]; then
 
 			if [ -d "$PROJECT_DOCKER_DIR" ]; then
-				DOCKER_FILES=($(find $PROJECT_DOCKER_DIR -type f -name '*.yml'))
+				DOCKER_FILES=($(find "$PROJECT_DOCKER_DIR" -type f -name '*.yml'))
 
 				[ -f "$DOCKER_FILES" ] && docker_compose_runner "down"
 			fi

@@ -13,7 +13,7 @@ docker_start() {
 		if [[ "$(docker image ls --format '{{.Repository}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]] && [ "$(docker volume ls --format '{{.Name}}' | grep -E '(^|_|-)'$DOCKER_VOLUME_DB'($)')" ]; then
 			ECHO_SUCCESS "Site image and volume found"
 
-			if [ -f $PROJECT_DOCKER_DIR/docker-compose.yml ]; then
+			if [ -f "$PROJECT_DOCKER_DIR/docker-compose.yml" ]; then
 				ECHO_YELLOW "Starting docker containers for this site"
 
 				docker_compose_runner "up -d"
@@ -32,9 +32,7 @@ docker_start() {
 			ECHO_YELLOW "Checking for Docker-compose file exist"
 
 			if [ -d "$PROJECT_DOCKER_DIR" ]; then
-				DOCKER_FILES=($(find $PROJECT_DOCKER_DIR -type f -name '*.yml'))
-
-				if [ -f "$DOCKER_FILES" ]; then
+				if find "$PROJECT_DOCKER_DIR" -type f -name 'docker-compose.yml' | grep -q .; then
 					echo "Starting Container"
 					docker_compose_runner "up -d"
 				else

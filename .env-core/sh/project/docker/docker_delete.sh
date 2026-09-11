@@ -6,7 +6,7 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 docker_delete() {
 	get_existing_domains "======== DELETE project ======="
 
-	if [ -d $PROJECT_ROOT_DIR ]; then
+	if [ -d "$PROJECT_ROOT_DIR" ]; then
 		EMPTY_LINE
 		ECHO_ATTENTION "You can't restore the site after it has been deleted."
 		ECHO_ATTENTION "This operation will remove the localhost containers, volumes, and the WordPress core files."
