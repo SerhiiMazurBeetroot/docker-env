@@ -9,7 +9,7 @@ docker_nginx_setup() {
 		ECHO_ERROR "Make sure folder was not deleted"
 	else
 		if [ -f "$DIR_NGINX/docker-compose.yml" ]; then
-			if [ $NGINX_EXISTS -eq 1 ]; then
+			if [[ "${NGINX_EXISTS:-0}" -eq 1 ]]; then
 				ECHO_ATTENTION "Nginx already setup and running"
 			else
 				ECHO_YELLOW "Container is not running"
@@ -44,7 +44,7 @@ docker_nginx_setup() {
 					docker_nginx_start
 				else
 					docker_nginx_start
-					if [ $NGINX_EXISTS -eq 1 ]; then
+					if [[ "${NGINX_EXISTS:-0}" -eq 1 ]]; then
 						ECHO_SUCCESS "Container started"
 					else
 						ECHO_ERROR "Problem starting container"
@@ -58,7 +58,7 @@ docker_nginx_setup() {
 }
 
 docker_nginx_start() {
-	if [ $NGINX_EXISTS -eq 0 ]; then
+	if [[ "${NGINX_EXISTS:-0}" -eq 0 ]]; then
 		docker_compose_runner "up -d" "$DIR_NGINX"
 
 		if [[ $OSTYPE == "linux" ]]; then
@@ -71,7 +71,7 @@ docker_nginx_start() {
 }
 
 docker_nginx_stop() {
-	if [ $NGINX_EXISTS -eq 1 ]; then
+	if [[ "${NGINX_EXISTS:-0}" -eq 1 ]]; then
 		docker_compose_runner "down" "$DIR_NGINX"
 
 		if [[ $OSTYPE == "linux" ]]; then
@@ -84,7 +84,7 @@ docker_nginx_stop() {
 }
 
 docker_nginx_restart() {
-	if [ $NGINX_EXISTS -eq 1 ]; then
+	if [[ "${NGINX_EXISTS:-0}" -eq 1 ]]; then
 		docker_compose_runner "restart" "$DIR_NGINX"
 
 		if [[ $OSTYPE == "linux" ]]; then
@@ -117,7 +117,7 @@ docker_nginx_container() {
 }
 
 docker_nginx_resetup() {
-	if [ $NGINX_EXISTS -eq 1 ]; then
+	if [[ "${NGINX_EXISTS:-0}" -eq 1 ]]; then
 		docker_nginx_stop
 
 		[ "$(docker volume ls | grep ssl-certs)" ] && docker volume rm "ssl-certs" && ECHO_YELLOW "Deleting Volume ssl-certs" || echo "Volume ssl-certs not found"
