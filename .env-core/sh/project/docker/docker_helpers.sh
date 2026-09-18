@@ -32,10 +32,18 @@ docker_overlay_bundled_dockerfiles() {
 }
 
 # Compose interpolates ${VAR} from the shell before the project .env file.
-# const.sh exports several DB vars as empty strings — that overrides wp-docker/.env
-# and MariaDB starts with no MARIADB_ROOT_PASSWORD.
-docker_compose_unset_project_env() {
-	unset MYSQL_ROOT_PASSWORD MYSQL_DATABASE MARIADB_ROOT_PASSWORD MARIADB_DATABASE 2>/dev/null || true
+# const.sh exports many keys as empty strings — those override project .env and
+# break MariaDB passwords, Directus build args (directus/directus:), etc.
+# Session vars (DOMAIN_NAME, paths, …) must NOT be unset here — rebuild/restart
+# runs compose then docker_restart in the same shell.
+docker_compose_unset_interpolation_env() {
+	unset \
+		COMPOSE_PROJECT_NAME PORT PORT_FRONT \
+		WP_VERSION TABLE_PREFIX WP_USER WP_PASSWORD PHP_VERSION \
+		MONGODB_LOCAL_PORT MONGO_EXPRESS_PORT NODE_VERSION NEXTJS_VERSION \
+		DIRECTUS_VERSION ELASTIC_VERSION ELASTIC_PORT KIBANA_PORT LOGSTASH_PORT \
+		MYSQL_ROOT_PASSWORD MYSQL_DATABASE MARIADB_ROOT_PASSWORD MARIADB_DATABASE \
+		2>/dev/null || true
 }
 
 docker_compose_runner() {
@@ -43,7 +51,7 @@ docker_compose_runner() {
 	local DIR_DOCKER=${2:-}
 
 	if [[ -z "$DIR_DOCKER" ]]; then
-		DIR_DOCKER="$PROJECT_DOCKER_DIR"
+		DIR_DOCKER="${PROJECT_DOCKER_DIR:-}"
 	fi
 
 	if [[ -z "$DIR_DOCKER" || ! -d "$DIR_DOCKER" ]]; then
@@ -51,12 +59,32 @@ docker_compose_runner() {
 		return 1
 	fi
 
-	docker_compose_unset_project_env
-
-	# --project-directory keeps the CLI cwd unchanged (compose v1 and v2).
-	# COMMAND is a compose subcommand string, e.g. "up -d --build".
+	# Subshell: unset only affects compose interpolation; parent keeps DOMAIN_NAME etc.
 	# shellcheck disable=SC2086
-	$DOCKER_COMPOSE_CMD --project-directory "$DIR_DOCKER" $COMMAND
+	(
+		
+		$DOCKER_COMPOSE_CMD --project-directory "$DIR_DOCKER" $COMMAND
+		docker_compose_unset_interpolation_env
+	)
+}
+
+# Backwards-compatible alias for tests_helpers.
+docker_compose_unset_project_env() {
+	docker_compose_unset_interpolation_env
+}
+
+# Run compose in a subshell (safe interpolation) and capture stdout — for tests/ps checks.
+docker_compose_output() {
+	local COMMAND=${1:-}
+	local DIR_DOCKER=${2:-${PROJECT_DOCKER_DIR:-}}
+
+	[[ -n "$DIR_DOCKER" && -d "$DIR_DOCKER" ]] || return 1
+
+	# shellcheck disable=SC2086
+	(
+		$DOCKER_COMPOSE_CMD --project-directory "$DIR_DOCKER" $COMMAND
+		docker_compose_unset_interpolation_env
+	)
 }
 
 docker_official_image_exists() {

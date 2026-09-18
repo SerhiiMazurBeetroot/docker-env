@@ -6,14 +6,17 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 docker_start() {
 	stopped_projects_list "======== START project ========"
 
-	if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]; then
+	docker_require_project_context "======== START project ========" || return 1
+
+	if container_is_running; then
 		ECHO_WARN_RED "Containers already running for this domain"
 		project_services_menu
 	else
-		if [[ "$(docker image ls --format '{{.Repository}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]] && [ "$(docker volume ls --format '{{.Name}}' | grep -E '(^|_|-)'$DOCKER_VOLUME_DB'($)')" ]; then
+		if [[ "$(docker image ls --format '{{.Repository}}' | grep -E '(^|_|-)'"${DOCKER_CONTAINER_APP}"'($)')" ]] \
+			&& [[ "$(docker volume ls --format '{{.Name}}' | grep -E '(^|_|-)'"${DOCKER_VOLUME_DB:-}"'($)')" ]]; then
 			ECHO_SUCCESS "Site image and volume found"
 
-			if [ -f "$PROJECT_DOCKER_DIR/docker-compose.yml" ]; then
+			if [[ -f "${PROJECT_DOCKER_DIR}/docker-compose.yml" ]]; then
 				ECHO_YELLOW "Starting docker containers for this site"
 
 				docker_compose_runner "up -d"
@@ -31,7 +34,7 @@ docker_start() {
 			ECHO_ERROR "Site image or volume was not found"
 			ECHO_YELLOW "Checking for Docker-compose file exist"
 
-			if [ -d "$PROJECT_DOCKER_DIR" ]; then
+			if [[ -d "${PROJECT_DOCKER_DIR:-}" ]]; then
 				if find "$PROJECT_DOCKER_DIR" -type f -name 'docker-compose.yml' | grep -q .; then
 					echo "Starting Container"
 					docker_compose_runner "up -d"
