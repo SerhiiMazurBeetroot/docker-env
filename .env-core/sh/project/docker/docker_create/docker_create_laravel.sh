@@ -5,68 +5,24 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 
 docker_create_laravel() {
 	unset_variables
+	docker_create_require_nginx || return 1
+	get_domain_name
+	check_domain_exists
+	docker_create_require_new_site || return 1
+	get_project_dir ""
+	set_project_args
+	check_data_before_continue_callback docker_create_laravel || return 1
 
-	if [ $NGINX_EXISTS -eq 1 ]; then
-		get_domain_name
-		check_domain_exists
+	CREATE_TEMPLATE="copy"
+	docker_create_project docker_create_laravel_after
+}
 
-		if [[ $DOMAIN_EXISTS == 0 ]]; then
-			get_project_dir ""
-			set_project_args
-			check_data_before_continue_callback docker_create_laravel
-
-			ECHO_INFO "Setting up Docker containers for $DOMAIN_FULL"
-
-			#GET PORT
-			get_all_ports
-
-			print_to_file_instances
-
-			# Create DIR
-			mkdir -p $PROJECT_ROOT_DIR
-
-			# Clone templates files
-			# TODO: use from github
-			git_clone_templates_files "copy"
-
-			# Rename files
-			replace_templates_files
-
-			# Replace Variables
-			replace_variables
-
-			# Load env
-			env_file_load "create"
-
-			ECHO_GREEN "Docker compose file set and container can be built and started"
-			ECHO_TEXT "Starting Container"
-			docker_compose_runner "up -d --build"
-
-			ECHO_SUCCESS "Containers Started"
-
-			setup_hosts_file add
-			fix_permissions
-			notice_windows_host add
-			docker_restart
-
-			install_laravel
-
-			edit_file_gitignore
-
-			# Print for user project info
-			notice_project_vars "open" "ip"
-		else
-			ECHO_ERROR "Site already exists"
-			docker_create_laravel
-		fi
-	else
-		ECHO_ERROR "Nginx container not running"
-		nginx_menu
-	fi
+docker_create_laravel_after() {
+	install_laravel
+	edit_file_gitignore
 }
 
 install_laravel() {
-	# Scaffold Laravel (ONLY if not exists)
 	if [ ! -f "$PROJECT_ROOT_DIR/artisan" ]; then
 		ECHO_INFO "Creating Laravel app..."
 
@@ -80,5 +36,4 @@ install_laravel() {
 	else
 		ECHO_INFO "Laravel app already exists, skipping creation"
 	fi
-
 }
