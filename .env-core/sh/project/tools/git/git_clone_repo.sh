@@ -8,41 +8,39 @@ git_clone_project() {
 
 	if [[ $CAN_CLONE == 1 ]]; then
 		ECHO_YELLOW "Cloning repository to temp..."
-		rm -rf $PROJECT_ROOT_DIR/repository
+		rm -rf "$PROJECT_ROOT_DIR/repository"
 
-		git config --global http.sslVerify false
+		git clone "$URL_CLONE" "$PROJECT_ROOT_DIR/repository/"
 
-		git clone "$URL_CLONE" $PROJECT_ROOT_DIR/repository/
-
-		if [ ! -d $PROJECT_DATABASE_DIR/ ]; then
+		if [ ! -d "$PROJECT_DATABASE_DIR/" ]; then
 			ECHO_INFO "Creating DIR wp-database..."
-			mkdir $PROJECT_DATABASE_DIR/
+			mkdir -p "$PROJECT_DATABASE_DIR/"
 		fi
 
 		ECHO_INFO "Please wait, copying themes and plugins..."
 
-		if [[ -d $PROJECT_ROOT_DIR/repository/wp-content || -d $PROJECT_ROOT_DIR/repository/wp-admin || -d $PROJECT_ROOT_DIR/repository/wp-includes ]]; then
-			cp -rf $PROJECT_ROOT_DIR/repository/. $PROJECT_ROOT_DIR/
+		if [[ -d "$PROJECT_ROOT_DIR/repository/wp-content" || -d "$PROJECT_ROOT_DIR/repository/wp-admin" || -d "$PROJECT_ROOT_DIR/repository/wp-includes" ]]; then
+			cp -rf "$PROJECT_ROOT_DIR/repository/." "$PROJECT_ROOT_DIR/"
 		fi
 
-		if [ -d $PROJECT_ROOT_DIR/repository/themes ]; then
-			cp -rf $PROJECT_ROOT_DIR/repository/themes/. $PROJECT_ROOT_DIR/wp-content/themes/
+		if [ -d "$PROJECT_ROOT_DIR/repository/themes" ]; then
+			cp -rf "$PROJECT_ROOT_DIR/repository/themes/." "$PROJECT_ROOT_DIR/wp-content/themes/"
 		fi
 
-		if [ -d $PROJECT_ROOT_DIR/repository/plugins ]; then
-			cp -rf $PROJECT_ROOT_DIR/repository/plugins/. $PROJECT_ROOT_DIR/wp-content/plugins/
+		if [ -d "$PROJECT_ROOT_DIR/repository/plugins" ]; then
+			cp -rf "$PROJECT_ROOT_DIR/repository/plugins/." "$PROJECT_ROOT_DIR/wp-content/plugins/"
 		fi
 
-		if [ -d $PROJECT_ROOT_DIR/repository/uploads ]; then
-			cp -rf $PROJECT_ROOT_DIR/repository/uploads/. $PROJECT_ROOT_DIR/wp-content/uploads/
+		if [ -d "$PROJECT_ROOT_DIR/repository/uploads" ]; then
+			cp -rf "$PROJECT_ROOT_DIR/repository/uploads/." "$PROJECT_ROOT_DIR/wp-content/uploads/"
 		fi
 
 		#Bedrock
-		if [[ -d $PROJECT_ROOT_DIR/repository/config && -d $PROJECT_ROOT_DIR/repository/web ]]; then
-			cp -rf $PROJECT_ROOT_DIR/repository/. $PROJECT_ROOT_DIR/app/
+		if [[ -d "$PROJECT_ROOT_DIR/repository/config" && -d "$PROJECT_ROOT_DIR/repository/web" ]]; then
+			cp -rf "$PROJECT_ROOT_DIR/repository/." "$PROJECT_ROOT_DIR/app/"
 		fi
 
-		rm -rf $PROJECT_ROOT_DIR/repository
+		rm -rf "$PROJECT_ROOT_DIR/repository"
 		ECHO_YELLOW "Themes and plugins copied"
 
 		while true; do

@@ -25,8 +25,14 @@ git_can_clone() {
 		URL_CORRECT=$URL_CLONE
 	fi
 
+	if ! is_https_or_git_url "$URL_CLONE"; then
+		ECHO_ERROR "Only https:// or git@ clone URLs are allowed"
+		export CAN_CLONE=0
+		return 1
+	fi
+
 	# Checking URL
-	if curl --output /dev/null --silent --head --fail -k $URL_CORRECT; then
+	if curl --output /dev/null --silent --head --fail -- "$URL_CORRECT"; then
 		ECHO_SUCCESS "URL EXISTS"
 		export CAN_CLONE=1
 	else

@@ -4,58 +4,49 @@
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
 git_save_token_gitlab() {
-	#Remove token before save
-	gitlab=$(awk '/TOKEN_GITLAB/{print}' "$FILE_SETTINGS")
-
-	read -rp "Gitlab token: " TOKEN_GITLAB
-	[[ $gitlab != '' && $TOKEN_GITLAB != '' ]] && sed -i -e '/'"$gitlab"'/d' "$FILE_SETTINGS"
-	[[ $TOKEN_GITLAB != '' ]] && echo "TOKEN_GITLAB=$TOKEN_GITLAB" >>"$FILE_SETTINGS"
+	read -rsp "Gitlab token: " TOKEN_GITLAB
+	echo
+	[[ $TOKEN_GITLAB != '' ]] && save_settings "TOKEN_GITLAB=$TOKEN_GITLAB"
 }
 
 git_save_user_gitlab() {
-	#Remove user before save
-	gitlab=$(awk '/USER_GITLAB/{print}' "$FILE_SETTINGS")
-
 	read -rp "Gitlab user: " USER_GITLAB
-	[[ $gitlab != '' && $USER_GITLAB != '' ]] && sed -i -e '/'"$gitlab"'/d' "$FILE_SETTINGS"
-	[[ $USER_GITLAB != '' ]] && echo "USER_GITLAB=$USER_GITLAB" >>"$FILE_SETTINGS"
+	[[ $USER_GITLAB != '' ]] && save_settings "USER_GITLAB=$USER_GITLAB"
 }
 
 git_create_repo_gitlab() {
-	TOKEN_GITLAB=$(awk '/TOKEN_GITLAB/{print $1}' "$FILE_SETTINGS" | sed 's/'TOKEN_GITLAB='//')
-	USER_GITLAB=$(awk '/USER_GITLAB/{print $1}' "$FILE_SETTINGS" | sed 's/'USER_GITLAB='//')
+	TOKEN_GITLAB=$(awk -F= '/^TOKEN_GITLAB=/{print $2}' "$FILE_SETTINGS")
+	USER_GITLAB=$(awk -F= '/^USER_GITLAB=/{print $2}' "$FILE_SETTINGS")
 
 	[[ $TOKEN_GITLAB == '' ]] && git_save_token_gitlab || true
 	[[ $USER_GITLAB == '' ]] && git_save_user_gitlab || true
 
 	if [[ $TOKEN_GITLAB && $USER_GITLAB ]]; then
-		#REPO_TYPE
 		ECHO_ENTER "Enter REPO_TYPE [default '1']"
 		ECHO_GREEN "1 - Private"
 		ECHO_GREEN "2 - Public"
 
 		REPO_TYPE=$(GET_USER_INPUT "select_one_of")
 
-		#REPO_NAME
 		REPO_NAME="$DOMAIN_NAME"
 
-		#REPO_TYPE
 		[[ $REPO_TYPE == 1 ]] && REPO_TYPE="private"
 		[[ $REPO_TYPE == 2 ]] && REPO_TYPE="public"
 
 		response=$(curl --silent --header "PRIVATE-TOKEN: $TOKEN_GITLAB" \
-			-XPOST "https://gitlab.com/api/v4/projects?name="$REPO_NAME"&visibility="$REPO_TYPE"")
+			-X POST \
+			--data-urlencode "name=${REPO_NAME}" \
+			--data-urlencode "visibility=${REPO_TYPE}" \
+			"https://gitlab.com/api/v4/projects")
 
-		response="$(echo $response | awk '/{"message":{"/ {print}' || true)"
-
-		if [[ $response == "" ]]; then
+		if [[ "$response" == *'"id":'* && "$response" != *'"message"'* ]]; then
 			ECHO_SUCCESS "Gitlab"
 
-			cd "$PROJECT_ROOT_DIR"
+			cd "$PROJECT_ROOT_DIR" || return 1
 
 			if [[ -d "${PWD}/.git" ]]; then
 				ECHO_YELLOW "Push Origin Master..."
-				git push -u origin master
+				git_push_origin_with_token "$TOKEN_GITLAB"
 			else
 				ECHO_YELLOW "Creating Repository..."
 
@@ -63,8 +54,8 @@ git_create_repo_gitlab() {
 				git add .
 				git commit -m "initial commit"
 				git branch -M master
-				git remote add origin https://gitlab-ci-token:${TOKEN_GITLAB}@gitlab.com/$USER_GITLAB/$REPO_NAME.git
-				git push -u origin master
+				git remote add origin "https://gitlab.com/${USER_GITLAB}/${REPO_NAME}.git"
+				git_push_origin_with_token "$TOKEN_GITLAB"
 			fi
 
 			cd ../../

@@ -47,12 +47,11 @@ git_config_fileMode() {
 	if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
 		git config core.fileMode false
 
-		#TODO: find a solution in the future without using '*'
 		safe_directories=$(git config --global --get-all safe.directory)
-		patterns=("*" "$PROJECT_DIR")
+		patterns=("$PROJECT_DIR")
 
 		for pattern in "${patterns[@]}"; do
-			if echo "$safe_directories" | grep -E "$pattern"; then #TODO: maybe here problem
+			if echo "$safe_directories" | grep -F -x -- "$pattern"; then
 				ECHO_TEXT "Pattern [$pattern] is already in the global Git configuration."
 			else
 				git config --global --add safe.directory "$pattern"

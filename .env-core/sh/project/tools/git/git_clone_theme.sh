@@ -27,19 +27,17 @@ git_clone_theme() {
 
 			if [[ $CAN_CLONE == 1 ]]; then
 				ECHO_YELLOW "Cloning theme repository to temp..."
-				rm -rf $PROJECT_ROOT_DIR/repository
+				rm -rf "$PROJECT_ROOT_DIR/repository"
 
-				git config --global http.sslVerify false
-
-				git clone "$URL_CLONE" $PROJECT_ROOT_DIR/repository/themes/
+				git clone "$URL_CLONE" "$PROJECT_ROOT_DIR/repository/themes/"
 
 				ECHO_INFO "Please wait, copying themes..."
 
-				if [ -d $PROJECT_ROOT_DIR/repository/themes ]; then
-					cp -rf $PROJECT_ROOT_DIR/repository/themes/. $PROJECT_ROOT_DIR/wp-content/themes/$THEME_NAME
+				if [ -d "$PROJECT_ROOT_DIR/repository/themes" ]; then
+					cp -rf "$PROJECT_ROOT_DIR/repository/themes/." "$PROJECT_ROOT_DIR/wp-content/themes/$THEME_NAME"
 				fi
 
-				rm -rf $PROJECT_ROOT_DIR/repository
+				rm -rf "$PROJECT_ROOT_DIR/repository"
 				ECHO_YELLOW "Theme copied, THEME_NAME: $THEME_NAME"
 				EMPTY_LINE
 			fi

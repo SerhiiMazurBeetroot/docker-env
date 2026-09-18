@@ -4,67 +4,56 @@
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
 git_save_token_github() {
-	#Remove token before save
-	github=$(awk '/TOKEN_GITHUB/{print}' "$FILE_SETTINGS")
-
-	read -rp "Github token: " TOKEN_GITHUB
-	[[ $github != '' && $TOKEN_GITHUB != '' ]] && sed -i -e '/'"$github"'/d' "$FILE_SETTINGS"
-	[[ $TOKEN_GITHUB != '' ]] && echo "TOKEN_GITHUB=$TOKEN_GITHUB" >>"$FILE_SETTINGS"
+	read -rsp "Github token: " TOKEN_GITHUB
+	echo
+	[[ $TOKEN_GITHUB != '' ]] && save_settings "TOKEN_GITHUB=$TOKEN_GITHUB"
 }
 
 git_save_user_github() {
-	#Remove user before save
-	github=$(awk '/USER_GITHUB/{print}' "$FILE_SETTINGS")
-
 	read -rp "Github user: " USER_GITHUB
-	[[ $github != '' && $USER_GITHUB != '' ]] && sed -i -e '/'"$github"'/d' "$FILE_SETTINGS"
-	[[ $USER_GITHUB != '' ]] && echo "USER_GITHUB=$USER_GITHUB" >>"$FILE_SETTINGS"
+	[[ $USER_GITHUB != '' ]] && save_settings "USER_GITHUB=$USER_GITHUB"
 }
 
 git_create_repo_github() {
-	TOKEN_GITHUB=$(awk '/TOKEN_GITHUB/{print $1}' "$FILE_SETTINGS" | sed 's/'TOKEN_GITHUB='//')
-	USER_GITHUB=$(awk '/USER_GITHUB/{print $1}' "$FILE_SETTINGS" | sed 's/'USER_GITHUB='//')
+	TOKEN_GITHUB=$(awk -F= '/^TOKEN_GITHUB=/{print $2}' "$FILE_SETTINGS")
+	USER_GITHUB=$(awk -F= '/^USER_GITHUB=/{print $2}' "$FILE_SETTINGS")
 
 	[[ $TOKEN_GITHUB == '' ]] && git_save_token_github || true
 	[[ $USER_GITHUB == '' ]] && git_save_user_github || true
 
 	if [[ $TOKEN_GITHUB && $USER_GITHUB ]]; then
-		#REPO_TYPE
 		ECHO_ENTER "Enter REPO_TYPE [default '1']"
 		ECHO_GREEN "1 - Private"
 		ECHO_GREEN "2 - Public"
 
 		REPO_TYPE=$(GET_USER_INPUT "select_one_of")
 
-		#REPO_NAME
 		REPO_NAME="$DOMAIN_NAME"
 
-		#REPO_TYPE
 		[[ $REPO_TYPE == 1 ]] && REPO_TYPE="private"
 		[[ $REPO_TYPE == 2 ]] && REPO_TYPE="public"
 
 		response=$(
-			curl -i -X POST https://api.github.com/user/repos \
-				-H "Authorization: token $TOKEN_GITHUB" \
+			curl -sS -o /dev/null -w "%{http_code}" -X POST https://api.github.com/user/repos \
+				-H "Authorization: Bearer $TOKEN_GITHUB" \
+				-H "Accept: application/vnd.github+json" \
 				-d @- <<EOF
 {
   "name": "$REPO_NAME",
   "description": "Project $REPO_NAME",
-  "$REPO_TYPE": "true"
+  "$REPO_TYPE": true
 }
 EOF
 		)
 
-		response="$(echo $response | awk -F'[][]' '{print $2}' | grep -Eo '("message": ".*")' | sed 's/"message"://g' || true)"
-
-		if [[ $response == "" ]]; then
+		if [[ $response == "201" || $response == "200" ]]; then
 			ECHO_SUCCESS "Github"
 
-			cd "$PROJECT_ROOT_DIR"
+			cd "$PROJECT_ROOT_DIR" || return 1
 
 			if [[ -d "${PWD}/.git" ]]; then
 				ECHO_YELLOW "Push Origin Master..."
-				git push -u origin master
+				git_push_origin_with_token "$TOKEN_GITHUB"
 			else
 				ECHO_YELLOW "Creating Repository..."
 
@@ -72,13 +61,13 @@ EOF
 				git add .
 				git commit -m "initial commit"
 				git branch -M master
-				git remote add origin https://${TOKEN_GITHUB}@github.com/$USER_GITHUB/$REPO_NAME.git
-				git push -u origin master
+				git remote add origin "https://github.com/${USER_GITHUB}/${REPO_NAME}.git"
+				git_push_origin_with_token "$TOKEN_GITHUB"
 			fi
 
 			cd ../../
 		else
-			ECHO_ERROR "Github: $response"
+			ECHO_ERROR "Github: HTTP $response"
 		fi
 	else
 		ECHO_ATTENTION "Please fill in your access information"
