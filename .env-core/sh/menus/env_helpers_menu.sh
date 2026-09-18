@@ -125,7 +125,7 @@ env_helpers_permisions_menu() {
 		ECHO_GREEN "2 - Set current dir to 775"
 		ECHO_GREEN "3 - Set all files to 644 recursively"
 		ECHO_GREEN "4 - Set all dirs to 755 recursively"
-		ECHO_GREEN "5 - sudo chmod -R 777 ."
+		ECHO_GREEN "5 - chmod ug+rwX recursively (current dir)"
 
 		actions=$(GET_USER_INPUT "select_one_of")
 
@@ -150,8 +150,8 @@ env_helpers_permisions_menu() {
 			ECHO_SUCCESS "All directories set to 755 recursively"
 			;;
 		5)
-			sudo chmod -R 777 .
-			ECHO_SUCCESS "sudo chmod -R 777 ."
+			sudo chmod -R ug+rwX .
+			ECHO_SUCCESS "Set ug+rwX recursively on $(pwd)"
 			;;
 		*)
 			ECHO_RED "Invalid option. Try again."
@@ -179,10 +179,9 @@ env_helpers_docker_menu() {
 			;;
 		1)
 			ECHO_YELLOW "Stopping and removing all containers..."
-			containers=$(docker ps -aq)
-			if [[ -n "$containers" ]]; then
-				docker stop $containers >/dev/null 2>&1 || true
-				docker rm $containers >/dev/null 2>&1 || true
+			if docker ps -aq | grep -q .; then
+				docker ps -aq | xargs docker stop >/dev/null 2>&1 || true
+				docker ps -aq | xargs docker rm >/dev/null 2>&1 || true
 				ECHO_GREEN "✅ All containers stopped and removed."
 			else
 				ECHO_CYAN "No containers found."
@@ -210,9 +209,8 @@ env_helpers_docker_menu() {
 			;;
 		4)
 			ECHO_YELLOW "Removing all Docker images..."
-			images=$(docker images -q)
-			if [[ -n "$images" ]]; then
-				docker rmi -f $images >/dev/null 2>&1 || true
+			if docker images -q | grep -q .; then
+				docker images -q | xargs docker rmi -f >/dev/null 2>&1 || true
 				ECHO_GREEN "✅ All images removed."
 			else
 				ECHO_CYAN "No images found."
