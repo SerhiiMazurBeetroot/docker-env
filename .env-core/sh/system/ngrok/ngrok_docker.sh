@@ -29,7 +29,7 @@ docker_ngrok_setup() {
 }
 
 docker_ngrok_start() {
-	if [ $NGINX_EXISTS -eq 1 ]; then
+	if [[ "${NGINX_EXISTS:-0}" -eq 1 ]]; then
 		docker_compose_runner "up -d" "$DIR_NGROK"
 		ECHO_SUCCESS "Ngrok started"
 	else
@@ -39,7 +39,7 @@ docker_ngrok_start() {
 }
 
 docker_ngrok_stop() {
-	if [ $NGINX_EXISTS -eq 1 ]; then
+	if [[ "${NGINX_EXISTS:-0}" -eq 1 ]]; then
 		docker_compose_runner "down" "$DIR_NGROK"
 		ECHO_SUCCESS "Ngrok container stopped"
 	else
@@ -49,7 +49,7 @@ docker_ngrok_stop() {
 }
 
 docker_ngrok_restart() {
-	if [ $NGINX_EXISTS -eq 1 ]; then
+	if [[ "${NGINX_EXISTS:-0}" -eq 1 ]]; then
 		docker_compose_runner "restart" "$DIR_NGROK"
 	else
 		ECHO_ERROR "Nginx container not running"
@@ -64,7 +64,8 @@ docker_ngrok_rebuild() {
 ngrok_save_token() {
 	ngrok_read_env
 
-	read -rp "Enter token: " NGROK_AUTH
+	read -rsp "Enter token: " NGROK_AUTH
+	echo
 
 	if [[ $NGROK_AUTH != '' ]]; then
 		sed -i "s/^NGROK_AUTH=.*$/NGROK_AUTH='$NGROK_AUTH'/g" "$NGROK_ENV_FILE"
@@ -74,7 +75,7 @@ ngrok_save_token() {
 
 ngrok_add_endpoint() {
 
-	[[ "$DOMAIN_NAME" == '' ]] && running_projects_list "======= Add new endpoint ======="
+	[[ -z "${DOMAIN_NAME:-}" ]] && running_projects_list "======= Add new endpoint ======="
 	if [[ $DOMAIN_NAME != '' ]]; then
 
 		if grep -q "name: ${DOMAIN_NAME}" "$NGROK_CONFIG_FILE"; then
@@ -100,7 +101,7 @@ ngrok_add_endpoint() {
 
 ngrok_delete_endpoint() {
 
-	[[ "$DOMAIN_NAME" == '' ]] && running_projects_list "======= Add new endpoint ======="
+	[[ -z "${DOMAIN_NAME:-}" ]] && running_projects_list "======= Add new endpoint ======="
 	if [[ $DOMAIN_NAME != '' ]]; then
 		if grep -q "name: ${DOMAIN_NAME}" "$NGROK_CONFIG_FILE"; then
 			sed -i "/# ${DOMAIN_FULL} START #/,/# ${DOMAIN_FULL} END #/d" "$NGROK_CONFIG_FILE"
@@ -116,5 +117,5 @@ ngrok_delete_endpoint() {
 }
 
 ngrok_read_env() {
-	source $NGROK_ENV_FILE
+	env_load_file "$NGROK_ENV_FILE"
 }

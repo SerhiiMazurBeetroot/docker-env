@@ -4,7 +4,7 @@
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
 tests_actions() {
-	if [[ $TEST_MODE ]]; then
+	if [[ -n "${TEST_MODE:-}" ]]; then
 		while true; do
 			EMPTY_LINE
 			ECHO_CYAN "======== TESTS actions ========"
@@ -19,7 +19,9 @@ tests_actions() {
 				system_menu
 				;;
 			1)
-				tests_create_all_projects
+				if ! tests_create_all_projects; then
+					ECHO_ERROR "Create-all tests finished with failures"
+				fi
 				;;
 			2)
 				tests_delete_all_projects
@@ -31,9 +33,3 @@ tests_actions() {
 	fi
 }
 
-echo_tests_actions() {
-	if [[ $ENV_MODE == 'development' ]]; then
-		TEST_MODE=true
-		ECHO_RED "10 - Run tests"
-	fi
-}

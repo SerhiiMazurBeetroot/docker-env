@@ -4,67 +4,44 @@
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
 tests_create_all_projects() {
+	local failed=()
+	local type
+
+	load_project_modules
+	tests_build_project_types
+
 	EMPTY_LINE
-	ECHO_WARN_YELLOW "Start testing: Create all projects"
+	ECHO_WARN_YELLOW "Start testing: Create all projects (${#TESTS_PROJECT_TYPES[@]} types)"
 
-	for ((i = 0; i < ${#AVAILABLE_PROJECTS[@]}; i++)); do
-		PROJECT_TYPE="${AVAILABLE_PROJECTS[i]}"
+	for type in "${TESTS_PROJECT_TYPES[@]}"; do
+		EMPTY_LINE
+		ECHO_CYAN "---- $type ----"
 
-		TEST_RUNNING=1
-		SETUP_TYPE=1
-		DOMAIN_NAME="$PROJECT_TYPE-test"
-		DOMAIN_FULL="dev.$PROJECT_TYPE-test.local"
-		get_project_dir "skip_question"
+		if tests_create_one_project "$type"; then
+			ECHO_SUCCESS "Create + health: $type"
+		else
+			failed+=("$type")
+		fi
 
-		INSTANCES_STATUS="remove"
-		docker_delete
-
-		case ${PROJECT_TYPE:-} in
-		"wordpress")
-			docker_create_wp
-			;;
-		"bedrock")
-			docker_create_bedrock
-			;;
-		"php")
-			docker_create_php
-			;;
-		"nextjs")
-			docker_create_nextjs
-			;;
-		"directus")
-			docker_create_directus
-			;;
-		"elasticsearch")
-			docker_create_elastic
-			;;
-		esac
-
-		TEST_RUNNING=0
-		unset_variables "PROJECT_TYPE"
+		tests_reset_project_globals
 	done
 
-	ECHO_SUCCESS "Testing: Create all projects"
+	tests_print_summary "Create all projects" "${failed[@]}"
 }
 
 tests_delete_all_projects() {
+	local type
+
+	load_project_modules
+	tests_build_project_types
+
 	EMPTY_LINE
-	ECHO_WARN_YELLOW "Start testing: Delete all projects"
+	ECHO_WARN_YELLOW "Start testing: Delete all projects (${#TESTS_PROJECT_TYPES[@]} types)"
 
-	for ((i = 0; i < ${#AVAILABLE_PROJECTS[@]}; i++)); do
-		PROJECT_TYPE="${AVAILABLE_PROJECTS[i]}"
-
-		TEST_RUNNING=1
-		SETUP_TYPE=1
-		DOMAIN_NAME="$PROJECT_TYPE-test"
-		DOMAIN_FULL="dev.$PROJECT_TYPE-test.local"
-		get_project_dir "skip_question"
-
-		INSTANCES_STATUS="remove"
-		docker_delete
-
-		TEST_RUNNING=0
-		unset_variables "PROJECT_TYPE"
+	for type in "${TESTS_PROJECT_TYPES[@]}"; do
+		tests_prepare_project "$type"
+		tests_teardown_project
+		tests_reset_project_globals
 	done
 
 	ECHO_SUCCESS "Testing: Delete all projects"

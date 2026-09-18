@@ -19,7 +19,7 @@ docker_nghost_setup() {
 }
 
 docker_nghost_start() {
-	if [ $NGINX_EXISTS -eq 0 ]; then
+	if [[ "${NGINX_EXISTS:-0}" -eq 0 ]]; then
 		docker_compose_runner "up -d" "$DIR_NGHOST"
 
 		ECHO_SUCCESS "NgHost started"
@@ -30,7 +30,7 @@ docker_nghost_start() {
 }
 
 docker_nghost_stop() {
-	if [ $NGINX_EXISTS -eq 1 ]; then
+	if [[ "${NGINX_EXISTS:-0}" -eq 1 ]]; then
 		docker_compose_runner "down" "$DIR_NGHOST"
 		ECHO_SUCCESS "NgHost container stopped"
 	else
@@ -40,7 +40,7 @@ docker_nghost_stop() {
 }
 
 docker_nghost_restart() {
-	if [ $NGINX_EXISTS -eq 1 ]; then
+	if [[ "${NGINX_EXISTS:-0}" -eq 1 ]]; then
 		docker_compose_runner "restart" "$DIR_NGHOST"
 	else
 		ECHO_ERROR "Nginx container not running"
