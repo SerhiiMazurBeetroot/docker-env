@@ -11,7 +11,7 @@ get_php_versions() {
 
 	PHP_VERSION="${PHP_LIST[1]}"
 
-	if [ ! $PHP_VERSION ]; then
+	if [[ -z "${PHP_VERSION:-}" ]]; then
 		if [[ ${QUESTION:-} == "default" ]]; then
 			PHP_VERSION="${PHP_LIST[1]}"
 		else
@@ -47,10 +47,11 @@ get_latest_wp_version() {
 }
 
 get_nodejs_version() {
+	QUESTION=${1:-}
 	NODE_VERSIONS=($(curl -sL 'https://raw.githubusercontent.com/nodejs/docker-node/main/versions.json' | grep -o '"[0-9]\+": {' | cut -d'"' -f2 | sed 's/: {//'))
 	NODE_LATEST_VERSION="${NODE_VERSIONS}"
 
-	if [ ! $NODE_VERSION ]; then
+	if [[ -z "${NODE_VERSION:-}" ]]; then
 		if [[ ${QUESTION:-} == "default" ]]; then
 			NODE_VERSION="${NODE_VERSIONS[1]}"
 		else
@@ -79,12 +80,13 @@ get_nodejs_version() {
 }
 
 get_directus_version() {
+	QUESTION=${1:-}
 	# shellcheck disable=SC2207
 	local LIST=()
 
 	LIST=($(curl -s 'https://api.github.com/repos/directus/directus/tags' | jq -r '.[].name | sub("^v"; "")' | head -n 3))
 
-	if [ -z "$DIRECTUS_VERSION" ]; then
+	if [[ -z "${DIRECTUS_VERSION:-}" ]]; then
 		if [[ ${QUESTION:-} == "default" ]]; then
 			DIRECTUS_VERSION="${LIST[1]}"
 		else
@@ -111,14 +113,16 @@ get_directus_version() {
 		fi
 	fi
 
+	[[ -n "${DIRECTUS_VERSION:-}" ]] || DIRECTUS_VERSION="10.8.2"
 }
 
 # Elastic, Logstash, Kibana
 get_elastic_version() {
+	QUESTION=${1:-}
 	# shellcheck disable=SC2207
 	LIST=($(curl -s 'https://hub.docker.com/v2/repositories/library/elasticsearch/tags/?page_size=10' | jq -r '.results[].name' | sort -Vr | head -n 3))
 
-	if [ -z "$ELASTIC_VERSION" ]; then
+	if [[ -z "${ELASTIC_VERSION:-}" ]]; then
 		if [[ ${QUESTION:-} == "default" ]]; then
 			ELASTIC_VERSION="${LIST[1]}"
 		else
@@ -173,7 +177,7 @@ get_nextjs_version() {
 
 	DEFAULT_VERSION="${LIST[0]}"
 
-	if [ -z "$NEXTJS_VERSION" ]; then
+	if [[ -z "${NEXTJS_VERSION:-}" ]]; then
 		if [[ $QUESTION == "default" ]]; then
 			NEXTJS_VERSION="$DEFAULT_VERSION"
 		else

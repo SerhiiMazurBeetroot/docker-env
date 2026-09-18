@@ -40,7 +40,7 @@ project_services_menu() {
 			;;
 		3)
 			ECHO_INFO "[exit] to exit the terminal"
-			[[ "$DOMAIN_NAME" == '' ]] && running_projects_list "======= CLI ======="
+			[[ -z "${DOMAIN_NAME:-}" ]] && running_projects_list "======= CLI ======="
 			docker exec -it "$DOCKER_CONTAINER_APP" sh
 			;;
 

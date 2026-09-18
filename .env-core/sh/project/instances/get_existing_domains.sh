@@ -61,5 +61,7 @@ get_existing_domains() {
 			ECHO_ERROR "Sites don't exists"
 			main_actions
 		fi
+	elif ! has_project_paths 2>/dev/null; then
+		reload_project_context
 	fi
 }

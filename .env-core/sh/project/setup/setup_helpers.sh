@@ -13,13 +13,19 @@ get_domain_name() {
 		done
 
 		# Remove non printing chars from DOMAIN_NAME
-		DOMAIN_NAME=$(echo $DOMAIN_NAME | tr -dc '[[:print:]]' | tr -d ' ' | tr -d '[A' | tr -d '[C' | tr -d '[B' | tr -d '[D')
+		DOMAIN_NAME=$(echo "$DOMAIN_NAME" | tr -dc '[[:print:]]' | tr -d ' ' | tr -d '[A' | tr -d '[C' | tr -d '[B' | tr -d '[D')
 
 		# Replace "_" to "-"
-		DOMAIN_NAME=$(echo $DOMAIN_NAME | sed 's/_/-/g')
+		DOMAIN_NAME=$(echo "$DOMAIN_NAME" | sed 's/_/-/g')
 
 		# Remove subdomain
-		DOMAIN_NAME=$(echo ${DOMAIN_NAME} | cut -d . -f 1)
+		DOMAIN_NAME=$(echo "${DOMAIN_NAME}" | cut -d . -f 1)
+
+		if ! is_safe_hostname "$DOMAIN_NAME"; then
+			ECHO_ERROR "Invalid domain name. Use letters, numbers, dots, and hyphens only."
+			DOMAIN_NAME=""
+			return 1
+		fi
 	fi
 }
 
@@ -42,7 +48,7 @@ check_domain_exists() {
 
 	DOMAIN_CHECK=$(instances_get domain_name)
 
-	if [[ "$DOMAIN_NAME" == "$DOMAIN_CHECK" ]]; then
+	if [[ "${DOMAIN_NAME:-}" == "$DOMAIN_CHECK" ]]; then
 		DOMAIN_EXISTS=1
 	else
 		DOMAIN_EXISTS=0
@@ -50,12 +56,31 @@ check_domain_exists() {
 }
 
 
-unset_variables() {
-	local vars=${1:-}
+# Reset a session variable to empty (never unset — nounset-safe).
+reset_session_var() {
+	local name="$1"
 
-	if [[ $TEST_RUNNING -ne 1 ]]; then
-		unset DOMAIN_NAME DB_NAME TABLE_PREFIX PHP_VERSION MULTISITE EMPTY_CONTENT NODE_VERSIONS SETUP_ACTION DOMAIN_MAIL $vars
+	is_safe_ident "$name" || return 1
+	printf -v "$name" '%s' ''
+	export "$name"
+}
+
+# Clear wizard / menu session state. Prefer this over bare unset under nounset.
+unset_variables() {
+	local extra="${1:-}"
+	local name
+
+	if [[ ${TEST_RUNNING:-0} -eq 1 ]]; then
+		return 0
 	fi
+
+	for name in DOMAIN_NAME DB_NAME TABLE_PREFIX PHP_VERSION MULTISITE EMPTY_CONTENT SETUP_ACTION DOMAIN_MAIL; do
+		reset_session_var "$name"
+	done
+
+	for name in $extra; do
+		[[ -n "$name" ]] && reset_session_var "$name"
+	done
 }
 
 get_project_type() {
@@ -65,7 +90,7 @@ get_project_type() {
 }
 
 get_compose_project_name() {
-	if [ -n "$DOMAIN_FULL" ]; then
+	if [[ -n "${DOMAIN_FULL:-}" ]]; then
 		COMPOSE_PROJECT_NAME=$(echo "$DOMAIN_FULL" | sed "s/[^a-zA-Z0-9_\-]/_/g; s/^-//; s/-$/_/; s/-/_/g; s/[^a-zA-Z0-9_\-]//g; s/^$/none/")
 	fi
 }
@@ -87,7 +112,7 @@ delete_site_data() {
 }
 
 randpassword() {
-	WP_PASSWORD=$(LC_CTYPE=C tr -dc A-Za-z0-9_\!\@\#\$\%\^\&\*\(\)-+= </dev/urandom | head -c 20) || true
+	WP_PASSWORD=$(LC_CTYPE=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c 20) || true
 }
 
 git_clone_templates_files() {

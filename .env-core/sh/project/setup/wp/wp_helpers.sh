@@ -41,7 +41,12 @@ wp_composer_package() {
 		wp_get_default_theme
 	fi
 
-	docker exec -it "$DOCKER_CONTAINER_APP" bash -l -c "cd ./wp-content/themes/$WP_DEFAULT_THEME && composer require $package" || true
+	if [[ ! "$package" =~ ^[A-Za-z0-9._/-]+ ]]; then
+		ECHO_ERROR "Invalid composer package"
+		return 1
+	fi
+
+	docker exec -it "$DOCKER_CONTAINER_APP" bash -l -c "cd ./wp-content/themes/$WP_DEFAULT_THEME && composer require -- $(printf '%q' "$package")" || true
 }
 
 wp_get_default_theme() {
@@ -78,7 +83,33 @@ wp_npm_install() {
 	fi
 }
 
+wait_for_wp_core() {
+	local marker="/var/www/html/wp-includes/version.php"
+
+	if [[ "${PROJECT_TYPE:-}" == "bedrock" ]]; then
+		marker="/var/www/html/web/wp/wp-includes/version.php"
+	fi
+
+	EMPTY_LINE
+	ECHO_YELLOW "Waiting for WordPress core at $marker"
+
+	docker exec -i "$DOCKER_CONTAINER_APP" sh -c "
+		i=0
+		until [ -f $marker ]; do
+			i=\$((i + 1))
+			if [ \$i -gt 120 ]; then
+				echo 'Timeout waiting for WordPress files ($marker)' >&2
+				exit 1
+			fi
+			echo 'WordPress files not ready yet...' >&2
+			sleep 2
+		done
+	"
+}
+
 wp_core_install() {
+	wait_for_wp_core || return 1
+
 	ECHO_WARN_YELLOW "wp_core_install..."
 	if [[ "yes" = "$MULTISITE" || "2" = "$MULTISITE" ]]; then
 		docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'wp core multisite-install --url=https://'$DOMAIN_FULL' --title='$DOMAIN_NAME' --admin_user='$WP_USER' --admin_password="'$WP_PASSWORD'" --admin_email=example@example.com --skip-email --allow-root'

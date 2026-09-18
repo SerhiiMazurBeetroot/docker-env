@@ -40,7 +40,7 @@ create_nextjs_app() {
 	if [[ $DOMAIN_EXISTS == 0 ]]; then
 		get_project_dir "$@"
 		set_custom_args
-		check_data_before_continue_callback create_nextjs_app
+		check_data_before_continue_callback create_nextjs_app || return 1
 
 		ECHO_INFO "Installing [$DOMAIN_FULL] v.$NEXTJS_VERSION locally..."
 
@@ -51,44 +51,43 @@ create_nextjs_app() {
 		get_project_dir "skip_question"
 
 		# Create DIR
-		mkdir -p $PROJECT_ROOT_DIR
+		mkdir -p "$PROJECT_ROOT_DIR"
 
 		install_nextjs
 
 		print_to_file_instances
 	else
 		ECHO_ERROR "Site already exists"
-		docker_create_nextjs "$@"
+		return 1
 	fi
 
 }
 
 install_nextjs() {
 	cd "$PROJECT_ROOT_DIR" || {
-		echo "❌ Cannot cd into $PROJECT_ROOT_DIR"
+		ECHO_ERROR "Cannot cd into $PROJECT_ROOT_DIR"
 		return 1
 	}
 
 	MAJOR_VERSION=$(echo "$NEXTJS_VERSION" | cut -d'.' -f1)
 
-	local CMD="npx create-next-app@${NEXTJS_VERSION} . --js --eslint --src-dir --import-alias=\"@/*\""
+	local npx_cmd=(npx "create-next-app@${NEXTJS_VERSION}" . --js --eslint --src-dir --import-alias="@/*")
 
 	if [[ "$MAJOR_VERSION" -ge 15 ]]; then
 		# > 15
-		CMD+=" --tailwind --app --turbopack"
+		npx_cmd+=(--tailwind --app --turbopack)
 	elif [[ "$MAJOR_VERSION" -eq 14 ]]; then
 		# 14
-		CMD+=" --tailwind --app"
+		npx_cmd+=(--tailwind --app)
 	else
 		# 13 or older
-		CMD+=" --tailwind"
+		npx_cmd+=(--tailwind)
 	fi
 
 	# Run the assembled command
-	eval "$CMD"
+	"${npx_cmd[@]}"
 
 	npm i
 
 	cd - >/dev/null || return 1
-
 }

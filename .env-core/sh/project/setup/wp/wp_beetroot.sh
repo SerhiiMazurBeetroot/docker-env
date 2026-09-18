@@ -82,7 +82,7 @@ edit_file_env_setup_beetroot() {
 edit_file_compose_setup_beetroot() {
 	#Replace Volumes from 'wp-content' to 'wp-core' files SETUP_TYPE=beetroot
 	if [[ "$SETUP_TYPE" == 3 ]]; then
-		sed -i -e 's/wp-content\///g' $PROJECT_DOCKER_DIR/docker-compose.yml
+		sed -i -e 's/wp-content\///g' "$PROJECT_DOCKER_DIR/docker-compose.yml"
 
 		docker_rebuild
 	fi

@@ -27,10 +27,10 @@ wp_multisite_convert() {
 }
 
 wp_multisite_htaccess() {
-	containerId=$(docker inspect -f '{{.Id}}' $DOCKER_CONTAINER_APP)
-	docker cp $PROJECT_DOCKER_DIR/htaccess.multisite $containerId:/var/www/html/.htaccess
+	containerId=$(docker inspect -f '{{.Id}}' "$DOCKER_CONTAINER_APP")
+	docker cp "$PROJECT_DOCKER_DIR/htaccess.multisite" "$containerId:/var/www/html/.htaccess"
 }
 
 wp_multisite_env() {
-	sed -i -e 's/WP_ALLOW_MULTISITE=0/WP_ALLOW_MULTISITE=1/g' $PROJECT_DOCKER_DIR/.env
+	sed -i -e 's/WP_ALLOW_MULTISITE=0/WP_ALLOW_MULTISITE=1/g' "$PROJECT_DOCKER_DIR/.env"
 }

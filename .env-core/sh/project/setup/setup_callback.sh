@@ -4,6 +4,8 @@
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
 check_data_before_continue_callback() {
+	local restart_fn="${1:-}"
+
 	EMPTY_LINE
 	ECHO_INFO "Check everything before proceeding:"
 
@@ -14,15 +16,19 @@ check_data_before_continue_callback() {
 
 		case $yn in
 		[Yy]*)
-			break
+			return 0
 			;;
 		[Nn]*)
 			ECHO_ERROR "Enter correct information"
 			unset_variables
 
-			# Run next function again
-			($1)
-			break
+			# Same-shell restart (not ($1) — that is a subshell, so parent
+			# create would continue and run the install steps twice).
+			# Caller must `|| return` so this frame does not continue after restart.
+			if [[ -n "$restart_fn" ]]; then
+				"$restart_fn"
+			fi
+			return 1
 			;;
 
 		*) echo "Please answer [y/n]" ;;
@@ -47,52 +53,43 @@ setup_installation_type_callback() {
 			main_actions
 			;;
 		1)
-			get_domain_name
-			check_domain_exists
-
-			if [[ $DOMAIN_EXISTS == 0 ]]; then
-				get_project_dir "$@"
-				set_project_args
-			else
-				ECHO_ERROR "Site already exists"
-
-				# Run next function again
-				($1)
+			if ! _setup_require_new_domain; then
+				continue
 			fi
-
-			break
+			get_project_dir "$@"
+			set_project_args
+			return 0
 			;;
 		2)
-			get_domain_name
-			check_domain_exists
-
-			if [[ $DOMAIN_EXISTS == 0 ]]; then
-				get_project_dir "$@"
-				set_custom_args
-			else
-				ECHO_ERROR "Site already exists"
-
-				# Run next function again
-				($1)
+			if ! _setup_require_new_domain; then
+				continue
 			fi
-
-			break
+			get_project_dir "$@"
+			set_custom_args
+			return 0
 			;;
 		3)
-			get_domain_name
-			check_domain_exists
-
-			if [[ $DOMAIN_EXISTS == 0 ]]; then
-				wp_beetroot_args "$@"
-			else
-				ECHO_ERROR "Site already exists"
-
-				# Run next function again
-				($1)
+			if ! _setup_require_new_domain; then
+				continue
 			fi
-
-			break
+			wp_beetroot_args "$@"
+			return 0
 			;;
 		esac
 	done
+}
+
+_setup_require_new_domain() {
+	get_domain_name
+	check_domain_exists
+
+	if [[ $DOMAIN_EXISTS == 0 ]]; then
+		return 0
+	fi
+
+	ECHO_ERROR "Site already exists"
+	reset_session_var DOMAIN_NAME
+	reset_session_var DOMAIN_FULL
+	DOMAIN_EXISTS=0
+	return 1
 }

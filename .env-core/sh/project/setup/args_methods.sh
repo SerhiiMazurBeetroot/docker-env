@@ -127,9 +127,18 @@ set_custom_args() {
 		esac
 
 		if [[ "$skip_user_input" != true ]]; then
-			# Print user choice
+			if ! is_safe_ident "$arg"; then
+				echo "Unsupported argument: $arg"
+				skip_user_input=false
+				continue
+			fi
 
-			read -rp "$(ECHO_ENTER "Enter $arg [default '$default_value']")" user_input
+			if [[ "$arg" == "WP_PASSWORD" ]]; then
+				read -rsp "$(ECHO_ENTER "Enter $arg [default generated]")" user_input
+				echo
+			else
+				read -rp "$(ECHO_ENTER "Enter $arg [default '$default_value']")" user_input
+			fi
 			if [[ -n "$user_input" ]]; then
 				printf -v "$arg" '%s' "$user_input"
 			else
@@ -154,13 +163,9 @@ set_project_args() {
 			TABLE_PREFIX=${TABLE_PREFIX:-"wp_"}
 			;;
 		'WP_VERSION')
-			[[ "${WP_VERSION:-}" == '' ]] && get_latest_wp_version
-			if [[ $WP_VERSION ]]; then
-				true
-			elif [[ -z ${WP_VERSION:-} ]]; then
-				WP_VERSION=$WP_LATEST_VER
-			else
-				echo "WordPress not supported, please check version"
+			if [[ -z "${WP_VERSION:-}" ]]; then
+				get_latest_wp_version
+				WP_VERSION="${WP_LATEST_VER:-}"
 			fi
 			;;
 		'WP_USER')
@@ -169,7 +174,7 @@ set_project_args() {
 		'WP_PASSWORD')
 			[[ ${passw:-} == '' ]] && randpassword
 
-			if [[ ! "$passw" =~ [1-3] ]]; then
+			if [[ ! "${passw:-}" =~ [1-3] ]]; then
 				WP_PASSWORD=1
 			elif [[ "$passw" -eq 1 ]]; then
 				WP_PASSWORD=1
@@ -184,7 +189,7 @@ set_project_args() {
 				EMPTY_CONTENT="no"
 			elif [[ "$EMPTY_CONTENT" -eq 2 ]]; then
 				EMPTY_CONTENT="yes"
-			elif [[ $EMPTY_CONTENT == '' ]]; then
+			elif [[ -z "${EMPTY_CONTENT:-}" ]]; then
 				EMPTY_CONTENT="no"
 			fi
 			;;
@@ -195,7 +200,7 @@ set_project_args() {
 				MULTISITE="no"
 			elif [[ "$MULTISITE" -eq 2 ]]; then
 				MULTISITE="yes"
-			elif [[ $MULTISITE == '' ]]; then
+			elif [[ -z "${MULTISITE:-}" ]]; then
 				MULTISITE="no"
 			fi
 			;;
@@ -239,13 +244,18 @@ get_project_dir() {
 		fi
 	fi
 
-	[[ $DOMAIN_FULL == '' ]] && DOMAIN_FULL="$DOMAIN_NAME_DEFAULT"
+	[[ -z "${DOMAIN_FULL:-}" ]] && DOMAIN_FULL="$DOMAIN_NAME_DEFAULT"
 
 	# Remove non printing chars from DOMAIN_FULL
-	DOMAIN_FULL=$(echo $DOMAIN_FULL | tr -dc '[[:print:]]' | tr -d ' ' | tr -d '[A' | tr -d '[C' | tr -d '[B' | tr -d '[D')
+	DOMAIN_FULL=$(echo "$DOMAIN_FULL" | tr -dc '[[:print:]]' | tr -d ' ' | tr -d '[A' | tr -d '[C' | tr -d '[B' | tr -d '[D')
 
 	# Replace "_" to "-"
-	DOMAIN_FULL=$(echo $DOMAIN_FULL | sed 's/_/-/g')
+	DOMAIN_FULL=$(echo "$DOMAIN_FULL" | sed 's/_/-/g')
+
+	if ! is_safe_hostname "$DOMAIN_FULL"; then
+		ECHO_ERROR "Invalid DOMAIN_FULL. Use letters, numbers, dots, and hyphens only."
+		return 1
+	fi
 
 	set_project_vars
 }
