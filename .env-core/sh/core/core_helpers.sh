@@ -24,6 +24,8 @@ check_instances_file_exists() {
 }
 
 print_to_file_instances() {
+	load_project_modules
+
 	if [[ $PORT && $DOMAIN_NAME ]]; then
 		[[ $PORT_FRONT == "" ]] && PORT_FRONT=0
 
@@ -42,6 +44,32 @@ print_list() {
 		option="${OPTION_LIST[i]}"
 		ECHO_KEY_VALUE "[$index]" "$option"
 	done
+}
+
+sed_inplace() {
+	local expr="$1"
+	local file="${2:-}"
+
+	if [[ -z "$file" ]]; then
+		case "$(uname)" in
+		Darwin)
+			sed -i '' "$@"
+			;;
+		*)
+			sed -i "$@"
+			;;
+		esac
+		return
+	fi
+
+	case "$(uname)" in
+	Darwin)
+		sed -i '' "$expr" "$file"
+		;;
+	*)
+		sed -i "$expr" "$file"
+		;;
+	esac
 }
 
 update_core_env_file() {
