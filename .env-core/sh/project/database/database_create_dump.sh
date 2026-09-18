@@ -7,23 +7,23 @@ database_create_dump() {
 	env_file_load
 	get_mysql_cmd
 
-	mkdir -p $PROJECT_DATABASE_DIR/temp
+	mkdir -p "$PROJECT_DATABASE_DIR/temp"
 
 	# Save old files to "/temp" before deleting
-	for files in $PROJECT_DATABASE_DIR/*.sql; do
+	for files in "$PROJECT_DATABASE_DIR"/*.sql; do
 		if [ -e "$files" ]; then
 			ECHO_TEXT "There are old files to delete"
-			mv $PROJECT_DATABASE_DIR/*.sql $PROJECT_DATABASE_DIR/temp
+			mv "$PROJECT_DATABASE_DIR"/*.sql "$PROJECT_DATABASE_DIR/temp"
 			break
 		fi
 	done
 
-	file=$PROJECT_DATABASE_DIR/$DUMP_FILE
+	file="$PROJECT_DATABASE_DIR/$DUMP_FILE"
 
 	# Create dump
 	case $DB_TYPE in
 	"MYSQL")
-		docker exec -i "$DOCKER_CONTAINER_DB" sh -c "$MYSQL_DUMP_CMD -uroot -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE" >"$file"
+		docker exec -e MYSQL_PWD="${MYSQL_ROOT_PASSWORD:-}" -i "$DOCKER_CONTAINER_DB" sh -c "$MYSQL_DUMP_CMD -uroot $MYSQL_DATABASE" >"$file"
 		;;
 	"POSTGRES")
 		docker exec -i "$DOCKER_CONTAINER_DB" pg_dump -U "$DB_USER" -d "$DB_NAME" -F t >"$file"
@@ -32,11 +32,11 @@ database_create_dump() {
 
 	# Check if new backup was created
 	if [ -e "$file" ]; then
-		rm -rf $PROJECT_DATABASE_DIR/temp
+		rm -rf "$PROJECT_DATABASE_DIR/temp"
 		ECHO_SUCCESS "Backup done $(date +%Y'-'%m'-'%d' '%H':'%M)"
 	else
 		ECHO_ERROR "DB dump not created"
-		mv $PROJECT_DATABASE_DIR/temp/*.sql $PROJECT_DATABASE_DIR/
-		rm -rf $PROJECT_DATABASE_DIR/temp
+		mv "$PROJECT_DATABASE_DIR/temp"/*.sql "$PROJECT_DATABASE_DIR/"
+		rm -rf "$PROJECT_DATABASE_DIR/temp"
 	fi
 }

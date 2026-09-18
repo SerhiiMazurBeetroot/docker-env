@@ -31,21 +31,21 @@ database_import() {
 						# Drop DB
 						case $DB_TYPE in
 						"MYSQL")
-							docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "$MYSQL_ADMIN_CMD drop $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
+							docker exec -e MYSQL_PWD="${MYSQL_ROOT_PASSWORD:-}" -i "$DOCKER_CONTAINER_DB" bash -l -c "$MYSQL_ADMIN_CMD drop $DB_NAME -f -uroot"
 							;;
 						esac
 
 						# Create empty DB
 						case $DB_TYPE in
 						"MYSQL")
-							docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "$MYSQL_ADMIN_CMD create $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
+							docker exec -e MYSQL_PWD="${MYSQL_ROOT_PASSWORD:-}" -i "$DOCKER_CONTAINER_DB" bash -l -c "$MYSQL_ADMIN_CMD create $DB_NAME -f -uroot"
 							;;
 						esac
 
 						# Import DB
 						case $DB_TYPE in
 						"MYSQL")
-							docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "$MYSQL_CMD -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < /docker-entrypoint-initdb.d/dump.sql"
+							docker exec -e MYSQL_PWD="${MYSQL_ROOT_PASSWORD:-}" -i "$DOCKER_CONTAINER_DB" bash -l -c "$MYSQL_CMD -uroot \"$MYSQL_DATABASE\" < /docker-entrypoint-initdb.d/dump.sql"
 							;;
 						"POSTGRES")
 							docker exec -i "$DOCKER_CONTAINER_DB" bash -c "$(declare -f database_import_postgres); database_import_postgres $DB_NAME $DB_USER"
@@ -64,7 +64,7 @@ database_import() {
 							# Drop DB
 							case $DB_TYPE in
 							"MYSQL")
-								docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "$MYSQL_ADMIN_CMD drop $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
+								docker exec -e MYSQL_PWD="${MYSQL_ROOT_PASSWORD:-}" -i "$DOCKER_CONTAINER_DB" bash -l -c "$MYSQL_ADMIN_CMD drop $DB_NAME -f -uroot"
 								;;
 							esac
 						fi
@@ -73,7 +73,7 @@ database_import() {
 							# Create empty DB
 							case $DB_TYPE in
 							"MYSQL")
-								docker exec -i "$DOCKER_CONTAINER_DB" bash -l -c "$MYSQL_ADMIN_CMD create $DB_NAME -f -uroot -p$MYSQL_ROOT_PASSWORD"
+								docker exec -e MYSQL_PWD="${MYSQL_ROOT_PASSWORD:-}" -i "$DOCKER_CONTAINER_DB" bash -l -c "$MYSQL_ADMIN_CMD create $DB_NAME -f -uroot"
 								;;
 							esac
 						fi
