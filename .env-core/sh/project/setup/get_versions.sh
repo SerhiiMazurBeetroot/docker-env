@@ -6,8 +6,14 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 get_php_versions() {
 	QUESTION=${1:-}
 	local PHP_LIST=()
+	local preset="${PHP_VERSION:-}"
 
 	PHP_LIST=($(curl -fs 'https://www.php.net/releases/index.php?json' | jq -r '.[].supported_versions[]' | sort -Vr | uniq))
+
+	if [[ -n "$preset" ]]; then
+		PHP_VERSION="$preset"
+		return 0
+	fi
 
 	PHP_VERSION="${PHP_LIST[1]}"
 

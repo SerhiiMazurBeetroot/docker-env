@@ -89,7 +89,7 @@ set_project_vars() {
 	"elasticsearch")
 		DOMAIN_LOGSTASH="$DOMAIN_FULL.logstash"
 		DOMAIN_KIBANA="$DOMAIN_FULL.kibana"
-		DOCKER_CONTAINER_APP="$DOMAIN_NAME-elastic"
+		DOCKER_CONTAINER_APP="$DOMAIN_NAME-elasticsearch"
 		HOST_EXTRA="$DOMAIN_LOGSTASH $DOMAIN_KIBANA"
 		;;
 	"laravel")
@@ -106,8 +106,4 @@ set_project_vars() {
 		return 1
 		;;
 	esac
-
-	if [ "${HOST_EXTRA:-}" ]; then
-		HOST_EXTRA="$DOMAIN_DB $DOMAIN_MAIL"
-	fi
 }

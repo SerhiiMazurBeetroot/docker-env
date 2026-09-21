@@ -28,7 +28,7 @@ fix_permissions_wp() {
 		docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'chown -R www-data:www-data /var/www/html/'
 		docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'chmod -R ug+rwX /var/www/html/'
 	else
-		ECHO_ERROR "Docker container doesn't exist [fix_permissions_wp] [$PROJECT_ROOT_DIR]"
+		ECHO_YELLOW "Skipping container permissions — no running app container"
 	fi
 
 	if [[ $OSTYPE == "linux" ]]; then
