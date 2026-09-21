@@ -11,6 +11,7 @@ system_menu() {
 		ECHO_CYAN "======== System  ======="
 		ECHO_YELLOW "0 - Return to main menu"
 		ECHO_GREEN "1 - Nginx"
+		ECHO_KEY_VALUE "3 - Web UI" "$(webui_status_label)"
 		# ECHO_GREEN "2 - Ngrok"
 		ECHO_KEY_VALUE "9 - Settings" "$ENV_UPDATES"
 
@@ -27,6 +28,9 @@ system_menu() {
 			;;
 		2)
 			# ngrok_menu
+			;;
+		3)
+			webui_menu
 			;;
 		9)
 			env_settings
