@@ -43,6 +43,7 @@ docker_compose_unset_interpolation_env() {
 		MONGODB_LOCAL_PORT MONGO_EXPRESS_PORT NODE_VERSION NEXTJS_VERSION \
 		DIRECTUS_VERSION ELASTIC_VERSION ELASTIC_PORT KIBANA_PORT LOGSTASH_PORT \
 		MYSQL_ROOT_PASSWORD MYSQL_DATABASE MARIADB_ROOT_PASSWORD MARIADB_DATABASE \
+		DB_NAME \
 		2>/dev/null || true
 }
 
@@ -59,12 +60,12 @@ docker_compose_runner() {
 		return 1
 	fi
 
-	# Subshell: unset only affects compose interpolation; parent keeps DOMAIN_NAME etc.
+	# Subshell: unset empty session exports so Compose reads the project .env.
+	# Parent keeps DOMAIN_NAME / paths for later docker_restart in the same shell.
 	# shellcheck disable=SC2086
 	(
-		
-		$DOCKER_COMPOSE_CMD --project-directory "$DIR_DOCKER" $COMMAND
 		docker_compose_unset_interpolation_env
+		$DOCKER_COMPOSE_CMD --project-directory "$DIR_DOCKER" $COMMAND
 	)
 }
 
@@ -82,8 +83,8 @@ docker_compose_output() {
 
 	# shellcheck disable=SC2086
 	(
-		$DOCKER_COMPOSE_CMD --project-directory "$DIR_DOCKER" $COMMAND
 		docker_compose_unset_interpolation_env
+		$DOCKER_COMPOSE_CMD --project-directory "$DIR_DOCKER" $COMMAND
 	)
 }
 

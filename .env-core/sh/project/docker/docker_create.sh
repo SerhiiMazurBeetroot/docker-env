@@ -20,7 +20,7 @@ docker_create_require_new_site() {
 
 # Optional flags (unset at end of docker_create_project):
 #   CREATE_TEMPLATE=clone|copy|wpnextjs|directus_nextjs|nodejs
-#   CREATE_COMPOSE_CMD="up -d --build"
+#   CREATE_COMPOSE_CMD="up -d"
 #   CREATE_COMPOSE_DIR=
 #   CREATE_ENV_FILE=
 #   CREATE_SYNC_PORT_FRONT=1
@@ -44,7 +44,7 @@ docker_create_project() {
 	fi
 
 	get_project_dir "skip_question"
-	print_to_file_instances
+	print_to_file_instances "building"
 	mkdir -p "$PROJECT_ROOT_DIR"
 
 	case "${CREATE_TEMPLATE:-clone}" in
@@ -81,8 +81,12 @@ docker_create_project() {
 	ECHO_TEXT "Starting Container"
 	EMPTY_LINE
 
-	docker_compose_runner "${CREATE_COMPOSE_CMD:-up -d --build}" "${CREATE_COMPOSE_DIR:-}"
+	if ! docker_compose_runner "${CREATE_COMPOSE_CMD:-up -d}" "${CREATE_COMPOSE_DIR:-}"; then
+		instances_set_status "inactive"
+		return 1
+	fi
 
+	instances_set_status "active"
 	ECHO_SUCCESS "Containers Started"
 
 	setup_hosts_file add

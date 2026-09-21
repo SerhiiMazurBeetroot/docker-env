@@ -13,9 +13,13 @@ docker_create_elastic() {
 	set_project_args
 	check_data_before_continue_callback docker_create_elastic || return 1
 
+	# Compose already brought the stack up; bouncing Elasticsearch immediately
+	# fails health and docker_restart's "container exists" check.
+	CREATE_SKIP_DOCKER_RESTART=1
 	docker_create_project docker_create_elastic_after
 }
 
 docker_create_elastic_after() {
 	edit_file_gitignore
+	docker_nginx_restart || true
 }
