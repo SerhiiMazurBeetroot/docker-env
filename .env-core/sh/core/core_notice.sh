@@ -42,7 +42,7 @@ notice_project_urls() {
 
 		notice_project_ips "$OPEN_LINK"
 
-		if [[ "$OPEN_LINK" == 'open' ]]; then
+		if [[ "$OPEN_LINK" == 'open' && ${TEST_RUNNING:-0} -ne 1 ]]; then
 			if command -v google-chrome &>/dev/null; then
 				google-chrome "https://$DOMAIN_FULL" || true
 			else

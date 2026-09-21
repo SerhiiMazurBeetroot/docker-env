@@ -24,12 +24,13 @@ check_instances_file_exists() {
 }
 
 print_to_file_instances() {
+	local status="${1:-active}"
 	load_project_modules
 
 	if [[ $PORT && $DOMAIN_NAME ]]; then
 		[[ $PORT_FRONT == "" ]] && PORT_FRONT=0
 
-		instances_append "$PORT | active | $DOMAIN_NAME | $DOMAIN_FULL | $DB_NAME | $DB_TYPE | $PROJECT_TYPE | $PORT_FRONT |"
+		instances_append "$PORT | ${status} | $DOMAIN_NAME | $DOMAIN_FULL | $DB_NAME | $DB_TYPE | $PROJECT_TYPE | $PORT_FRONT |"
 	fi
 }
 

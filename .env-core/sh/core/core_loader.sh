@@ -17,7 +17,7 @@ source_files_in() {
 				continue
 			fi
 
-			if [[ -f "$file" && -r "$file" ]]; then
+			if [[ -f "$file" && -r "$file" && "$base" == *.sh ]]; then
 				. "$file"
 			elif [[ -d "$file" ]]; then
 				source_files_in "$file" "$skip_dir"

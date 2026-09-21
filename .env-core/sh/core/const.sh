@@ -2,13 +2,19 @@
 
 # shellcheck disable=SC1091
 export DIR_DATA="$ENV_DIR/.env-core/data"
-export DIR_NGINX="$ENV_DIR/.env-core/nginx" # reassign [env_migration]
 export DIR_SYSTEM="$ENV_DIR/.env-core/system"
+export DIR_NGINX="$DIR_SYSTEM/nginx"
 
 export FILE_SETTINGS="$DIR_DATA/settings.log"
 export FILE_INSTANCES="$DIR_DATA/instances.log"
 export FILE_DOCKER_HUB="$DIR_DATA/dockerHub.log"
 export FILE_ENV="$DIR_SYSTEM/.env"
+export FILE_WEBUI_PID="$DIR_DATA/webui.pid"
+export FILE_WEBUI_LOG="$DIR_DATA/webui.log"
+
+export WEBUI_HOST="127.0.0.1"
+export WEBUI_PORT="7777"
+export WEBUI_CONTAINER="nginx-webui"
 
 export ALIAS_CMD="docker-env"
 export GITHUB_USER="SerhiiMazurBeetroot"
