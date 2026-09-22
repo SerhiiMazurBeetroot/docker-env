@@ -2,6 +2,7 @@ import "./globals.css";
 import { DisplayProvider } from "./components/display/DisplayProvider";
 import { ThemeProvider } from "./components/theme/ThemeProvider";
 import { LogSettingsProvider } from "./components/logs/LogSettingsProvider";
+import { ConsoleSettingsProvider } from "./components/console/ConsoleSettingsProvider";
 import { SnapshotProvider } from "./components/snapshot/SnapshotProvider";
 
 export const metadata = {
@@ -33,7 +34,9 @@ export default function RootLayout({ children }) {
 				<ThemeProvider>
 					<DisplayProvider>
 						<LogSettingsProvider>
-							<SnapshotProvider>{children}</SnapshotProvider>
+							<ConsoleSettingsProvider>
+								<SnapshotProvider>{children}</SnapshotProvider>
+							</ConsoleSettingsProvider>
 						</LogSettingsProvider>
 					</DisplayProvider>
 				</ThemeProvider>

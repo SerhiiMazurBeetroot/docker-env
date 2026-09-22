@@ -5,6 +5,7 @@ import { appendCliLog, readConsoleOpen, readSse, visibleLog, writeConsoleOpen } 
 import { filterProjects, projectStats, projectTypes, bulkTargets, dozzleBaseUrl, dozzleContainerUrl, readProjectFilter, readProjectQuery, writeProjectFilter, writeProjectQuery } from "../../lib/projects";
 import { expectFromAction, pendingResolved } from "../../lib/waiting";
 import { useSnapshot } from "../snapshot/SnapshotProvider";
+import { useConsoleSettings } from "../console/ConsoleSettingsProvider";
 import { useDisplay } from "../display/DisplayProvider";
 import AppHeader from "../layout/AppHeader";
 import Console from "./Console";
@@ -17,6 +18,7 @@ import SystemSection from "./SystemSection";
 export default function Dashboard() {
 	const { projects, system, error } = useSnapshot();
 	const { density } = useDisplay();
+	const { autoOpen } = useConsoleSettings();
 	const [busy, setBusy] = useState({});
 	const [pending, setPending] = useState({});
 	const [log, setLog] = useState("");
@@ -148,7 +150,7 @@ export default function Dashboard() {
 				return next;
 			});
 		}
-		setLogOpen(true);
+		if (autoOpen) setLogOpen(true);
 		setLogLive(true);
 		setLog(`${label}…\n`);
 		try {
@@ -166,7 +168,7 @@ export default function Dashboard() {
 			}
 			await readSse(response, (event) => {
 				if (event.type === "log") {
-					setLogOpen(true);
+					if (autoOpen) setLogOpen(true);
 					setLog((current) => appendCliLog(current, event.text));
 					return;
 				}
@@ -250,7 +252,7 @@ export default function Dashboard() {
 			stopLogs();
 			setConsoleMode("cli");
 			setLogTitle("Console");
-			setLogOpen(true);
+			if (autoOpen) setLogOpen(true);
 			setLog(`No projects to ${action} (${scope}).\n`);
 			return;
 		}
