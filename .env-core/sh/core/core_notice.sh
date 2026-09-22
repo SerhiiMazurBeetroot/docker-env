@@ -76,6 +76,12 @@ notice_project_ips() {
 			"directus:8055"
 		)
 		;;
+	directus_nextjs)
+		services=(
+			"nextjs:3000"
+			"directus:8055"
+		)
+		;;
 	*)
 		services=()
 		;;
@@ -151,7 +157,7 @@ notice_compose_v2() {
 
 	if [[ ${COMPOSE_VERSION:-} == 1 ]]; then
 		ECHO_INFO "Please install docker compose V2."
-		ECHO_INFO "Help readme 6.5"
+		ECHO_INFO "See docs/troubleshooting.md"
 		EMPTY_LINE
 	fi
 }

@@ -14,5 +14,9 @@ docker_create_directus_nextjs() {
 	check_data_before_continue_callback docker_create_directus_nextjs || return 1
 
 	CREATE_TEMPLATE="directus_nextjs"
-	docker_create_project
+	docker_create_project docker_create_directus_nextjs_after
+}
+
+docker_create_directus_nextjs_after() {
+	mkdir -p "$PROJECT_ROOT_DIR/backend/uploads" "$PROJECT_ROOT_DIR/backend/extensions"
 }

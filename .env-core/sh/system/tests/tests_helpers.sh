@@ -100,12 +100,16 @@ tests_assert_instance_row() {
 tests_assert_containers_running() {
 	case "${PROJECT_TYPE:-}" in
 	directus_nextjs)
+		tests_container_running "${DOMAIN_NAME}-nextjs" || {
+			ECHO_ERROR "Container not running: ${DOMAIN_NAME}-nextjs"
+			return 1
+		}
 		tests_container_running "${DOMAIN_NAME}-directus" || {
 			ECHO_ERROR "Container not running: ${DOMAIN_NAME}-directus"
 			return 1
 		}
-		tests_container_running "${DOMAIN_NAME}-mysql" || {
-			ECHO_ERROR "Container not running: ${DOMAIN_NAME}-mysql"
+		tests_container_running "${DOMAIN_NAME}-postgres" || {
+			ECHO_ERROR "Container not running: ${DOMAIN_NAME}-postgres"
 			return 1
 		}
 		;;
@@ -161,8 +165,11 @@ tests_assert_http() {
 			url="https://${DOMAIN_KIBANA}"
 		fi
 		;;
-	directus | directus_nextjs)
+	directus)
 		url="https://${DOMAIN_FULL}/server/health"
+		;;
+	directus_nextjs)
+		url="https://${DOMAIN_FULL}"
 		;;
 	esac
 

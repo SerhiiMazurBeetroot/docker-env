@@ -29,6 +29,7 @@ env_create() {
 		"NODE_VERSION=${NODE_VERSION:-}"
 		# Directus
 		"DIRECTUS_VERSION=${DIRECTUS_VERSION:-}"
+		"DB_NAME=${DB_NAME:-}"
 		# Elasticsearch
 		"ELASTIC_VERSION=${ELASTIC_VERSION:-}"
 		"ELASTIC_PORT=${ELASTIC_PORT:-}"

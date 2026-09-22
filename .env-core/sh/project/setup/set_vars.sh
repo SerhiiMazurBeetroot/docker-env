@@ -85,6 +85,12 @@ set_project_vars() {
 		;;
 	"directus_nextjs")
 		DB_TYPE="POSTGRES"
+		DB_NAME="directus"
+		DOMAIN_ADMIN="${DOMAIN_FULL}.directus"
+		DOMAIN_DB="${DOMAIN_FULL}.pgadmin"
+		DOCKER_CONTAINER_DB="${DOMAIN_NAME}-postgres"
+		DOCKER_CONTAINER_APP="${DOMAIN_NAME}-nextjs"
+		HOST_EXTRA="$DOMAIN_ADMIN $DOMAIN_DB"
 		;;
 	"elasticsearch")
 		DOMAIN_LOGSTASH="$DOMAIN_FULL.logstash"

@@ -66,7 +66,11 @@ docker_create_project() {
 	esac
 
 	replace_templates_files
-	docker_overlay_bundled_dockerfiles
+	# GitHub docker-env-template-* is the source. Overlay local Dockerfiles
+	# only while ENV_MODE=development (quick test/fix without pushing).
+	if [[ ${ENV_MODE:-} == "development" ]]; then
+		docker_overlay_bundled_dockerfiles
+	fi
 	replace_variables
 
 	if [[ -n "${CREATE_ENV_FILE:-}" ]]; then

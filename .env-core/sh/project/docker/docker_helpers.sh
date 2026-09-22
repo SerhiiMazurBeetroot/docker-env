@@ -7,6 +7,7 @@ replace_variables() {
 	local compose_files=(
 		"${PROJECT_DOCKER_DIR:-}/docker-compose.yml"
 		"${PROJECT_DOCKER_DIR:-}/docker-compose.override.yml"
+		"${PROJECT_DOCKER_DIR:-}/servers.json"
 		"${PROJECT_ROOT_DIR:-}/docker-compose.yml"
 	)
 	local file
@@ -18,6 +19,8 @@ replace_variables() {
 	done
 }
 
+# Copy bundled Dockerfiles over a cloned site. Used only in development
+# (ENV_MODE=development) so GitHub templates stay the source for real creates.
 docker_overlay_bundled_dockerfiles() {
 	local src="${ENV_DIR}/.env-core/templates/${PROJECT_TYPE}/docker"
 	local dest="${PROJECT_DOCKER_DIR:-$PROJECT_ROOT_DIR/docker}"

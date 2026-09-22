@@ -48,10 +48,17 @@ get_project_args() {
 			NODE_VERSION
 		)
 		;;
-	directus | directus_nextjs)
+	directus)
 		ARGS=(
 			DB_NAME
 			DIRECTUS_VERSION
+		)
+		;;
+	directus_nextjs)
+		ARGS=(
+			DB_NAME
+			DIRECTUS_VERSION
+			NODE_VERSION
 		)
 		;;
 	elasticsearch)
@@ -79,7 +86,11 @@ set_custom_args() {
 	for arg in "${ARGS[@]}"; do
 		case $arg in
 		'DB_NAME')
-			default_value="db"
+			if [[ ${PROJECT_TYPE:-} == "directus" || ${PROJECT_TYPE:-} == "directus_nextjs" ]]; then
+				default_value="directus"
+			else
+				default_value="db"
+			fi
 			;;
 		'TABLE_PREFIX')
 			default_value="wp_"
@@ -157,7 +168,11 @@ set_project_args() {
 	for arg in "${ARGS[@]}"; do
 		case $arg in
 		'DB_NAME')
-			DB_NAME=${DB_NAME:-"db"}
+			if [[ ${PROJECT_TYPE:-} == "directus" || ${PROJECT_TYPE:-} == "directus_nextjs" ]]; then
+				DB_NAME=${DB_NAME:-"directus"}
+			else
+				DB_NAME=${DB_NAME:-"db"}
+			fi
 			;;
 		'TABLE_PREFIX')
 			TABLE_PREFIX=${TABLE_PREFIX:-"wp_"}
