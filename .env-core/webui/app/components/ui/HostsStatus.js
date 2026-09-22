@@ -5,26 +5,36 @@ export default function HostsStatus({ hosts, busy = false, onToggle, compact = f
 	const extrasWanted = !!hosts.extrasWanted;
 	const extrasOk = extrasWanted && hosts.extrasComplete;
 	const label = !hosts.readable
-		? "hosts unknown"
+		? "unknown"
 		: !siteOk
-			? "hosts missing"
+			? "missing"
 			: extrasWanted && !extrasOk
 				? "extras missing"
 				: extrasWanted
-					? "hosts + extras"
-					: "hosts ok";
+					? "extras on"
+					: "ok";
 	const tone = !hosts.readable
-		? "border-line text-muted"
+		? "text-muted"
 		: !siteOk || (extrasWanted && !extrasOk)
-			? "border-warn/40 bg-warn/10 text-warn"
-			: "border-ok/30 bg-ok/10 text-ok";
+			? "text-warn"
+			: "text-ok";
+	const dot = !hosts.readable
+		? "bg-muted"
+		: !siteOk || (extrasWanted && !extrasOk)
+			? "bg-warn"
+			: "bg-ok";
 	const action = hosts.action;
 	const actionLabel = action === "rem" ? "Remove extras" : siteOk ? "Add extras" : "Add hosts";
 
 	return (
-		<div className={`inline-flex max-w-full items-center gap-1 ${compact ? "" : ""}`}>
-			<span className={`rounded-lg border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${tone}`}>
-				{label}
+		<div className="inline-flex max-w-full items-center gap-1.5">
+			<span
+				className={`inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider ${tone} ${
+					compact ? "" : "text-[11px]"
+				}`}
+			>
+				<span className={`h-1.5 w-1.5 rounded-full ${dot}`} aria-hidden="true" />
+				hosts {label}
 			</span>
 			{action && onToggle ? (
 				<button
@@ -32,7 +42,7 @@ export default function HostsStatus({ hosts, busy = false, onToggle, compact = f
 					disabled={busy}
 					title={actionLabel}
 					onClick={() => onToggle(action)}
-					className="rounded-lg border border-line bg-raised px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-chip hover:border-accent/40 hover:text-accent disabled:opacity-50"
+					className="rounded-md border border-line bg-raised px-1.5 py-0.5 text-[10px] font-semibold text-chip hover:border-accent/40 hover:text-accent disabled:opacity-50"
 				>
 					{busy ? "…" : actionLabel}
 				</button>

@@ -20,7 +20,10 @@ const TYPE_FIELDS = {
 	directus: [{ key: "DIRECTUS_VERSION", label: "Directus version" }],
 	elasticsearch: [{ key: "ELASTIC_VERSION", label: "Elastic version" }],
 	laravel: [{ key: "PHP_VERSION", label: "PHP version" }],
-	directus_nextjs: [{ key: "DIRECTUS_VERSION", label: "Directus version" }],
+	directus_nextjs: [
+		{ key: "DIRECTUS_VERSION", label: "Directus version" },
+		{ key: "NODE_VERSION", label: "Node version" },
+	],
 	wpnextjs: [
 		{ key: "PHP_VERSION", label: "PHP version" },
 		{ key: "WP_VERSION", label: "WordPress version" },

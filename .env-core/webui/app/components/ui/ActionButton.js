@@ -16,6 +16,7 @@ export default function ActionButton({
 	onClick,
 	size = "md",
 	iconOnly = false,
+	className = "",
 }) {
 	const sizing = iconOnly
 		? "h-7 w-7 justify-center px-0"
@@ -30,7 +31,7 @@ export default function ActionButton({
 			aria-label={label}
 			disabled={disabled}
 			onClick={onClick}
-			className={`inline-flex items-center gap-1.5 rounded-lg font-semibold transition disabled:pointer-events-none disabled:bg-white/[0.2] disabled:text-var(--btn-start-text-disabled) disabled:bg-var(--btn-start-bg-disabled) disabled:hover:brightness-100 ${sizing} ${TONES[tone]}`}
+			className={`inline-flex items-center gap-1.5 rounded-lg font-semibold transition disabled:pointer-events-none disabled:bg-white/[0.2] disabled:text-var(--btn-start-text-disabled) disabled:bg-var(--btn-start-bg-disabled) disabled:hover:brightness-100 ${sizing} ${TONES[tone]} ${className}`}
 		>
 			{loading ? <Spinner className="h-3.5 w-3.5" /> : icon}
 			{iconOnly ? null : label}

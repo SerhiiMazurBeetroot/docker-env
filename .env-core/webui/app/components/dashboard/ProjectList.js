@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
 	dozzleContainerUrl,
 	groupProjectsByType,
@@ -11,7 +11,7 @@ import { isBuildingProject, waitLabel } from "../../lib/waiting";
 import { useDisplay } from "../display/DisplayProvider";
 import ActionButton from "../ui/ActionButton";
 import HostsStatus from "../ui/HostsStatus";
-import { IconChevron, IconPlay, IconRebuild, IconRestart, IconStop, IconTrash } from "../ui/Icons";
+import { IconChevron, IconMore, IconPlay, IconRebuild, IconRestart, IconStop, IconTrash, Spinner } from "../ui/Icons";
 import ResourceGlance from "../ui/ResourceGlance";
 import ServiceChip from "../ui/ServiceChip";
 import { ProjectSkeleton } from "../ui/Skeleton";
@@ -226,27 +226,13 @@ function ProjectCard({
 				</div>
 				{servicesOpen ? (
 					<>
-						<div className="flex flex-wrap gap-1">
-							<ResourceGlance resources={project.resources} compact={compact || grid} />
-							{urls.length === 0 && !compact ? (
-								<span className="text-sm text-muted">No URLs yet</span>
-							) : (
-								urls.map(item => (
-									<UrlChip
-										key={`${project.domain}-${item.key}`}
-										label={URL_LABELS[item.key] || item.key}
-										url={item.url}
-										compact={compact || grid}
-									/>
-								))
-							)}
-							<HostsStatus
-								hosts={project.hosts}
-								compact={compact || grid}
-								busy={!!busy[`hosts:${project.domain}`]}
-								onToggle={action => onHosts?.(action, project.domain)}
-							/>
-						</div>
+						<ProjectMeta
+							project={project}
+							urls={urls}
+							layout={layout}
+							hostsBusy={!!busy[`hosts:${project.domain}`]}
+							onHosts={onHosts}
+						/>
 						<ServiceRow
 							project={project}
 							services={services}
@@ -266,7 +252,62 @@ function ProjectCard({
 	);
 }
 
+function ProjectMeta({ project, urls, layout = "comfortable", hostsBusy, onHosts }) {
+	const compactChips = layout !== "comfortable";
+	const stacked = layout === "grid";
+	const hasStats = layout === "comfortable" && !!project.resources;
+	const hasHosts = !!project.hosts;
+	const hasUrls = urls.length > 0;
+
+	if (!hasStats && !hasHosts && !hasUrls && compactChips) return null;
+
+	return (
+		<div className="overflow-hidden rounded-xl border border-line bg-fg/5">
+			<div
+				className={
+					stacked
+						? "flex flex-col divide-y divide-line"
+						: "flex flex-col divide-y divide-line sm:flex-row sm:items-center sm:divide-x sm:divide-y-0"
+				}
+			>
+				{hasStats ? (
+					<div className="flex shrink-0 items-center px-2.5 py-1.5">
+						<ResourceGlance resources={project.resources} plain />
+					</div>
+				) : null}
+				<div className="flex min-w-0 flex-1 flex-wrap items-center gap-1 px-2 py-1.5">
+					{!hasUrls && layout === "comfortable" ? (
+						<span className="text-sm text-muted">No URLs yet</span>
+					) : null}
+					{urls.map(item => (
+						<UrlChip
+							key={`${project.domain}-${item.key}`}
+							label={URL_LABELS[item.key] || item.key}
+							url={item.url}
+							compact={compactChips}
+						/>
+					))}
+				</div>
+				{hasHosts ? (
+					<div className="flex shrink-0 items-center px-2.5 py-1.5">
+						<HostsStatus
+							hosts={project.hosts}
+							compact={compactChips}
+							busy={hostsBusy}
+							onToggle={action => onHosts?.(action, project.domain)}
+						/>
+					</div>
+				) : null}
+			</div>
+		</div>
+	);
+}
+
 function ActionRow({ compact = false, running, waiting, action, expect, onAction, onDelete, domain }) {
+	const extraClass = "hidden md:inline-flex";
+	const startLoading = action === "start" || (waiting && expect === "running" && !action);
+	const stopLoading = action === "stop" || (waiting && expect === "stopped" && action === "stop");
+
 	return (
 		<div
 			className={`flex flex-nowrap gap-1 rounded-xl border border-line bg-fg/5 ${
@@ -280,7 +321,7 @@ function ActionRow({ compact = false, running, waiting, action, expect, onAction
 				size="sm"
 				iconOnly={compact}
 				disabled={running || waiting}
-				loading={action === "start" || (waiting && expect === "running" && !action)}
+				loading={startLoading}
 				onClick={() => onAction("start", domain)}
 			/>
 			<ActionButton
@@ -289,6 +330,7 @@ function ActionRow({ compact = false, running, waiting, action, expect, onAction
 				icon={<IconRestart />}
 				size="sm"
 				iconOnly={compact}
+				className={extraClass}
 				disabled={!running || waiting}
 				loading={action === "restart"}
 				onClick={() => onAction("restart", domain)}
@@ -299,6 +341,7 @@ function ActionRow({ compact = false, running, waiting, action, expect, onAction
 				icon={<IconRebuild />}
 				size="sm"
 				iconOnly={compact}
+				className={extraClass}
 				disabled={waiting}
 				loading={action === "rebuild"}
 				onClick={() => onAction("rebuild", domain)}
@@ -310,7 +353,7 @@ function ActionRow({ compact = false, running, waiting, action, expect, onAction
 				size="sm"
 				iconOnly={compact}
 				disabled={!running || waiting}
-				loading={action === "stop" || (waiting && expect === "stopped" && action === "stop")}
+				loading={stopLoading}
 				onClick={() => onAction("stop", domain)}
 			/>
 			<ActionButton
@@ -319,11 +362,120 @@ function ActionRow({ compact = false, running, waiting, action, expect, onAction
 				icon={<IconTrash />}
 				size="sm"
 				iconOnly={compact}
+				className={extraClass}
 				disabled={waiting}
 				loading={action === "delete"}
 				onClick={() => onDelete?.(domain)}
 			/>
+			<MoreActions
+				running={running}
+				waiting={waiting}
+				action={action}
+				onRestart={() => onAction("restart", domain)}
+				onRebuild={() => onAction("rebuild", domain)}
+				onDelete={() => onDelete?.(domain)}
+			/>
 		</div>
+	);
+}
+
+function MoreActions({ running, waiting, action, onRestart, onRebuild, onDelete }) {
+	const [open, setOpen] = useState(false);
+	const root = useRef(null);
+	const busy = action === "restart" || action === "rebuild" || action === "delete";
+
+	useEffect(() => {
+		if (!open) return undefined;
+
+		function onPointer(event) {
+			if (!root.current?.contains(event.target)) setOpen(false);
+		}
+		function onKey(event) {
+			if (event.key === "Escape") setOpen(false);
+		}
+
+		window.addEventListener("pointerdown", onPointer);
+		window.addEventListener("keydown", onKey);
+		return () => {
+			window.removeEventListener("pointerdown", onPointer);
+			window.removeEventListener("keydown", onKey);
+		};
+	}, [open]);
+
+	function run(fn) {
+		setOpen(false);
+		fn?.();
+	}
+
+	return (
+		<div className="relative md:hidden" ref={root}>
+			<button
+				type="button"
+				title="More actions"
+				aria-label="More actions"
+				aria-haspopup="menu"
+				aria-expanded={open}
+				disabled={waiting && !busy}
+				onClick={event => {
+					event.stopPropagation();
+					setOpen(value => !value);
+				}}
+				className={`inline-flex h-7 w-7 items-center justify-center rounded-lg font-semibold text-fg transition hover:bg-fg/15 disabled:pointer-events-none disabled:opacity-50 ${
+					open || busy ? "bg-fg/15" : "bg-fg/10"
+				}`}
+			>
+				{busy ? <Spinner className="h-3.5 w-3.5" /> : <IconMore />}
+			</button>
+			{open ? (
+				<div
+					role="menu"
+					className="absolute right-0 top-[calc(100%+0.35rem)] z-40 min-w-[11rem] overflow-hidden rounded-xl border border-line bg-panel py-1 shadow-card"
+				>
+					<MoreItem
+						label="Restart"
+						icon={<IconRestart />}
+						disabled={!running || waiting}
+						loading={action === "restart"}
+						onClick={() => run(onRestart)}
+					/>
+					<MoreItem
+						label="Rebuild"
+						icon={<IconRebuild />}
+						disabled={waiting}
+						loading={action === "rebuild"}
+						onClick={() => run(onRebuild)}
+					/>
+					<MoreItem
+						label="Delete"
+						icon={<IconTrash />}
+						danger
+						disabled={waiting}
+						loading={action === "delete"}
+						onClick={() => run(onDelete)}
+					/>
+				</div>
+			) : null}
+		</div>
+	);
+}
+
+function MoreItem({ label, icon, disabled, loading, danger = false, onClick }) {
+	return (
+		<button
+			type="button"
+			role="menuitem"
+			disabled={disabled}
+			onClick={event => {
+				event.stopPropagation();
+				onClick?.();
+			}}
+			className={`flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] font-semibold disabled:pointer-events-none disabled:opacity-40 ${
+				danger ? "text-danger hover:bg-danger/10" : "text-fg hover:bg-fg/10"
+			}`}
+		>
+			{loading ? <Spinner className="h-3.5 w-3.5" /> : icon}
+			{label}
+		</button>
 	);
 }
 

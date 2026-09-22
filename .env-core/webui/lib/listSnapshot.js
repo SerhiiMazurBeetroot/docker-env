@@ -100,6 +100,11 @@ export function extraHostsForType(type, domainFull) {
 			];
 		case "directus":
 			return [{ key: "DOMAIN_DB", host: `${domainFull}.pgadmin` }];
+		case "directus_nextjs":
+			return [
+				{ key: "DOMAIN_ADMIN", host: `${domainFull}.directus` },
+				{ key: "DOMAIN_DB", host: `${domainFull}.pgadmin` },
+			];
 		case "elasticsearch":
 			return [
 				{ key: "DOMAIN_LOGSTASH", host: `${domainFull}.logstash` },

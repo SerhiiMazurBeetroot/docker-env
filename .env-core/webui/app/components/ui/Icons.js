@@ -100,6 +100,16 @@ export function IconChevron({ className = "h-3 w-3" }) {
 	);
 }
 
+export function IconMore({ className = "h-3.5 w-3.5" }) {
+	return (
+		<svg viewBox="0 0 16 16" className={className} fill="currentColor" aria-hidden>
+			<circle cx="3.5" cy="8" r="1.35" />
+			<circle cx="8" cy="8" r="1.35" />
+			<circle cx="12.5" cy="8" r="1.35" />
+		</svg>
+	);
+}
+
 export function IconPlus({ className = "h-3.5 w-3.5" }) {
 	return (
 		<svg viewBox="0 0 16 16" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>

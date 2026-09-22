@@ -16,6 +16,7 @@ const TYPE_TONES = {
 	nextjs: "bg-zinc-400/15 text-zinc-200",
 	nodejs: "bg-lime-400/15 text-lime-300",
 	directus: "bg-violet-400/15 text-violet-300",
+	directusnextjs: "bg-violet-400/15 text-violet-300",
 	elastic: "bg-amber-400/15 text-amber-300",
 	elasticsearch: "bg-amber-400/15 text-amber-300",
 	bedrock: "bg-cyan-400/15 text-cyan-300",
