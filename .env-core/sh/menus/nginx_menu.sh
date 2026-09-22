@@ -9,13 +9,13 @@ nginx_menu() {
 
 		EMPTY_LINE
 		ECHO_CYAN "===== Nginx server ===="
-		ECHO_YELLOW "0 - Return to previous menu"
-		ECHO_GREEN "1 - Setup"
-		ECHO_GREEN "2 - Stop"
-		ECHO_GREEN "3 - Start"
-		ECHO_GREEN "4 - Restart"
-		ECHO_GREEN "5 - Rebuild"
-		ECHO_GREEN "6 - Re-Setup"
+		ECHO_YELLOW "[0] Return to previous menu"
+		ECHO_GREEN "[1] Setup"
+		ECHO_GREEN "[2] Stop"
+		ECHO_GREEN "[3] Start"
+		ECHO_GREEN "[4] Restart"
+		ECHO_GREEN "[5] Rebuild"
+		ECHO_GREEN "[6] Re-Setup"
 
 		proxy_actions=$(GET_USER_INPUT "select_one_of")
 

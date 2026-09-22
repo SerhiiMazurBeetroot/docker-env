@@ -10,13 +10,13 @@ webui_menu() {
 		EMPTY_LINE
 		ECHO_CYAN "======== Web UI ======="
 		ECHO_KEY_VALUE "Status" "$(webui_status_label)"
-		ECHO_YELLOW "0 - Return to previous menu"
-		ECHO_GREEN "1 - Start"
-		ECHO_GREEN "2 - Stop"
-		ECHO_GREEN "3 - Open in browser"
+		ECHO_YELLOW "[0] Return to previous menu"
+		ECHO_GREEN "[1] Start"
+		ECHO_GREEN "[2] Stop"
+		ECHO_GREEN "[3] Open in browser"
 		if [[ ${ENV_MODE:-} == "development" ]]; then
-			ECHO_RED "4 - Rebuild image"
-			ECHO_GREEN "5 - Develop image"
+			ECHO_RED "[4] Rebuild image"
+			ECHO_GREEN "[5] Develop image"
 		fi
 
 		actions=$(GET_USER_INPUT "select_one_of")

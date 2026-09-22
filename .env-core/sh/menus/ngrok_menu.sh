@@ -8,15 +8,15 @@ ngrok_menu() {
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "===== Ngrok Agent ===="
-		ECHO_YELLOW "0 - Return to the previous menu"
-		ECHO_GREEN "1 - Setup"
-		ECHO_GREEN "2 - Stop"
-		ECHO_GREEN "3 - Start"
-		ECHO_GREEN "4 - Restart"
-		ECHO_GREEN "5 - Rebuild"
-		ECHO_GREEN "6 - Your Authtoken"
-		ECHO_GREEN "7 - Add New Endpoint"
-		ECHO_GREEN "8 - Delete Endpoint"
+		ECHO_YELLOW "[0] Return to the previous menu"
+		ECHO_GREEN "[1] Setup"
+		ECHO_GREEN "[2] Stop"
+		ECHO_GREEN "[3] Start"
+		ECHO_GREEN "[4] Restart"
+		ECHO_GREEN "[5] Rebuild"
+		ECHO_GREEN "[6] Your Authtoken"
+		ECHO_GREEN "[7] Add New Endpoint"
+		ECHO_GREEN "[8] Delete Endpoint"
 
 		actions=$(GET_USER_INPUT "select_one_of")
 

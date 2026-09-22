@@ -7,12 +7,12 @@ env_helpers_menu() {
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "==== Helpers menu ==="
-		ECHO_YELLOW "0 - Return to main menu"
-		ECHO_GREEN "1 - Docker"
-		ECHO_GREEN "2 - Permissions"
-		ECHO_GREEN "3 - Git Tools"
-		ECHO_GREEN "4 - Disk Usage"
-		ECHO_GREEN "5 - Mac cleanup"
+		ECHO_YELLOW "[0] Return to main menu"
+		ECHO_GREEN "[1] Docker"
+		ECHO_GREEN "[2] Permissions"
+		ECHO_GREEN "[3] Git Tools"
+		ECHO_GREEN "[4] Disk Usage"
+		ECHO_GREEN "[5] Mac cleanup"
 
 		actions=$(GET_USER_INPUT "select_one_of")
 
@@ -47,9 +47,9 @@ env_helpers_disk_menu() {
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "==== Disk Usage menu ==="
-		ECHO_YELLOW "0 - Return to main menu"
-		ECHO_GREEN "1 - Find large files (300M+)"
-		ECHO_GREEN "2 - Show top largest folders"
+		ECHO_YELLOW "[0] Return to main menu"
+		ECHO_GREEN "[1] Find large files (300M+)"
+		ECHO_GREEN "[2] Show top largest folders"
 
 		actions=$(GET_USER_INPUT "select_one_of")
 
@@ -78,10 +78,10 @@ env_helpers_git_menu() {
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "==== GIT menu ==="
-		ECHO_YELLOW "0 - Return to main menu"
-		ECHO_GREEN "1 - git config core.fileMode false"
-		ECHO_GREEN "2 - git_user_info"
-		ECHO_GREEN "3 - empty commit"
+		ECHO_YELLOW "[0] Return to main menu"
+		ECHO_GREEN "[1] git config core.fileMode false"
+		ECHO_GREEN "[2] git_user_info"
+		ECHO_GREEN "[3] empty commit"
 
 		actions=$(GET_USER_INPUT "select_one_of")
 
@@ -120,12 +120,12 @@ env_helpers_permisions_menu() {
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "==== Permissions menu ==="
-		ECHO_YELLOW "0 - Return to main menu"
-		ECHO_GREEN "1 - Set current dir to 755"
-		ECHO_GREEN "2 - Set current dir to 775"
-		ECHO_GREEN "3 - Set all files to 644 recursively"
-		ECHO_GREEN "4 - Set all dirs to 755 recursively"
-		ECHO_GREEN "5 - chmod ug+rwX recursively (current dir)"
+		ECHO_YELLOW "[0] Return to main menu"
+		ECHO_GREEN "[1] Set current dir to 755"
+		ECHO_GREEN "[2] Set current dir to 775"
+		ECHO_GREEN "[3] Set all files to 644 recursively"
+		ECHO_GREEN "[4] Set all dirs to 755 recursively"
+		ECHO_GREEN "[5] chmod ug+rwX recursively (current dir)"
 
 		actions=$(GET_USER_INPUT "select_one_of")
 
@@ -164,12 +164,12 @@ env_helpers_docker_menu() {
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "==== Docker menu ==="
-		ECHO_YELLOW "0 - Return to main menu"
-		ECHO_GREEN "1 - Stop and Remove All Containers"
-		ECHO_GREEN "2 - Remove All Volumes"
-		ECHO_GREEN "3 - Remove All Networks"
-		ECHO_GREEN "4 - Remove All Images"
-		ECHO_GREEN "5 - Prune All Unused Resources"
+		ECHO_YELLOW "[0] Return to main menu"
+		ECHO_GREEN "[1] Stop and Remove All Containers"
+		ECHO_GREEN "[2] Remove All Volumes"
+		ECHO_GREEN "[3] Remove All Networks"
+		ECHO_GREEN "[4] Remove All Images"
+		ECHO_GREEN "[5] Prune All Unused Resources"
 
 		actions=$(GET_USER_INPUT "select_one_of")
 

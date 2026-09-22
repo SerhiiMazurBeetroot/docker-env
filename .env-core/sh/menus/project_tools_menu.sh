@@ -9,18 +9,18 @@ project_tools_menu() {
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "===== Tools and Integrations ===="
-		ECHO_YELLOW "0 - Return to the previous menu"
-		ECHO_GREEN "1 - Change Status [active <=> inactive]"
-		ECHO_GREEN "2 - GIT"
-		ECHO_GREEN "3 - Archiving the project"
-		ECHO_CYAN "4 - Other Services"
-		# ECHO_GREEN "5 - Ngrok [Add New Endpoint]"
+		ECHO_YELLOW "[0] Return to the previous menu"
+		ECHO_GREEN "[1] Change Status [active <=> inactive]"
+		ECHO_GREEN "[2] GIT"
+		ECHO_GREEN "[3] Archiving the project"
+		ECHO_CYAN "[4] Other Services"
+		# ECHO_GREEN "[5] Ngrok [Add New Endpoint]"
 
 		action=$(GET_USER_INPUT "select_one_of")
 
 		case $action in
 		0)
-			project_services_menu
+			return 0
 			;;
 		1)
 			get_existing_domains "======= Change Status ======="

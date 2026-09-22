@@ -9,12 +9,12 @@ nghost_menu() {
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "======= NgHost ========"
-		ECHO_YELLOW "0 - Return to main menu"
-		ECHO_GREEN "1 - Setup"
-		ECHO_GREEN "2 - Stop"
-		ECHO_GREEN "3 - Start"
-		ECHO_GREEN "4 - Restart"
-		ECHO_GREEN "5 - Rebuild"
+		ECHO_YELLOW "[0] Return to main menu"
+		ECHO_GREEN "[1] Setup"
+		ECHO_GREEN "[2] Stop"
+		ECHO_GREEN "[3] Start"
+		ECHO_GREEN "[4] Restart"
+		ECHO_GREEN "[5] Rebuild"
 
 		proxy_actions=$(GET_USER_INPUT "select_one_of")
 

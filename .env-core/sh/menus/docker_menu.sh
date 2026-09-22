@@ -9,14 +9,14 @@ docker_menu() {
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "======== Docker actions ======="
-		ECHO_YELLOW "0 - Return to the previous menu"
-		ECHO_RED "1 - Permanently Remove"
-		ECHO_GREEN "2 - Stop"
-		ECHO_GREEN "3 - Start"
-		ECHO_GREEN "4 - Restart"
-		ECHO_GREEN "5 - Rebuild"
-		ECHO_CYAN "6 - Fix permissions"
-		ECHO_GREEN "7 - Project URLs"
+		ECHO_YELLOW "[0] Return to the previous menu"
+		ECHO_RED "[1] Permanently Remove"
+		ECHO_GREEN "[2] Stop"
+		ECHO_GREEN "[3] Start"
+		ECHO_GREEN "[4] Restart"
+		ECHO_GREEN "[5] Rebuild"
+		ECHO_CYAN "[6] Fix permissions"
+		ECHO_GREEN "[7] Project URLs"
 
 		actions=$(GET_USER_INPUT "select_one_of")
 

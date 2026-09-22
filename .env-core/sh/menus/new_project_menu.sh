@@ -7,7 +7,7 @@ new_project_menu() {
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "===== Project type ===="
-		ECHO_YELLOW "0 - Return to main menu"
+		ECHO_YELLOW "[0] Return to main menu"
 
 		build_visible_projects
 

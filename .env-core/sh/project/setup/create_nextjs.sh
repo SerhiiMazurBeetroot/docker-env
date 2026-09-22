@@ -9,9 +9,9 @@ create_nextjs() {
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "======== Next.js Setup ======="
-		ECHO_YELLOW "0 - Return to the previous menu"
-		ECHO_GREEN "1 - Docker 🐳"
-		ECHO_GREEN "2 - Local"
+		ECHO_YELLOW "[0] Return to the previous menu"
+		ECHO_GREEN "[1] Docker 🐳"
+		ECHO_GREEN "[2] Local"
 
 		actions=$(GET_USER_INPUT "select_one_of")
 

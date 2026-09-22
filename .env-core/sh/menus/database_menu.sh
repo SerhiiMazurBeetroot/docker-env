@@ -7,11 +7,11 @@ database_menu() {
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "========== DB actions ========="
-		ECHO_YELLOW "0 - Return to the previous menu"
-		ECHO_GREEN "1 - Update DB (import)"
-		ECHO_GREEN "2 - Dump DB (export)"
-		ECHO_GREEN "3 - Search-Replace"
-		ECHO_GREEN "4 - Replace project from DB"
+		ECHO_YELLOW "[0] Return to the previous menu"
+		ECHO_GREEN "[1] Update DB (import)"
+		ECHO_GREEN "[2] Dump DB (export)"
+		ECHO_GREEN "[3] Search-Replace"
+		ECHO_GREEN "[4] Replace project from DB"
 
 		actions=$(GET_USER_INPUT "select_one_of")
 

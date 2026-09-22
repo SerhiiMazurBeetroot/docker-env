@@ -14,8 +14,8 @@ database_export() {
 			EMPTY_LINE
 			file1=$DB_NAME.sql
 			file2=dump-$DB_NAME-$TIMESTAMP.sql
-			ECHO_GREEN "1 - $file1"
-			ECHO_GREEN "2 - $file2 [default]"
+			ECHO_GREEN "[1] $file1"
+			ECHO_GREEN "[2] $file2 [default]"
 
 			DUMP_FILE=$(GET_USER_INPUT "select_one_of")
 

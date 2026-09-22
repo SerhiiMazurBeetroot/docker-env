@@ -11,9 +11,9 @@ git_clone_menu() {
 		while true; do
 			EMPTY_LINE
 			ECHO_CYAN "===== Clone actions ===="
-			ECHO_YELLOW "0 - Return to previous menu"
-			ECHO_GREEN "1 - Clone Project"
-			ECHO_GREEN "2 - Clone WP Theme"
+			ECHO_YELLOW "[0] Return to previous menu"
+			ECHO_GREEN "[1] Clone Project"
+			ECHO_GREEN "[2] Clone WP Theme"
 
 			actions=$(GET_USER_INPUT "select_one_of")
 

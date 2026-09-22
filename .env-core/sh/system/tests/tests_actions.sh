@@ -8,9 +8,9 @@ tests_actions() {
 		while true; do
 			EMPTY_LINE
 			ECHO_CYAN "======== TESTS actions ========"
-			ECHO_YELLOW "0 - Return to the previous menu"
-			ECHO_GREEN "1 - Create all AVAILABLE_PROJECTS"
-			ECHO_GREEN "2 - Delete all AVAILABLE_PROJECTS"
+			ECHO_YELLOW "[0] Return to the previous menu"
+			ECHO_GREEN "[1] Create all AVAILABLE_PROJECTS"
+			ECHO_GREEN "[2] Delete all AVAILABLE_PROJECTS"
 
 			actions=$(GET_USER_INPUT "select_one_of")
 

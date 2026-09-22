@@ -9,17 +9,17 @@ wp_menu() {
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "===== WP Workflow ===="
-		ECHO_YELLOW "0 - Return to the previous menu"
-		ECHO_GREEN "1 - Composer install [theme]"
-		ECHO_GREEN "2 - Composer package"
-		ECHO_GREEN "3 - Delete site data (posts, themes, plugins)"
-		ECHO_GREEN "4 - Into a multisite installation"
+		ECHO_YELLOW "[0] Return to the previous menu"
+		ECHO_GREEN "[1] Composer install [theme]"
+		ECHO_GREEN "[2] Composer package"
+		ECHO_GREEN "[3] Delete site data (posts, themes, plugins)"
+		ECHO_GREEN "[4] Into a multisite installation"
 
 		action=$(GET_USER_INPUT "select_one_of")
 
 		case $action in
 		0)
-			project_services_menu
+			return 0
 			;;
 		1)
 			wp_composer_install
