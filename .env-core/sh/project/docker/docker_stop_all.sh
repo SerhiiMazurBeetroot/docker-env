@@ -6,10 +6,13 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 docker_stop_all() {
 	local type_filter="${1:-}"
 	local domain
+	local failed=0
 
-	ECHO_YELLOW "Stoping all containers..."
+	ECHO_YELLOW "Stopping all containers..."
 
-	while IFS= read -r domain; do
+	# Read names on fd 3. docker exec -i (DB dump) and compose read stdin,
+	# which would otherwise consume the rest of this list and stop one project.
+	while IFS= read -r domain <&3; do
 		[[ -n "$domain" ]] || continue
 		DOMAIN_NAME="$domain"
 		reset_session_var PROJECT_TYPE
@@ -27,20 +30,28 @@ docker_stop_all() {
 			continue
 		fi
 
-		database_auto_backup
+		if ! container_is_running; then
+			unset_variables
+			continue
+		fi
 
-		if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_APP'($)')" ]; then
+		database_auto_backup || true
 
-			if [ -d "$PROJECT_DOCKER_DIR" ]; then
-				DOCKER_FILES=($(find "$PROJECT_DOCKER_DIR" -type f -name '*.yml'))
-
-				[ -f "$DOCKER_FILES" ] && docker_compose_runner "down"
+		ECHO_YELLOW "Stopping [${DOMAIN_NAME}]"
+		if [[ -f "${PROJECT_DOCKER_DIR:-}/docker-compose.yml" ]]; then
+			if docker_compose_runner "down"; then
+				ECHO_SUCCESS "Docker container stopped [${PROJECT_ROOT_DIR}]"
+			else
+				ECHO_ERROR "Failed to stop [${DOMAIN_NAME}]"
+				failed=1
 			fi
-
-			ECHO_SUCCESS "Docker container stopped [$PROJECT_ROOT_DIR]"
+		else
+			ECHO_ERROR "Compose file missing; cannot stop [${DOMAIN_NAME}]"
+			failed=1
 		fi
 		unset_variables
-	done < <(instances_domain_names)
+	done 3< <(instances_domain_names)
 
-	docker_nginx_restart
+	docker_nginx_restart || true
+	return "$failed"
 }
