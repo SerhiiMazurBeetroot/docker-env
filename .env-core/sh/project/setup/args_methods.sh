@@ -69,6 +69,7 @@ get_project_args() {
 	laravel)
 		ARGS=(
 			PHP_VERSION
+			LARAVEL_VERSION
 			DB_NAME
 		)
 		;;
@@ -84,6 +85,7 @@ set_custom_args() {
 	local skip_user_input=false
 
 	for arg in "${ARGS[@]}"; do
+		skip_user_input=false
 		case $arg in
 		'DB_NAME')
 			if [[ ${PROJECT_TYPE:-} == "directus" || ${PROJECT_TYPE:-} == "directus_nextjs" ]]; then
@@ -122,6 +124,10 @@ set_custom_args() {
 			;;
 		'DIRECTUS_VERSION')
 			get_directus_version
+			skip_user_input=true
+			;;
+		'LARAVEL_VERSION')
+			get_laravel_version
 			skip_user_input=true
 			;;
 		'ELASTIC_VERSION')
@@ -227,6 +233,9 @@ set_project_args() {
 			;;
 		'DIRECTUS_VERSION')
 			get_directus_version "default"
+			;;
+		'LARAVEL_VERSION')
+			get_laravel_version
 			;;
 		'ELASTIC_VERSION')
 			get_elastic_version

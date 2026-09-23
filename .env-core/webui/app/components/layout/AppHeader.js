@@ -42,6 +42,7 @@ export default function AppHeader({
 						size="sm"
 						disabled={loading || createBusy}
 						onClick={() => onCreate?.()}
+						className="opacity-0"
 					/>
 				) : (
 					<div />

@@ -122,6 +122,8 @@ export function urlsForProject(type, domainFull) {
 		urls.push({ key: "DOMAIN_ADMIN", url: `https://${domainFull}/wp-admin` });
 	} else if (type === "bedrock") {
 		urls.push({ key: "DOMAIN_ADMIN", url: `https://${domainFull}/wp/wp-admin` });
+	} else if (type === "laravel") {
+		urls.push({ key: "DOMAIN_ADMIN", url: `https://${domainFull}/login` });
 	}
 	for (const extra of extraHostsForType(type, domainFull)) {
 		urls.push({ key: extra.key, url: `https://${extra.host}` });

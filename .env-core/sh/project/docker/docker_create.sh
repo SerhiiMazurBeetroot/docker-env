@@ -19,7 +19,7 @@ docker_create_require_new_site() {
 }
 
 # Optional flags (unset at end of docker_create_project):
-#   CREATE_TEMPLATE=clone|copy|wpnextjs|directus_nextjs|nodejs
+#   CREATE_TEMPLATE=clone|copy|wpnextjs|directus_nextjs|nodejs|laravel
 #   CREATE_COMPOSE_CMD="up -d"
 #   CREATE_COMPOSE_DIR=
 #   CREATE_ENV_FILE=
@@ -60,6 +60,9 @@ docker_create_project() {
 	nodejs)
 		rsync -av "$ENV_DIR/.env-core/templates/nodejs/" "$PROJECT_ROOT_DIR/"
 		;;
+	laravel)
+		cp -R "$ENV_DIR/.env-core/templates/laravel/." "$PROJECT_ROOT_DIR/"
+		;;
 	*)
 		git_clone_templates_files
 		;;
@@ -98,8 +101,11 @@ docker_create_project() {
 		fix_permissions
 	fi
 	notice_windows_host add
+	# Containers were just started. Restarting them here kills MariaDB and the
+	# WordPress copy before the first boot finishes. Nginx still needs a reload
+	# so the new host is picked up.
 	if [[ ${CREATE_SKIP_DOCKER_RESTART:-0} -ne 1 ]]; then
-		docker_restart
+		docker_nginx_restart || true
 	fi
 
 	if [[ -n "$after_up" ]]; then

@@ -285,7 +285,8 @@ webui_start_all() {
 	webui_cli_boot
 	ECHO_YELLOW "Starting projects${type_filter:+ ($type_filter)}..."
 
-	while IFS= read -r domain; do
+	# fd 3: start runs docker exec -i (permissions) and must not eat this list.
+	while IFS= read -r domain <&3; do
 		[[ -n "$domain" ]] || continue
 		DOMAIN_NAME="$domain"
 		reset_session_var PROJECT_TYPE
@@ -317,7 +318,7 @@ webui_start_all() {
 			failed=1
 		fi
 		unset_variables
-	done < <(instances_domain_names)
+	done 3< <(instances_domain_names)
 
 	docker_nginx_restart || true
 	return "$failed"
@@ -837,7 +838,7 @@ webui_create_project() {
 	local type="${1:-}"
 	local domain="${2:-}"
 	local pair key value
-	local allowed='^(PHP_VERSION|WP_VERSION|NODE_VERSION|NEXTJS_VERSION|DIRECTUS_VERSION|ELASTIC_VERSION|DB_NAME|TABLE_PREFIX|EMPTY_CONTENT|MULTISITE)$'
+	local allowed='^(PHP_VERSION|WP_VERSION|NODE_VERSION|NEXTJS_VERSION|DIRECTUS_VERSION|LARAVEL_VERSION|ELASTIC_VERSION|DB_NAME|TABLE_PREFIX|EMPTY_CONTENT|MULTISITE)$'
 
 	webui_cli_boot
 	env_mode

@@ -21,6 +21,7 @@ env_create() {
 		"WP_USER=${WP_USER:-}"
 		"WP_PASSWORD=${WP_PASSWORD:-}"
 		"PHP_VERSION=${PHP_VERSION:-}"
+		"LARAVEL_VERSION=${LARAVEL_VERSION:-}"
 		# Headless CMS
 		"PORT_FRONT=${PORT_FRONT:-}"
 		# Node.js

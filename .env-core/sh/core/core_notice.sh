@@ -82,6 +82,11 @@ notice_project_ips() {
 			"directus:8055"
 		)
 		;;
+	laravel)
+		services=(
+			"laravel:"
+		)
+		;;
 	*)
 		services=()
 		;;
