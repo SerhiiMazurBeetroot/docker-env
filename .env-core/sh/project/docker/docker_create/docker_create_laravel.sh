@@ -13,7 +13,6 @@ docker_create_laravel() {
 	set_project_args
 	check_data_before_continue_callback docker_create_laravel || return 1
 
-	CREATE_TEMPLATE="laravel"
 	docker_create_project docker_create_laravel_after
 }
 
