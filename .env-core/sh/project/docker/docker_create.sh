@@ -19,7 +19,7 @@ docker_create_require_new_site() {
 }
 
 # Optional flags (unset at end of docker_create_project):
-#   CREATE_TEMPLATE=clone|copy|wpnextjs|directus_nextjs|nodejs|laravel
+#   CREATE_TEMPLATE=clone|copy|wordpress_nextjs|directus_nextjs|nodejs
 #   CREATE_COMPOSE_CMD="up -d"
 #   CREATE_COMPOSE_DIR=
 #   CREATE_ENV_FILE=
@@ -51,8 +51,8 @@ docker_create_project() {
 	copy)
 		git_clone_templates_files "copy"
 		;;
-	wpnextjs)
-		cp -R "$ENV_DIR/.env-core/templates/wpnextjs/." "$PROJECT_ROOT_DIR/"
+	wordpress_nextjs)
+		cp -R "$ENV_DIR/.env-core/templates/wordpress_nextjs/." "$PROJECT_ROOT_DIR/"
 		;;
 	directus_nextjs)
 		cp -R "$ENV_DIR/.env-core/templates/directus_nextjs/." "$PROJECT_ROOT_DIR/"

@@ -8,7 +8,7 @@ fix_permissions() {
 
 	if [[ $DOMAIN_EXISTS == 1 ]]; then
 		case ${PROJECT_TYPE:-} in
-		"wordpress" | "bedrock" | "wpnextjs")
+		"wordpress" | "bedrock" | "wordpress_nextjs")
 			fix_permissions_wp
 			;;
 		*)

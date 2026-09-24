@@ -27,7 +27,7 @@ const TYPE_FIELDS = {
 		{ key: "DIRECTUS_VERSION", label: "Directus version" },
 		{ key: "NODE_VERSION", label: "Node version" },
 	],
-	wpnextjs: [
+	wordpress_nextjs: [
 		{ key: "PHP_VERSION", label: "PHP version" },
 		{ key: "WP_VERSION", label: "WordPress version" },
 		{ key: "NODE_VERSION", label: "Node version" },

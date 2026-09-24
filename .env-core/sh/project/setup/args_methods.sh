@@ -24,7 +24,7 @@ get_project_args() {
 			PHP_VERSION
 		)
 		;;
-	wpnextjs)
+	wordpress_nextjs)
 		ARGS=(
 			DB_NAME
 			TABLE_PREFIX

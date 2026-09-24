@@ -82,6 +82,12 @@ notice_project_ips() {
 			"directus:8055"
 		)
 		;;
+	wordpress_nextjs)
+		services=(
+			"nextjs:3000"
+			"wordpress:"
+		)
+		;;
 	laravel)
 		services=(
 			"laravel:"

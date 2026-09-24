@@ -26,14 +26,14 @@ STABLE_PROJECTS=(
 WIP_PROJECT_TITLES=(
 	"Laravel [dev]"
 	"Directus + Next.js [dev]"
-	"Next.WP [dev]"
+	"WordPress + Next.js [dev]"
 	"Node.js [dev]"
 )
 
 WIP_PROJECTS=(
 	"laravel"
 	"directus_nextjs"
-	"wpnextjs"
+	"wordpress_nextjs"
 	"nodejs"
 )
 
@@ -75,7 +75,7 @@ create_project_by_type() {
 	"php")
 		docker_create_php
 		;;
-	"wpnextjs")
+	"wordpress_nextjs")
 		docker_create_wp_next
 		;;
 	"nodejs")

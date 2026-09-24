@@ -14,7 +14,7 @@ const CREATE_TYPES = new Set([
 	"elasticsearch",
 	"laravel",
 	"directus_nextjs",
-	"wpnextjs",
+	"wordpress_nextjs",
 	"nodejs",
 ]);
 const CREATE_OPTION_KEYS = new Set([

@@ -99,6 +99,20 @@ tests_assert_instance_row() {
 
 tests_assert_containers_running() {
 	case "${PROJECT_TYPE:-}" in
+	wordpress_nextjs)
+		tests_container_running "${DOMAIN_NAME}-nextjs" || {
+			ECHO_ERROR "Container not running: ${DOMAIN_NAME}-nextjs"
+			return 1
+		}
+		tests_container_running "${DOMAIN_NAME}-wordpress" || {
+			ECHO_ERROR "Container not running: ${DOMAIN_NAME}-wordpress"
+			return 1
+		}
+		tests_container_running "${DOMAIN_NAME}-mysql" || {
+			ECHO_ERROR "Container not running: ${DOMAIN_NAME}-mysql"
+			return 1
+		}
+		;;
 	directus_nextjs)
 		tests_container_running "${DOMAIN_NAME}-nextjs" || {
 			ECHO_ERROR "Container not running: ${DOMAIN_NAME}-nextjs"

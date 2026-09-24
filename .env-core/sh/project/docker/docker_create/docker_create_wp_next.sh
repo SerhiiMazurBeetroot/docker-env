@@ -13,15 +13,16 @@ docker_create_wp_next() {
 	set_project_args
 	check_data_before_continue_callback docker_create_wp_next || return 1
 
-	CREATE_TEMPLATE="wpnextjs"
+	CREATE_TEMPLATE="wordpress_nextjs"
 	docker_create_project docker_create_wp_next_after
 }
 
 docker_create_wp_next_after() {
-	(cd "$PROJECT_ROOT_DIR/frontend" && npm i)
+	mkdir -p \
+		"$PROJECT_ROOT_DIR/wp-content/uploads" \
+		"$PROJECT_ROOT_DIR/wp-content/themes" \
+		"$PROJECT_ROOT_DIR/wp-content/plugins" \
+		"$PROJECT_ROOT_DIR/logs/wordpress"
 	wp_core_install
 	wp_site_empty
-	edit_file_compose_setup_beetroot
-	edit_file_gitignore
-	notice_composer
 }

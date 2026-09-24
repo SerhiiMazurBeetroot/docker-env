@@ -98,6 +98,12 @@ export function extraHostsForType(type, domainFull) {
 				{ key: "DOMAIN_DB", host: `${domainFull}.phpmyadmin` },
 				{ key: "DOMAIN_MAIL", host: `${domainFull}.mail` },
 			];
+		case "wordpress_nextjs":
+			return [
+				{ key: "DOMAIN_ADMIN", host: `${domainFull}.wp` },
+				{ key: "DOMAIN_DB", host: `${domainFull}.phpmyadmin` },
+				{ key: "DOMAIN_MAIL", host: `${domainFull}.mail` },
+			];
 		case "directus":
 			return [{ key: "DOMAIN_DB", host: `${domainFull}.pgadmin` }];
 		case "directus_nextjs":
@@ -118,7 +124,7 @@ export function extraHostsForType(type, domainFull) {
 export function urlsForProject(type, domainFull) {
 	if (!domainFull) return [];
 	const urls = [{ key: "DOMAIN_FULL", url: `https://${domainFull}` }];
-	if (type === "wordpress" || type === "projects" || type === "wpnextjs") {
+	if (type === "wordpress" || type === "projects") {
 		urls.push({ key: "DOMAIN_ADMIN", url: `https://${domainFull}/wp-admin` });
 	} else if (type === "bedrock") {
 		urls.push({ key: "DOMAIN_ADMIN", url: `https://${domainFull}/wp/wp-admin` });

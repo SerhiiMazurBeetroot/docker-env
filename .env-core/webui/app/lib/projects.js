@@ -11,6 +11,7 @@ export const URL_LABELS = {
 const TYPE_TONES = {
 	php: "bg-sky-400/15 text-sky-300",
 	wordpress: "bg-blue-400/15 text-blue-300",
+	wordpressnextjs: "bg-indigo-400/15 text-indigo-300",
 	wp: "bg-blue-400/15 text-blue-300",
 	laravel: "bg-rose-400/15 text-rose-300",
 	nextjs: "bg-zinc-400/15 text-zinc-200",
