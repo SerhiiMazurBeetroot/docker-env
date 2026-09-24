@@ -13,7 +13,6 @@ docker_create_wp_next() {
 	set_project_args
 	check_data_before_continue_callback docker_create_wp_next || return 1
 
-	CREATE_TEMPLATE="wordpress_nextjs"
 	docker_create_project docker_create_wp_next_after
 }
 
