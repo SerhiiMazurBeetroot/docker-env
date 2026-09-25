@@ -85,12 +85,12 @@ tests_assert_instance_row() {
 	type=$(instances_get project_type)
 
 	if [[ "$status" != "active" ]]; then
-		ECHO_ERROR "instances.log status is not active for $DOMAIN_NAME (got: ${status:-empty})"
+		ECHO_ERROR "instances.json status is not active for $DOMAIN_NAME (got: ${status:-empty})"
 		return 1
 	fi
 
 	if [[ "$type" != "$PROJECT_TYPE" ]]; then
-		ECHO_ERROR "instances.log project_type mismatch for $DOMAIN_NAME (expected $PROJECT_TYPE, got: ${type:-empty})"
+		ECHO_ERROR "instances.json project_type mismatch for $DOMAIN_NAME (expected $PROJECT_TYPE, got: ${type:-empty})"
 		return 1
 	fi
 

@@ -104,7 +104,7 @@ delete_site_data() {
 		echo "Webroot not found"
 	fi
 
-	#Remove from instances.log
+	#Remove from instances.json
 	update_file_instances
 
 	#Remove from /etc/hosts

@@ -216,7 +216,7 @@ export default function Dashboard() {
 	function runDelete(domain) {
 		if (!domain) return;
 		const ok = window.confirm(
-			`Delete ${domain}?\n\nStops containers if they exist, then removes site files and the instances.log row. Matching images and volumes are removed when present.`
+			`Delete ${domain}?\n\nStops containers if they exist, then removes site files and the site record. Matching images and volumes are removed when present.`
 		);
 		if (!ok) return;
 		if (detailDomain === domain) setDetailDomain("");

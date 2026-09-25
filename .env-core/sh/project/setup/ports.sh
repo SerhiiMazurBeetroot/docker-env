@@ -4,8 +4,8 @@
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
 get_unique_port() {
-	# GET PORT [ count port from 3309 ]
-	PORT=3309
+	# First site port. 3309 was only the header row of the old instances.log.
+	PORT=3310
 	while true; do
 		port_exist=""
 		if instances_port_taken "$PORT"; then

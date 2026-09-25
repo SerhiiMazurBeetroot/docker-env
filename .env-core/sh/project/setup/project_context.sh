@@ -13,7 +13,7 @@ has_project_paths() {
 	[[ -n "${PROJECT_DOCKER_DIR:-}" && -n "${DOCKER_CONTAINER_APP:-}" ]]
 }
 
-# Load DOMAIN_NAME + paths from instances.log when a domain is already known.
+# Load DOMAIN_NAME + paths from instances.json when a domain is already known.
 reload_project_context() {
 	has_domain_name || return 1
 	get_project_dir "skip_question"

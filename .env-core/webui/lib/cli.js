@@ -2,7 +2,7 @@ import path from "path";
 import fs from "fs";
 import { spawn } from "child_process";
 import { parseDockerLogLine } from "./logParse";
-import { listProjectsFast, sampleProjectStats, urlsForProject, hostsStatusFor, loadHostsText, hostTokenSet, applyHostsExtras } from "./listSnapshot";
+import { listProjectsFast, sampleProjectStats, urlsForProject, hostsStatusFor, loadHostsText, hostTokenSet, applyHostsExtras, readInstanceSites } from "./listSnapshot";
 
 const ACTIONS = new Set(["start", "stop", "restart", "rebuild", "delete"]);
 const CREATE_TYPES = new Set([
@@ -646,10 +646,6 @@ function instancesDir() {
 	return path.join(envDir(), ".env-core/data");
 }
 
-function instancesLogPath() {
-	return path.join(instancesDir(), "instances.log");
-}
-
 function dockerNames(args) {
 	return new Promise((resolve) => {
 		const child = spawn("docker", args, { env: process.env });
@@ -677,26 +673,6 @@ function dockerNames(args) {
 	});
 }
 
-function parseInstancesLog(text) {
-	const rows = [];
-	const lines = String(text || "").split(/\r?\n/);
-
-	for (let index = 0; index < lines.length; index += 1) {
-		const cols = lines[index].split("|").map((part) => part.trim());
-		const domain = cols[2] || "";
-		if (!domain || domain === "DOMAIN_NAME") continue;
-		if (index === 0 && cols[0] === "PORT") continue;
-		rows.push({
-			domain,
-			status: cols[1] || "",
-			domainFull: cols[3] || "",
-			type: cols[6] || "",
-		});
-	}
-
-	return rows;
-}
-
 function projectLooksRunning(names, domain) {
 	const prefix = `${domain}-`;
 	return names.some((name) => name === domain || name.startsWith(prefix));
@@ -718,13 +694,6 @@ function liteSystemService(id, name, container, urls, actions, names) {
 }
 
 export async function listProjectsLite() {
-	let raw = "";
-	try {
-		raw = fs.readFileSync(instancesLogPath(), "utf8");
-	} catch (err) {
-		raw = "";
-	}
-
 	const names = await dockerNames(["ps", "--format", "{{.Names}}"]);
 	const hosts = await loadHostsText();
 	const tokens = hostTokenSet(hosts.text);
@@ -733,7 +702,7 @@ export async function listProjectsLite() {
 	const webuiUrl = `http://${webuiHost}:${process.env.WEBUI_PORT || "7777"}`;
 	const systemActions = ["start", "stop", "restart"];
 
-	const projects = parseInstancesLog(raw).map((row) => {
+	const projects = readInstanceSites().map((row) => {
 		const urls = urlsForProject(row.type, row.domainFull);
 		const url = row.domainFull ? `https://${row.domainFull}` : "";
 		return {
@@ -1048,14 +1017,7 @@ export async function getProjectDetail(domain) {
 		return { status: 400, body: { ok: false, error: "Invalid domain" } };
 	}
 
-	let raw = "";
-	try {
-		raw = fs.readFileSync(instancesLogPath(), "utf8");
-	} catch (err) {
-		raw = "";
-	}
-
-	const row = parseInstancesLog(raw).find((item) => item.domain === domain);
+	const row = readInstanceSites().find((item) => item.domain === domain);
 	if (!row) {
 		return { status: 404, body: { ok: false, error: "Unknown project" } };
 	}
@@ -1228,7 +1190,7 @@ export function streamProjectSnapshots(signal) {
 				const dir = instancesDir();
 				if (fs.existsSync(dir)) {
 					watcher = fs.watch(dir, (_event, filename) => {
-						if (!filename || filename === "instances.log") {
+						if (!filename || filename === "instances.json" || filename === "instances.log") {
 							scheduleRefresh();
 						}
 					});

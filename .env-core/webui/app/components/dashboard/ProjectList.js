@@ -66,7 +66,7 @@ export default function ProjectList({
 		return (
 			<div className="rounded-2xl border border-dashed border-line bg-panel/60 px-6 py-12 text-center text-muted">
 				{projects.length === 0
-					? "No projects in instances.log yet. Use New project to create one."
+					? "No projects yet. Use New project to create one."
 					: "No projects match this filter."}
 			</div>
 		);

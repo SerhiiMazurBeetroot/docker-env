@@ -6,8 +6,17 @@ function envDir() {
 	return process.env.ENV_DIR || process.env.DOCKER_ENV_DIR || path.resolve(process.cwd(), "../..");
 }
 
+function instancesJsonPath() {
+	return path.join(envDir(), ".env-core/data/instances.json");
+}
+
 function instancesLogPath() {
 	return path.join(envDir(), ".env-core/data/instances.log");
+}
+
+export function instancesFilePath() {
+	if (fs.existsSync(instancesJsonPath())) return instancesJsonPath();
+	return instancesLogPath();
 }
 
 function dockerCapture(args, timeoutMs = 8000) {
@@ -56,6 +65,35 @@ function parseJsonLines(text) {
 		}
 	}
 	return rows;
+}
+
+export function parseInstances(text) {
+	const raw = String(text || "").trim();
+	if (raw.startsWith("{")) {
+		try {
+			const parsed = JSON.parse(raw);
+			const sites = Array.isArray(parsed.sites) ? parsed.sites : [];
+			return sites
+				.map((site) => ({
+					domain: site.domain_name || "",
+					status: site.status || "",
+					domainFull: site.domain_full || "",
+					type: site.project_type || "",
+				}))
+				.filter((row) => row.domain && row.domain !== "DOMAIN_NAME");
+		} catch (err) {
+			return [];
+		}
+	}
+	return parseInstancesLog(raw);
+}
+
+export function readInstanceSites() {
+	try {
+		return parseInstances(fs.readFileSync(instancesFilePath(), "utf8"));
+	} catch (err) {
+		return [];
+	}
 }
 
 export function parseInstancesLog(text) {
@@ -276,13 +314,7 @@ function rewriteHosts(text, action, site, extras) {
 }
 
 export async function applyHostsExtras(action, domain) {
-	let raw = "";
-	try {
-		raw = fs.readFileSync(instancesLogPath(), "utf8");
-	} catch (err) {
-		raw = "";
-	}
-	const row = parseInstancesLog(raw).find((item) => item.domain === domain);
+	const row = readInstanceSites().find((item) => item.domain === domain);
 	if (!row) return { ok: false, log: `Unknown project ${domain}` };
 
 	const extras = extraHostsForType(row.type, row.domainFull).map((item) => item.host);
@@ -472,20 +504,13 @@ function systemFromPs(psRows) {
 }
 
 export async function listProjectsFast() {
-	let raw = "";
-	try {
-		raw = fs.readFileSync(instancesLogPath(), "utf8");
-	} catch (err) {
-		raw = "";
-	}
-
 	const [captured, hosts] = await Promise.all([
 		dockerCapture(["ps", "-a", "--format", "{{json .}}"], 8000),
 		loadHostsText(),
 	]);
 	const psRows = parseJsonLines(captured.stdout);
 	const tokens = hostTokenSet(hosts.text);
-	const rows = parseInstancesLog(raw);
+	const rows = readInstanceSites();
 
 	const projects = rows.map((row) => {
 		const services = servicesForProject(row, psRows);

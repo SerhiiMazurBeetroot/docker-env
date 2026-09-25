@@ -15,11 +15,17 @@ fix_linux_watchers() {
 }
 
 check_instances_file_exists() {
-	if [ ! -f "$FILE_INSTANCES" ]; then
-		mkdir -p "$DIR_DATA"
+	mkdir -p "$DIR_DATA"
 
-		PORT=3309
-		echo "$PORT | STATUS | DOMAIN_NAME | DOMAIN_FULL | DB_NAME | DB_TYPE | PROJECT_TYPE | PORT_FRONT | " >>"$FILE_INSTANCES"
+	# Runs on every start, including offline. env_migration repeats this
+	# once CORE_VERSION is still below 3.0.0; the function is idempotent.
+	if declare -F migrate_instances_log_to_json >/dev/null 2>&1; then
+		migrate_instances_log_to_json
+		return 0
+	fi
+
+	if [[ ! -f "$FILE_INSTANCES" ]]; then
+		printf '%s\n' '{"sites":[]}' >"$FILE_INSTANCES"
 	fi
 }
 
@@ -30,7 +36,7 @@ print_to_file_instances() {
 	if [[ $PORT && $DOMAIN_NAME ]]; then
 		[[ $PORT_FRONT == "" ]] && PORT_FRONT=0
 
-		instances_append "$PORT | ${status} | $DOMAIN_NAME | $DOMAIN_FULL | $DB_NAME | $DB_TYPE | $PROJECT_TYPE | $PORT_FRONT |"
+		instances_append "$status"
 	fi
 }
 

@@ -32,7 +32,7 @@ database_replace_project_from_db() {
 		# TABLE_PREFIX
 		NEW_TABLE_PREFIX=$(grep 'CREATE TABLE' "$PROJECT_DATABASE_DIR/$DB_FILE" | grep -o '[`][A-Za-z0-9_]\+[_comments]\+[`]' | awk '/'_comments'/{print}' | head -n 1 | sed 's/comments//g' | tr -d \`)
 
-		# Replace instances.log
+		# Replace the site row in instances.json
 		instances_set_field db_name "$NEW_DB_NAME"
 
 		# Replace .env
