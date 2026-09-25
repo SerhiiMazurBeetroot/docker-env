@@ -32,6 +32,11 @@ env_migration() {
 		fi
 	fi
 
+	# Numeric compare. The old `<` check above is lexicographic and stays as-is.
+	if version_lt "${CORE_VER_CUR:-0}" "3.0.0" || { [[ -f "$FILE_INSTANCES_LOG" ]] && [[ ! -s "$FILE_INSTANCES" ]]; }; then
+		migrate_instances_log_to_json
+	fi
+
 	export DIR_NGINX="$ENV_DIR/.env-core/system/nginx"
 
 	# case start v.2.0.1
@@ -39,12 +44,45 @@ env_migration() {
 	core_version
 }
 
+# True when $1 is a lower dotted version than $2 (2.0.8 < 3.0.0).
+version_lt() {
+	local left="${1:-0}"
+	local right="${2:-0}"
+	local IFS=.
+	local -a a b
+	local i n ai bi
+
+	# shellcheck disable=SC2206
+	a=($left)
+	# shellcheck disable=SC2206
+	b=($right)
+	n=${#a[@]}
+	((${#b[@]} > n)) && n=${#b[@]}
+
+	for ((i = 0; i < n; i++)); do
+		ai=${a[i]:-0}
+		bi=${b[i]:-0}
+		ai=${ai//[^0-9]/}
+		bi=${bi//[^0-9]/}
+		ai=${ai:-0}
+		bi=${bi:-0}
+		if ((10#$ai < 10#$bi)); then
+			return 0
+		fi
+		if ((10#$ai > 10#$bi)); then
+			return 1
+		fi
+	done
+	return 1
+}
+
 move_dir_data() {
 	if [ -f "$ENV_DIR/.env-core/instances.log" ]; then
 		ECHO_YELLOW "Replacing FILE_INSTANCES ..."
 
-		mv "$ENV_DIR/.env-core/settings.log" "$FILE_SETTINGS"
-		mv "$ENV_DIR/.env-core/instances.log" "$FILE_INSTANCES"
+		mkdir -p "$DIR_DATA"
+		[[ -f "$ENV_DIR/.env-core/settings.log" ]] && mv "$ENV_DIR/.env-core/settings.log" "$FILE_SETTINGS"
+		mv "$ENV_DIR/.env-core/instances.log" "$FILE_INSTANCES_LOG"
 	fi
 }
 

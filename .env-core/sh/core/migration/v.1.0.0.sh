@@ -19,22 +19,23 @@ replace_wp_instances_file_1_0() {
 	if [ -f "$ENV_DIR/wp-instances.log" ]; then
 		ECHO_YELLOW "Replacing FILE_INSTANCES ..."
 
-		mv "$ENV_DIR/wp-instances.log" "$ENV_DIR/.env-core/instances.log"
+		mkdir -p "$DIR_DATA"
+		mv "$ENV_DIR/wp-instances.log" "$FILE_INSTANCES_LOG"
 		while read line; do
 			if [[ $line == *"DOMAIN_NAME"* ]]; then
 				# Change to head (DB_TYPE & PROJECT_TYPE)
-				sed -i -e "s/$line/3309 \| STATUS \| DOMAIN_NAME \| DOMAIN_FULL \| DB_NAME \| DB_TYPE \| PROJECT_TYPE \|/g" $FILE_INSTANCES
+				sed -i -e "s/$line/3309 \| STATUS \| DOMAIN_NAME \| DOMAIN_FULL \| DB_NAME \| DB_TYPE \| PROJECT_TYPE \|/g" "$FILE_INSTANCES_LOG"
 			else
 				# Add MYSQL & wordpress to previous project
-				sed -i -e "s/$line/$line MYSQL \| wordpress \|/g" $FILE_INSTANCES
+				sed -i -e "s/$line/$line MYSQL \| wordpress \|/g" "$FILE_INSTANCES_LOG"
 			fi
 
-		done <"$FILE_INSTANCES"
+		done <"$FILE_INSTANCES_LOG"
 
 		#Replace "Protocol https" to "Status active"
 		while read line; do
-			sed -i -e "s/https/active/g" $FILE_INSTANCES
-		done <"$FILE_INSTANCES"
+			sed -i -e "s/https/active/g" "$FILE_INSTANCES_LOG"
+		done <"$FILE_INSTANCES_LOG"
 	fi
 	EMPTY_LINE
 }
