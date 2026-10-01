@@ -10,6 +10,21 @@ docker_create_require_nginx() {
 	fi
 }
 
+# Compose failed after the tree, catalog row, and maybe some containers exist.
+# Hosts are removed too when a line was already written.
+docker_create_rollback() {
+	local compose_dir="${CREATE_COMPOSE_DIR:-${PROJECT_DOCKER_DIR:-}}"
+
+	ECHO_ERROR "Create failed. Removing the partial site [${DOMAIN_NAME:-}]."
+
+	if [[ -n "$compose_dir" && -f "$compose_dir/docker-compose.yml" ]]; then
+		docker_compose_runner "down -v --remove-orphans" "$compose_dir" || true
+	fi
+
+	INSTANCES_STATUS="remove"
+	delete_site_data || true
+}
+
 docker_create_require_new_site() {
 	if [[ ${DOMAIN_EXISTS:-0} != 0 ]]; then
 		ECHO_ERROR "Site already exists"
@@ -91,7 +106,7 @@ docker_create_project() {
 	EMPTY_LINE
 
 	if ! docker_compose_runner "${CREATE_COMPOSE_CMD:-up -d}" "${CREATE_COMPOSE_DIR:-}"; then
-		instances_set_status "inactive"
+		docker_create_rollback
 		return 1
 	fi
 
