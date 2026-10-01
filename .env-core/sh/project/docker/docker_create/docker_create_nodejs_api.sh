@@ -13,7 +13,6 @@ docker_create_nodejs_api() {
 	set_project_args
 	check_data_before_continue_callback docker_create_nodejs_api || return 1
 
-	CREATE_TEMPLATE="nodejs_api"
 	CREATE_SKIP_PERMISSIONS=1
 	docker_create_project
 }
