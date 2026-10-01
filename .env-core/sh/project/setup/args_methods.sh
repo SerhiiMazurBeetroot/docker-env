@@ -259,22 +259,20 @@ get_project_dir() {
 	[[ "$SETUP_TYPE" -eq 3 ]] && DOMAIN_NAME_DEFAULT="$DOMAIN_NAME.local"
 
 	#DOMAIN_FULL
-	if [[ $QUESTION == "skip_question" ]]; then
+	if [[ ${CLI_NONINTERACTIVE:-0} -eq 1 && -n "${CLI_DOMAIN:-}" ]]; then
+		DOMAIN_FULL="$CLI_DOMAIN"
+	elif [[ $QUESTION == "skip_question" ]]; then
 		DOMAIN_FULL=$(instances_get domain_full)
-	else
-		if [[ $TEST_RUNNING -ne 1 ]]; then
-			ECHO_ENTER "Enter DOMAIN_FULL [default $DOMAIN_NAME_DEFAULT]"
-			read -rp "DOMAIN_FULL: " DOMAIN_FULL
-		fi
+	elif [[ ${CLI_NONINTERACTIVE:-0} -eq 1 ]]; then
+		DOMAIN_FULL=""
+	elif [[ ${TEST_RUNNING:-0} -ne 1 ]]; then
+		ECHO_ENTER "Enter DOMAIN_FULL [default $DOMAIN_NAME_DEFAULT]"
+		read -rp "DOMAIN_FULL: " DOMAIN_FULL
 	fi
 
 	[[ -z "${DOMAIN_FULL:-}" ]] && DOMAIN_FULL="$DOMAIN_NAME_DEFAULT"
 
-	# Remove non printing chars from DOMAIN_FULL
-	DOMAIN_FULL=$(echo "$DOMAIN_FULL" | tr -dc '[[:print:]]' | tr -d ' ' | tr -d '[A' | tr -d '[C' | tr -d '[B' | tr -d '[D')
-
-	# Replace "_" to "-"
-	DOMAIN_FULL=$(echo "$DOMAIN_FULL" | sed 's/_/-/g')
+	DOMAIN_FULL=$(sanitize_host_input "$DOMAIN_FULL")
 
 	if ! is_safe_hostname "$DOMAIN_FULL"; then
 		ECHO_ERROR "Invalid DOMAIN_FULL. Use letters, numbers, dots, and hyphens only."

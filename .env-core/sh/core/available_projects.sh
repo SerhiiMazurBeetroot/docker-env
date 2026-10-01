@@ -324,8 +324,8 @@ create_project_by_type() {
 
 	load_project_modules
 
-	# Next.js asks Docker vs local. Tests call the Docker create directly.
-	if [[ "$type" == "nextjs" && ${TEST_RUNNING:-0} -ne 1 ]]; then
+	# Next.js asks Docker vs local. Tests and the CLI call the Docker create directly.
+	if [[ "$type" == "nextjs" && ${TEST_RUNNING:-0} -ne 1 && ${CLI_NONINTERACTIVE:-0} -ne 1 ]]; then
 		fn="create_nextjs"
 	else
 		fn=$(project_field create "$type") || {

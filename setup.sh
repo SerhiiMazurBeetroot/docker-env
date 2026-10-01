@@ -14,4 +14,8 @@ main_actions() {
 	primary_menu
 }
 
-main_actions
+if [[ $# -gt 0 ]]; then
+	cli_dispatch "$@"
+else
+	main_actions
+fi

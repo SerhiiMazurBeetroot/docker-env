@@ -36,6 +36,9 @@ export ENV_TESTS_LOADED=0
 
 export TEST_RUNNING=0
 export TEST_MODE=""
+export CLI_NONINTERACTIVE=0
+export CLI_NAME=""
+export CLI_DOMAIN=""
 
 # --- Session / wizard state (reset via reset_session_var, never unset under nounset) ---
 export DOMAIN_NAME=""

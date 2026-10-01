@@ -3,22 +3,44 @@
 # shellcheck disable=SC1091
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
+# Drop non-printing characters, spaces, and leftover arrow-key fragments ([A [B [C [D).
+sanitize_host_input() {
+	local value="${1:-}"
+
+	value=$(printf '%s' "$value" | tr -dc '[[:print:]]' | tr -d ' ')
+	value=${value//\[A/}
+	value=${value//\[B/}
+	value=${value//\[C/}
+	value=${value//\[D/}
+	value=${value//_/-}
+	printf '%s' "$value"
+}
+
 get_domain_name() {
-	if [ -z "${DOMAIN_NAME:-}" ]; then
+	local fresh=0
+
+	if [[ -z "${DOMAIN_NAME:-}" && -n "${CLI_NAME:-}" ]]; then
+		DOMAIN_NAME="$CLI_NAME"
+		fresh=1
+	fi
+
+	if [[ -z "${DOMAIN_NAME:-}" ]]; then
+		if [[ ${CLI_NONINTERACTIVE:-0} -eq 1 ]]; then
+			ECHO_ERROR "Site name is required. Use --name."
+			return 1
+		fi
+
 		ECHO_ENTER "Enter Domain Name without subdomain:"
 		read -rp 'Domain: ' DOMAIN_NAME
+		fresh=1
 
 		while [ -z "${DOMAIN_NAME:-}" ]; do
 			read -rp "Please fill in the Domain: " DOMAIN_NAME
 		done
+	fi
 
-		# Remove non printing chars from DOMAIN_NAME
-		DOMAIN_NAME=$(echo "$DOMAIN_NAME" | tr -dc '[[:print:]]' | tr -d ' ' | tr -d '[A' | tr -d '[C' | tr -d '[B' | tr -d '[D')
-
-		# Replace "_" to "-"
-		DOMAIN_NAME=$(echo "$DOMAIN_NAME" | sed 's/_/-/g')
-
-		# Remove subdomain
+	if [[ "$fresh" -eq 1 ]]; then
+		DOMAIN_NAME=$(sanitize_host_input "$DOMAIN_NAME")
 		DOMAIN_NAME=$(echo "${DOMAIN_NAME}" | cut -d . -f 1)
 
 		if ! is_safe_hostname "$DOMAIN_NAME"; then

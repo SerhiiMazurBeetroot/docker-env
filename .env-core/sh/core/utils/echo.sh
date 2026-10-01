@@ -83,7 +83,7 @@ GET_USER_INPUT() {
 	local default_choice=${3:-}   # optional
 	local choice
 
-	if [[ $TEST_RUNNING -eq 1 ]]; then
+	if [[ ${TEST_RUNNING:-0} -eq 1 || ${CLI_NONINTERACTIVE:-0} -eq 1 ]]; then
 		choice="${default_choice:-}"
 	else
 		case $prompt_type in
