@@ -33,9 +33,16 @@ git_create_repo_github() {
 		[[ $REPO_TYPE == 1 ]] && REPO_TYPE="private"
 		[[ $REPO_TYPE == 2 ]] && REPO_TYPE="public"
 
+		authfile=$(mktemp "${TMPDIR:-/tmp}/github-auth.XXXXXX")
+		chmod 600 "$authfile"
+		printf 'Authorization: Bearer %s\n' "$TOKEN_GITHUB" >"$authfile" || {
+			rm -f "$authfile"
+			return 1
+		}
+
 		response=$(
 			curl -sS -o /dev/null -w "%{http_code}" -X POST https://api.github.com/user/repos \
-				-H "Authorization: Bearer $TOKEN_GITHUB" \
+				-H "@${authfile}" \
 				-H "Accept: application/vnd.github+json" \
 				-d @- <<EOF
 {
@@ -44,7 +51,8 @@ git_create_repo_github() {
   "$REPO_TYPE": true
 }
 EOF
-		)
+		) || true
+		rm -f "$authfile"
 
 		if [[ $response == "201" || $response == "200" ]]; then
 			ECHO_SUCCESS "Github"
