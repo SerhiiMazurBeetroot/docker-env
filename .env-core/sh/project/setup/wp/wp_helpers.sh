@@ -16,10 +16,10 @@ wp_composer_install() {
 		EMPTY_LINE
 		ECHO_YELLOW "Running composer install... $DOCKER_CONTAINER_APP"
 
-		COMPOSER_ISSUE=$(docker exec -it "$DOCKER_CONTAINER_APP" bash -l -c "cd ./wp-content/themes/$WP_DEFAULT_THEME && composer install" | awk '{if(/allowed/) print }' || true)
+		COMPOSER_ISSUE=$(wp_composer_in_theme | awk '{if(/allowed/) print }' || true)
 		ECHO_YELLOW "COMPOSER_ISSUE: $COMPOSER_ISSUE"
 
-		docker exec -i "$DOCKER_CONTAINER_APP" bash -l -c "cd ./wp-content/themes/$WP_DEFAULT_THEME && rm -rf ./vendor && composer install" || true
+		WP_COMPOSER_CLEAN=1 wp_composer_in_theme || true
 	else
 		ECHO_YELLOW "composer.json file doesn't exists"
 	fi
@@ -46,7 +46,19 @@ wp_composer_package() {
 		return 1
 	fi
 
-	docker exec -it "$DOCKER_CONTAINER_APP" bash -l -c "cd ./wp-content/themes/$WP_DEFAULT_THEME && composer require -- $(printf '%q' "$package")" || true
+	docker exec -i \
+		-e WP_THEME="${WP_DEFAULT_THEME}" \
+		-e WP_PACKAGE="$package" \
+		"$DOCKER_CONTAINER_APP" \
+		bash -lc 'cd "./wp-content/themes/$WP_THEME" && composer require -- "$WP_PACKAGE"' || true
+}
+
+wp_composer_in_theme() {
+	docker exec -i \
+		-e WP_THEME="${WP_DEFAULT_THEME}" \
+		-e WP_COMPOSER_CLEAN="${WP_COMPOSER_CLEAN:-}" \
+		"$DOCKER_CONTAINER_APP" \
+		bash -lc 'cd "./wp-content/themes/$WP_THEME" && if [ "$WP_COMPOSER_CLEAN" = 1 ]; then rm -rf ./vendor; fi && composer install'
 }
 
 wp_get_default_theme() {
@@ -79,7 +91,10 @@ wp_npm_install() {
 	if [[ -f "$PROJECT_WP_CONTENT_DIR/themes/$WP_DEFAULT_THEME/package.json" ]]; then
 		EMPTY_LINE
 		ECHO_YELLOW "Running npm install... $DOCKER_CONTAINER_APP"
-		docker exec -i "$DOCKER_CONTAINER_APP" bash -l -c "cd ./wp-content/themes/$WP_DEFAULT_THEME && rm -rf ./node_modules && npm install" || true
+		docker exec -i \
+			-e WP_THEME="${WP_DEFAULT_THEME}" \
+			"$DOCKER_CONTAINER_APP" \
+			bash -lc 'cd "./wp-content/themes/$WP_THEME" && rm -rf ./node_modules && npm install' || true
 	fi
 }
 
@@ -93,30 +108,50 @@ wait_for_wp_core() {
 	EMPTY_LINE
 	ECHO_YELLOW "Waiting for WordPress core at $marker"
 
-	docker exec -i "$DOCKER_CONTAINER_APP" sh -c "
+	docker exec -i -e WP_MARKER="$marker" "$DOCKER_CONTAINER_APP" sh -c '
 		i=0
-		until [ -f $marker ]; do
-			i=\$((i + 1))
-			if [ \$i -gt 120 ]; then
-				echo 'Timeout waiting for WordPress files ($marker)' >&2
+		until [ -f "$WP_MARKER" ]; do
+			i=$((i + 1))
+			if [ "$i" -gt 120 ]; then
+				echo "Timeout waiting for WordPress files ($WP_MARKER)" >&2
 				exit 1
 			fi
-			echo 'WordPress files not ready yet...' >&2
+			echo "WordPress files not ready yet..." >&2
 			sleep 2
 		done
-	"
+	'
+}
+
+wp_core_install_exec() {
+	local command="$1"
+
+	case "$command" in
+	install | multisite-install) ;;
+	*)
+		ECHO_ERROR "Unknown wp core command"
+		return 1
+		;;
+	esac
+
+	docker exec -i \
+		-e WP_INSTALL_COMMAND="$command" \
+		-e WP_INSTALL_URL="https://${DOMAIN_FULL}" \
+		-e WP_INSTALL_TITLE="${DOMAIN_NAME}" \
+		-e WP_INSTALL_USER="${WP_USER}" \
+		-e WP_INSTALL_PASSWORD="${WP_PASSWORD}" \
+		"$DOCKER_CONTAINER_APP" \
+		sh -c 'wp core "$WP_INSTALL_COMMAND" --url="$WP_INSTALL_URL" --title="$WP_INSTALL_TITLE" --admin_user="$WP_INSTALL_USER" --admin_password="$WP_INSTALL_PASSWORD" --admin_email=example@example.com --skip-email --allow-root'
 }
 
 wp_core_install() {
 	wait_for_wp_core || return 1
 
 	ECHO_WARN_YELLOW "wp_core_install..."
-	if [[ "yes" = "$MULTISITE" || "2" = "$MULTISITE" ]]; then
-		docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'wp core multisite-install --url=https://'$DOMAIN_FULL' --title='$DOMAIN_NAME' --admin_user='$WP_USER' --admin_password="'$WP_PASSWORD'" --admin_email=example@example.com --skip-email --allow-root'
-
+	if [[ "${MULTISITE:-}" == "yes" || "${MULTISITE:-}" == "2" ]]; then
+		wp_core_install_exec "multisite-install"
 		wp_multisite_htaccess
 	else
-		docker exec -i "$DOCKER_CONTAINER_APP" sh -c 'wp core install --url=https://'$DOMAIN_FULL' --title='$DOMAIN_NAME' --admin_user='$WP_USER' --admin_password="'$WP_PASSWORD'" --admin_email=example@example.com --skip-email --allow-root'
+		wp_core_install_exec "install"
 	fi
 
 	ECHO_SUCCESS "Done!"

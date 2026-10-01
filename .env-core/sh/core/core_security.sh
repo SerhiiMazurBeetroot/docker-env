@@ -66,15 +66,14 @@ env_load_file() {
 }
 
 mysql_root() {
-	local extra="${1:-}"
-
 	docker exec -e MYSQL_PWD="${MYSQL_ROOT_PASSWORD:-}" -i "$DOCKER_CONTAINER_DB" \
-		sh -c "${MYSQL_CMD:-mysql} -uroot --silent ${extra}"
+		"${MYSQL_CMD:-mysql}" -uroot --silent "$@"
 }
 
 git_push_origin_with_token() {
 	local token="$1"
 	local askpass
+	local status=0
 
 	askpass=$(mktemp "${TMPDIR:-/tmp}/git-askpass.XXXXXX")
 	chmod 700 "$askpass"
@@ -87,6 +86,7 @@ esac
 EOF
 
 	GIT_ASKPASS_TOKEN="$token" GIT_ASKPASS="$askpass" GIT_TERMINAL_PROMPT=0 \
-		git push -u origin master
+		git push -u origin master || status=$?
 	rm -f "$askpass"
+	return "$status"
 }
