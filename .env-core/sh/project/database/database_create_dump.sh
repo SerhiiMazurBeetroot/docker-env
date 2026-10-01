@@ -4,39 +4,46 @@
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
 database_create_dump() {
+	local file partial status old
+
 	env_file_load
 	get_mysql_cmd
 
 	mkdir -p "$PROJECT_DATABASE_DIR/temp"
 
-	# Save old files to "/temp" before deleting
-	for files in "$PROJECT_DATABASE_DIR"/*.sql; do
-		if [ -e "$files" ]; then
-			ECHO_TEXT "There are old files to delete"
-			mv "$PROJECT_DATABASE_DIR"/*.sql "$PROJECT_DATABASE_DIR/temp"
-			break
-		fi
-	done
-
 	file="$PROJECT_DATABASE_DIR/$DUMP_FILE"
+	partial="$PROJECT_DATABASE_DIR/temp/.dump-partial.sql"
+	status=0
 
-	# Create dump
-	case $DB_TYPE in
+	case "${DB_TYPE:-}" in
 	"MYSQL")
-		docker exec -e MYSQL_PWD="${MYSQL_ROOT_PASSWORD:-}" -i "$DOCKER_CONTAINER_DB" sh -c "$MYSQL_DUMP_CMD -uroot $MYSQL_DATABASE" >"$file"
+		docker exec -e MYSQL_PWD="${MYSQL_ROOT_PASSWORD:-}" -i "$DOCKER_CONTAINER_DB" sh -c "$MYSQL_DUMP_CMD -uroot $MYSQL_DATABASE" >"$partial" </dev/null || status=$?
 		;;
 	"POSTGRES")
-		docker exec -i "$DOCKER_CONTAINER_DB" pg_dump -U "$DB_USER" -d "$DB_NAME" -F t >"$file"
+		docker exec -i "$DOCKER_CONTAINER_DB" pg_dump -U "$DB_USER" -d "$DB_NAME" -F t >"$partial" </dev/null || status=$?
+		;;
+	*)
+		rm -f "$partial"
+		ECHO_ERROR "Unsupported database type: ${DB_TYPE:-}"
+		return 1
 		;;
 	esac
 
-	# Check if new backup was created
-	if [ -e "$file" ]; then
-		rm -rf "$PROJECT_DATABASE_DIR/temp"
-		ECHO_SUCCESS "Backup done $(date +%Y'-'%m'-'%d' '%H':'%M)"
-	else
+	# A failed dump still creates an empty file through the redirect.
+	if [[ "$status" -ne 0 || ! -s "$partial" ]]; then
+		rm -f "$partial"
 		ECHO_ERROR "DB dump not created"
-		mv "$PROJECT_DATABASE_DIR/temp"/*.sql "$PROJECT_DATABASE_DIR/"
-		rm -rf "$PROJECT_DATABASE_DIR/temp"
+		return 1
 	fi
+
+	mv "$partial" "$file"
+
+	for old in "$PROJECT_DATABASE_DIR"/*.sql; do
+		[[ -e "$old" ]] || continue
+		[[ "$old" == "$file" ]] && continue
+		rm -f "$old"
+	done
+
+	rm -rf "$PROJECT_DATABASE_DIR/temp"
+	ECHO_SUCCESS "Backup done $(date +%Y'-'%m'-'%d' '%H':'%M)"
 }

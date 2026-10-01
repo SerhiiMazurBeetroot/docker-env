@@ -4,6 +4,9 @@
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
 database_import() {
+	local attempts=0
+	local max_attempts=24
+
 	if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_DB'($)')" ]; then
 		ECHO_GREEN "App and DB container exists"
 
@@ -19,10 +22,11 @@ database_import() {
 
 				ECHO_GREEN "DB collected, inserting it to the SQL container"
 				dbstatus=1
-				while [[ $dbstatus != [0] ]]; do
+				attempts=0
+				while [[ "$dbstatus" != "0" ]]; do
 					check_db_exists
 
-					if [ $DB_EXISTS ]; then
+					if [[ -n "${DB_EXISTS:-}" ]]; then
 						dbstatus=0
 						ECHO_GREEN "DB found"
 
@@ -48,7 +52,7 @@ database_import() {
 							docker exec -e MYSQL_PWD="${MYSQL_ROOT_PASSWORD:-}" -i "$DOCKER_CONTAINER_DB" bash -l -c "$MYSQL_CMD -uroot \"$MYSQL_DATABASE\" < /docker-entrypoint-initdb.d/dump.sql"
 							;;
 						"POSTGRES")
-							docker exec -i "$DOCKER_CONTAINER_DB" bash -c "$(declare -f database_import_postgres); database_import_postgres $DB_NAME $DB_USER"
+							database_import_postgres "$DB_NAME" "$DB_USER" || return 1
 							;;
 						esac
 
@@ -56,8 +60,14 @@ database_import() {
 
 						database_search_replace
 					else
+						attempts=$((attempts + 1))
+						if ((attempts >= max_attempts)); then
+							ECHO_ERROR "Database did not become ready"
+							return 1
+						fi
+
 						sleep 5
-						ECHO_YELLOW "Trying to insert DB, awaiting MariaDB container..."
+						ECHO_YELLOW "Trying to insert DB, awaiting MariaDB container... (${attempts}/${max_attempts})"
 						check_db_exists
 
 						if [ $DB_EXISTS ]; then
