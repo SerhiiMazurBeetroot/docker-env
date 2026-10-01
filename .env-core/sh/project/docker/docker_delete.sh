@@ -31,7 +31,7 @@ docker_delete_project() {
 }
 
 docker_delete() {
-	get_existing_domains "======== DELETE project ======="
+	get_existing_domains "======== DELETE project =======" || return 1
 
 	if [ -d "$PROJECT_ROOT_DIR" ]; then
 		EMPTY_LINE

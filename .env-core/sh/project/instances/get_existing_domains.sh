@@ -51,7 +51,7 @@ get_existing_domains() {
 					break
 				else
 					if [ "$choice" == 0 ]; then
-						docker_menu
+						return 1
 					else
 						ECHO_WARN_RED "Wrong option"
 					fi

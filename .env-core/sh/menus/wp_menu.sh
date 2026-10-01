@@ -4,8 +4,6 @@
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
 wp_menu() {
-	unset_variables "PROJECT_TYPE"
-
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "===== WP Workflow ===="
@@ -23,23 +21,15 @@ wp_menu() {
 			;;
 		1)
 			wp_composer_install
-			unset_variables
-			project_services_menu
 			;;
 		2)
 			wp_composer_package
-			unset_variables
-			project_services_menu
 			;;
 		3)
-			wp_site_empty
-			unset_variables
-			project_services_menu
+			wp_site_empty ask
 			;;
 		4)
 			wp_multisite_convert
-			unset_variables
-			project_services_menu
 			;;
 		esac
 	done

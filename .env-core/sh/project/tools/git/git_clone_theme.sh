@@ -4,7 +4,7 @@
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
 git_clone_theme() {
-	get_existing_domains
+	get_existing_domains || return 1
 	check_domain_exists
 
 	if [[ $DOMAIN_EXISTS == 1 ]]; then

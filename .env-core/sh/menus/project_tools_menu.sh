@@ -23,7 +23,7 @@ project_tools_menu() {
 			return 0
 			;;
 		1)
-			get_existing_domains "======= Change Status ======="
+			get_existing_domains "======= Change Status =======" || continue
 			CURRENT_STATUS=$(instances_get status)
 
 			if [[ "$CURRENT_STATUS" == 'active' ]]; then

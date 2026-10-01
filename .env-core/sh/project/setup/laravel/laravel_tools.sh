@@ -5,7 +5,7 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 
 laravel_select_project() {
 	if [[ -z "${DOMAIN_NAME:-}" ]]; then
-		get_existing_domains "======= Laravel ======="
+		get_existing_domains "======= Laravel =======" || return 1
 	fi
 
 	if [[ ${PROJECT_TYPE:-} != "laravel" ]]; then

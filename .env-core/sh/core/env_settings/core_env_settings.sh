@@ -70,7 +70,7 @@ check_env_version() {
 			check_git_version
 
 			#Replace ENV_DATE_CHECK
-			sed -i -e '/ENV_DATE_CHECK/d' "$FILE_SETTINGS"
+			sed_inplace '/ENV_DATE_CHECK/d' "$FILE_SETTINGS"
 			echo "ENV_DATE_CHECK=$DATE_NOW" >>"$FILE_SETTINGS"
 		fi
 	fi

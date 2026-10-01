@@ -21,7 +21,7 @@ new_project_menu() {
 
 		case ${PROJECT_TYPE:-} in
 		0)
-			main_actions
+			return 0
 			;;
 		*)
 			if ((PROJECT_TYPE < 1 || PROJECT_TYPE > ${#AVAILABLE_PROJECTS[@]})); then

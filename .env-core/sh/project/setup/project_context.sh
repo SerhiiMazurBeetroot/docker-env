@@ -24,7 +24,7 @@ docker_require_project_context() {
 	local action="${1:-======= Select project ========}"
 
 	if ! has_domain_name; then
-		get_existing_domains "$action"
+		get_existing_domains "$action" || return 1
 	fi
 
 	if ! has_domain_name; then

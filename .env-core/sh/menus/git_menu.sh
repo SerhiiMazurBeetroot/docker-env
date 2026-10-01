@@ -31,13 +31,13 @@ git_menu() {
 			project_services_menu
 			;;
 		3)
-			get_existing_domains "====== Create Github Repo ====="
+			get_existing_domains "====== Create Github Repo =====" || continue
 			git_create_repo_github
 			unset_variables
 			git_menu
 			;;
 		4)
-			get_existing_domains "====== Create GitLab Repo ====="
+			get_existing_domains "====== Create GitLab Repo =====" || continue
 			git_create_repo_gitlab
 			unset_variables
 			git_menu

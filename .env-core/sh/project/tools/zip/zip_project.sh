@@ -4,7 +4,7 @@
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
 zip_project() {
-	get_existing_domains "======== ZIP project ======="
+	get_existing_domains "======== ZIP project =======" || return 1
 
 	if [ -d "$PROJECT_ROOT_DIR" ]; then
 		#First of all save DB

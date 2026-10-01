@@ -18,7 +18,7 @@ env_helpers_menu() {
 
 		case $actions in
 		0)
-			main_actions
+			return 0
 			;;
 		1)
 			env_helpers_docker_menu
@@ -47,7 +47,7 @@ env_helpers_disk_menu() {
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "==== Disk Usage menu ==="
-		ECHO_YELLOW "[0] Return to main menu"
+		ECHO_YELLOW "[0] Return to the previous menu"
 		ECHO_GREEN "[1] Find large files (300M+)"
 		ECHO_GREEN "[2] Show top largest folders"
 
@@ -55,7 +55,7 @@ env_helpers_disk_menu() {
 
 		case $actions in
 		0)
-			main_actions
+			return 0
 			;;
 		1)
 			find . -type f -size +300M
@@ -78,7 +78,7 @@ env_helpers_git_menu() {
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "==== GIT menu ==="
-		ECHO_YELLOW "[0] Return to main menu"
+		ECHO_YELLOW "[0] Return to the previous menu"
 		ECHO_GREEN "[1] git config core.fileMode false"
 		ECHO_GREEN "[2] git_user_info"
 		ECHO_GREEN "[3] empty commit"
@@ -87,7 +87,7 @@ env_helpers_git_menu() {
 
 		case $actions in
 		0)
-			main_actions
+			return 0
 			;;
 		1)
 			git config core.fileMode false
@@ -120,7 +120,7 @@ env_helpers_permisions_menu() {
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "==== Permissions menu ==="
-		ECHO_YELLOW "[0] Return to main menu"
+		ECHO_YELLOW "[0] Return to the previous menu"
 		ECHO_GREEN "[1] Set current dir to 755"
 		ECHO_GREEN "[2] Set current dir to 775"
 		ECHO_GREEN "[3] Set all files to 644 recursively"
@@ -131,7 +131,7 @@ env_helpers_permisions_menu() {
 
 		case $actions in
 		0)
-			main_actions
+			return 0
 			;;
 		1)
 			chmod 755 .
@@ -164,7 +164,7 @@ env_helpers_docker_menu() {
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "==== Docker menu ==="
-		ECHO_YELLOW "[0] Return to main menu"
+		ECHO_YELLOW "[0] Return to the previous menu"
 		ECHO_GREEN "[1] Stop and Remove All Containers"
 		ECHO_GREEN "[2] Remove All Volumes"
 		ECHO_GREEN "[3] Remove All Networks"
@@ -175,7 +175,7 @@ env_helpers_docker_menu() {
 
 		case $actions in
 		0)
-			main_actions
+			return 0
 			;;
 		1)
 			ECHO_YELLOW "Stopping and removing all containers..."
