@@ -17,7 +17,7 @@ create_nextjs() {
 
 		case $actions in
 		0)
-			project_services_menu
+			return 0
 			;;
 		1)
 			docker_create_nextjs

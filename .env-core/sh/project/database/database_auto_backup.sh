@@ -4,7 +4,9 @@
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
 database_auto_backup() {
-	[[ "${DOMAIN_NAME:-}" == '' ]] && running_projects_list "========= STOP project ========"
+	if [[ -z "${DOMAIN_NAME:-}" ]]; then
+		running_projects_list "========= STOP project ========" || return 1
+	fi
 
 	if [ "$(docker ps --format '{{.Names}}' | grep -E '(^|_|-)'$DOCKER_CONTAINER_DB'($)')" ]; then
 		get_db_name

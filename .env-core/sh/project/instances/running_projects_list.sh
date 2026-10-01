@@ -29,8 +29,7 @@ running_projects_list() {
 
 	if ((${#running_container[@]} == 0)); then
 		ECHO_ERROR "Sites not running"
-		project_services_menu
-		return
+		return 1
 	fi
 
 	# Interactive selection loop
@@ -49,8 +48,7 @@ running_projects_list() {
 			get_project_dir "skip_question"
 			break
 		elif ((choice == 0)); then
-			project_services_menu
-			return
+			return 1
 		else
 			ECHO_WARN_RED "Wrong option"
 		fi

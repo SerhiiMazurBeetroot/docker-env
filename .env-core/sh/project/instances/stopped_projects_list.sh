@@ -30,8 +30,7 @@ stopped_projects_list() {
 	# Check if we have any containers to work with
 	if ((${#existing_container[@]} == 0)); then
 		ECHO_ERROR "No active sites found"
-		project_services_menu
-		return
+		return 1
 	fi
 
 	# Find stopped containers (in existing but not running)
@@ -49,8 +48,7 @@ stopped_projects_list() {
 	# Check if we have stopped containers
 	if ((${#stopped_container[@]} == 0)); then
 		ECHO_ERROR "No stopped sites found"
-		project_services_menu
-		return
+		return 1
 	fi
 
 	# Interactive selection loop
@@ -69,8 +67,7 @@ stopped_projects_list() {
 			get_project_dir "skip_question"
 			break
 		elif ((choice == 0)); then
-			project_services_menu
-			return
+			return 1
 		else
 			ECHO_WARN_RED "Wrong option"
 		fi

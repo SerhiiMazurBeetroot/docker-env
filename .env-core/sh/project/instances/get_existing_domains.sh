@@ -9,7 +9,7 @@ get_existing_domains() {
 	if [ -z "${DOMAIN_NAME:-}" ]; then
 		EMPTY_LINE
 		ECHO_CYAN "======== Project Status ======="
-		ECHO_YELLOW "[0] Return to the services menu"
+		ECHO_YELLOW "[0] Return to the previous menu"
 		ECHO_KEY_VALUE "[1]" "active [default]"
 		ECHO_KEY_VALUE "[2]" "inactive"
 		ECHO_KEY_VALUE "[3]" "all"
@@ -17,7 +17,7 @@ get_existing_domains() {
 		first_choice=$(GET_USER_INPUT "select_one_of")
 
 		if [[ "$first_choice" == "0" ]]; then
-			project_services_menu
+			return 1
 		fi
 
 		status_filter="active"
@@ -59,7 +59,7 @@ get_existing_domains() {
 			done
 		else
 			ECHO_ERROR "Sites don't exists"
-			main_actions
+			return 1
 		fi
 	elif ! has_project_paths 2>/dev/null; then
 		reload_project_context

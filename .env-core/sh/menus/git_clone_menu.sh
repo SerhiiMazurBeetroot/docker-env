@@ -19,7 +19,6 @@ git_clone_menu() {
 
 			case $actions in
 			0)
-				project_services_menu
 				break
 				;;
 			1)

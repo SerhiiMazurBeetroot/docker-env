@@ -25,7 +25,7 @@ docker_nghost_start() {
 		ECHO_SUCCESS "NgHost started"
 	else
 		ECHO_ERROR "NgHost container not running"
-		nginx_menu
+		return 1
 	fi
 }
 
@@ -35,7 +35,7 @@ docker_nghost_stop() {
 		ECHO_SUCCESS "NgHost container stopped"
 	else
 		ECHO_ERROR "Nginx container not running"
-		nginx_menu
+		return 1
 	fi
 }
 
@@ -44,7 +44,7 @@ docker_nghost_restart() {
 		docker_compose_runner "restart" "$DIR_NGHOST"
 	else
 		ECHO_ERROR "Nginx container not running"
-		nginx_menu
+		return 1
 	fi
 }
 

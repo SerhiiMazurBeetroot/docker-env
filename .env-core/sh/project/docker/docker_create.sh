@@ -6,7 +6,6 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 docker_create_require_nginx() {
 	if [[ ${NGINX_EXISTS:-0} -ne 1 ]]; then
 		ECHO_ERROR "Nginx container not running"
-		nginx_menu
 		return 1
 	fi
 }

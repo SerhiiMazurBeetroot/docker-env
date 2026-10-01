@@ -42,7 +42,7 @@ setup_installation_type_callback() {
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "==== $PROJECT_TYPE type ==="
-		ECHO_YELLOW "[0] Return to main menu"
+		ECHO_YELLOW "[0] Return to the previous menu"
 		ECHO_KEY_VALUE "[1]" "default"
 		ECHO_KEY_VALUE "[2]" "custom"
 		ECHO_KEY_VALUE "[3]" "beetroot"
@@ -50,7 +50,7 @@ setup_installation_type_callback() {
 
 		case $SETUP_TYPE in
 		0)
-			main_actions
+			return 1
 			;;
 		1)
 			if ! _setup_require_new_domain; then
@@ -72,7 +72,7 @@ setup_installation_type_callback() {
 			if ! _setup_require_new_domain; then
 				continue
 			fi
-			wp_beetroot_args "$@"
+			wp_beetroot_args "$@" || return 1
 			return 0
 			;;
 		esac

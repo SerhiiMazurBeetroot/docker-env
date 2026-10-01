@@ -50,7 +50,7 @@ docker_delete() {
 				;;
 			[Nn]*)
 				unset_variables
-				project_services_menu
+				return 1
 				;;
 
 			*) echo "Please answer [y/n]" ;;

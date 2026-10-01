@@ -19,7 +19,7 @@ docker_ngrok_setup() {
 
 			# Set the authtoken
 			ngrok_read_env
-			sed -i "s/^  authtoken:.*$/  authtoken: '$NGROK_AUTH'/g" "$NGROK_CONFIG_FILE"
+			sed_inplace "s/^  authtoken:.*$/  authtoken: '$NGROK_AUTH'/g" "$NGROK_CONFIG_FILE"
 
 			docker_ngrok_start
 		else
@@ -33,8 +33,8 @@ docker_ngrok_start() {
 		docker_compose_runner "up -d" "$DIR_NGROK"
 		ECHO_SUCCESS "Ngrok started"
 	else
-		ECHO_ERROR "Ngrok container not running"
-		nginx_menu
+		ECHO_ERROR "Nginx container not running"
+		return 1
 	fi
 }
 
@@ -44,7 +44,7 @@ docker_ngrok_stop() {
 		ECHO_SUCCESS "Ngrok container stopped"
 	else
 		ECHO_ERROR "Nginx container not running"
-		nginx_menu
+		return 1
 	fi
 }
 
@@ -53,7 +53,7 @@ docker_ngrok_restart() {
 		docker_compose_runner "restart" "$DIR_NGROK"
 	else
 		ECHO_ERROR "Nginx container not running"
-		nginx_menu
+		return 1
 	fi
 }
 
@@ -68,14 +68,16 @@ ngrok_save_token() {
 	echo
 
 	if [[ $NGROK_AUTH != '' ]]; then
-		sed -i "s/^NGROK_AUTH=.*$/NGROK_AUTH='$NGROK_AUTH'/g" "$NGROK_ENV_FILE"
-		sed -i "s/^  authtoken:.*$/  authtoken: '$NGROK_AUTH'/g" "$NGROK_CONFIG_FILE"
+		sed_inplace "s/^NGROK_AUTH=.*$/NGROK_AUTH='$NGROK_AUTH'/g" "$NGROK_ENV_FILE"
+		sed_inplace "s/^  authtoken:.*$/  authtoken: '$NGROK_AUTH'/g" "$NGROK_CONFIG_FILE"
 	fi
 }
 
 ngrok_add_endpoint() {
 
-	[[ -z "${DOMAIN_NAME:-}" ]] && running_projects_list "======= Add new endpoint ======="
+	if [[ -z "${DOMAIN_NAME:-}" ]]; then
+		running_projects_list "======= Add new endpoint =======" || return 1
+	fi
 	if [[ $DOMAIN_NAME != '' ]]; then
 
 		if grep -q "name: ${DOMAIN_NAME}" "$NGROK_CONFIG_FILE"; then
@@ -101,10 +103,12 @@ ngrok_add_endpoint() {
 
 ngrok_delete_endpoint() {
 
-	[[ -z "${DOMAIN_NAME:-}" ]] && running_projects_list "======= Add new endpoint ======="
+	if [[ -z "${DOMAIN_NAME:-}" ]]; then
+		running_projects_list "======= Add new endpoint =======" || return 1
+	fi
 	if [[ $DOMAIN_NAME != '' ]]; then
 		if grep -q "name: ${DOMAIN_NAME}" "$NGROK_CONFIG_FILE"; then
-			sed -i "/# ${DOMAIN_FULL} START #/,/# ${DOMAIN_FULL} END #/d" "$NGROK_CONFIG_FILE"
+			sed_inplace "/# ${DOMAIN_FULL} START #/,/# ${DOMAIN_FULL} END #/d" "$NGROK_CONFIG_FILE"
 
 			ECHO_SUCCESS "Endpoint for ${DOMAIN_NAME} deleted"
 		else

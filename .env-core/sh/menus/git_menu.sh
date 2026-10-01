@@ -23,28 +23,23 @@ git_menu() {
 		1)
 			git_clone_project
 			unset_variables
-			project_services_menu
 			;;
 		2)
 			git_clone_theme
 			unset_variables
-			project_services_menu
 			;;
 		3)
 			get_existing_domains "====== Create Github Repo =====" || continue
 			git_create_repo_github
 			unset_variables
-			git_menu
 			;;
 		4)
 			get_existing_domains "====== Create GitLab Repo =====" || continue
 			git_create_repo_gitlab
 			unset_variables
-			git_menu
 			;;
 		5)
 			git_save_access
-			git_menu
 			;;
 		esac
 	done

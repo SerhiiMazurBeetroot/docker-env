@@ -21,13 +21,11 @@ zip_menu() {
 			INSTANCES_STATUS="archive"
 			zip_project
 			unset_variables "PROJECT_TYPE"
-			project_services_menu
 			;;
 		2)
 			INSTANCES_STATUS="active"
 			unzip_project
 			unset_variables "PROJECT_TYPE"
-			project_services_menu
 			;;
 		esac
 	done

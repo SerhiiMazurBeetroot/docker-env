@@ -17,25 +17,25 @@ database_menu() {
 
 		case $actions in
 		0)
-			project_services_menu
+			return 0
 			;;
 		1)
-			running_projects_list "========== IMPORT DB =========="
+			running_projects_list "========== IMPORT DB ==========" || continue
 			database_import
 			unset_variables
 			;;
 		2)
-			running_projects_list "========== EXPORT DB =========="
+			running_projects_list "========== EXPORT DB ==========" || continue
 			database_export
 			unset_variables
 			;;
 		3)
-			running_projects_list "====== Search-Replace DB ======"
+			running_projects_list "====== Search-Replace DB ======" || continue
 			database_search_replace
 			unset_variables
 			;;
 		4)
-			running_projects_list "=== Replace project from DB ==="
+			running_projects_list "=== Replace project from DB ===" || continue
 			database_replace_project_from_db
 			docker_rebuild
 			docker_restart

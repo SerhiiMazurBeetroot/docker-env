@@ -5,14 +5,13 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 
 docker_start() {
 	if ! has_domain_name; then
-		stopped_projects_list "======== START project ========"
+		stopped_projects_list "======== START project ========" || return 1
 	fi
 
 	docker_require_project_context "======== START project ========" || return 1
 
 	if container_is_running; then
 		ECHO_WARN_RED "Containers already running for this domain"
-		project_services_menu
 		return 0
 	fi
 
