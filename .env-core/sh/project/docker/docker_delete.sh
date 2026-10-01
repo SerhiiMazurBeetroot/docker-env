@@ -6,6 +6,11 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 docker_delete_project() {
 	docker_require_project_context "======= DELETE project ========" || return 1
 
+	if ! database_snapshot_before_delete; then
+		ECHO_ERROR "Delete cancelled. The database snapshot failed."
+		return 1
+	fi
+
 	INSTANCES_STATUS="remove"
 	ECHO_YELLOW "Deleting site [$PROJECT_ROOT_DIR]"
 	fix_permissions || true

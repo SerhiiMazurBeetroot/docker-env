@@ -39,6 +39,7 @@ export TEST_MODE=""
 export CLI_NONINTERACTIVE=0
 export CLI_NAME=""
 export CLI_DOMAIN=""
+export BACKUP_KEEP=5
 
 # --- Session / wizard state (reset via reset_session_var, never unset under nounset) ---
 export DOMAIN_NAME=""
