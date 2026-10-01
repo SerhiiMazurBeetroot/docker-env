@@ -37,7 +37,7 @@ get_project_args() {
 			NODE_VERSION
 		)
 		;;
-	nodejs)
+	nodejs | nodejs_api)
 		ARGS=(
 			NODE_VERSION
 		)

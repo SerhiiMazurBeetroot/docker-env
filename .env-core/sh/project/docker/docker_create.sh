@@ -19,7 +19,7 @@ docker_create_require_new_site() {
 }
 
 # Optional flags (unset at end of docker_create_project):
-#   CREATE_TEMPLATE=clone|copy|wordpress_nextjs|directus_nextjs|nodejs
+#   CREATE_TEMPLATE=clone|copy|wordpress_nextjs|directus_nextjs|nodejs|nodejs_api|laravel
 #   CREATE_COMPOSE_CMD="up -d"
 #   CREATE_COMPOSE_DIR=
 #   CREATE_ENV_FILE=
@@ -59,6 +59,9 @@ docker_create_project() {
 		;;
 	nodejs)
 		rsync -av "$ENV_DIR/.env-core/templates/nodejs/" "$PROJECT_ROOT_DIR/"
+		;;
+	nodejs_api)
+		cp -R "$ENV_DIR/.env-core/templates/nodejs_api/." "$PROJECT_ROOT_DIR/"
 		;;
 	laravel)
 		cp -R "$ENV_DIR/.env-core/templates/laravel/." "$PROJECT_ROOT_DIR/"

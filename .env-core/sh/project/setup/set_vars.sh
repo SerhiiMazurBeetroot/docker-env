@@ -77,6 +77,12 @@ set_project_vars() {
 		DOCKER_CONTAINER_APP="$DOMAIN_NAME-nodejs"
 		DOCKER_CONTAINER_DB="$DOMAIN_NAME-mongo"
 		;;
+	"nodejs_api")
+		DB_TYPE="0"
+		DOCKER_VOLUME_DB=""
+		DOCKER_CONTAINER_DB=""
+		DOCKER_CONTAINER_APP="$DOMAIN_NAME-nodejs_api"
+		;;
 	"nextjs")
 		DOCKER_CONTAINER_APP="$DOMAIN_NAME-nextjs"
 		;;

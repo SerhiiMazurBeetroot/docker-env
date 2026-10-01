@@ -16,6 +16,7 @@ const CREATE_TYPES = new Set([
 	"directus_nextjs",
 	"wordpress_nextjs",
 	"nodejs",
+	"nodejs_api",
 ]);
 const CREATE_OPTION_KEYS = new Set([
 	"PHP_VERSION",

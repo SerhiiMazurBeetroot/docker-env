@@ -42,7 +42,7 @@ tests_reset_project_globals() {
 
 tests_project_compose_dir() {
 	case "${PROJECT_TYPE:-}" in
-	nodejs | nodejs_api)
+	nodejs)
 		printf '%s' "$PROJECT_ROOT_DIR"
 		;;
 	wordpress | projects)

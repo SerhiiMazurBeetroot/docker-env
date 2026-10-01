@@ -33,6 +33,7 @@ const TYPE_FIELDS = {
 		{ key: "NODE_VERSION", label: "Node version" },
 	],
 	nodejs: [{ key: "NODE_VERSION", label: "Node version" }],
+	nodejs_api: [{ key: "NODE_VERSION", label: "Node version" }],
 };
 
 export default function CreateProjectModal({ open, onClose, onCreate, busy = false }) {
