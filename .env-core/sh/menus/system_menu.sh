@@ -9,11 +9,10 @@ system_menu() {
 	while true; do
 		EMPTY_LINE
 		ECHO_CYAN "======== System  ======="
-		ECHO_YELLOW "0 - Return to main menu"
-		ECHO_GREEN "1 - Nginx"
-		ECHO_KEY_VALUE "3 - Web UI" "$(webui_status_label)"
-		# ECHO_GREEN "2 - Ngrok"
-		ECHO_KEY_VALUE "9 - Settings" "$ENV_UPDATES"
+		ECHO_YELLOW "[0] Return to main menu"
+		ECHO_GREEN "[1] Nginx"
+		ECHO_KEY_VALUE "[2] Web UI" "$(webui_status_label)"
+		ECHO_KEY_VALUE "[3] Settings" "$ENV_UPDATES"
 
 		echo_tests_actions
 
@@ -21,23 +20,24 @@ system_menu() {
 
 		case "$userChoice" in
 		0)
-			primary_menu
+			return 0
 			;;
 		1)
 			nginx_menu
 			;;
 		2)
-			# ngrok_menu
-			;;
-		3)
 			webui_menu
 			;;
-		9)
+		3)
 			env_settings
 			;;
-		10)
-			load_system_tests
-			tests_actions
+		4)
+			if [[ ${ENV_MODE:-} == 'development' ]]; then
+				load_system_tests
+				tests_actions
+			else
+				ECHO_WARN_RED "Invalid selection. Please try again."
+			fi
 			;;
 		*)
 			ECHO_WARN_RED "Invalid selection. Please try again."
@@ -50,6 +50,6 @@ system_menu() {
 echo_tests_actions() {
 	if [[ ${ENV_MODE:-} == 'development' ]]; then
 		TEST_MODE=true
-		ECHO_RED "10 - Run tests"
+		ECHO_RED "[4] Run tests"
 	fi
 }

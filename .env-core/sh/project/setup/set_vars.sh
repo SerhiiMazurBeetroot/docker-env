@@ -16,7 +16,7 @@ set_project_vars() {
 	DOMAIN_DB=""
 	DOCKER_VOLUME_DB="$DOMAIN_NAME"_db_data
 	DOCKER_CONTAINER_DB="$DOMAIN_NAME-mysql"
-	PROJECT_DOCKER_DIR="$PROJECT_ROOT_DIR/docker"
+	PROJECT_DOCKER_DIR=$(project_compose_dir "${PROJECT_TYPE:-}" || printf '%s' "$PROJECT_ROOT_DIR/docker")
 	PROJECT_DATABASE_DIR=$PROJECT_ROOT_DIR/database
 	DB_TYPE="0"
 	DB_NAME="db"
@@ -38,10 +38,8 @@ set_project_vars() {
 	"wordpress" | "projects")
 		DB_TYPE="MYSQL"
 		DOMAIN_ADMIN="$DOMAIN_FULL/wp-admin"
-		PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/wp-docker
 		PROJECT_DATABASE_DIR=$PROJECT_ROOT_DIR/wp-database
 		PROJECT_WP_CONTENT_DIR=$PROJECT_ROOT_DIR/wp-content
-		DOCKER_CONTAINER_APP="$DOMAIN_NAME-wordpress"
 		DOMAIN_DB="$DOMAIN_FULL.phpmyadmin"
 		DOMAIN_MAIL="$DOMAIN_FULL.mail"
 		HOST_EXTRA="$DOMAIN_DB $DOMAIN_MAIL"
@@ -50,21 +48,17 @@ set_project_vars() {
 		DB_TYPE="MYSQL"
 		DOMAIN_ADMIN="$DOMAIN_FULL/wp/wp-admin"
 		PROJECT_WP_CONTENT_DIR=$PROJECT_ROOT_DIR/app/web/app
-		DOCKER_CONTAINER_APP="$DOMAIN_NAME-bedrock"
 		DOMAIN_DB="$DOMAIN_FULL.phpmyadmin"
 		DOMAIN_MAIL="$DOMAIN_FULL.mail"
 		HOST_EXTRA="$DOMAIN_DB $DOMAIN_MAIL"
 		;;
 	"php")
 		PROJECT_WP_CONTENT_DIR=$PROJECT_ROOT_DIR/app
-		DOCKER_CONTAINER_APP="$DOMAIN_NAME-php"
 		;;
 	"wordpress_nextjs")
 		DB_TYPE="MYSQL"
-		PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/docker
 		PROJECT_DATABASE_DIR=$PROJECT_ROOT_DIR/database
 		PROJECT_WP_CONTENT_DIR=$PROJECT_ROOT_DIR/wp-content
-		DOCKER_CONTAINER_APP="$DOMAIN_NAME-wordpress"
 		DOCKER_CONTAINER_DB="$DOMAIN_NAME-mysql"
 		DOMAIN_ADMIN="${DOMAIN_FULL}.wp"
 		DOMAIN_DB="$DOMAIN_FULL.phpmyadmin"
@@ -74,24 +68,20 @@ set_project_vars() {
 	"nodejs")
 		DB_TYPE="MONGO"
 		PROJECT_DIR="nodejs"
-		DOCKER_CONTAINER_APP="$DOMAIN_NAME-nodejs"
 		DOCKER_CONTAINER_DB="$DOMAIN_NAME-mongo"
 		;;
 	"nodejs_api")
 		DB_TYPE="0"
 		DOCKER_VOLUME_DB=""
 		DOCKER_CONTAINER_DB=""
-		DOCKER_CONTAINER_APP="$DOMAIN_NAME-nodejs_api"
 		;;
 	"nextjs")
-		DOCKER_CONTAINER_APP="$DOMAIN_NAME-nextjs"
 		;;
 	"directus")
 		DB_TYPE="POSTGRES"
 		DB_NAME="directus"
 		DOMAIN_DB="$DOMAIN_FULL.pgadmin"
 		DOCKER_CONTAINER_DB="$DOMAIN_NAME-postgres"
-		DOCKER_CONTAINER_APP="$DOMAIN_NAME-directus"
 		HOST_EXTRA="$DOMAIN_DB"
 		;;
 	"directus_nextjs")
@@ -100,20 +90,16 @@ set_project_vars() {
 		DOMAIN_ADMIN="${DOMAIN_FULL}.directus"
 		DOMAIN_DB="${DOMAIN_FULL}.pgadmin"
 		DOCKER_CONTAINER_DB="${DOMAIN_NAME}-postgres"
-		DOCKER_CONTAINER_APP="${DOMAIN_NAME}-nextjs"
 		HOST_EXTRA="$DOMAIN_ADMIN $DOMAIN_DB"
 		;;
 	"elasticsearch")
 		DOMAIN_LOGSTASH="$DOMAIN_FULL.logstash"
 		DOMAIN_KIBANA="$DOMAIN_FULL.kibana"
-		DOCKER_CONTAINER_APP="$DOMAIN_NAME-elasticsearch"
 		HOST_EXTRA="$DOMAIN_LOGSTASH $DOMAIN_KIBANA"
 		;;
 	"laravel")
 		DB_TYPE="MYSQL"
-		PROJECT_DOCKER_DIR=$PROJECT_ROOT_DIR/docker
 		PROJECT_DATABASE_DIR=$PROJECT_ROOT_DIR/database
-		DOCKER_CONTAINER_APP="$DOMAIN_NAME-laravel"
 		DOMAIN_ADMIN="$DOMAIN_FULL/login"
 		DOMAIN_DB="$DOMAIN_FULL.phpmyadmin"
 		DOMAIN_MAIL="$DOMAIN_FULL.mail"
@@ -124,4 +110,6 @@ set_project_vars() {
 		return 1
 		;;
 	esac
+
+	DOCKER_CONTAINER_APP=$(project_container_name) || return 1
 }

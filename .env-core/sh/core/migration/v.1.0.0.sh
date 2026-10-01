@@ -24,17 +24,17 @@ replace_wp_instances_file_1_0() {
 		while read line; do
 			if [[ $line == *"DOMAIN_NAME"* ]]; then
 				# Change to head (DB_TYPE & PROJECT_TYPE)
-				sed -i -e "s/$line/3309 \| STATUS \| DOMAIN_NAME \| DOMAIN_FULL \| DB_NAME \| DB_TYPE \| PROJECT_TYPE \|/g" "$FILE_INSTANCES_LOG"
+				sed_inplace "s/$line/3309 \| STATUS \| DOMAIN_NAME \| DOMAIN_FULL \| DB_NAME \| DB_TYPE \| PROJECT_TYPE \|/g" "$FILE_INSTANCES_LOG"
 			else
 				# Add MYSQL & wordpress to previous project
-				sed -i -e "s/$line/$line MYSQL \| wordpress \|/g" "$FILE_INSTANCES_LOG"
+				sed_inplace "s/$line/$line MYSQL \| wordpress \|/g" "$FILE_INSTANCES_LOG"
 			fi
 
 		done <"$FILE_INSTANCES_LOG"
 
 		#Replace "Protocol https" to "Status active"
 		while read line; do
-			sed -i -e "s/https/active/g" "$FILE_INSTANCES_LOG"
+			sed_inplace "s/https/active/g" "$FILE_INSTANCES_LOG"
 		done <"$FILE_INSTANCES_LOG"
 	fi
 	EMPTY_LINE
@@ -73,7 +73,7 @@ replace_docker_compose() {
 					#Replace old path for adminer.php
 					DOCKER_DIR="$(echo ${FILENAME} | sed -e 's/docker-compose.*.yml//')"
 					cp -rf "$ENV_DIR/.env-core/templates/wordpress/adminer.php.example" "$DOCKER_DIR/adminer.php"
-					sed -i -e 's/.\/..\/..\/..\/env-core\/templates\/database\/adminer-template:/.\/..\/wp-docker\/adminer.php:/g' $NEW_FILENAME
+					sed_inplace 's/.\/..\/..\/..\/env-core\/templates\/database\/adminer-template:/.\/..\/wp-docker\/adminer.php:/g' "$NEW_FILENAME"
 				fi
 			done
 		done

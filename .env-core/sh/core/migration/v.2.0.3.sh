@@ -28,7 +28,7 @@ fix_old_compose_project_name() {
 
 				get_compose_project_name
 
-				sed -i "s/^COMPOSE_PROJECT_NAME='.*/COMPOSE_PROJECT_NAME='$COMPOSE_PROJECT_NAME'/" "$DOCKER_FILE"
+				sed_inplace "s/^COMPOSE_PROJECT_NAME='.*/COMPOSE_PROJECT_NAME='$COMPOSE_PROJECT_NAME'/" "$DOCKER_FILE"
 			fi
 
 		done

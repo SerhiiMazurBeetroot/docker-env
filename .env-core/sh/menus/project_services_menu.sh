@@ -6,50 +6,59 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 project_services_menu() {
 	load_project_modules
 
+	local -a names=()
+	local -a types=()
+	local -a hosts=()
+	local -a states=()
+	local line name host type state
+	local index choice
+
 	while true; do
+		names=()
+		types=()
+		hosts=()
+		states=()
+
+		while IFS=$'\t' read -r name type host state; do
+			[[ -z "$name" ]] && continue
+			names+=("$name")
+			types+=("$type")
+			hosts+=("$host")
+			states+=("$state")
+		done < <(instances_visible_sites)
+
 		EMPTY_LINE
-		ECHO_CYAN "==== Project Services ==="
-		ECHO_YELLOW "0 - Return to main menu"
-		ECHO_GREEN "1 - Docker"
-		ECHO_GREEN "2 - Database"
-		ECHO_GREEN "3 - CLI"
-		ECHO_CYAN "4 - List of existing projects"
-		ECHO_GREEN "5 - Tools and Integrations"
+		ECHO_CYAN "==== Sites ===="
+		ECHO_YELLOW "[0] Return to main menu"
 
-		actions=$(GET_USER_INPUT "select_one_of")
+		if ((${#names[@]} == 0)); then
+			ECHO_YELLOW "No sites yet. Create one from New project."
+		else
+			for ((index = 0; index < ${#names[@]}; index++)); do
+				printf '%b[%d]%b %-16s %-20s %-10s https://%s\n' \
+					"$GREEN" "$((index + 1))" "$NC" \
+					"${names[$index]}" \
+					"$(site_type_label "${types[$index]}")" \
+					"${states[$index]}" \
+					"${hosts[$index]}"
+			done
+		fi
 
-		case $actions in
-		0)
-			main_actions
-			;;
-		1)
-			if [[ "${NGINX_EXISTS:-0}" -eq 1 ]]; then
-				docker_menu
-			else
-				ECHO_ERROR "Nginx container not running"
-				nginx_menu
-			fi
-			;;
-		2)
-			if [[ "${NGINX_EXISTS:-0}" -eq 1 ]]; then
-				database_menu
-			else
-				ECHO_ERROR "Nginx container not running"
-				nginx_menu
-			fi
-			;;
-		3)
-			ECHO_INFO "[exit] to exit the terminal"
-			[[ -z "${DOMAIN_NAME:-}" ]] && running_projects_list "======= CLI ======="
-			docker exec -it "$DOCKER_CONTAINER_APP" sh
-			;;
+		choice=$(GET_USER_INPUT "select_one_of")
+		choice="${choice:-0}"
 
-		4)
-			existing_projects_list
-			;;
-		5)
-			project_tools_menu
-			;;
-		esac
+		if [[ "$choice" == "0" ]]; then
+			return 0
+		fi
+
+		if ((choice < 1 || choice > ${#names[@]})); then
+			ECHO_WARN_RED "Wrong option"
+			continue
+		fi
+
+		reset_session_var PROJECT_TYPE
+		DOMAIN_NAME="${names[$((choice - 1))]}"
+		get_project_dir "skip_question" || continue
+		site_menu
 	done
 }

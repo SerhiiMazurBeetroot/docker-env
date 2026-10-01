@@ -7,14 +7,14 @@ wp_beetroot_args() {
 	EMPTY_LINE
 	while true; do
 		ECHO_CYAN "==== Use variables ===="
-		ECHO_YELLOW "[0] Return to main menu"
+		ECHO_YELLOW "[0] Return to the previous menu"
 		ECHO_KEY_VALUE "[1]" "default"
 		ECHO_KEY_VALUE "[2]" "custom"
 		choice=$(GET_USER_INPUT "select_one_of")
 
 		case $choice in
 		0)
-			main_actions
+			return 1
 			;;
 		1)
 			get_domain_name
@@ -36,7 +36,7 @@ edit_file_wp_config_setup_beetroot() {
 
 	if [[ -f "$PROJECT_ROOT_DIR/wp-config.php" ]]; then
 		#Replace wp-config variables
-		sed -i -e "s/getenv('WP_SITEURL')/getenv('WP_HOME')/g" "$PROJECT_ROOT_DIR/wp-config.php"
+		sed_inplace "s/getenv('WP_SITEURL')/getenv('WP_HOME')/g" "$PROJECT_ROOT_DIR/wp-config.php"
 
 		CONFIG_EXISTS=$(awk '/composer_autoload/{print}' "$PROJECT_ROOT_DIR/wp-config.php")
 
@@ -71,18 +71,18 @@ edit_file_env_setup_beetroot() {
 		ECHO_YELLOW "eidt .env file..."
 		cp -rf "$PROJECT_THEME_DIR/.env.example" "$PROJECT_THEME_DIR/.env"
 
-		sed -i -e 's~http://site.local~https://'"$DOMAIN_FULL"'~g' "$PROJECT_THEME_DIR/.env"
-		sed -i -e 's/dbname/'"$DB_NAME"'/g' "$PROJECT_THEME_DIR/.env"
-		sed -i -e 's/DB_USER=mysql/DB_USER=root/g' "$PROJECT_THEME_DIR/.env"
-		sed -i -e 's/DB_PASSWORD=mysql/DB_PASSWORD=PassWorD123/g' "$PROJECT_THEME_DIR/.env"
-		sed -i -e 's/localhost/'"$DOMAIN_NAME-mysql"'/g' "$PROJECT_THEME_DIR/.env"
+		sed_inplace "s~http://site.local~https://${DOMAIN_FULL}~g" "$PROJECT_THEME_DIR/.env"
+		sed_inplace "s/dbname/${DB_NAME}/g" "$PROJECT_THEME_DIR/.env"
+		sed_inplace "s/DB_USER=mysql/DB_USER=root/g" "$PROJECT_THEME_DIR/.env"
+		sed_inplace "s/DB_PASSWORD=mysql/DB_PASSWORD=PassWorD123/g" "$PROJECT_THEME_DIR/.env"
+		sed_inplace "s/localhost/${DOMAIN_NAME}-mysql/g" "$PROJECT_THEME_DIR/.env"
 	fi
 }
 
 edit_file_compose_setup_beetroot() {
 	#Replace Volumes from 'wp-content' to 'wp-core' files SETUP_TYPE=beetroot
 	if [[ "$SETUP_TYPE" == 3 ]]; then
-		sed -i -e 's/wp-content\///g' "$PROJECT_DOCKER_DIR/docker-compose.yml"
+		sed_inplace 's/wp-content\///g' "$PROJECT_DOCKER_DIR/docker-compose.yml"
 
 		docker_rebuild
 	fi

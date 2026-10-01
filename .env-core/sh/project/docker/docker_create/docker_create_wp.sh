@@ -5,7 +5,7 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 
 docker_create_wp() {
 	unset_variables
-	docker_create_require_nginx || return 1
+	project_require_nginx_for_type || return 1
 	setup_installation_type_callback docker_create_wp || return 1
 	check_domain_exists
 	docker_create_require_new_site || return 1

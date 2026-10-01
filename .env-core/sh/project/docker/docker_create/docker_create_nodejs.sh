@@ -5,6 +5,7 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 
 docker_create_nodejs() {
 	unset_variables
+	project_require_nginx_for_type || return 1
 	get_domain_name
 	check_domain_exists
 	docker_create_require_new_site || return 1

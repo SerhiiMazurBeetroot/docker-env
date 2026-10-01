@@ -5,7 +5,7 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 
 wp_multisite_convert() {
 	if [ "$DOMAIN_NAME" == '' ]; then
-		running_projects_list "======= Enabling multisite ======"
+		running_projects_list "======= Enabling multisite ======" || return 1
 	fi
 
 	IS_MULTISITE=$(awk '/WP_ALLOW_MULTISITE=/{print $1}' "$PROJECT_DOCKER_DIR"/.env | tr -d WP_ALLOW_MULTISITE=)
@@ -32,5 +32,5 @@ wp_multisite_htaccess() {
 }
 
 wp_multisite_env() {
-	sed -i -e 's/WP_ALLOW_MULTISITE=0/WP_ALLOW_MULTISITE=1/g' "$PROJECT_DOCKER_DIR/.env"
+	sed_inplace 's/WP_ALLOW_MULTISITE=0/WP_ALLOW_MULTISITE=1/g' "$PROJECT_DOCKER_DIR/.env"
 }

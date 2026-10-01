@@ -5,7 +5,7 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 
 docker_create_directus() {
 	# unset_variables
-	docker_create_require_nginx || return 1
+	project_require_nginx_for_type || return 1
 	get_domain_name
 	check_domain_exists
 	docker_create_require_new_site || return 1

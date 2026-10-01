@@ -41,17 +41,7 @@ tests_reset_project_globals() {
 }
 
 tests_project_compose_dir() {
-	case "${PROJECT_TYPE:-}" in
-	nodejs)
-		printf '%s' "$PROJECT_ROOT_DIR"
-		;;
-	wordpress | projects)
-		printf '%s' "$PROJECT_ROOT_DIR/wp-docker"
-		;;
-	*)
-		printf '%s' "${PROJECT_DOCKER_DIR:-$PROJECT_ROOT_DIR/docker}"
-		;;
-	esac
+	project_compose_dir
 }
 
 tests_container_running() {
@@ -98,54 +88,33 @@ tests_assert_instance_row() {
 }
 
 tests_assert_containers_running() {
-	case "${PROJECT_TYPE:-}" in
-	wordpress_nextjs)
-		tests_container_running "${DOMAIN_NAME}-nextjs" || {
-			ECHO_ERROR "Container not running: ${DOMAIN_NAME}-nextjs"
-			return 1
-		}
-		tests_container_running "${DOMAIN_NAME}-wordpress" || {
-			ECHO_ERROR "Container not running: ${DOMAIN_NAME}-wordpress"
-			return 1
-		}
-		tests_container_running "${DOMAIN_NAME}-mysql" || {
-			ECHO_ERROR "Container not running: ${DOMAIN_NAME}-mysql"
-			return 1
-		}
-		;;
-	directus_nextjs)
-		tests_container_running "${DOMAIN_NAME}-nextjs" || {
-			ECHO_ERROR "Container not running: ${DOMAIN_NAME}-nextjs"
-			return 1
-		}
-		tests_container_running "${DOMAIN_NAME}-directus" || {
-			ECHO_ERROR "Container not running: ${DOMAIN_NAME}-directus"
-			return 1
-		}
-		tests_container_running "${DOMAIN_NAME}-postgres" || {
-			ECHO_ERROR "Container not running: ${DOMAIN_NAME}-postgres"
-			return 1
-		}
-		;;
-	*)
-		if [[ -z "${DOCKER_CONTAINER_APP:-}" ]]; then
-			ECHO_ERROR "DOCKER_CONTAINER_APP is not set for $PROJECT_TYPE"
-			return 1
-		fi
+	local extra suffix
 
-		tests_container_running "$DOCKER_CONTAINER_APP" || {
-			ECHO_ERROR "Container not running: $DOCKER_CONTAINER_APP"
+	if [[ -z "${DOCKER_CONTAINER_APP:-}" ]]; then
+		ECHO_ERROR "DOCKER_CONTAINER_APP is not set for $PROJECT_TYPE"
+		return 1
+	fi
+
+	tests_container_running "$DOCKER_CONTAINER_APP" || {
+		ECHO_ERROR "Container not running: $DOCKER_CONTAINER_APP"
+		return 1
+	}
+
+	if [[ "${DB_TYPE:-0}" != "0" && -n "${DOCKER_CONTAINER_DB:-}" ]]; then
+		tests_container_running "$DOCKER_CONTAINER_DB" || {
+			ECHO_ERROR "Container not running: $DOCKER_CONTAINER_DB"
 			return 1
 		}
+	fi
 
-		if [[ "${DB_TYPE:-0}" != "0" && -n "${DOCKER_CONTAINER_DB:-}" ]]; then
-			tests_container_running "$DOCKER_CONTAINER_DB" || {
-				ECHO_ERROR "Container not running: $DOCKER_CONTAINER_DB"
-				return 1
-			}
-		fi
-		;;
-	esac
+	extra=$(project_field also "${PROJECT_TYPE:-}" || true)
+	for suffix in $extra; do
+		[[ -n "$suffix" ]] || continue
+		tests_container_running "${DOMAIN_NAME}-${suffix}" || {
+			ECHO_ERROR "Container not running: ${DOMAIN_NAME}-${suffix}"
+			return 1
+		}
+	done
 
 	return 0
 }

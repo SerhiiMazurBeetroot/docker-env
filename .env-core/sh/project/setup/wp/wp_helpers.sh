@@ -5,7 +5,7 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 
 wp_composer_install() {
 	if [ "$DOMAIN_NAME" == '' ]; then
-		running_projects_list "======= Install Composer ======"
+		running_projects_list "======= Install Composer ======" || return 1
 		get_db_name
 		wp_get_default_theme
 		edit_file_env_setup_beetroot
@@ -36,7 +36,7 @@ wp_composer_package() {
 	done
 
 	if [ "$DOMAIN_NAME" == '' ]; then
-		running_projects_list "======= Install package ======"
+		running_projects_list "======= Install package ======" || return 1
 		get_db_name
 		wp_get_default_theme
 	fi
@@ -60,7 +60,7 @@ wp_get_default_theme() {
 
 			# Replace variable WP_DEFAULT_THEME .env file
 			PREV_THEME="$(grep -o "WP_DEFAULT_THEME=[A-Za-z0-9.,-]*\+" "$PROJECT_DOCKER_DIR"/.env)"
-			sed -i 's~'"$PREV_THEME"'~'"WP_DEFAULT_THEME=$WP_DEFAULT_THEME"'~g' "$PROJECT_DOCKER_DIR/.env"
+			sed_inplace "s~${PREV_THEME}~WP_DEFAULT_THEME=${WP_DEFAULT_THEME}~g" "$PROJECT_DOCKER_DIR/.env"
 
 		else
 			ECHO_YELLOW "DB FILE doesn't exists"
@@ -72,7 +72,7 @@ wp_get_default_theme() {
 
 wp_npm_install() {
 	if [ "$DOMAIN_NAME" == '' ]; then
-		running_projects_list "======= Install npm ======"
+		running_projects_list "======= Install npm ======" || return 1
 		wp_get_default_theme
 	fi
 
