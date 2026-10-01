@@ -193,7 +193,7 @@ webui_create_project() {
 		fi
 		if [[ -n "$value" ]]; then
 			printf -v "$key" '%s' "$value"
-			export "$key"
+			export "${key?}"
 		fi
 	done
 

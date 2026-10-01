@@ -66,7 +66,7 @@ check_env_version() {
 		echo "ENV_DATE_CHECK=$DATE_NOW" >>"$FILE_SETTINGS"
 	else
 		#Run only once a day
-		if [[ $ENV_DATE_CHECK != $DATE_NOW || $action != 'daily' ]]; then
+		if [[ "$ENV_DATE_CHECK" != "$DATE_NOW" || "$action" != "daily" ]]; then
 			check_git_version
 
 			#Replace ENV_DATE_CHECK
@@ -128,7 +128,7 @@ save_settings() {
 
 core_version() {
 	if [ -f "$FILE_SETTINGS" ]; then
-		if [[ $CORE_VER_CUR != $CORE_VERSION || $CORE_VER_CUR == '' ]]; then
+		if [[ "$CORE_VER_CUR" != "$CORE_VERSION" || "$CORE_VER_CUR" == "" ]]; then
 			save_settings "CORE_VERSION=$CORE_VERSION"
 		fi
 	fi

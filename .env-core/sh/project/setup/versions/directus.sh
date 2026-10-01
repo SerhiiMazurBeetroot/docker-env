@@ -5,10 +5,12 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 
 get_directus_version() {
 	QUESTION=${1:-}
-	# shellcheck disable=SC2207
 	local LIST=()
+	local version
 
-	LIST=($(curl -s 'https://api.github.com/repos/directus/directus/tags' | jq -r '.[].name | sub("^v"; "")' | head -n 3))
+	while IFS= read -r version; do
+		[[ -n "$version" ]] && LIST+=("$version")
+	done < <(curl -s 'https://api.github.com/repos/directus/directus/tags' | jq -r '.[].name | sub("^v"; "")' | head -n 3)
 
 	if [[ -z "${DIRECTUS_VERSION:-}" ]]; then
 		if [[ ${QUESTION:-} == "default" ]]; then

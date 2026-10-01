@@ -45,13 +45,14 @@ laravel_resolve_version() {
 
 get_laravel_version() {
 	QUESTION=${1:-}
-	# shellcheck disable=SC2207
 	local -a ALL=()
 	local -a LIST=()
 	local preset="${LARAVEL_VERSION:-}"
 	local version major seen choice resolved
 
-	ALL=($(curl -fs 'https://repo.packagist.org/p2/laravel/laravel.json' | jq -r '.packages["laravel/laravel"][].version | sub("^v";"")' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$'))
+	while IFS= read -r version; do
+		[[ -n "$version" ]] && ALL+=("$version")
+	done < <(curl -fs 'https://repo.packagist.org/p2/laravel/laravel.json' | jq -r '.packages["laravel/laravel"][].version | sub("^v";"")' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$')
 
 	if ((${#ALL[@]} == 0)); then
 		ECHO_WARN_RED "Could not read Laravel versions from Packagist. Composer will install the latest release."

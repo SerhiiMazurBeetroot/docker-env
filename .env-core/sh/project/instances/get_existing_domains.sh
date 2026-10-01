@@ -31,7 +31,10 @@ get_existing_domains() {
 		string=$(instances_domains "$status_filter")
 
 		if [ "$string" ]; then
-			OptionList=($string)
+			OptionList=()
+			while IFS= read -r domain; do
+				[[ -n "$domain" ]] && OptionList+=("$domain")
+			done < <(printf '%s\n' "$string")
 
 			while true; do
 				EMPTY_LINE

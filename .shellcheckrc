@@ -1,0 +1,6 @@
+# Scripts under .env-core/sh are sourced into one shell.
+# A name assigned in one file is read from another, so unused-variable
+# warnings are not useful here.
+disable=SC2034
+external-sources=true
+shell=bash

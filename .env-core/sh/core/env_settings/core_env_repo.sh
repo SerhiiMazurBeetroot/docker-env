@@ -39,7 +39,7 @@ check_git_version() {
 		GIT_VERSION=$(git ls-remote $REPO | grep refs/heads/master | cut -f 1)
 	fi
 
-	if [[ $ENV_VERSION != $GIT_VERSION ]]; then
+	if [[ "$ENV_VERSION" != "$GIT_VERSION" ]]; then
 		ENV_UPDATES="There is a new version"
 	else
 		ENV_UPDATES="Everything up-to-date"
@@ -69,7 +69,8 @@ update_env() {
 
 repo_exists() {
 	local repo_name=$1
-	local response=$(curl -s -o /dev/null -w "%{http_code}" "https://api.github.com/repos/$repo_name")
+	local response
+	response=$(curl -s -o /dev/null -w "%{http_code}" "https://api.github.com/repos/$repo_name")
 
 	if [[ $response -eq 200 ]]; then
 		return 1

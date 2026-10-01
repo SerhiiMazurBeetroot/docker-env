@@ -61,7 +61,7 @@ env_load_file() {
 		esac
 
 		printf -v "$key" '%s' "$value"
-		export "$key"
+		export "${key?}"
 	done <"$file"
 }
 

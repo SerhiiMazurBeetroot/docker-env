@@ -54,9 +54,12 @@ replace_dir_projects_to_wordpress() {
 }
 
 replace_docker_compose() {
-	DOCKER_FILES=($(find . -type f -name 'docker-compose.*.yml'))
+	DOCKER_FILES=()
+	while IFS= read -r found; do
+		[[ -n "$found" ]] && DOCKER_FILES+=("$found")
+	done < <(find . -type f -name 'docker-compose.*.yml')
 
-	if [[ $DOCKER_FILES ]]; then
+	if [[ ${#DOCKER_FILES[@]} -gt 0 ]]; then
 		ECHO_YELLOW "Don't worry, it's just a migration process"
 		ECHO_YELLOW "Replacing docker-compose files ..."
 

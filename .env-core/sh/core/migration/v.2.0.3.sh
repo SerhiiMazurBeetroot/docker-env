@@ -17,13 +17,16 @@ fix_old_compose_project_name() {
 	ECHO_YELLOW "Don't worry, it's just a migration process"
 	ECHO_YELLOW "Replacing old vars COMPOSE_PROJECT_NAME ..."
 
-	DOCKER_FILES=($(find . -type f -name '.env'))
+	DOCKER_FILES=()
+	while IFS= read -r found; do
+		[[ -n "$found" ]] && DOCKER_FILES+=("$found")
+	done < <(find . -type f -name '.env')
 
-	if [[ $DOCKER_FILES ]]; then
+	if [[ ${#DOCKER_FILES[@]} -gt 0 ]]; then
 		docker_stop_all
 
 		for DOCKER_FILE in "${DOCKER_FILES[@]}"; do
-			if [[ $FILENAME != *".env-core/templates"* ]]; then
+			if [[ "$DOCKER_FILE" != *".env-core/templates"* ]]; then
 				DOMAIN_FULL=$(awk -F= '/COMPOSE_PROJECT_NAME/{gsub(/'"'"'/, "", $2); print $2}' "$DOCKER_FILE")
 
 				get_compose_project_name

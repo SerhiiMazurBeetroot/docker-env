@@ -5,8 +5,12 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 
 get_nodejs_version() {
 	QUESTION=${1:-}
-	NODE_VERSIONS=($(curl -sL 'https://raw.githubusercontent.com/nodejs/docker-node/main/versions.json' | grep -o '"[0-9]\+": {' | cut -d'"' -f2 | sed 's/: {//'))
-	NODE_LATEST_VERSION="${NODE_VERSIONS}"
+	local version
+	NODE_VERSIONS=()
+	while IFS= read -r version; do
+		[[ -n "$version" ]] && NODE_VERSIONS+=("$version")
+	done < <(curl -sL 'https://raw.githubusercontent.com/nodejs/docker-node/main/versions.json' | grep -o '"[0-9]\+": {' | cut -d'"' -f2 | sed 's/: {//')
+	NODE_LATEST_VERSION="${NODE_VERSIONS[0]:-}"
 
 	if [[ -z "${NODE_VERSION:-}" ]]; then
 		if [[ ${QUESTION:-} == "default" ]]; then

@@ -7,8 +7,11 @@ get_php_versions() {
 	QUESTION=${1:-}
 	local PHP_LIST=()
 	local preset="${PHP_VERSION:-}"
+	local version
 
-	PHP_LIST=($(curl -fs 'https://www.php.net/releases/index.php?json' | jq -r '.[].supported_versions[]' | sort -Vr | uniq))
+	while IFS= read -r version; do
+		[[ -n "$version" ]] && PHP_LIST+=("$version")
+	done < <(curl -fs 'https://www.php.net/releases/index.php?json' | jq -r '.[].supported_versions[]' | sort -Vr | uniq)
 
 	if [[ -n "$preset" ]]; then
 		PHP_VERSION="$preset"

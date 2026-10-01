@@ -142,7 +142,7 @@ notice_project_vars() {
 	notice_project_urls "$OPEN_LINK"
 	notice_windows_project_vars
 
-	ECHO_YELLOW "You can find this info in the file ["$PROJECT_DOCKER_DIR"/.env"]
+	ECHO_YELLOW "You can find this info in the file [${PROJECT_DOCKER_DIR}/.env]"
 	EMPTY_LINE
 }
 

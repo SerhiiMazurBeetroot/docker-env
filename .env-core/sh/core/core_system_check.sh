@@ -30,7 +30,7 @@ detect_os() {
 		OSTYPE='unknown'
 		;;
 	esac
-	export $OSTYPE
+	export OSTYPE
 }
 
 docker_compose_version() {
@@ -46,7 +46,8 @@ docker_compose_version() {
 }
 
 env_mode() {
-	export ENV_MODE=$(awk '/ENV_MODE/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_MODE='//')
+	ENV_MODE=$(awk '/ENV_MODE/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_MODE='//')
+	export ENV_MODE
 }
 
 versions() {

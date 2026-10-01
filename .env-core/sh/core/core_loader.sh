@@ -18,6 +18,7 @@ source_files_in() {
 			fi
 
 			if [[ -f "$file" && -r "$file" && "$base" == *.sh ]]; then
+				# shellcheck disable=SC1090
 				. "$file"
 			elif [[ -d "$file" ]]; then
 				source_files_in "$file" "$skip_dir"

@@ -4,9 +4,12 @@
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
 get_archived_projects() {
-	ZIP_FILES=($(find . -type f -name "archive_*.zip"))
+	ZIP_FILES=()
+	while IFS= read -r zip; do
+		[[ -n "$zip" ]] && ZIP_FILES+=("$zip")
+	done < <(find . -type f -name "archive_*.zip")
 
-	if [[ $ZIP_FILES ]]; then
+	if [[ ${#ZIP_FILES[@]} -gt 0 ]]; then
 		while true; do
 			EMPTY_LINE
 			ECHO_CYAN "======== UNZIP project ======="

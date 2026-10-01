@@ -84,7 +84,7 @@ reset_session_var() {
 
 	is_safe_ident "$name" || return 1
 	printf -v "$name" '%s' ''
-	export "$name"
+	export "${name?}"
 }
 
 # Clear wizard / menu session state. Prefer this over bare unset under nounset.

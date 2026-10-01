@@ -125,6 +125,7 @@ docker_official_image_exists() {
 get_docker_ip() {
 	local container=${1:-}
 	if [ -n "$container" ]; then
-		export DOCKER_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $container)
+		DOCKER_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$container")
+		export DOCKER_IP
 	fi
 }
