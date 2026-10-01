@@ -41,7 +41,7 @@ wp_composer_package() {
 		wp_get_default_theme
 	fi
 
-	if [[ ! "$package" =~ ^[A-Za-z0-9._/-]+ ]]; then
+	if [[ ! "$package" =~ ^[A-Za-z0-9][A-Za-z0-9._-]*\/[A-Za-z0-9][A-Za-z0-9._-]*(:[A-Za-z0-9._*^~<>=|@ -]+)?$ ]]; then
 		ECHO_ERROR "Invalid composer package"
 		return 1
 	fi
