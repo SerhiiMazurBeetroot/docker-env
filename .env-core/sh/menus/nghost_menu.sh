@@ -20,7 +20,7 @@ nghost_menu() {
 
 		case $proxy_actions in
 		0)
-			main_actions
+			return 0
 			;;
 		1)
 			docker_nghost_setup

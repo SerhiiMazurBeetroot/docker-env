@@ -21,7 +21,7 @@ nginx_menu() {
 
 		case $proxy_actions in
 		0)
-			system_menu
+			return 0
 			;;
 		1)
 			docker_nginx_setup

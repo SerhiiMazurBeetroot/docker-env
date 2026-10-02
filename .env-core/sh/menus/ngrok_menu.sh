@@ -22,7 +22,7 @@ ngrok_menu() {
 
 		case $actions in
 		0)
-			system_menu
+			return 0
 			;;
 		1)
 			docker_ngrok_setup
