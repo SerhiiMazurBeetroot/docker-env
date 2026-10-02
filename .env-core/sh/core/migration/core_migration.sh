@@ -39,8 +39,6 @@ env_migration() {
 
 	export DIR_NGINX="$ENV_DIR/.env-core/system/nginx"
 
-	# case start v.2.0.1
-	env_update_repo
 	core_version
 }
 

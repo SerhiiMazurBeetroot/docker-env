@@ -29,6 +29,10 @@ check_env_settings() {
 }
 
 check_git_version() {
+	# Old installs pointed MAIN_REPO at devENV. Resolve that only when a
+	# version check is actually running, not on every menu open.
+	env_update_repo
+
 	REPO='https://github.com/'$MAIN_REPO'.git'
 
 	if repo_exists "$MAIN_REPO"; then

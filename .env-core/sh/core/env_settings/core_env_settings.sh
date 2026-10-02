@@ -18,7 +18,7 @@ env_settings() {
 
 		case $settings in
 		0)
-			main_actions
+			return 0
 			;;
 		1)
 			update_env
@@ -127,21 +127,36 @@ save_settings() {
 }
 
 core_version() {
-	if [ -f "$FILE_SETTINGS" ]; then
-		if [[ "$CORE_VER_CUR" != "$CORE_VERSION" || "$CORE_VER_CUR" == "" ]]; then
-			save_settings "CORE_VERSION=$CORE_VERSION"
-		fi
+	local saved_ver
+
+	[[ -f "$FILE_SETTINGS" ]] || return 0
+
+	saved_ver=$(awk -F= '/^CORE_VERSION=/{print $2; exit}' "$FILE_SETTINGS" | tr -d '[:space:]')
+	if [[ -z "$saved_ver" || "$saved_ver" != "$CORE_VERSION" ]]; then
+		save_settings "CORE_VERSION=$CORE_VERSION"
 	fi
 }
 
+# True when today's update check has not been recorded yet.
+env_updates_due() {
+	local saved today
+
+	[[ -f "${FILE_SETTINGS:-}" ]] || return 0
+
+	saved=$(awk -F= '/^ENV_DATE_CHECK=/{print $2; exit}' "$FILE_SETTINGS")
+	today=$(date +'%m/%d/%Y')
+	[[ -z "$saved" || "$saved" != "$today" ]]
+}
+
 env_check_updates() {
-	# Check for internet
+	# Same calendar day: do not ping and do not call GitHub.
+	env_updates_due || return 0
+
 	if ! ping -c 1 google.com &>/dev/null; then
 		ECHO_WARN_YELLOW "No internet connection. Skipping update check."
 		return 0
 	fi
 
-	# Notice about updates to main menu
 	if [[ -z "${ENV_UPDATES:-}" ]]; then
 		check_env_version "daily"
 	elif [[ $ENV_UPDATES == "Everything up-to-date" ]]; then
