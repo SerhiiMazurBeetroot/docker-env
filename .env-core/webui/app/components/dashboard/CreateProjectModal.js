@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { IconClose, IconPlus } from "../ui/Icons";
+import { normalizeProjectDomain } from "../../../lib/domain";
+import { versionsForOption } from "../../../lib/versionChoices";
 
 const TYPE_FIELDS = {
 	wordpress: [
@@ -38,6 +40,7 @@ const TYPE_FIELDS = {
 
 export default function CreateProjectModal({ open, onClose, onCreate, busy = false }) {
 	const [types, setTypes] = useState([]);
+	const [versions, setVersions] = useState({});
 	const [type, setType] = useState("wordpress");
 	const [domain, setDomain] = useState("");
 	const [options, setOptions] = useState({});
@@ -51,6 +54,7 @@ export default function CreateProjectModal({ open, onClose, onCreate, busy = fal
 			.then((body) => {
 				if (cancelled || !body.ok) return;
 				setTypes(body.types || []);
+				setVersions(body.versions || {});
 				if (body.types?.[0]?.id) setType(body.types[0].id);
 			})
 			.catch(() => {
@@ -62,6 +66,9 @@ export default function CreateProjectModal({ open, onClose, onCreate, busy = fal
 	}, [open]);
 
 	const fields = useMemo(() => TYPE_FIELDS[type] || [], [type]);
+	const versionOptions = fields.some((field) => field.key === "WP_VERSION") ? options : {};
+	const name = normalizeProjectDomain(domain);
+	const host = type === "elasticsearch" ? `dev.${name || "mysite"}.elastic` : `dev.${name || "mysite"}.local`;
 
 	useEffect(() => {
 		setOptions({});
@@ -71,9 +78,13 @@ export default function CreateProjectModal({ open, onClose, onCreate, busy = fal
 
 	function submit(event) {
 		event.preventDefault();
-		const name = domain.trim().toLowerCase().replace(/_/g, "-").split(".")[0];
+		const name = normalizeProjectDomain(domain);
 		if (!name) {
 			setError("Domain is required");
+			return;
+		}
+		if (!/^[a-z0-9]([a-z0-9-]{0,251}[a-z0-9])?$/.test(name)) {
+			setError("Use letters, numbers, and hyphens");
 			return;
 		}
 		setError("");
@@ -90,7 +101,7 @@ export default function CreateProjectModal({ open, onClose, onCreate, busy = fal
 				<div className="mb-4 flex items-start justify-between gap-3">
 					<div>
 						<h2 className="m-0 text-lg font-extrabold tracking-tight">New project</h2>
-						<p className="mt-1 text-xs text-muted">Wraps the CLI create flow. Leave versions empty for defaults.</p>
+						<p className="mt-1 text-xs text-muted">Default uses the current recommended release.</p>
 					</div>
 					<button type="button" onClick={onClose} className="rounded-lg p-1.5 text-muted hover:bg-raised hover:text-fg">
 						<IconClose />
@@ -100,7 +111,10 @@ export default function CreateProjectModal({ open, onClose, onCreate, busy = fal
 					<span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-muted">Type</span>
 					<select
 						value={type}
-						onChange={(event) => setType(event.target.value)}
+						onChange={(event) => {
+							setType(event.target.value);
+							setOptions({});
+						}}
 						className="h-9 w-full rounded-xl border border-line bg-raised px-3 text-sm outline-none focus:border-accent/50"
 					>
 						{types.map((item) => (
@@ -119,20 +133,39 @@ export default function CreateProjectModal({ open, onClose, onCreate, busy = fal
 						className="h-9 w-full rounded-xl border border-line bg-raised px-3 text-sm outline-none focus:border-accent/50"
 					/>
 					<span className="mt-1 block text-[11px] text-muted">
-						Short name only. Host becomes {type === "elasticsearch" ? `dev.${domain || "mysite"}.elastic` : `dev.${domain || "mysite"}.local`}
+						Short name only. Host becomes {host}
 					</span>
 				</label>
-				{fields.map((field) => (
-					<label key={field.key} className="mb-3 block text-sm">
-						<span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-muted">{field.label}</span>
-						<input
-							value={options[field.key] || ""}
-							onChange={(event) => setOptions((current) => ({ ...current, [field.key]: event.target.value }))}
-							placeholder="default"
-							className="h-9 w-full rounded-xl border border-line bg-raised px-3 font-mono text-sm outline-none focus:border-accent/50"
-						/>
-					</label>
-				))}
+				{fields.map((field) => {
+					const choices = versionsForOption(versions, field.key, versionOptions);
+					return (
+						<label key={field.key} className="mb-3 block text-sm">
+							<span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-muted">{field.label}</span>
+							<select
+								value={choices.includes(options[field.key]) ? options[field.key] : ""}
+								onChange={(event) => {
+									const value = event.target.value;
+									setOptions((current) => {
+										const next = { ...current, [field.key]: value };
+										if (field.key === "WP_VERSION" && next.PHP_VERSION) {
+											const phpChoices = versionsForOption(versions, "PHP_VERSION", next);
+											if (!phpChoices.includes(next.PHP_VERSION)) next.PHP_VERSION = "";
+										}
+										return next;
+									});
+								}}
+								className="h-9 w-full rounded-xl border border-line bg-raised px-3 text-sm outline-none focus:border-accent/50"
+							>
+								<option value="">Default</option>
+								{choices.map((version) => (
+									<option key={version} value={version}>
+										{version}
+									</option>
+								))}
+							</select>
+						</label>
+					);
+				})}
 				{error ? <p className="mb-3 text-sm text-danger">{error}</p> : null}
 				<div className="flex justify-end gap-2">
 					<button type="button" onClick={onClose} className="rounded-lg px-3 py-1.5 text-sm text-muted hover:text-fg">
