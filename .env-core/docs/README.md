@@ -1,20 +1,20 @@
 # Documentation
 
-docker-env is a local Docker toolbox. The CLI and [Web UI](web-ui.md) wrap the same scripts. They do not reimplement Docker.
+docker-env runs local sites in Docker behind one Nginx proxy. The CLI and the Web UI call the same scripts.
 
-| Kind | Page | Use it when |
-| --- | --- | --- |
-| Tutorial | [Getting started](getting-started.md) | First install, Nginx, first site |
-| How-to | [Web UI](web-ui.md) | Dashboard at `http://127.0.0.1:7777` |
-| How-to | [Projects](#projects) | Create and run a stack |
-| Explanation | [System services](system.md) | Nginx proxy, TLS, hosts, Dozzle, Mail |
-| How-to | [Troubleshooting](troubleshooting.md) | Ports, certs, Compose v2, hosts |
+| Page | When to open it |
+| --- | --- |
+| [Getting started](getting-started.md) | Install, Nginx, first site |
+| [Web UI](web-ui.md) | Dashboard at `http://127.0.0.1:7777` |
+| [System services](system.md) | Proxy, certificates, hosts, logs, mail |
+| [Troubleshooting](troubleshooting.md) | Ports, certs, hosts, login |
+| [Projects](#projects) | How a stack is created |
 
-[Back to README](../README.MD)
+[Back to the project README](../../README.MD)
 
 ## Projects
 
-Stable types (always in **New project**):
+Each type has its own page:
 
 - [WordPress](projects/wordpress.md)
 - [Bedrock](projects/bedrock.md)
@@ -23,16 +23,14 @@ Stable types (always in **New project**):
 - [Directus](projects/directus.md)
 - [Elastic Stack](projects/elasticsearch.md)
 
-Laravel, [Directus + Next.js](projects/directus-nextjs.md), WP + Next.js, and Node.js appear only when `ENV_MODE=development` in `.env-core/data/settings.log`.
-
 ## Main menu
 
 ```
 docker-env
-├── 1 System Services     Nginx, Web UI
-├── 2 New project         create a site
-├── 3 Project Services    Docker, database, CLI, list, tools
-└── 4 Helpers             Docker prune, permissions, Git, disk
+├── 1 System     Nginx, Web UI, settings
+├── 2 New site   create a site
+├── 3 Sites      start, shell, database, archive
+└── 4 Helpers    Docker prune, permissions, Git, disk
 ```
 
-Projects live under `{type}/{host}/` in this repo (for example `wordpress/dev.blog.local/`).
+Site files live under `{type}/{host}/` in this repo (for example `wordpress/dev.blog.local/`).
