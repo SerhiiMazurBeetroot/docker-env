@@ -30,25 +30,27 @@ docker-env
 
 Same as `./setup.sh` from the repo.
 
-![First setup](../.env-core/docs/gifs/setup.gif)
+![First setup](gifs/setup.gif)
 
 ## Start Nginx
 
 Projects need the shared proxy. In the CLI:
 
-1. **1 — System Services**
+1. **1 — System**
 2. **1 — Nginx**
 3. **1 — Setup**
 
 That creates the `dockerwp` network and `ssl-certs` volume, then starts `nginx-proxy`, `nginx-mkcert`, and `nginx-dozzle`. It also tries to start the Web UI at [http://127.0.0.1:7777](http://127.0.0.1:7777).
 
-![Nginx setup](../.env-core/docs/gifs/nginx.gif)
+The first time the Web UI starts, the CLI creates a sign-in token. Show it with **1 System → 2 Web UI → 4 Show sign-in token**, then paste it on `/login`. See [Web UI](web-ui.md).
+
+![Nginx setup](gifs/nginx.gif)
 
 Trust the local CA once: [System: certificates](system.md#trust-the-local-ca).
 
 ## Create a project
 
-1. **2 — New project**
+1. **2 — New site**
 2. Pick a type (see [projects](README.md#projects))
 3. Enter a short domain name (example: `blog`)
 4. Confirm `DOMAIN_FULL` (default is usually `dev.blog.local`)
@@ -58,16 +60,18 @@ On macOS and Linux the CLI appends `127.0.0.1` lines to `/etc/hosts` (sudo). On 
 
 Open `https://dev.blog.local` (HTTPS on port **443**).
 
-![CLI overview](../.env-core/docs/gifs/docker-env.gif)
+![CLI overview](gifs/docker-env.gif)
 
 ## Everyday commands
 
 | Goal | CLI | Web UI |
 | --- | --- | --- |
-| Start / stop / rebuild a site | **3 → 1 Docker** | Card actions |
-| Import / export DB | **3 → 2 Database** | — |
-| Shell in the app container | **3 → 3 CLI** | — |
-| List sites | **3 → 4** | Home list |
+| Start or stop a site | **3 Sites** → pick the site | Card actions |
+| Restart or rebuild | Site → **More** | Card actions |
+| Import / export / search-replace DB | Site → **Database** | — |
+| Shell in the app container | Site → **Shell** | — |
+| Zip a site | Site → **More → Archive** | — |
+| Restore a zip | **3 Sites → [r]** when an archive exists | — |
 | Container logs | Dozzle | Card → logs |
 
 Dozzle: [http://127.0.0.1:7007](http://127.0.0.1:7007)

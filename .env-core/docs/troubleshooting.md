@@ -47,9 +47,13 @@ The site cert is fine only after the **root CA** is trusted. See [Trust the loca
 ## Web UI will not start
 
 1. Confirm Nginx is up (`docker ps` → `nginx-proxy`).
-2. **1 System → 3 Web UI → 1 Start**.
+2. **1 System → 2 Web UI → 1 Start**.
 3. Open [http://127.0.0.1:7777](http://127.0.0.1:7777), not a `*.local` host.
 4. If port 7777 is taken, stop the other listener.
+
+## Web UI login fails
+
+Show the token with **1 System → 2 Web UI → 4 Show sign-in token** and paste that value with no extra spaces. Restart the Web UI after the token changes so `nginx-webui` reloads `.env-core/system/nginx/.env`.
 
 Stopping the Web UI does not stop Nginx. Stopping Nginx (`compose down` on the system stack) does stop the Web UI if it was part of that project.
 

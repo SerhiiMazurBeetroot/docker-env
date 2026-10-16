@@ -14,9 +14,10 @@ webui_menu() {
 		ECHO_GREEN "[1] Start"
 		ECHO_GREEN "[2] Stop"
 		ECHO_GREEN "[3] Open in browser"
+		ECHO_GREEN "[4] Show sign-in token"
 		if [[ ${ENV_MODE:-} == "development" ]]; then
-			ECHO_RED "[4] Rebuild image"
-			ECHO_GREEN "[5] Develop image"
+			ECHO_RED "[5] Rebuild image"
+			ECHO_GREEN "[6] Develop image"
 		fi
 
 		actions=$(GET_USER_INPUT "select_one_of")
@@ -43,13 +44,16 @@ webui_menu() {
 			fi
 			;;
 		4)
+			webui_show_token
+			;;
+		5)
 			if [[ ${ENV_MODE:-} == "development" ]]; then
 				webui_server_rebuild
 			else
 				ECHO_WARN_RED "Invalid selection. Please try again."
 			fi
 			;;
-		5)
+		6)
 			if [[ ${ENV_MODE:-} == "development" ]]; then
 				webui_server_develop
 			else

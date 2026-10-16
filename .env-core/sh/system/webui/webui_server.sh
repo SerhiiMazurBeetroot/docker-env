@@ -127,6 +127,7 @@ webui_server_start() {
 	fi
 
 	ECHO_SUCCESS "Web UI started at $(webui_url)"
+	ECHO_INFO "Sign in at /login. Token: 1 System → 2 Web UI → 4 Show sign-in token"
 }
 
 webui_server_stop() {
