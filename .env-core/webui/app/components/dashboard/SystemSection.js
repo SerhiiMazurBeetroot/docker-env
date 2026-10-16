@@ -28,6 +28,7 @@ export default function SystemSection({ services, loading, busy, pending = {}, o
 			<button
 				type="button"
 				aria-expanded={open}
+				aria-label={open ? "Hide system services" : "Show system services"}
 				onClick={() => setOpen((value) => !value)}
 				className="flex w-full flex-wrap items-center gap-2 px-3 py-2 text-left"
 			>
@@ -49,16 +50,15 @@ export default function SystemSection({ services, loading, busy, pending = {}, o
 						{service.name}
 					</span>
 				))}
-				<span className="ml-auto inline-flex items-center gap-1 rounded-lg border border-line bg-raised px-2 py-1 text-[12px] font-semibold text-fg">
-					{open ? "Hide services" : "Show services"}
-					<span className="font-medium text-muted">
+				<span className="ml-auto inline-flex items-center gap-2 text-[12px] font-semibold tabular-nums text-muted">
+					<span className={unhealthy ? "text-danger" : "text-fg"}>
 						{runningCount}/{services.length}
 					</span>
-					<IconChevron className={`h-3 w-3 text-muted transition ${open ? "rotate-180" : ""}`} />
+					<IconChevron className={`h-3.5 w-3.5 transition ${open ? "rotate-180" : ""}`} />
 				</span>
 			</button>
 			{open ? (
-				<div className="grid gap-2 border-t border-line px-3 py-3 sm:grid-cols-3">
+				<div className="grid items-stretch gap-2 border-t border-line px-3 py-3 sm:grid-cols-3">
 					{services.map((service) => (
 						<SystemCard
 							key={service.id || service.container}
@@ -86,7 +86,7 @@ function SystemCard({ service, action, pendingExpect, onAction, onLogs, active, 
 	const kind = waiting ? "waiting" : serviceKind(service);
 
 	return (
-		<article className="rounded-lg border border-line bg-raised/60 px-3 py-2.5">
+		<article className="flex h-full flex-col rounded-lg border border-line bg-raised/60 px-3 py-2.5">
 			<div className="mb-1 flex items-center justify-between gap-2">
 				<h2 className="m-0 text-sm font-extrabold tracking-tight">{service.name}</h2>
 				<StatusBadge
@@ -118,22 +118,21 @@ function SystemCard({ service, action, pendingExpect, onAction, onLogs, active, 
 					</a>
 				</>
 			) : null}
-			<div className="mt-2 flex flex-wrap gap-1.5">
-				{urls.length === 0 ? (
-					<span className="text-xs text-muted">No port</span>
-				) : (
-					urls.map((item) => (
+			{urls.length ? (
+				<div className="mt-2 flex flex-wrap gap-1.5">
+					{urls.map((item) => (
 						<UrlChip
 							key={`${service.container}-${item.key}`}
 							label={item.key}
 							url={item.url}
 							compact
 						/>
-					))
-				)}
-			</div>
+					))}
+				</div>
+			) : null}
 			{canAct ? (
-				<div className="mt-3 flex flex-wrap gap-1 rounded-lg border border-line bg-fg/5 p-1">
+				<div className="mt-auto pt-3">
+				<div className="flex flex-wrap gap-1 rounded-lg border border-line bg-fg/5 p-1">
 					<ActionButton
 						label="Start"
 						tone="start"
@@ -161,6 +160,7 @@ function SystemCard({ service, action, pendingExpect, onAction, onLogs, active, 
 						loading={action === "stop" || (waiting && pendingExpect === "stopped" && !action)}
 						onClick={() => onAction("stop", service.id)}
 					/>
+				</div>
 				</div>
 			) : null}
 		</article>

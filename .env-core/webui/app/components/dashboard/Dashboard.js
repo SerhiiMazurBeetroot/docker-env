@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { appendCliLog, readConsoleOpen, readSse, visibleLog, writeConsoleOpen } from "../../lib/logs";
+import { appendCliLog, readSse, visibleLog } from "../../lib/logs";
 import { filterProjects, projectStats, projectTypes, bulkTargets, dozzleBaseUrl, dozzleContainerUrl, readProjectFilter, readProjectQuery, writeProjectFilter, writeProjectQuery } from "../../lib/projects";
 import { expectFromAction, pendingResolved } from "../../lib/waiting";
 import { useSnapshot } from "../snapshot/SnapshotProvider";
@@ -14,9 +14,11 @@ import ProjectDetail from "./ProjectDetail";
 import ProjectList from "./ProjectList";
 import ProjectToolbar from "./ProjectToolbar";
 import SystemSection from "./SystemSection";
+import SetupChecklist from "./SetupChecklist";
+import { reportError } from "../../lib/reportError";
 
 export default function Dashboard() {
-	const { projects, system, error } = useSnapshot();
+	const { projects, system, error, setup, features } = useSnapshot();
 	const { density } = useDisplay();
 	const { autoOpen } = useConsoleSettings();
 	const [busy, setBusy] = useState({});
@@ -36,7 +38,6 @@ export default function Dashboard() {
 	const logsSource = useRef(null);
 
 	useEffect(() => {
-		setLogOpen(readConsoleOpen());
 		setFilter(readProjectFilter());
 		setQuery(readProjectQuery());
 		setConsoleReady(true);
@@ -44,10 +45,9 @@ export default function Dashboard() {
 
 	useEffect(() => {
 		if (!consoleReady) return;
-		writeConsoleOpen(logOpen);
 		writeProjectFilter(filter);
 		writeProjectQuery(query);
-	}, [consoleReady, logOpen, filter, query]);
+	}, [consoleReady, filter, query]);
 
 	useEffect(() => {
 		return () => {
@@ -183,6 +183,12 @@ export default function Dashboard() {
 			});
 		} catch (err) {
 			setLog((current) => appendCliLog(current, `\n${err.message}`));
+			reportError({
+				source: "browser",
+				action: label,
+				target: key,
+				message: err.message || "Request failed",
+			});
 		} finally {
 			setLogLive(false);
 			setBusy((current) => {
@@ -283,19 +289,20 @@ export default function Dashboard() {
 		{ id: "running", label: "Running", count: stats.running },
 		{ id: "building", label: "Building", count: stats.building },
 		{ id: "stopped", label: "Stopped", count: stats.stopped },
+		{ id: "archived", label: "Archived", count: stats.archived },
 	];
 
 	return (
 		<div className="flex h-screen flex-col overflow-hidden">
 			<AppHeader
-				stats={stats}
 				loading={projects == null}
 				createBusy={Object.values(busy).includes("create")}
-				onCreate={() => setCreateOpen(true)}
+				onCreate={features?.["webui.create"] ? () => setCreateOpen(true) : undefined}
 			/>
 			<div className="flex min-h-0 flex-1">
 				<main className="min-w-0 flex-1 overflow-y-auto">
 					<div className={`mx-auto px-6 py-6 ${density === "grid" ? "max-w-7xl" : "max-w-6xl"}`}>
+						<SetupChecklist setup={setup} loading={projects == null} busy={busy} onHosts={runHosts} />
 						<SystemSection
 							services={system}
 							loading={projects == null}

@@ -7,6 +7,8 @@ let memory = {
 	system: [],
 	error: "",
 	resources: {},
+	setup: null,
+	features: {},
 };
 
 const SnapshotContext = createContext(memory);
@@ -28,6 +30,8 @@ function nextSnapshot(current, data) {
 						status: hit.status,
 						hosts: hit.hosts || item.hosts,
 						urls: hit.urls?.length ? hit.urls : item.urls,
+						guide: hit.guide || item.guide || "",
+						notice: hit.notice !== undefined ? hit.notice : item.notice,
 					}
 				: item;
 		});
@@ -40,7 +44,14 @@ function nextSnapshot(current, data) {
 		);
 	}
 
-	return { projects, system, error: "", resources: current.resources || {} };
+	return {
+		projects,
+		system,
+		error: "",
+		resources: current.resources || {},
+		setup: data.setup || current.setup || null,
+		features: data.features || current.features || {},
+	};
 }
 
 export function SnapshotProvider({ children }) {
@@ -100,6 +111,8 @@ export function SnapshotProvider({ children }) {
 			projects,
 			system: snapshot.system,
 			error: snapshot.error,
+			setup: snapshot.setup || null,
+			features: snapshot.features || {},
 		};
 	}, [snapshot]);
 

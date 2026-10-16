@@ -18,7 +18,7 @@ export async function POST(request) {
 		return NextResponse.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
 	}
 
-	const result = streamCreateProject(payload.type || "", payload.domain || "", payload.options || {}, request.signal);
+	const result = await streamCreateProject(payload.type || "", payload.domain || "", payload.options || {}, request.signal);
 
 	if (result.error) {
 		return NextResponse.json(result.error.body, { status: result.error.status });

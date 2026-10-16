@@ -51,7 +51,7 @@ export function serviceShortName(service, domain) {
 export const DOZZLE_DEFAULT_URL = "http://127.0.0.1:7007";
 export const PROJECT_FILTER_KEY = "docker-env-project-filter";
 export const PROJECT_QUERY_KEY = "docker-env-project-query";
-const PROJECT_FILTERS = new Set(["all", "running", "building", "stopped"]);
+const PROJECT_FILTERS = new Set(["all", "running", "building", "stopped", "archived"]);
 
 export function readProjectFilter() {
 	try {
@@ -95,7 +95,11 @@ export function groupProjectsByType(projects) {
 	}
 	return [...groups.entries()]
 		.sort((a, b) => a[0].localeCompare(b[0]))
-		.map(([type, items]) => ({ type, items }));
+		.map(([type, items]) => ({
+			type,
+			guide: items.find((item) => item.guide)?.guide || "",
+			items,
+		}));
 }
 
 export function projectTypes(projects) {
@@ -158,8 +162,9 @@ export function filterProjects(projects, query, filter) {
 	const needle = query.trim().toLowerCase();
 	return list.filter((project) => {
 		if (filter === "running" && (!project.running || isBuilding(project))) return false;
-		if (filter === "stopped" && (project.running || isBuilding(project))) return false;
+		if (filter === "stopped" && (project.running || isBuilding(project) || isArchived(project))) return false;
 		if (filter === "building" && !isBuilding(project)) return false;
+		if (filter === "archived" && !isArchived(project)) return false;
 		if (!needle) return true;
 		const services = (project.services || [])
 			.map((item) => `${item.service || ""} ${item.name || ""}`)
@@ -173,12 +178,17 @@ function isBuilding(project) {
 	return String(project?.status || "").toLowerCase() === "building";
 }
 
+function isArchived(project) {
+	return String(project?.status || "").toLowerCase() === "archive";
+}
+
 export function projectStats(projects) {
 	const list = projects || [];
 	return {
 		total: list.length,
-		running: list.filter((item) => item.running && !isBuilding(item)).length,
+		running: list.filter((item) => item.running && !isBuilding(item) && !isArchived(item)).length,
 		building: list.filter((item) => isBuilding(item)).length,
-		stopped: list.filter((item) => !item.running && !isBuilding(item)).length,
+		stopped: list.filter((item) => !item.running && !isBuilding(item) && !isArchived(item)).length,
+		archived: list.filter((item) => isArchived(item)).length,
 	};
 }

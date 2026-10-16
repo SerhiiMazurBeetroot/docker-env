@@ -38,8 +38,6 @@ webui_system_service() {
 }
 
 webui_list_system() {
-	local http="http://127.0.0.1:8080"
-	local https="https://127.0.0.1"
 	local dozzle="http://127.0.0.1:7007"
 	local webui
 	local actions
@@ -47,7 +45,7 @@ webui_list_system() {
 	actions='["start","stop","restart"]'
 
 	jq -nc \
-		--argjson nginx "$(webui_system_service "nginx" "Nginx" "nginx-proxy" "$(jq -nc --arg http "$http" --arg https "$https" '[{key:"HTTP",url:$http},{key:"HTTPS",url:$https}]')" "$actions")" \
+		--argjson nginx "$(webui_system_service "nginx" "Nginx" "nginx-proxy" "[]" "$actions")" \
 		--argjson dozzle "$(webui_system_service "dozzle" "Dozzle" "nginx-dozzle" "$(jq -nc --arg url "$dozzle" '[{key:"UI",url:$url}]')" "$actions")" \
 		--argjson webui "$(webui_system_service "webui" "Web UI" "${WEBUI_CONTAINER:-nginx-webui}" "$(jq -nc --arg url "$webui" '[{key:"UI",url:$url}]')" "[]")" \
 		'[$nginx,$dozzle,$webui]'
@@ -119,15 +117,7 @@ webui_list_projects() {
 }
 
 webui_list_types() {
-	local i json="[]"
 	webui_cli_boot
-	env_mode
-	build_visible_projects
-
-	for ((i = 0; i < ${#AVAILABLE_PROJECTS[@]}; i++)); do
-		json=$(jq -nc --argjson acc "$json" --arg id "${AVAILABLE_PROJECTS[$i]}" --arg title "${PROJECT_TITLES[$i]}" \
-			'$acc + [{id:$id,title:$title}]')
-	done
-
-	jq -n --argjson types "$json" --arg mode "${ENV_MODE:-}" '{ok:true,types:$types,mode:$mode}'
+	env_mode >&2
+	project_catalog_emit_json
 }

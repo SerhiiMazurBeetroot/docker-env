@@ -99,13 +99,16 @@ function DetailBody({ data }) {
 			<section>
 				<SectionTitle>Last action</SectionTitle>
 				{last ? (
-					<p className="m-0 text-sm">
-						<span className="font-semibold">{last.action}</span>
-						<span className={last.ok ? "text-ok" : "text-danger"}> {last.ok ? "ok" : "failed"}</span>
-						<span className="text-muted"> · {formatWhen(last.at)}</span>
-					</p>
+					<div>
+						<p className="m-0 text-sm">
+							<span className="font-semibold">{last.action || "action"}</span>
+							<span className={last.ok ? "text-ok" : "text-danger"}> {last.ok ? "ok" : "failed"}</span>
+							<span className="text-muted"> · {formatWhen(last.at)}</span>
+						</p>
+						{!last.ok && last.message ? <p className="m-0 mt-1 text-sm text-danger">{last.message}</p> : null}
+					</div>
 				) : (
-					<p className="m-0 text-sm text-muted">No Web UI action recorded yet.</p>
+					<p className="m-0 text-sm text-muted">No action recorded yet.</p>
 				)}
 			</section>
 

@@ -134,6 +134,14 @@ export function IconHome({ className = "h-5 w-5" }) {
 	);
 }
 
+export function IconDocs({ className = "h-5 w-5" }) {
+	return (
+		<svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>
+			<path d="M6.2 3.5h8.2l3.4 3.4V20a1.5 1.5 0 0 1-1.5 1.5H6.2A1.5 1.5 0 0 1 4.7 20V5A1.5 1.5 0 0 1 6.2 3.5zm7.4 1.6v2.7h2.7L13.6 5.1zM8 11.2h8v1.4H8v-1.4zm0 3.2h8v1.4H8v-1.4zm0-6.4h4.2v1.4H8V8z" />
+		</svg>
+	);
+}
+
 export function IconSettings({ className = "h-5 w-5" }) {
 	return (
 		<svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>

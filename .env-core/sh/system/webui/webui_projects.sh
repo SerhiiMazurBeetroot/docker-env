@@ -164,6 +164,10 @@ webui_create_project() {
 
 	webui_cli_boot
 	env_mode
+	if ! wip_feature "webui.create"; then
+		ECHO_ERROR "Creating a project from the Web UI is a developer feature. Set ENV_MODE=development."
+		return 1
+	fi
 	build_visible_projects
 
 	if [[ -z "$type" || -z "$domain" ]]; then

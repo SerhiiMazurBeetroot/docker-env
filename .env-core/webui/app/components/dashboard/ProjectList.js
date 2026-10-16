@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import {
 	dozzleContainerUrl,
 	groupProjectsByType,
@@ -107,6 +108,16 @@ export default function ProjectList({
 						>
 							{group.type}
 						</span>
+						{group.guide ? (
+							<span className="inline-flex max-w-full items-center gap-1 rounded-full border border-line bg-raised px-2.5 py-[1px] text-chip">
+								<Link
+									href={group.guide}
+									className="text-[11px] font-semibold text-accent hover:underline"
+								>
+									guide
+								</Link>
+							</span>
+						) : null}
 						<span className="text-[11px] text-muted">
 							{group.items.length} project{group.items.length === 1 ? "" : "s"}
 						</span>
@@ -154,7 +165,6 @@ function ProjectCard({
 
 	const actions = (
 		<ActionRow
-			compact
 			running={running}
 			waiting={waiting}
 			action={action}
@@ -162,8 +172,14 @@ function ProjectCard({
 			onAction={onAction}
 			onDelete={onDelete}
 			domain={project.domain}
+			fill={grid}
+			servicesOpen={servicesOpen}
+			onToggleServices={services.length ? onToggleServices : null}
 		/>
 	);
+	const siteMissing = !!(project.hosts && project.hosts.readable !== false && !project.hosts.site);
+	const hostsBusy = !!busy[`hosts:${project.domain}`];
+	const hostLabel = project.domainFull || String(project.url || "").replace(/^https?:\/\//, "");
 
 	return (
 		<article
@@ -178,8 +194,8 @@ function ProjectCard({
 				}
 			}}
 			title="Open project details"
-			className={`relative cursor-pointer border border-line bg-panel/90 shadow-card ${
-				compact ? "rounded-xl px-3 py-2" : grid ? "flex h-full flex-col rounded-2xl p-3.5" : "rounded-2xl p-4"
+			className={`relative cursor-pointer border border-line bg-panel/90 shadow-card h-max ${
+				compact ? "rounded-xl px-3 py-2" : grid ? "flex flex-col rounded-2xl p-3.5" : "rounded-2xl p-4"
 			} ${running && !waiting && kind === "running" ? "shadow-glow" : ""} ${
 				waiting ? "ring-1 ring-accent/25" : ""
 			} ${selected ? "ring-1 ring-accent/40" : ""} hover:border-accent/30`}
@@ -190,42 +206,51 @@ function ProjectCard({
 				/>
 			) : null}
 			<div className={`relative flex min-h-0 flex-1 flex-col ${compact ? "gap-1.5" : "gap-2.5"}`}>
-				<div className="flex items-start gap-2">
-					<div className="min-w-0 flex-1">
-						<div className="flex flex-wrap items-center gap-1.5">
-							<StatusBadge
-								running={running}
-								compact
-								waiting={waiting}
-								label={waiting ? statusLabel : kind}
-								kind={kind}
-							/>
-						</div>
-						<h2 className="m-0 truncate font-extrabold tracking-tight text-fg text-sm">{project.domain}</h2>
-						<p className="m-0 truncate font-mono text-[10px] text-muted">{project.domainFull || "—"}</p>
-					</div>
-					<div className="flex shrink-0 items-start gap-1">
-						{services.length ? (
-							<div className="flex flex-nowrap gap-1 rounded-xl border border-line bg-fg/5 shrink-0 p-1">
-								<button
-									type="button"
-									title={servicesOpen ? "Hide services" : "Show services"}
-									aria-expanded={servicesOpen}
-									onClick={event => {
-										event.stopPropagation();
-										onToggleServices?.();
-									}}
-									className="inline-flex h-7 w-20 items-center justify-center rounded-lg border border-line bg-fg/5 text-muted hover:text-fg"
-								>
-									<IconChevron className={`h-3 w-3 transition ${servicesOpen ? "rotate-180" : ""}`} />
-								</button>
-							</div>
-						) : null}
-						{actions}
-					</div>
+				<div className="flex justify-between">
+					{project.url ? (
+						<a
+							href={project.url}
+							target="_blank"
+							rel="noreferrer"
+							title={`Open ${project.url}`}
+							className="block truncate font-mono text-[15px] font-semibold leading-tight text-fg hover:text-accent"
+						>
+							{hostLabel}
+						</a>
+					) : (
+						<span className="block truncate font-mono text-[15px] leading-tight text-muted">
+							{hostLabel || "—"}
+						</span>
+					)}
+					<StatusBadge
+						running={running}
+						compact
+						waiting={waiting}
+						label={waiting ? statusLabel : kind}
+						kind={kind}
+					/>
 				</div>
+				<div className="flex min-w-0 flex-wrap items-center gap-1.5 justify-between">
+					<span className="truncate text-[11px] font-semibold text-muted">{project.domain}</span>
+					{siteMissing ? (
+						<button
+							type="button"
+							disabled={hostsBusy}
+							onClick={() => onHosts?.("add", project.domain)}
+							className="shrink-0 rounded-md border border-line bg-raised px-1.5 py-0.5 text-[11px] font-semibold text-fg hover:border-accent/40 hover:text-accent disabled:opacity-50"
+						>
+							{hostsBusy ? "…" : "Add hosts"}
+						</button>
+					) : null}
+				</div>
+				<div className="min-w-0 w-full">{actions}</div>
+				{project.notice && project.notice.ok === false && project.notice.message ? (
+					<p className="m-0 truncate text-[11px] text-danger" title={project.notice.message}>
+						{project.notice.message}
+					</p>
+				) : null}
 				{servicesOpen ? (
-					<>
+					<div className="grid gap-2">
 						<ProjectMeta
 							project={project}
 							urls={urls}
@@ -233,19 +258,26 @@ function ProjectCard({
 							hostsBusy={!!busy[`hosts:${project.domain}`]}
 							onHosts={onHosts}
 						/>
-						<ServiceRow
-							project={project}
-							services={services}
-							busy={busy}
-							pending={pending}
-							expect={expect}
-							building={building}
-							onLogs={onLogs}
-							onServiceAction={onServiceAction}
-							logContainer={logContainer}
-							dozzleBase={dozzleBase}
-						/>
-					</>
+						{services.length ? (
+							<div className="grid gap-1.5">
+								<p className="m-0 text-[10px] font-bold uppercase tracking-wider text-muted">
+									Containers
+								</p>
+								<ServiceRow
+									project={project}
+									services={services}
+									busy={busy}
+									pending={pending}
+									expect={expect}
+									building={building}
+									onLogs={onLogs}
+									onServiceAction={onServiceAction}
+									logContainer={logContainer}
+									dozzleBase={dozzleBase}
+								/>
+							</div>
+						) : null}
+					</div>
 				) : null}
 			</div>
 		</article>
@@ -256,10 +288,10 @@ function ProjectMeta({ project, urls, layout = "comfortable", hostsBusy, onHosts
 	const compactChips = layout !== "comfortable";
 	const stacked = layout === "grid";
 	const hasStats = layout === "comfortable" && !!project.resources;
-	const hasHosts = !!project.hosts;
-	const hasUrls = urls.length > 0;
+	const showHosts = !!project.hosts?.site;
+	const extraUrls = urls.filter(item => item.url !== project.url);
 
-	if (!hasStats && !hasHosts && !hasUrls && compactChips) return null;
+	if (!hasStats && !showHosts && !extraUrls.length) return null;
 
 	return (
 		<div className="overflow-hidden rounded-xl border border-line bg-fg/5">
@@ -275,20 +307,22 @@ function ProjectMeta({ project, urls, layout = "comfortable", hostsBusy, onHosts
 						<ResourceGlance resources={project.resources} plain />
 					</div>
 				) : null}
-				<div className="flex min-w-0 flex-1 flex-wrap items-center gap-1 px-2 py-1.5">
-					{!hasUrls && layout === "comfortable" ? (
-						<span className="text-sm text-muted">No URLs yet</span>
-					) : null}
-					{urls.map(item => (
-						<UrlChip
-							key={`${project.domain}-${item.key}`}
-							label={URL_LABELS[item.key] || item.key}
-							url={item.url}
-							compact={compactChips}
-						/>
-					))}
-				</div>
-				{hasHosts ? (
+				{extraUrls.length ? (
+					<div className="flex flex-col gap-1 px-2 py-2">
+						<span className="mr-1 text-[10px] font-bold uppercase tracking-wider text-muted">Links</span>
+						<div className="flex min-w-0 flex-1 flex-wrap items-center gap-1">
+							{extraUrls.map(item => (
+								<UrlChip
+									key={`${project.domain}-${item.key}`}
+									label={URL_LABELS[item.key] || item.key}
+									url={item.url}
+									compact={compactChips}
+								/>
+							))}
+						</div>
+					</div>
+				) : null}
+				{showHosts ? (
 					<div className="flex shrink-0 items-center px-2.5 py-1.5">
 						<HostsStatus
 							hosts={project.hosts}
@@ -303,69 +337,63 @@ function ProjectMeta({ project, urls, layout = "comfortable", hostsBusy, onHosts
 	);
 }
 
-function ActionRow({ compact = false, running, waiting, action, expect, onAction, onDelete, domain }) {
-	const extraClass = "hidden md:inline-flex";
+function ActionRow({
+	running,
+	waiting,
+	action,
+	expect,
+	onAction,
+	onDelete,
+	domain,
+	servicesOpen,
+	onToggleServices,
+	fill = false,
+}) {
 	const startLoading = action === "start" || (waiting && expect === "running" && !action);
 	const stopLoading = action === "stop" || (waiting && expect === "stopped" && action === "stop");
+	const grow = fill ? "flex-1 justify-center" : "";
 
 	return (
 		<div
-			className={`flex flex-nowrap gap-1 rounded-xl border border-line bg-fg/5 ${
-				compact ? "shrink-0 p-1" : "gap-1.5 p-1.5 xl:justify-end"
-			}`}
+			className={`flex w-full flex-nowrap items-center gap-1 rounded-xl border border-line bg-fg/5 p-1 ${fill ? "" : "justify-end"}`}
 		>
+			{onToggleServices ? (
+				<button
+					type="button"
+					title={servicesOpen ? "Hide services" : "Show services"}
+					aria-expanded={!!servicesOpen}
+					aria-label={servicesOpen ? "Hide services" : "Show services"}
+					onClick={event => {
+						event.stopPropagation();
+						onToggleServices();
+					}}
+					className={`inline-flex h-7 items-center gap-1 rounded-lg px-2 text-[12px] font-semibold text-fg hover:bg-fg/10 ${grow}`}
+				>
+					<span>{servicesOpen ? "Hide" : "More"}</span>
+					<IconChevron
+						className={`h-3 w-3 shrink-0 text-muted transition ${servicesOpen ? "rotate-180" : ""}`}
+					/>
+				</button>
+			) : null}
 			<ActionButton
 				label="Start"
 				tone="start"
 				icon={<IconPlay />}
 				size="sm"
-				iconOnly={compact}
+				className={grow}
 				disabled={running || waiting}
 				loading={startLoading}
 				onClick={() => onAction("start", domain)}
-			/>
-			<ActionButton
-				label="Restart"
-				tone="restart"
-				icon={<IconRestart />}
-				size="sm"
-				iconOnly={compact}
-				className={extraClass}
-				disabled={!running || waiting}
-				loading={action === "restart"}
-				onClick={() => onAction("restart", domain)}
-			/>
-			<ActionButton
-				label="Rebuild"
-				tone="rebuild"
-				icon={<IconRebuild />}
-				size="sm"
-				iconOnly={compact}
-				className={extraClass}
-				disabled={waiting}
-				loading={action === "rebuild"}
-				onClick={() => onAction("rebuild", domain)}
 			/>
 			<ActionButton
 				label="Stop"
 				tone="stop"
 				icon={<IconStop />}
 				size="sm"
-				iconOnly={compact}
+				className={grow}
 				disabled={!running || waiting}
 				loading={stopLoading}
 				onClick={() => onAction("stop", domain)}
-			/>
-			<ActionButton
-				label="Delete"
-				tone="stop"
-				icon={<IconTrash />}
-				size="sm"
-				iconOnly={compact}
-				className={extraClass}
-				disabled={waiting}
-				loading={action === "delete"}
-				onClick={() => onDelete?.(domain)}
 			/>
 			<MoreActions
 				running={running}
@@ -408,7 +436,7 @@ function MoreActions({ running, waiting, action, onRestart, onRebuild, onDelete 
 	}
 
 	return (
-		<div className="relative md:hidden" ref={root}>
+		<div className="relative shrink-0" ref={root}>
 			<button
 				type="button"
 				title="More actions"

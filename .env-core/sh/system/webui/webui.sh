@@ -14,7 +14,7 @@ webui_dispatch() {
 	list)
 		webui_list_projects
 		;;
-	types)
+	types|catalog)
 		webui_list_types
 		;;
 	create)

@@ -3,10 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ActionButton from "../ui/ActionButton";
-import { IconHome, IconPlus, IconSettings, Spinner } from "../ui/Icons";
+import { IconDocs, IconHome, IconPlus, IconSettings, Spinner } from "../ui/Icons";
 
 export default function AppHeader({
-	stats,
 	loading,
 	subtitle = "Local container console",
 	createBusy = false,
@@ -14,12 +13,12 @@ export default function AppHeader({
 }) {
 	const pathname = usePathname();
 	const onSettings = pathname === "/settings" || pathname?.startsWith("/settings/");
-	const value = (n) => (loading ? "…" : n);
+	const onDocs = pathname === "/docs" || pathname?.startsWith("/docs/");
 	const showCreate = typeof onCreate === "function";
 
 	return (
 		<header className="sticky top-0 z-40 shrink-0 border-b border-line bg-ink/80 backdrop-blur-xl">
-			<div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 px-6 py-3">
+			<div className="flex items-center gap-4 px-6 py-3">
 				<Link href="/" className="flex min-w-0 items-center gap-3 text-fg">
 					<div className="relative h-9 w-9 shrink-0 rounded-xl bg-raised shadow-glow">
 						<span className="absolute bottom-1.5 left-1.5 h-3 w-6 rounded-[5px] bg-accent" />
@@ -34,29 +33,28 @@ export default function AppHeader({
 					</div>
 				</Link>
 
-				{showCreate ? (
-					<ActionButton
-						label="Create"
-						tone="start"
-						icon={<IconPlus />}
-						size="sm"
-						disabled={loading || createBusy}
-						onClick={() => onCreate?.()}
-						className="opacity-0"
-					/>
-				) : (
-					<div />
-				)}
-
-				<div className="flex items-center justify-end gap-5 text-sm">
-					{stats ? (
-						<>
-							<Stat label="Projects" value={value(stats.total)} />
-							<Stat label="Running" value={value(stats.running)} tone="text-ok" />
-							<Stat label="Building" value={value(stats.building)} tone="text-accent" />
-							<Stat label="Stopped" value={value(stats.stopped)} tone="text-danger" />
-						</>
+				<div className="ml-auto flex items-center gap-2 text-sm">
+					{showCreate ? (
+						<ActionButton
+							label="Create"
+							tone="start"
+							icon={<IconPlus />}
+							size="sm"
+							disabled={loading || createBusy}
+							onClick={() => onCreate?.()}
+						/>
 					) : null}
+					<Link
+						href="/docs"
+						title="Documentation"
+						aria-label="Documentation"
+						aria-current={onDocs ? "page" : undefined}
+						className={`rounded-lg border px-2.5 py-1.5 hover:border-accent/40 hover:text-accent ${
+							onDocs ? "border-accent/40 bg-raised text-accent" : "border-line bg-raised text-fg"
+						}`}
+					>
+						<IconDocs />
+					</Link>
 					<Link
 						href={onSettings ? "/" : "/settings"}
 						title={onSettings ? "Home" : "Settings"}
@@ -68,14 +66,5 @@ export default function AppHeader({
 				</div>
 			</div>
 		</header>
-	);
-}
-
-function Stat({ label, value, tone = "" }) {
-	return (
-		<div className="hidden sm:block">
-			<div className="text-[11px] uppercase tracking-wider text-muted">{label}</div>
-			<div className={`font-semibold ${tone}`}>{value}</div>
-		</div>
 	);
 }

@@ -126,4 +126,71 @@
 	[data-level="error"] {
 		background: rgb(var(--danger));
 	}
+
+	.doc-prose h1 {
+		@apply m-0 text-2xl font-extrabold tracking-tight;
+	}
+
+	.doc-prose h2 {
+		@apply mb-2 mt-8 text-lg font-bold;
+	}
+
+	.doc-prose h3 {
+		@apply mb-2 mt-6 text-base font-semibold;
+	}
+
+	.doc-prose p,
+	.doc-prose li {
+		@apply text-sm leading-6 text-fg/90;
+	}
+
+	.doc-prose a {
+		@apply text-accent underline underline-offset-2;
+	}
+
+	.doc-prose ul,
+	.doc-prose ol {
+		@apply my-3 space-y-1 pl-5;
+	}
+
+	.doc-prose ul {
+		@apply list-disc;
+	}
+
+	.doc-prose ol {
+		@apply list-decimal;
+	}
+
+	.doc-prose code {
+		@apply rounded bg-raised px-1 py-0.5 font-mono text-[12px];
+	}
+
+	.doc-prose pre {
+		@apply my-4 overflow-x-auto rounded-xl border border-line bg-ink/60 p-4;
+	}
+
+	.doc-prose pre code {
+		@apply bg-transparent p-0;
+	}
+
+	.doc-prose img {
+		@apply my-4 max-w-full rounded-xl border border-line;
+	}
+
+	.doc-table {
+		@apply my-4 overflow-x-auto;
+	}
+
+	.doc-prose table {
+		@apply w-full border-collapse text-left text-sm;
+	}
+
+	.doc-prose th,
+	.doc-prose td {
+		@apply border border-line px-3 py-2 align-top;
+	}
+
+	.doc-prose th {
+		@apply bg-raised text-xs font-semibold uppercase tracking-wide text-muted;
+	}
 }
