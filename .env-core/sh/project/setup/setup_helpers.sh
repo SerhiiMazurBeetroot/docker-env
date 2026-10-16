@@ -148,6 +148,10 @@ git_clone_templates_files() {
 			ECHO_ERROR "Please check you templates"
 		fi
 	else
-		git clone "$TEMPLATES_REPO-$PROJECT_TYPE.git" "$PROJECT_ROOT_DIR" --depth 1
+		if ! command -v git >/dev/null 2>&1; then
+			ECHO_ERROR "git is not installed"
+			return 1
+		fi
+		git clone "$TEMPLATES_REPO-$PROJECT_TYPE.git" "$PROJECT_ROOT_DIR" --depth 1 || return 1
 	fi
 }

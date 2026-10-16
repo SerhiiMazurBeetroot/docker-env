@@ -3,19 +3,6 @@
 # shellcheck disable=SC1091
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
-docker_create_laravel() {
-	unset_variables
-	project_require_nginx_for_type || return 1
-	get_domain_name
-	check_domain_exists
-	docker_create_require_new_site || return 1
-	get_project_dir "$@"
-	set_project_args
-	check_data_before_continue_callback docker_create_laravel || return 1
-
-	docker_create_project docker_create_laravel_after
-}
-
 docker_create_laravel_after() {
 	install_laravel || return 1
 }

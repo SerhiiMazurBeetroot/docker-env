@@ -32,8 +32,31 @@ docker_create_require_new_site() {
 	fi
 }
 
-# Optional flags (unset at end of docker_create_project):
-#   CREATE_TEMPLATE=clone|copy|wordpress_nextjs|directus_nextjs|nodejs|nodejs_api|laravel
+# Sibling checkout first, then the copy bundled in this repo.
+docker_create_copy_local_template() {
+	local sibling="$ENV_DIR/../docker-env-templates/docker-env-template-${PROJECT_TYPE}"
+	local bundled="$ENV_DIR/.env-core/templates/${PROJECT_TYPE}"
+	local src=""
+
+	if [[ -d "$sibling" ]]; then
+		src="$sibling"
+	elif [[ -d "$bundled" ]]; then
+		src="$bundled"
+	else
+		ECHO_ERROR "Local template not found for ${PROJECT_TYPE:-}"
+		return 1
+	fi
+
+	ECHO_INFO "Using local template ${src}"
+	rsync -a --exclude .git "$src/" "$PROJECT_ROOT_DIR/"
+}
+
+# Optional flags (unset at end of docker_create_project). docker_create_dispatch
+# sets these from PROJECT_CREATE_FLAGS in core/available_projects.sh:
+#   CREATE_TEMPLATE=clone|copy|wordpress_nextjs|directus_nextjs|nodejs|laravel
+#   CREATE_TEMPLATE_SOURCE=github|local
+#     github is the default and clones docker-env-template-$PROJECT_TYPE.
+#     local copies the sibling checkout, or .env-core/templates/$PROJECT_TYPE.
 #   CREATE_COMPOSE_CMD="up -d"
 #   CREATE_COMPOSE_DIR=
 #   CREATE_ENV_FILE=
@@ -61,6 +84,12 @@ docker_create_project() {
 	print_to_file_instances "building"
 	mkdir -p "$PROJECT_ROOT_DIR"
 
+	# github | local. Export CREATE_TEMPLATE_SOURCE=local to skip the clone.
+	local template_source="github"
+	if [[ ${CREATE_TEMPLATE_SOURCE:-github} == "local" ]]; then
+		template_source="local"
+	fi
+
 	case "${CREATE_TEMPLATE:-clone}" in
 	copy)
 		git_clone_templates_files "copy"
@@ -74,21 +103,28 @@ docker_create_project() {
 	nodejs)
 		rsync -av "$ENV_DIR/.env-core/templates/nodejs/" "$PROJECT_ROOT_DIR/"
 		;;
-	nodejs_api)
-		cp -R "$ENV_DIR/.env-core/templates/nodejs_api/." "$PROJECT_ROOT_DIR/"
-		;;
 	laravel)
 		cp -R "$ENV_DIR/.env-core/templates/laravel/." "$PROJECT_ROOT_DIR/"
 		;;
 	*)
-		git_clone_templates_files
+		if [[ $template_source == "local" ]]; then
+			if ! docker_create_copy_local_template; then
+				docker_create_rollback
+				return 1
+			fi
+		else
+			if ! git_clone_templates_files; then
+				docker_create_rollback
+				return 1
+			fi
+		fi
 		;;
 	esac
 
 	replace_templates_files
-	# GitHub docker-env-template-* is the source. Overlay local Dockerfiles
-	# only while ENV_MODE=development (quick test/fix without pushing).
-	if [[ ${ENV_MODE:-} == "development" ]]; then
+	# GitHub stays the source. In development, local Dockerfiles can still
+	# replace the cloned ones without copying the whole template.
+	if [[ $template_source == "github" && ${ENV_MODE:-} == "development" ]]; then
 		docker_overlay_bundled_dockerfiles
 	fi
 	replace_variables
@@ -113,7 +149,10 @@ docker_create_project() {
 	instances_set_status "active"
 	ECHO_SUCCESS "Containers Started"
 
-	setup_hosts_file add
+	# A hosts failure must not skip WordPress install. The browser would stay on the setup screen.
+	if ! setup_hosts_file add; then
+		ECHO_WARN_RED "Could not update the hosts file. Project setup will continue."
+	fi
 	if [[ ${CREATE_SKIP_PERMISSIONS:-0} -ne 1 ]]; then
 		fix_permissions
 	fi

@@ -5,6 +5,7 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 
 check_data_before_continue_callback() {
 	local restart_fn="${1:-}"
+	shift || true
 
 	EMPTY_LINE
 	ECHO_INFO "Check everything before proceeding:"
@@ -26,7 +27,7 @@ check_data_before_continue_callback() {
 			# create would continue and run the install steps twice).
 			# Caller must `|| return` so this frame does not continue after restart.
 			if [[ -n "$restart_fn" ]]; then
-				"$restart_fn"
+				"$restart_fn" "$@"
 			fi
 			return 1
 			;;
@@ -38,6 +39,14 @@ check_data_before_continue_callback() {
 
 setup_installation_type_callback() {
 	unset_variables
+
+	if [[ ${TEST_RUNNING:-0} -eq 1 || ${CLI_NONINTERACTIVE:-0} -eq 1 ]]; then
+		SETUP_TYPE=1
+		_setup_require_new_domain || return 1
+		get_project_dir "$@" || return 1
+		set_project_args || return 1
+		return 0
+	fi
 
 	while true; do
 		EMPTY_LINE
@@ -57,7 +66,7 @@ setup_installation_type_callback() {
 				continue
 			fi
 			get_project_dir "$@"
-			set_project_args
+			set_project_args || return 1
 			return 0
 			;;
 		2)

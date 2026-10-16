@@ -3,6 +3,14 @@
 # shellcheck disable=SC1091
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
+cli_catalog() {
+	if [[ -f "${FILE_SETTINGS:-}" ]]; then
+		env_mode >&2
+	fi
+
+	project_catalog_emit_json
+}
+
 cli_usage() {
 	local i
 
@@ -14,6 +22,7 @@ cli_usage() {
 	echo "  docker-env"
 	echo "  docker-env create --type wordpress --name blog"
 	echo "  docker-env create --type wordpress --name blog --domain dev.blog.local"
+	echo "  docker-env catalog --json"
 	echo
 	echo "Types:"
 
@@ -112,6 +121,14 @@ cli_dispatch() {
 	case "$cmd" in
 	create)
 		cli_create "$@"
+		;;
+	catalog)
+		if [[ "${1:-}" == "--json" || -z "${1:-}" ]]; then
+			cli_catalog
+		else
+			ECHO_ERROR "Usage: docker-env catalog --json"
+			return 1
+		fi
 		;;
 	help | -h | --help)
 		cli_usage

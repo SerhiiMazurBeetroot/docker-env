@@ -169,6 +169,7 @@ set_custom_args() {
 }
 
 set_project_args() {
+	version_catalog_reject_unknown || return 1
 	get_project_args
 
 	for arg in "${ARGS[@]}"; do
@@ -187,6 +188,10 @@ set_project_args() {
 			if [[ -z "${WP_VERSION:-}" ]]; then
 				get_latest_wp_version
 				WP_VERSION="${WP_LATEST_VER:-}"
+			fi
+			if [[ -z "${WP_VERSION:-}" ]]; then
+				ECHO_ERROR "Could not determine the WordPress version."
+				return 1
 			fi
 			;;
 		'WP_USER')
