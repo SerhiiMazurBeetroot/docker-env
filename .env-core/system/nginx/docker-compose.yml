@@ -45,6 +45,7 @@ services:
     environment:
       ENV_DIR: ${ENV_DIR}
       DOCKER_ENV_DIR: ${ENV_DIR}
+      WEBUI_TOKEN: ${WEBUI_TOKEN}
       WEBUI_HOST: 0.0.0.0
       WEBUI_PORT: "7777"
       PORT: "7777"
@@ -52,7 +53,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${ENV_DIR}:${ENV_DIR}
-      - /etc/hosts:/host-etc-hosts
+      - ${WEBUI_HOSTS_FILE:-/etc/hosts}:/host-etc-hosts
     ports:
       - 127.0.0.1:7777:7777
     restart: always

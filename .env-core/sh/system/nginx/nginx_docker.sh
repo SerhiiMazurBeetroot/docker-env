@@ -62,6 +62,7 @@ docker_nginx_start() {
 		docker_nginx_env
 		# Bring the proxy up first so a Web UI image build cannot block Nginx.
 		docker_compose_runner "up -d nginx mkcert dozzle" "$DIR_NGINX"
+		docker_nginx_container
 		docker_nginx_ensure_webui || true
 
 		if [[ $OSTYPE == "linux" ]]; then
@@ -150,6 +151,17 @@ docker_nginx_env() {
 	docker_nginx_set_env_key "${FILE_ENV:-$DIR_SYSTEM/.env}" "ENV_DIR" "${ENV_DIR:-}"
 	docker_nginx_set_env_key "$DIR_NGINX/.env" "ENV_DIR" "${ENV_DIR:-}"
 	docker_nginx_set_env_key "$DIR_NGINX/.env" "DOCKER_ENV_DIR" "${ENV_DIR:-}"
+	docker_nginx_hosts_mount
+	webui_sync_auth_env || true
+}
+
+# OrbStack's /etc/hosts mount is the Linux VM file. Point the Web UI at macOS /etc/hosts.
+docker_nginx_hosts_mount() {
+	local context
+	context=$(docker context show 2>/dev/null || true)
+	if [[ "$context" == "orbstack" ]]; then
+		docker_nginx_set_env_key "$DIR_NGINX/.env" "WEBUI_HOSTS_FILE" "/mnt/mac/private/etc/hosts"
+	fi
 }
 
 docker_nginx_set_env_key() {
@@ -181,6 +193,8 @@ docker_nginx_ensure_webui() {
 		ECHO_WARN_YELLOW "ENV_DIR is not set; skipping Web UI"
 		return 1
 	fi
+
+	webui_sync_auth_env || true
 
 	if docker ps --format '{{.Names}}' 2>/dev/null | grep -qE "^${WEBUI_CONTAINER:-nginx-webui}$"; then
 		ECHO_INFO "Web UI already running at http://${WEBUI_HOST:-127.0.0.1}:${WEBUI_PORT:-7777}"

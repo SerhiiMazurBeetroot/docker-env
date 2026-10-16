@@ -28,12 +28,6 @@ webui_hosts_rewrite() {
 		return 1
 	fi
 
-	if [[ ! -w "$file" ]]; then
-		ECHO_ERROR "Hosts file is not writable from Web UI ($file)."
-		ECHO_YELLOW "Mount /etc/hosts at /host-etc-hosts on the webui container, or run setup from the CLI."
-		return 1
-	fi
-
 	extra_csv=$(IFS=,; printf '%s' "${extras[*]}")
 	tmp=$(mktemp)
 	awk -v action="$action" -v site="$site" -v extra_csv="$extra_csv" '
@@ -84,9 +78,20 @@ webui_hosts_rewrite() {
 	cat "$tmp" >"$file" || {
 		rm -f "$tmp"
 		ECHO_ERROR "Failed to write $file"
+		ECHO_YELLOW "The Web UI writes that file as your Mac user. /etc/hosts is owned by root, so the write is denied until your user can write it."
 		return 1
 	}
 	rm -f "$tmp"
+	if [[ "$action" == "add" ]] && ! awk -v name="$site" '
+		{
+			sub(/#.*/, "")
+			for (i = 2; i <= NF; i++) if ($i == name) found = 1
+		}
+		END { exit found ? 0 : 1 }
+	' "$file"; then
+		ECHO_ERROR "The Mac hosts file does not contain $site."
+		return 1
+	fi
 	return 0
 }
 

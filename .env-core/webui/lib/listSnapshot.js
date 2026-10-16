@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { spawn } from "child_process";
+import { composeRelForType, loadProjectCatalog } from "./catalog.js";
 
 function envDir() {
 	return process.env.ENV_DIR || process.env.DOCKER_ENV_DIR || path.resolve(process.cwd(), "../..");
@@ -116,13 +117,29 @@ export function parseInstancesLog(text) {
 	return rows;
 }
 
-export function findComposeDir(root, type) {
-	const extra = type === "wordpress" || type === "projects" ? path.join(root, "wp-docker") : null;
-	const candidates = [extra, path.join(root, "docker"), root].filter(Boolean);
+export function findComposeDir(root, type, composeRel) {
+	const rel = composeRel || (type === "wordpress" || type === "projects" ? "wp-docker" : "docker");
+	const candidates = [];
+
+	if (rel === ".") {
+		candidates.push(root);
+	} else if (rel) {
+		candidates.push(path.join(root, rel));
+	}
+
+	if (type === "wordpress" || type === "projects") {
+		candidates.push(path.join(root, "wp-docker"));
+	}
+	candidates.push(path.join(root, "docker"), root);
+
+	const seen = new Set();
 	for (const dir of candidates) {
+		if (!dir || seen.has(dir)) continue;
+		seen.add(dir);
 		if (fs.existsSync(path.join(dir, "docker-compose.yml"))) return dir;
 	}
-	return candidates[0] || root;
+
+	return candidates.find(Boolean) || root;
 }
 
 export function extraHostsForType(type, domainFull) {
@@ -175,10 +192,41 @@ export function urlsForProject(type, domainFull) {
 	return urls;
 }
 
-let hostsCache = { at: 0, text: "", ok: false };
+let hostsCache = { at: 0, text: "", ok: false, source: "" };
+
+// OrbStack bind-mounts the Linux VM's /etc/hosts, not macOS /etc/hosts.
+const ORBSTACK_MAC_HOSTS = "/mnt/mac/private/etc/hosts";
+
+function hostsIsVmStub(text) {
+	const names = [];
+	for (const raw of String(text || "").split(/\r?\n/)) {
+		const line = raw.replace(/#.*$/, "").trim();
+		if (!line) continue;
+		const parts = line.split(/\s+/);
+		if (parts.length < 2) continue;
+		for (const part of parts.slice(1)) {
+			if (part && !part.startsWith("#")) names.push(part.toLowerCase());
+		}
+	}
+	if (!names.length) return false;
+	const stock = new Set(["localhost", "localhost.localdomain", "orbstack"]);
+	return names.every((name) => stock.has(name));
+}
+
+function rememberHosts(text, source) {
+	hostsCache = { at: Date.now(), text, ok: true, source };
+	return hostsCache;
+}
 
 export function hostsFilePath() {
-	if (fs.existsSync("/host-etc-hosts")) return "/host-etc-hosts";
+	if (fs.existsSync("/host-etc-hosts")) {
+		try {
+			const text = fs.readFileSync("/host-etc-hosts", "utf8");
+			if (!hostsIsVmStub(text)) return "/host-etc-hosts";
+		} catch (err) {
+			return "/host-etc-hosts";
+		}
+	}
 	let inDocker = false;
 	try {
 		inDocker = fs.existsSync("/.dockerenv");
@@ -228,6 +276,24 @@ function dockerStdin(args, input, timeoutMs = 12000) {
 	});
 }
 
+async function readDockerHosts(source) {
+	const image = await webuiImage();
+	const captured = await dockerCapture(
+		["run", "--rm", "--network", "none", "-v", `${source}:/check-hosts:ro`, "--entrypoint", "cat", image, "/check-hosts"],
+		10000
+	);
+	if (captured.code !== 0) return null;
+	return captured.stdout;
+}
+
+async function writeDockerHosts(source, text) {
+	const image = await webuiImage();
+	return dockerStdin(
+		["run", "--rm", "-i", "--network", "none", "-v", `${source}:/check-hosts`, "--entrypoint", "tee", image, "/check-hosts"],
+		text
+	);
+}
+
 export async function loadHostsText(force = false) {
 	if (!force && hostsCache.at && Date.now() - hostsCache.at < 8000) {
 		return hostsCache;
@@ -236,47 +302,65 @@ export async function loadHostsText(force = false) {
 	const file = hostsFilePath();
 	if (file) {
 		try {
-			const text = fs.readFileSync(file, "utf8");
-			hostsCache = { at: Date.now(), text, ok: true };
-			return hostsCache;
+			return rememberHosts(fs.readFileSync(file, "utf8"), file);
 		} catch (err) {
 			// try docker next
 		}
 	}
 
-	const image = await webuiImage();
-	const captured = await dockerCapture(
-		["run", "--rm", "--network", "none", "-v", "/etc/hosts:/check-hosts:ro", "--entrypoint", "cat", image, "/check-hosts"],
-		10000
-	);
-	hostsCache = {
-		at: Date.now(),
-		text: captured.code === 0 ? captured.stdout : "",
-		ok: captured.code === 0,
-	};
+	// /etc/hosts inside Docker is the VM file. On OrbStack it can look like the Mac
+	// file and still be a different copy, so a write there does not reach the browser.
+	const sources = fs.existsSync("/.dockerenv") ? [ORBSTACK_MAC_HOSTS] : ["/etc/hosts"];
+	for (const source of sources) {
+		const text = await readDockerHosts(source);
+		if (text == null) continue;
+		if (hostsIsVmStub(text)) continue;
+		return rememberHosts(text, source);
+	}
+
+	hostsCache = { at: Date.now(), text: "", ok: false, source: "" };
 	return hostsCache;
+}
+
+function readMountedHosts() {
+	const file = hostsFilePath();
+	if (!file) return null;
+	try {
+		return fs.readFileSync(file, "utf8");
+	} catch (err) {
+		return null;
+	}
 }
 
 export async function writeHostsText(text) {
 	const file = hostsFilePath();
+	const macSource = process.env.WEBUI_HOSTS_FILE || ORBSTACK_MAC_HOSTS;
+
 	if (file) {
 		try {
 			fs.writeFileSync(file, text);
-			hostsCache = { at: Date.now(), text, ok: true };
-			return { ok: true };
 		} catch (err) {
-			// try docker next
+			// OrbStack reports this mount writable, then macOS rejects the write.
+		}
+		if (readMountedHosts() === text) {
+			rememberHosts(text, file);
+			return { ok: true };
 		}
 	}
 
-	const image = await webuiImage();
-	const captured = await dockerStdin(
-		["run", "--rm", "-i", "--network", "none", "-v", "/etc/hosts:/check-hosts", "--entrypoint", "tee", image, "/check-hosts"],
-		text
-	);
-	const ok = captured.code === 0;
-	if (ok) hostsCache = { at: Date.now(), text, ok: true };
-	return { ok, log: captured.stderr };
+	// Same Mac file via the Docker daemon. Do not fall back to the VM /etc/hosts.
+	if (file === "/host-etc-hosts" || !file) {
+		await writeDockerHosts(macSource, text);
+		if (readMountedHosts() === text) {
+			rememberHosts(text, file || macSource);
+			return { ok: true };
+		}
+	}
+
+	return {
+		ok: false,
+		log: "Could not write the Mac hosts file. The Web UI writes it as your user, and /etc/hosts is owned by root.",
+	};
 }
 
 function rewriteHosts(text, action, site, extras) {
@@ -329,11 +413,18 @@ export async function applyHostsExtras(action, domain) {
 
 	const next = rewriteHosts(loaded.text, action, row.domainFull, extras);
 	const written = await writeHostsText(next);
+	const line = ["127.0.0.1", row.domainFull, ...extras].join(" ");
 	if (!written.ok) {
-		return { ok: false, log: written.log || "Could not write host /etc/hosts" };
+		return { ok: false, log: `${written.log || "Could not write host /etc/hosts"}\n${line}` };
 	}
-	const verb = action === "rem" ? "Removed extras from" : "Added extras to";
-	return { ok: true, log: `${verb} /etc/hosts for ${row.domainFull}\n${extras.join(" ")}` };
+	const siteHost = String(row.domainFull || "").split("/")[0].toLowerCase();
+	const confirmed = hostTokenSet(readMountedHosts() || "");
+	if (!siteHost || !confirmed.has(siteHost)) {
+		return { ok: false, log: `The Mac hosts file does not contain ${row.domainFull}.\n${line}` };
+	}
+	const verb = action === "rem" ? "Removed extras from" : "Added";
+	const names = [row.domainFull, ...extras].filter(Boolean);
+	return { ok: true, log: `${verb} /etc/hosts for ${row.domainFull}\n${names.join(" ")}` };
 }
 
 export function hostTokenSet(text) {
@@ -421,11 +512,11 @@ function healthFromStatus(state, status) {
 	return "";
 }
 
-function servicesForProject(row, psRows) {
+function servicesForProject(row, psRows, catalog) {
 	const domain = row.domain;
 	const prefix = `${domain}-`;
 	const root = path.join(envDir(), row.type || "", row.domainFull || domain);
-	const composeDir = findComposeDir(root, row.type);
+	const composeDir = findComposeDir(root, row.type, composeRelForType(catalog, row.type));
 	const composeFile = path.join(composeDir, "docker-compose.yml");
 	const defined = composeServiceNames(composeFile);
 	const hits = psRows.filter((item) => {
@@ -488,32 +579,24 @@ function systemFromPs(psRows) {
 	}
 
 	return [
-		one(
-			"nginx",
-			"Nginx",
-			"nginx-proxy",
-			[
-				{ key: "HTTP", url: "http://127.0.0.1:8080" },
-				{ key: "HTTPS", url: "https://127.0.0.1" },
-			],
-			systemActions
-		),
+		one("nginx", "Nginx", "nginx-proxy", [], systemActions),
 		one("dozzle", "Dozzle", "nginx-dozzle", [{ key: "UI", url: "http://127.0.0.1:7007" }], systemActions),
 		one("webui", "Web UI", process.env.WEBUI_CONTAINER || "nginx-webui", [{ key: "UI", url: webuiUrl }], []),
 	];
 }
 
 export async function listProjectsFast() {
-	const [captured, hosts] = await Promise.all([
+	const [captured, hosts, catalog] = await Promise.all([
 		dockerCapture(["ps", "-a", "--format", "{{json .}}"], 8000),
 		loadHostsText(),
+		loadProjectCatalog().catch(() => null),
 	]);
 	const psRows = parseJsonLines(captured.stdout);
 	const tokens = hostTokenSet(hosts.text);
 	const rows = readInstanceSites();
 
 	const projects = rows.map((row) => {
-		const services = servicesForProject(row, psRows);
+		const services = servicesForProject(row, psRows, catalog);
 		const urls = urlsForProject(row.type, row.domainFull);
 		const url = row.domainFull ? `https://${row.domainFull}` : "";
 		return {
