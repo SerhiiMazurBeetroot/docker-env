@@ -27,7 +27,11 @@ get_nextjs_version() {
 		LIST+=("$latest")
 	done
 
-	DEFAULT_VERSION="${LIST[0]}"
+	DEFAULT_VERSION="${LIST[0]:-}"
+	if [[ -z "$DEFAULT_VERSION" ]]; then
+		echo "Error: no data from npm registry"
+		return 1
+	fi
 
 	if [[ -z "${NEXTJS_VERSION:-}" ]]; then
 		if [[ $QUESTION == "default" ]]; then

@@ -14,9 +14,13 @@ get_directus_version() {
 
 	if [[ -z "${DIRECTUS_VERSION:-}" ]]; then
 		if [[ ${QUESTION:-} == "default" ]]; then
-			DIRECTUS_VERSION="${LIST[1]}"
+			DIRECTUS_VERSION="${LIST[1]:-${LIST[0]:-}}"
+			if [[ -z "${DIRECTUS_VERSION:-}" ]]; then
+				ECHO_ERROR "Could not determine the Directus version."
+				return 1
+			fi
 		else
-			DIRECTUS_VERSION="${LIST[1]}"
+			DIRECTUS_VERSION="${LIST[1]:-${LIST[0]:-}}"
 			ECHO_ENTER "Enter DIRECTUS_VERSION [default '$DIRECTUS_VERSION']"
 
 			print_list "${LIST[@]}"
@@ -26,7 +30,7 @@ get_directus_version() {
 
 			if [ -z "$choice" ]; then
 				choice=-1
-				DIRECTUS_VERSION="${LIST[1]}"
+				DIRECTUS_VERSION="${LIST[1]:-${LIST[0]:-}}"
 			else
 				if (("$choice" > 0 && "$choice" <= ${#LIST[@]})); then
 					DIRECTUS_VERSION="${LIST[$(($choice - 1))]}"

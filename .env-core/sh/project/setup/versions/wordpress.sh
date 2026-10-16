@@ -8,7 +8,18 @@ get_latest_wp_version() {
 	WP=()
 	while IFS= read -r tag; do
 		[[ -n "$tag" ]] && WP+=("$tag")
-	done < <(curl -s 'https://api.github.com/repos/wordpress/wordpress/tags?per_page=2' | grep "name" | head -n 2 | awk '$0=$2' | grep -E '[0-9]+\.[0-9]+?' | tr -d '",')
-	WP_LATEST_VER=$(echo "${WP[0]:-}" | grep -Eo '[0-9]+\.[0-9]+\.?[0-9]+' || echo "${WP[0]:-}.0")
-	WP_PREV_VER=$(echo "${WP[1]:-}" | grep -Eo '[0-9]+\.[0-9]+\.?[0-9]+' || echo "${WP[1]:-}.0")
+	done < <(curl -fs 'https://api.github.com/repos/wordpress/wordpress/tags?per_page=2' 2>/dev/null | grep "name" | head -n 2 | awk '$0=$2' | grep -E '[0-9]+\.[0-9]+?' | tr -d '",' || true)
+
+	if [[ -z "${WP[0]:-}" ]]; then
+		WP_LATEST_VER=""
+		WP_PREV_VER=""
+		return 0
+	fi
+
+	WP_LATEST_VER=$(echo "${WP[0]}" | grep -Eo '[0-9]+\.[0-9]+\.?[0-9]+' || echo "${WP[0]}.0")
+	if [[ -n "${WP[1]:-}" ]]; then
+		WP_PREV_VER=$(echo "${WP[1]}" | grep -Eo '[0-9]+\.[0-9]+\.?[0-9]+' || echo "${WP[1]}.0")
+	else
+		WP_PREV_VER=""
+	fi
 }

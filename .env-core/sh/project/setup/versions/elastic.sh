@@ -11,9 +11,17 @@ get_elastic_version() {
 
 	if [[ -z "${ELASTIC_VERSION:-}" ]]; then
 		if [[ ${QUESTION:-} == "default" ]]; then
-			ELASTIC_VERSION="${LIST[1]}"
+			ELASTIC_VERSION="${LIST[1]:-${LIST[0]:-}}"
+			if [[ -z "${ELASTIC_VERSION:-}" ]]; then
+				ECHO_ERROR "Could not determine the Elasticsearch version."
+				return 1
+			fi
 		else
-			ELASTIC_VERSION="${LIST[1]}"
+			ELASTIC_VERSION="${LIST[1]:-${LIST[0]:-}}"
+			if [[ -z "${ELASTIC_VERSION:-}" ]]; then
+				ECHO_ERROR "Could not determine the Elasticsearch version."
+				return 1
+			fi
 			ECHO_ENTER "Enter ELASTIC_VERSION [default '$ELASTIC_VERSION']"
 
 			print_list "${LIST[@]}"
@@ -23,7 +31,7 @@ get_elastic_version() {
 
 			if [ -z "$choice" ]; then
 				choice=-1
-				ELASTIC_VERSION="${LIST[1]}"
+				ELASTIC_VERSION="${LIST[1]:-${LIST[0]:-}}"
 			else
 				if (("$choice" > 0 && "$choice" <= ${#LIST[@]})); then
 					ELASTIC_VERSION="${LIST[$(($choice - 1))]}"

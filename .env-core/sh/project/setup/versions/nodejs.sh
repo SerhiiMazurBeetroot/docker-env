@@ -14,7 +14,11 @@ get_nodejs_version() {
 
 	if [[ -z "${NODE_VERSION:-}" ]]; then
 		if [[ ${QUESTION:-} == "default" ]]; then
-			NODE_VERSION="${NODE_VERSIONS[1]}"
+			NODE_VERSION="${NODE_VERSIONS[1]:-${NODE_VERSIONS[0]:-}}"
+			if [[ -z "${NODE_VERSION:-}" ]]; then
+				ECHO_ERROR "Could not determine the Node.js version."
+				return 1
+			fi
 		else
 			ECHO_ENTER "Enter NODE_VERSION [default '$NODE_LATEST_VERSION']"
 
