@@ -56,6 +56,8 @@ database_snapshot_before_delete() {
 			return 1
 		fi
 		docker_compose_runner "up -d" || return 1
+		wait_for_docker_container "$DOCKER_CONTAINER_DB" || return 1
+		database_wait_mysql_ready || return 1
 	fi
 
 	TIMESTAMP=$(date +"%Y-%m-%d-%H%M%S")
@@ -70,7 +72,7 @@ database_snapshot_before_delete() {
 }
 
 database_create_dump() {
-	local file partial status
+	local file partial status db_target
 
 	env_file_load
 	get_mysql_cmd
@@ -83,7 +85,16 @@ database_create_dump() {
 
 	case "${DB_TYPE:-}" in
 	"MYSQL")
-		docker exec -e MYSQL_PWD="${MYSQL_ROOT_PASSWORD:-}" -i "$DOCKER_CONTAINER_DB" sh -c "$MYSQL_DUMP_CMD -uroot $MYSQL_DATABASE" >"$partial" </dev/null || status=$?
+		db_target="${MYSQL_DATABASE:-${DB_NAME:-}}"
+		if [[ -z "$db_target" ]]; then
+			rm -f "$partial"
+			ECHO_ERROR "No database name for dump"
+			return 1
+		fi
+
+		# mariadb-dump/mysqldump without -h uses the socket, which is often absent.
+		docker exec -e MYSQL_PWD="${MYSQL_ROOT_PASSWORD:-}" -i "$DOCKER_CONTAINER_DB" \
+			sh -c "$MYSQL_DUMP_CMD -h 127.0.0.1 -uroot -- \"$db_target\"" >"$partial" </dev/null || status=$?
 		;;
 	"POSTGRES")
 		docker exec -i "$DOCKER_CONTAINER_DB" pg_dump -U "$DB_USER" -d "$DB_NAME" -F t >"$partial" </dev/null || status=$?

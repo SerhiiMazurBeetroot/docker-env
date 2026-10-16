@@ -2,7 +2,7 @@
 
 A PHP app container behind Nginx. No WordPress install and no phpMyAdmin host. Disk path: `php/{DOMAIN_FULL}/`.
 
-![Create PHP](../../.env-core/docs/gifs/php.gif)
+![Create PHP](../gifs/php.gif)
 
 ## Create
 

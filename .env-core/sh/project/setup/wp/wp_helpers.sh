@@ -140,7 +140,8 @@ wp_core_install_exec() {
 		-e WP_INSTALL_USER="${WP_USER}" \
 		-e WP_INSTALL_PASSWORD="${WP_PASSWORD}" \
 		"$DOCKER_CONTAINER_APP" \
-		sh -c 'wp core "$WP_INSTALL_COMMAND" --url="$WP_INSTALL_URL" --title="$WP_INSTALL_TITLE" --admin_user="$WP_INSTALL_USER" --admin_password="$WP_INSTALL_PASSWORD" --admin_email=example@example.com --skip-email --allow-root'
+		sh -c 'wp core "$WP_INSTALL_COMMAND" --url="$WP_INSTALL_URL" --title="$WP_INSTALL_TITLE" --admin_user="$WP_INSTALL_USER" --admin_password="$WP_INSTALL_PASSWORD" --admin_email=example@example.com --skip-email --allow-root' \
+		|| return 1
 }
 
 wp_core_install() {
@@ -148,10 +149,10 @@ wp_core_install() {
 
 	ECHO_WARN_YELLOW "wp_core_install..."
 	if [[ "${MULTISITE:-}" == "yes" || "${MULTISITE:-}" == "2" ]]; then
-		wp_core_install_exec "multisite-install"
-		wp_multisite_htaccess
+		wp_core_install_exec "multisite-install" || return 1
+		wp_multisite_htaccess || return 1
 	else
-		wp_core_install_exec "install"
+		wp_core_install_exec "install" || return 1
 	fi
 
 	ECHO_SUCCESS "Done!"

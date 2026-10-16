@@ -2,7 +2,7 @@
 
 Classic WordPress in Docker behind [Nginx](../system.md). Disk path: `wordpress/{DOMAIN_FULL}/`.
 
-![Create WordPress](../../.env-core/docs/gifs/wordpress.gif)
+![Create WordPress](../gifs/wordpress.gif)
 
 ## Create
 

@@ -228,7 +228,7 @@ site_more_menu() {
 		ECHO_GREEN "[1] Restart"
 		ECHO_GREEN "[2] Rebuild"
 		ECHO_GREEN "[3] Git"
-		ECHO_GREEN "[4] Archive"
+		ECHO_GREEN "[4] Archive / restore (ZIP)"
 		ECHO_GREEN "[5] ${mark}"
 		ECHO_RED "[6] Remove site"
 

@@ -4,14 +4,14 @@
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
 unzip_project() {
-	get_archived_projects
+	get_archived_projects || return 1
 
-	if [[ "$DOMAIN_NAME" ]]; then
+	if [[ -n "${DOMAIN_NAME:-}" && -n "${FILENAME:-}" ]]; then
 		ECHO_YELLOW "Unzipping files ..."
 		mkdir -p "$PROJECT_ROOT_DIR"
 
 		if [ -d "$PROJECT_ROOT_DIR" ]; then
-			unzip -o "$FILENAME" -d "$PROJECT_DIR"
+			unzip -o "$FILENAME" -d "$ENV_DIR/$PROJECT_DIR"
 
 			update_file_instances
 			setup_hosts_file add
@@ -24,6 +24,6 @@ unzip_project() {
 			ECHO_WARN_RED "Directory name doesn't exists: $PROJECT_DIR"
 		fi
 	else
-		ECHO_WARN_RED "Archives doesn't exists"
+		ECHO_WARN_RED "Restore cancelled or archive could not be read."
 	fi
 }

@@ -124,6 +124,19 @@ instances_domain_names() {
 	' "$FILE_INSTANCES"
 }
 
+# True when at least one catalog row is status "archive" (ZIP restore target).
+instances_has_archived_sites() {
+	instances_prepare || return 1
+	[[ -f "$FILE_INSTANCES" ]] || return 1
+
+	jq -e '
+		any(.sites[]?
+			; .status == "archive"
+			and (.domain_name != null and .domain_name != "" and .domain_name != "DOMAIN_NAME")
+		)
+	' "$FILE_INSTANCES" >/dev/null 2>&1
+}
+
 # domain, project_type, domain_full, status — one TSV row per visible site.
 instances_visible_sites() {
 	instances_prepare || return 0

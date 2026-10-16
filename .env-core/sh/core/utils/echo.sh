@@ -58,6 +58,9 @@ ECHO_ATTENTION() {
 ECHO_SUCCESS() {
 	echo -e "✅ ${GREEN}[SUCCESS]" "${NC}""${1}"
 	EMPTY_LINE
+	if [[ -n "${DOMAIN_NAME:-}" ]] && declare -F clear_site_notice >/dev/null 2>&1; then
+		clear_site_notice "$DOMAIN_NAME" "${DIAG_ACTION:-ok}"
+	fi
 }
 
 ECHO_WARN_YELLOW() {
@@ -75,6 +78,9 @@ ECHO_ERROR() {
 	EMPTY_LINE
 	echo -e "🛑 \033[0;101m[ERROR]${RED}" "${1}""${NC}"
 	EMPTY_LINE
+	if declare -F record_diagnostic >/dev/null 2>&1; then
+		record_diagnostic "${1:-Error}" "${DIAG_ACTION:-cli}" "${DOMAIN_NAME:-}"
+	fi
 }
 
 GET_USER_INPUT() {

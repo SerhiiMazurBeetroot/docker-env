@@ -2,7 +2,7 @@
 
 [Roots Bedrock](https://roots.io/bedrock/) WordPress in Docker. Disk path: `bedrock/{DOMAIN_FULL}/`.
 
-![Create Bedrock](../../.env-core/docs/gifs/bedrock.gif)
+![Create Bedrock](../gifs/bedrock.gif)
 
 ## Create
 

@@ -45,9 +45,32 @@ docker_compose_version() {
 	[[ $COMPOSE_VERSION == 2 ]] && DOCKER_COMPOSE_CMD="docker compose" || DOCKER_COMPOSE_CMD="docker-compose"
 }
 
+env_mode_accepted() {
+	case "${1:-}" in
+	"" | development) return 0 ;;
+	*) return 1 ;;
+	esac
+}
+
 env_mode() {
 	ENV_MODE=$(awk '/ENV_MODE/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_MODE='//')
+	ENV_MODE="${ENV_MODE#\"}"
+	ENV_MODE="${ENV_MODE%\"}"
+	ENV_MODE="${ENV_MODE#\'}"
+	ENV_MODE="${ENV_MODE%\'}"
 	export ENV_MODE
+
+	if [[ ${TEST_RUNNING:-0} -eq 1 ]]; then
+		return 0
+	fi
+	if env_mode_accepted "$ENV_MODE"; then
+		return 0
+	fi
+	if [[ ${ENV_MODE_WARNED:-0} -eq 1 ]]; then
+		return 0
+	fi
+	ENV_MODE_WARNED=1
+	ECHO_WARN_RED "Unknown ENV_MODE '${ENV_MODE}'."
 }
 
 versions() {

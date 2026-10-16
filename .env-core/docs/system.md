@@ -49,11 +49,11 @@ mkcert writes the root CA to `.env-core/system/nginx/certs-root/` (`rootCA.pem`)
 
 Screenshots:
 
-1. [Install](../.env-core/docs/images/certs-1.jpg)
-2. [Store location](../.env-core/docs/images/certs-2.jpg)
-3. [Select store](../.env-core/docs/images/certs-3.jpg)
-4. [Import](../.env-core/docs/images/certs-4.jpg)
-5. [Confirm](../.env-core/docs/images/certs-5.jpg)
+1. [Install](images/certs-1.jpg)
+2. [Store location](images/certs-2.jpg)
+3. [Select store](images/certs-3.jpg)
+4. [Import](images/certs-4.jpg)
+5. [Confirm](images/certs-5.jpg)
 
 Microsoft: [Installing a trusted root certificate](https://learn.microsoft.com/en-us/windows-hardware/drivers/install/installing-a-test-certificate-on-a-test-computer).
 
@@ -100,7 +100,7 @@ These are per-project virtual hosts, not ports on localhost:
 
 ## Git tokens
 
-**3 Project Services → 5 Tools → 2 GIT → 5 Repo access** stores GitHub/GitLab tokens in `.env-core/data/settings.log` (gitignored). Needed only to create remote repos from the CLI.
+**3 Sites → pick a site → More → Git → Repo access** stores GitHub/GitLab tokens in `.env-core/data/settings.log` (gitignored). Needed only to create remote repos from the CLI.
 
 - [GitHub personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
 - [GitLab personal access token](https://docs.gitlab.com/user/profile/personal_access_tokens/)

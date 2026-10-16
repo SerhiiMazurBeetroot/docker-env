@@ -36,6 +36,9 @@ get_db_info() {
 
 _db_shell_mysql_password() {
 	MYSQL_ROOT_PASSWORD="$(env_file_value MYSQL_ROOT_PASSWORD 2>/dev/null || true)"
+	if [[ -z "${MYSQL_ROOT_PASSWORD:-}" ]]; then
+		MYSQL_ROOT_PASSWORD="$(env_file_value MARIADB_ROOT_PASSWORD 2>/dev/null || true)"
+	fi
 }
 
 check_db_exists() {
@@ -45,7 +48,7 @@ check_db_exists() {
 		get_mysql_cmd
 
 		DB_EXISTS=$(docker exec -e MYSQL_PWD="${MYSQL_ROOT_PASSWORD:-}" -i "$DOCKER_CONTAINER_DB" \
-			sh -c "$MYSQL_CMD -uroot --silent --execute 'SHOW DATABASES'" | grep -Eo "$DB_NAME" || true)
+			sh -c "$MYSQL_CMD -h 127.0.0.1 -uroot --silent --execute 'SHOW DATABASES'" | grep -Eo "$DB_NAME" || true)
 		;;
 	"POSTGRES")
 		DB_EXISTS=$(docker exec -i "$DOCKER_CONTAINER_DB" psql -U "$DB_USER" -d "$DB_NAME" -tAc "SELECT 1 FROM pg_database WHERE datname='$DB_NAME'" | grep -q "1" && echo true || echo false)
@@ -102,6 +105,26 @@ wait_for_docker_container() {
 
 	ECHO_ERROR "Timeout waiting for container $container (last status: ${status:-missing})"
 	docker logs "$container" 2>&1 | tail -40 || true
+	return 1
+}
+
+# MariaDB clients default to /run/mysqld/mysqld.sock; use TCP like wait_for_db.
+database_wait_mysql_ready() {
+	local attempts="${1:-45}"
+	local i
+
+	_db_shell_mysql_password
+	get_mysql_cmd
+
+	for ((i = 1; i <= attempts; i++)); do
+		if docker exec -e MYSQL_PWD="${MYSQL_ROOT_PASSWORD:-}" -i "$DOCKER_CONTAINER_DB" \
+			sh -c "$MYSQL_ADMIN_CMD ping -h 127.0.0.1 -uroot --silent" >/dev/null 2>&1; then
+			return 0
+		fi
+		sleep 2
+	done
+
+	ECHO_ERROR "Timeout waiting for database in ${DOCKER_CONTAINER_DB:-}"
 	return 1
 }
 

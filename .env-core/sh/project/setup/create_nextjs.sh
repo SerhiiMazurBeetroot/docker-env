@@ -20,7 +20,7 @@ create_nextjs() {
 			return 0
 			;;
 		1)
-			docker_create_nextjs
+			docker_create_dispatch nextjs
 			unset_variables "PROJECT_TYPE"
 			;;
 		2)

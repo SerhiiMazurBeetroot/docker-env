@@ -2,7 +2,7 @@
 
 Two install modes. Disk path: `nextjs/{DOMAIN_FULL}/`.
 
-![Create Next.js](../../.env-core/docs/gifs/nextjs.gif)
+![Create Next.js](../gifs/nextjs.gif)
 
 ## Create
 
@@ -11,7 +11,7 @@ CLI: **2 New project → Next.js**, then:
 | Key | Mode |
 | --- | --- |
 | 1 Docker | App in Compose, routed through Nginx |
-| 2 Local | `create-next-app` on the host (still recorded in `instances.log`) |
+| 2 Local | `create-next-app` on the host (still recorded in `instances.json`) |
 
 Web UI create uses the Docker path.
 

@@ -124,7 +124,7 @@ search_replace_mysql_text() {
 	get_mysql_cmd
 
 	columns=$(docker exec -e MYSQL_PWD="${MYSQL_ROOT_PASSWORD:-}" -i "$DOCKER_CONTAINER_DB" \
-		"$MYSQL_CMD" -uroot --batch --skip-column-names "$DB_NAME" -e \
+		"$MYSQL_CMD" -h 127.0.0.1 -uroot --batch --skip-column-names "$DB_NAME" -e \
 		"SELECT TABLE_NAME, COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND DATA_TYPE IN ('char','varchar','tinytext','text','mediumtext','longtext')") || {
 		ECHO_ERROR "Could not list text columns"
 		return 1
@@ -155,7 +155,7 @@ search_replace_mysql_text() {
 
 	ECHO_INFO "Updating ${count} text columns in ${DB_NAME}"
 	if docker exec -e MYSQL_PWD="${MYSQL_ROOT_PASSWORD:-}" -i "$DOCKER_CONTAINER_DB" \
-		"$MYSQL_CMD" -uroot "$DB_NAME" <"$sqlfile"; then
+		"$MYSQL_CMD" -h 127.0.0.1 -uroot "$DB_NAME" <"$sqlfile"; then
 		rm -f "$sqlfile"
 		ECHO_SUCCESS "Search-replace completed successfully."
 	else

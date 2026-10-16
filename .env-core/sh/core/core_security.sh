@@ -5,6 +5,8 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 
 is_safe_hostname() {
 	local name="${1:-}"
+	[[ -n "$name" ]] || return 1
+	[[ "$name" != *".."* ]] || return 1
 	[[ "$name" =~ ^[A-Za-z0-9]([A-Za-z0-9.-]{0,251}[A-Za-z0-9])?$ ]]
 }
 

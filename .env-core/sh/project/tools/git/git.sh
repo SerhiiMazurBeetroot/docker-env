@@ -47,7 +47,8 @@ git_config_fileMode() {
 	if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
 		git config core.fileMode false
 
-		safe_directories=$(git config --global --get-all safe.directory)
+		# Missing key exits 1. Under errexit that aborts create with no message.
+		safe_directories=$(git config --global --get-all safe.directory || true)
 		patterns=("$PROJECT_DIR")
 
 		for pattern in "${patterns[@]}"; do

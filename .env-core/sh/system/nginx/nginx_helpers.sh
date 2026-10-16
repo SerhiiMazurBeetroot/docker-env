@@ -6,8 +6,9 @@ source "${ENV_DIR}/.env-core/sh/common.sh"
 clear_nginx_logs() {
 	max_size=1000 # 1mb
 
-	if [ ! -d "$DIR_NGINX/logs" ]; then
+	if [ -d "$DIR_NGINX/logs" ]; then
 		for filename in "$DIR_NGINX/logs"/*; do
+			[ -f "$filename" ] || continue
 			# Check the size of each file
 			file_size=$(du -k "$filename" | cut -f1)
 

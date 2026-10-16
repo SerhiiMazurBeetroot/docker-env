@@ -32,7 +32,12 @@ project_services_menu() {
 		ECHO_YELLOW "[0] Return to main menu"
 
 		if ((${#names[@]} == 0)); then
-			ECHO_YELLOW "No sites yet. Create one from New project."
+			EMPTY_LINE
+			if instances_has_archived_sites; then
+				ECHO_CYAN "No active sites. Create one from New project, or restore an archive below."
+			else
+				ECHO_CYAN "No active sites. Create one from New project."
+			fi
 		else
 			for ((index = 0; index < ${#names[@]}; index++)); do
 				printf '%b[%d]%b %-16s %-20s %-10s https://%s\n' \
@@ -44,11 +49,25 @@ project_services_menu() {
 			done
 		fi
 
+		if instances_has_archived_sites; then
+			EMPTY_LINE
+			ECHO_GREEN "[r] Restore site from archive (ZIP)"
+		fi
+
 		choice=$(GET_USER_INPUT "select_one_of")
 		choice="${choice:-0}"
 
 		if [[ "$choice" == "0" ]]; then
 			return 0
+		fi
+
+		if [[ "$(echo "$choice" | tr '[:upper:]' '[:lower:]')" == "r" ]]; then
+			if instances_has_archived_sites; then
+				restore_project_from_archive
+			else
+				ECHO_WARN_RED "Wrong option"
+			fi
+			continue
 		fi
 
 		if ((choice < 1 || choice > ${#names[@]})); then
