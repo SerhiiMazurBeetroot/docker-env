@@ -11,6 +11,7 @@ source "$ENV_DIR"/.env-core/sh/autoloader.sh
 
 main_actions() {
 	healthcheck
+	env_logo_startup
 	primary_menu
 }
 

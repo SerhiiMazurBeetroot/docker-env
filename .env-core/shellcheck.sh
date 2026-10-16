@@ -5,13 +5,14 @@
 
 set -euo pipefail
 
-root=$(CDPATH= cd -- "$(dirname "$0")" && pwd)
+core_dir="$(cd "$(dirname "$0")" && pwd)"
+root="$(cd "$core_dir/.." && pwd)"
 cd "$root"
 
 files=()
 while IFS= read -r file; do
 	[[ -n "$file" ]] && files+=("$file")
-done < <(find .env-core/sh setup.sh -name '*.sh' -not -path '*/sh/dev/*' | sort)
+done < <(find .env-core/sh setup.sh .env-core/tests/unit -name '*.sh' -not -path '*/sh/dev/*' 2>/dev/null | sort)
 
 if [[ ${#files[@]} -eq 0 ]]; then
 	echo "No shell scripts found" >&2

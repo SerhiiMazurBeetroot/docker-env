@@ -143,7 +143,10 @@ docker-env
 
 <br>
 
-# [FAQ](./.env-core/docs/6-doc.MD#6-how-to)
+# Guides
+
+- [Using docker-env](./.env-core/docs/README.md) — install, sites, Web UI, troubleshooting
+- [Developing docker-env](./.env-core/docs/dev/README.md) — shell layout, catalog, tests
 
 ## Links
 
