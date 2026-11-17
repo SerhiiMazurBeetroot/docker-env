@@ -3,117 +3,153 @@
 # shellcheck disable=SC1091
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
-webui_system_service() {
-	local id="${1:-}"
-	local name="${2:-}"
-	local container="${3:-}"
-	local urls="${4:-[]}"
-	local actions="${5:-[]}"
+# Running container names, one per line. Read once per list call (see webui_list_projects).
+WEBUI_RUNNING_NAMES=""
+
+# Max sites checked at once. Each site runs two docker compose calls.
+WEBUI_LIST_JOBS=6
+
+# _webui_list_system_json RUNNING_NAMES: nginx, dozzle and web UI rows from one docker inspect.
+_webui_list_system_json() {
+	local running="${1:-}"
+	local webui_container="${WEBUI_CONTAINER:-nginx-webui}"
+	local inspect
+
+	# Missing containers make docker inspect fail, but it still prints the ones it found.
+	inspect=$(docker inspect -f '{{.Name}}{{"\t"}}{{.State.Status}}{{"\t"}}{{if .State.Health}}{{.State.Health.Status}}{{end}}' \
+		nginx-proxy nginx-dozzle "$webui_container" 2>/dev/null || true)
+
+	jq -nc \
+		--arg inspect "$inspect" \
+		--arg running "$running" \
+		--arg webui_container "$webui_container" \
+		--arg dozzle_url "http://127.0.0.1:7007" \
+		--arg webui_url "$(webui_url)" '
+		([ $inspect | split("\n")[] | select(length > 0) | split("\t")
+			| {key: (.[0] | ltrimstr("/")), value: {state: (.[1] // ""), health: (.[2] // "")}} ]
+			| from_entries) as $info
+		| [ $running | split("\n")[] | select(length > 0) ] as $up
+		| def svc($id; $name; $container; $urls; $actions):
+			($info[$container] // null) as $i
+			| {
+				id: $id,
+				name: $name,
+				container: $container,
+				running: ($up | any(. == $container)),
+				state: (if $i then ($i.state | ascii_downcase) else "missing" end),
+				health: (if $i then ($i.health | ascii_downcase) else "" end),
+				status: (if $i then $i.state + (if $i.health != "" then " (" + $i.health + ")" else "" end) else "" end),
+				urls: $urls,
+				actions: $actions
+			};
+		["start", "stop", "restart"] as $actions
+		| [
+			svc("nginx"; "Nginx"; "nginx-proxy"; []; $actions),
+			svc("dozzle"; "Dozzle"; "nginx-dozzle"; [{key: "UI", url: $dozzle_url}]; $actions),
+			svc("webui"; "Web UI"; $webui_container; [{key: "UI", url: $webui_url}]; [])
+		]
+	'
+}
+
+# _webui_list_row DOMAIN TYPE FULL STATUS: one project row as compact JSON.
+# Runs in its own subshell (see webui_list_projects), so the project globals it sets stay there.
+_webui_list_row() {
+	local domain="${1:-}"
+	local type="${2:-}"
+	local full="${3:-}"
+	local status="${4:-}"
 	local running=false
-	local state="missing"
-	local health=""
-	local status=""
+	local url=""
 
-	if webui_service_running "$container"; then
-		running=true
+	DOMAIN_NAME="$domain"
+	PROJECT_TYPE="$type"
+	PROJECT_ROOT_DIR=""
+	PROJECT_DOCKER_DIR=""
+	DOCKER_CONTAINER_APP=""
+	DOMAIN_FRONT=""
+	DOMAIN_ADMIN=""
+	DOMAIN_DB=""
+	DOMAIN_MAIL=""
+	DOMAIN_KIBANA=""
+	DOMAIN_LOGSTASH=""
+
+	if get_project_dir "skip_question" >/dev/null 2>&1; then
+		# Same match as container_is_running, against the names read once for the whole list.
+		if [[ -n "$DOCKER_CONTAINER_APP" ]] &&
+			printf '%s\n' "$WEBUI_RUNNING_NAMES" | grep -qE "(^|_|-)${DOCKER_CONTAINER_APP}($)"; then
+			running=true
+		fi
 	fi
 
-	if docker inspect "$container" >/dev/null 2>&1; then
-		state=$(docker inspect -f '{{.State.Status}}' "$container" 2>/dev/null | tr '[:upper:]' '[:lower:]')
-		health=$(docker inspect -f '{{if .State.Health}}{{.State.Health.Status}}{{end}}' "$container" 2>/dev/null | tr '[:upper:]' '[:lower:]')
-		status=$(docker inspect -f '{{.State.Status}}{{if .State.Health}} ({{.State.Health.Status}}){{end}}' "$container" 2>/dev/null)
-	fi
+	[[ -n "$full" ]] && url="https://${full}"
 
 	jq -nc \
-		--arg id "$id" \
-		--arg name "$name" \
-		--arg container "$container" \
-		--arg state "$state" \
-		--arg health "$health" \
+		--arg domain "$domain" \
 		--arg status "$status" \
+		--arg type "$type" \
+		--arg domainFull "$full" \
 		--argjson running "$running" \
-		--argjson urls "$urls" \
-		--argjson actions "$actions" \
-		'{id:$id,name:$name,container:$container,running:$running,state:$state,health:$health,status:$status,urls:$urls,actions:$actions}'
+		--arg url "$url" \
+		--argjson urls "$(webui_collect_urls)" \
+		--argjson services "$(webui_collect_services)" \
+		'{domain:$domain,status:$status,type:$type,domainFull:$domainFull,running:$running,url:$url,urls:$urls,services:$services}'
 }
 
-webui_list_system() {
-	local dozzle="http://127.0.0.1:7007"
-	local webui
-	local actions
-	webui=$(webui_url)
-	actions='["start","stop","restart"]'
+# domain, project_type, domain_full, status — one TSV row per listed site, from one jq read.
+_webui_list_sites() {
+	instances_prepare || return 0
+	[[ -f "$FILE_INSTANCES" ]] || return 0
 
-	jq -nc \
-		--argjson nginx "$(webui_system_service "nginx" "Nginx" "nginx-proxy" "[]" "$actions")" \
-		--argjson dozzle "$(webui_system_service "dozzle" "Dozzle" "nginx-dozzle" "$(jq -nc --arg url "$dozzle" '[{key:"UI",url:$url}]')" "$actions")" \
-		--argjson webui "$(webui_system_service "webui" "Web UI" "${WEBUI_CONTAINER:-nginx-webui}" "$(jq -nc --arg url "$webui" '[{key:"UI",url:$url}]')" "[]")" \
-		'[$nginx,$dozzle,$webui]'
-}
-
-webui_list_payload() {
-	local system_json
-	system_json=$(webui_list_system)
-
-	if [[ $# -eq 0 ]]; then
-		jq -n --argjson system "$system_json" '{ok:true,projects:[],system:$system}'
-		return 0
-	fi
-
-	printf '%s\n' "$@" | jq -s --argjson system "$system_json" '{ok:true,projects:.,system:$system}' || {
-		jq -n --argjson system "${system_json:-[]}" '{ok:false,error:"Could not build project list",projects:[],system:$system}'
-	}
+	jq -r '
+		.sites[]?
+		| select(.domain_name != null and .domain_name != "" and .domain_name != "DOMAIN_NAME")
+		| [.domain_name, (.project_type // "" | tostring), (.domain_full // "" | tostring), (.status // "" | tostring)]
+		| @tsv
+	' "$FILE_INSTANCES"
 }
 
 webui_list_projects() {
-	local domain status type full running url row
-	local rows=()
+	local domain type full status system_json tmp i n
+	local pids=()
 
 	webui_cli_boot
 
-	while IFS= read -r domain; do
+	WEBUI_RUNNING_NAMES=$(docker ps --format '{{.Names}}' 2>/dev/null || true)
+	tmp=$(mktemp -d "${TMPDIR:-/tmp}/webui-list.XXXXXX")
+
+	# Each site runs in the background and writes its row to its own numbered file.
+	# A site whose check fails leaves an empty file and is left out, as before.
+	i=0
+	while IFS=$'\t' read -r domain type full status; do
 		[[ -n "$domain" ]] || continue
 
-		status=$(instances_get status "$domain")
-		type=$(instances_get project_type "$domain")
-		full=$(instances_get domain_full "$domain")
-		running=false
+		_webui_list_row "$domain" "$type" "$full" "$status" >"$tmp/$i" 2>/dev/null &
+		pids+=("$!")
+		i=$((i + 1))
 
-		DOMAIN_NAME="$domain"
-		PROJECT_TYPE="${type:-}"
-		PROJECT_ROOT_DIR=""
-		PROJECT_DOCKER_DIR=""
-		DOCKER_CONTAINER_APP=""
-		DOMAIN_FRONT=""
-		DOMAIN_ADMIN=""
-		DOMAIN_DB=""
-		DOMAIN_MAIL=""
-		DOMAIN_KIBANA=""
-		DOMAIN_LOGSTASH=""
-
-		if get_project_dir "skip_question" >/dev/null 2>&1; then
-			if container_is_running; then
-				running=true
-			fi
+		if [[ ${#pids[@]} -ge $WEBUI_LIST_JOBS ]]; then
+			wait "${pids[@]}" 2>/dev/null || true
+			pids=()
 		fi
+	done < <(_webui_list_sites)
 
-		url=""
-		[[ -n "$full" ]] && url="https://${full}"
+	if [[ ${#pids[@]} -gt 0 ]]; then
+		wait "${pids[@]}" 2>/dev/null || true
+	fi
 
-		row=$(jq -nc \
-			--arg domain "$domain" \
-			--arg status "${status:-}" \
-			--arg type "${type:-}" \
-			--arg domainFull "${full:-}" \
-			--argjson running "$running" \
-			--arg url "$url" \
-			--argjson urls "$(webui_collect_urls)" \
-			--argjson services "$(webui_collect_services)" \
-			'{domain:$domain,status:$status,type:$type,domainFull:$domainFull,running:$running,url:$url,urls:$urls,services:$services}')
-		rows+=("$row")
-	done < <(instances_domain_names)
+	system_json=$(_webui_list_system_json "$WEBUI_RUNNING_NAMES")
 
-	webui_list_payload "${rows[@]}"
+	# Rows are read back in catalog order.
+	n=$i
+	i=0
+	while [[ $i -lt $n ]]; do
+		[[ -s "$tmp/$i" ]] && cat "$tmp/$i"
+		i=$((i + 1))
+	done | jq -s --argjson system "${system_json:-[]}" '{ok:true,projects:.,system:$system}' || {
+		jq -n --argjson system "${system_json:-[]}" '{ok:false,error:"Could not build project list",projects:[],system:$system}'
+	}
+
+	rm -rf "$tmp"
 }
 
 webui_list_types() {
