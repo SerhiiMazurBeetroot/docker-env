@@ -64,7 +64,11 @@ setup_hosts_file() {
 		case "${OSTYPE:-}" in
 		linux* | darwin*)
 			file="/etc/hosts"
-			privileged=1
+			# Group-writable hosts (root:staff) can be updated without sudo.
+			# sudo from the Web UI has no password prompt, so that path was skipped.
+			if [[ ! -w "$file" ]]; then
+				privileged=1
+			fi
 			;;
 		windows)
 			file="/c/Windows/System32/drivers/etc/hosts"
