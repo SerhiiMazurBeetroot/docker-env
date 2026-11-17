@@ -34,4 +34,7 @@ unit_source() {
 	local rel="$1"
 	# shellcheck disable=SC1090,SC1091
 	source "$UNIT_ROOT/.env-core/sh/$rel"
+	# Sourced files load common.sh, which turns errexit back on.
+	# Keep it off so one failed assertion does not end the whole run.
+	set +o errexit
 }

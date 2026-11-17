@@ -16,6 +16,7 @@ echo "docker-env unit tests"
 for file in "$UNIT_DIR"/test_*.sh; do
 	[[ -f "$file" ]] || continue
 	echo "==> $(basename "$file")"
+	set +o errexit
 	# shellcheck disable=SC1090
 	source "$file" || true
 done
