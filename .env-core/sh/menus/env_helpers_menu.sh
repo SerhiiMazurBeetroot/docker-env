@@ -13,6 +13,7 @@ env_helpers_menu() {
 		ECHO_GREEN "[3] Git Tools"
 		ECHO_GREEN "[4] Disk Usage"
 		ECHO_GREEN "[5] Mac cleanup"
+		ECHO_GREEN "[6] Ports"
 
 		actions=$(GET_USER_INPUT "select_one_of")
 
@@ -38,6 +39,12 @@ env_helpers_menu() {
 			;;
 		5)
 			env_mac_developer_cleanup
+			;;
+		6)
+			port_menu
+			;;
+		*)
+			ECHO_RED "Invalid option. Try again."
 			;;
 		esac
 	done

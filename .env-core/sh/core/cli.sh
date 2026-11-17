@@ -23,6 +23,9 @@ cli_usage() {
 	echo "  docker-env create --type wordpress --name blog"
 	echo "  docker-env create --type wordpress --name blog --domain dev.blog.local"
 	echo "  docker-env catalog --json"
+	echo "  docker-env port list"
+	echo "  docker-env port kill"
+	echo "  docker-env port kill 3001"
 	echo
 	echo "Types:"
 
@@ -132,6 +135,9 @@ cli_dispatch() {
 		;;
 	help | -h | --help)
 		cli_usage
+		;;
+	port)
+		cli_port "$@"
 		;;
 	*)
 		ECHO_ERROR "Unknown command: $cmd"
