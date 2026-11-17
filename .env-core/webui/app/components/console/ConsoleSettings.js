@@ -22,14 +22,14 @@ function Toggle({ checked, onChange, label }) {
 }
 
 export default function ConsoleSettings() {
-	const { autoOpen, setAutoOpen } = useConsoleSettings();
+	const { autoOpen, setAutoOpen, autoScroll, setAutoScroll } = useConsoleSettings();
 
 	return (
 		<section className="overflow-hidden rounded-2xl border border-line bg-panel/90">
 			<div className="border-b border-line px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted">
 				Console
 			</div>
-			<div className="flex min-h-[3.25rem] items-start justify-between gap-3 px-4 py-3.5 text-sm font-medium">
+			<div className="flex min-h-[3.25rem] items-start justify-between gap-3 border-b border-line px-4 py-3.5 text-sm font-medium">
 				<span className="min-w-0 flex-1">
 					<span className="inline-flex items-center gap-2">Open on actions</span>
 					<span className="mt-0.5 block text-xs font-normal text-muted">
@@ -39,6 +39,18 @@ export default function ConsoleSettings() {
 				</span>
 				<span className="flex shrink-0 items-center gap-2">
 					<Toggle label="Open console on actions" checked={autoOpen} onChange={setAutoOpen} />
+				</span>
+			</div>
+			<div className="flex min-h-[3.25rem] items-start justify-between gap-3 px-4 py-3.5 text-sm font-medium">
+				<span className="min-w-0 flex-1">
+					<span className="inline-flex items-center gap-2">Autoscroll</span>
+					<span className="mt-0.5 block text-xs font-normal text-muted">
+						Keep CLI output and docker logs pinned to the latest line. Turn off to read earlier lines
+						without being jumped back down.
+					</span>
+				</span>
+				<span className="flex shrink-0 items-center gap-2">
+					<Toggle label="Console autoscroll" checked={autoScroll} onChange={setAutoScroll} />
 				</span>
 			</div>
 		</section>

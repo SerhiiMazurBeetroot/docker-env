@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useConsoleSettings } from "../console/ConsoleSettingsProvider";
 import { IconClose, IconExternal, Spinner } from "../ui/Icons";
 import { linkify } from "../../lib/logs";
 import LogViewer from "../logs/LogViewer";
@@ -19,12 +20,12 @@ export default function Console({
 }) {
 	const logRef = useRef(null);
 	const isLogs = mode === "logs";
+	const { autoScroll, setAutoScroll } = useConsoleSettings();
 
 	useEffect(() => {
-		if (logRef.current) {
-			logRef.current.scrollTop = logRef.current.scrollHeight;
-		}
-	}, [log, logOpen, mode]);
+		if (!autoScroll || !logRef.current) return;
+		logRef.current.scrollTop = logRef.current.scrollHeight;
+	}, [log, logOpen, mode, autoScroll]);
 
 	return (
 		<>
@@ -91,6 +92,15 @@ export default function Console({
 							) : null}
 							<button
 								type="button"
+								className={`text-xs ${autoScroll ? "text-muted hover:text-fg" : "font-semibold text-accent"}`}
+								onClick={() => setAutoScroll(!autoScroll)}
+								title={autoScroll ? "Autoscroll on — click to pause" : "Autoscroll off — click to follow"}
+								aria-pressed={autoScroll}
+							>
+								{autoScroll ? "Autoscroll" : "Paused"}
+							</button>
+							<button
+								type="button"
 								className="text-xs text-muted hover:text-fg disabled:opacity-40"
 								disabled={isLogs ? entries.length === 0 : !log}
 								onClick={onClear}
@@ -114,7 +124,7 @@ export default function Console({
 					<div className="flex min-h-0 flex-1 flex-col">
 						{isLogs ? (
 							entries.length ? (
-								<LogViewer entries={entries} follow className="min-h-0 flex-1 px-3 py-2" />
+								<LogViewer entries={entries} follow={autoScroll} className="min-h-0 flex-1 px-3 py-2" />
 							) : (
 								<p className="m-0 flex items-center gap-2 px-4 py-6 text-sm leading-6 text-muted">
 									<Spinner className="h-4 w-4 text-accent" />

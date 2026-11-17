@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import DisplayPicker from "../display/DisplayPicker";
 import AppHeader from "../layout/AppHeader";
@@ -48,9 +49,13 @@ export default function SettingsPage() {
 						Web UI access
 					</div>
 					<div className="space-y-3 px-4 py-4 text-sm text-muted">
-						<p className="m-0">
-							API and dashboard actions require the shared token. Show it in the CLI:{" "}
-							<strong className="font-semibold text-fg">1 System → 2 Web UI → 4 Show sign-in token</strong>.
+						<p className="m-0 text-fg/80">
+							API and dashboard actions use the same sign-in token. Get it from{" "}
+							<span className="font-medium text-fg">System → Web UI → Show sign-in token</span> in the CLI, or see the{" "}
+							<Link href="/docs/web-ui#sign-in" className="text-accent underline underline-offset-2 hover:opacity-90">
+								sign-in guide
+							</Link>
+							.
 						</p>
 						<button
 							type="button"

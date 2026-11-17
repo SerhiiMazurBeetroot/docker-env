@@ -35,6 +35,9 @@ function isPublicPath(pathname) {
 	if (pathname.startsWith("/api/auth/")) {
 		return true;
 	}
+	if (pathname === "/docs" || pathname.startsWith("/docs/")) {
+		return true;
+	}
 	if (pathname.startsWith("/_next/") || pathname === "/favicon.ico" || pathname === "/icon.svg") {
 		return true;
 	}

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -43,8 +44,19 @@ export default function LoginPage() {
 		<div className="flex min-h-screen items-center justify-center px-6">
 			<div className="w-full max-w-md rounded-2xl border border-line bg-panel/90 p-6 shadow-lg">
 				<h1 className="m-0 text-xl font-bold tracking-tight">docker-env Web UI</h1>
-				<p className="mt-2 text-sm text-muted">
-					Show the token in the CLI: <strong className="font-semibold text-fg">1 System → 2 Web UI → 4 Show sign-in token</strong>, then paste it here.
+				<p className="mt-3 text-sm leading-relaxed text-fg/80">
+					In the docker-env CLI, choose{" "}
+					<span className="font-medium text-fg">System</span>
+					{" → "}
+					<span className="font-medium text-fg">Web UI</span>
+					{" → "}
+					<span className="font-medium text-fg">Show sign-in token</span>
+					, then paste the printed value below.
+				</p>
+				<p className="mt-2 text-sm">
+					<Link href="/docs/web-ui#sign-in" className="text-accent underline underline-offset-2 hover:opacity-90">
+						Open the sign-in guide
+					</Link>
 				</p>
 				<form className="mt-6 space-y-4" onSubmit={submit}>
 					<label className="block text-sm font-medium">
