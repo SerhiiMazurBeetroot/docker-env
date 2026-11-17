@@ -6,7 +6,7 @@ A PHP app container behind Nginx. No WordPress install and no phpMyAdmin host. D
 
 ## Create
 
-CLI: **2 New project → PHP-Server**.
+CLI: **2 New site → PHP-Server**.
 
 1. Short name, e.g. `api`
 2. Host (default `dev.api.local`)

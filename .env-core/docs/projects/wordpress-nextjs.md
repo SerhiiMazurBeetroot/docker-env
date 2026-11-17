@@ -1,6 +1,6 @@
 # WordPress + Next.js
 
-Next.js is the public site. WordPress is the admin at `{host}.wp`, with MariaDB, phpMyAdmin, and Mailhog. Shown in **New project** only when `ENV_MODE=development`. Disk path: `wordpress_nextjs/{DOMAIN_FULL}/`.
+Next.js is the public site. WordPress is the admin at `{host}.wp`, with MariaDB, phpMyAdmin, and Mailhog. Shown in **New site** only when `ENV_MODE=development`. Disk path: `wordpress_nextjs/{DOMAIN_FULL}/`.
 
 ## Create
 

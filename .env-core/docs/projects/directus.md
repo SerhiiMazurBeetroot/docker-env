@@ -4,7 +4,7 @@ Directus CMS with PostgreSQL behind Nginx. Disk path: `directus/{DOMAIN_FULL}/`.
 
 ## Create
 
-CLI: **2 New project → Directus**.
+CLI: **2 New site → Directus**.
 
 1. Short name
 2. Host (default `dev.{name}.local`)
@@ -24,6 +24,6 @@ Add both names to [hosts](../system.md#hosts-file) (the CLI does this on macOS/L
 
 Containers: `{shortname}-directus`, `{shortname}-postgres`.
 
-First-login admin is whatever the Directus image bootstrap uses in that project’s `.env` — check `directus/{DOMAIN_FULL}/` after create.
+The first admin login is `ADMIN_EMAIL` / `ADMIN_PASSWORD` in `directus/{DOMAIN_FULL}/docker/.env`. Change them before you rely on the site.
 
 [Getting started](../getting-started.md)

@@ -17,7 +17,7 @@ The CLI exits if `docker`, `jq`, or `node` is not on `PATH`. Install them on the
 
 ## Please install docker compose V2
 
-You are on Compose v1. Install the Compose **plugin** so `docker compose version` works.
+You are on Compose v1. The CLI still falls back to `docker-compose`, but that path is not tested. Install the Compose **plugin** so `docker compose version` works.
 
 - [Docker Compose install](https://docs.docker.com/compose/install/)
 
@@ -35,6 +35,15 @@ Create and Docker actions require `nginx-proxy`. **1 System → 1 Nginx → 1 Se
 | 7777 | Web UI |
 
 Stop the other process, or change that tool’s port. docker-env expects these defaults.
+
+To see who holds a port, and stop it:
+
+```bash
+docker-env port list
+docker-env port kill 3001
+```
+
+`docker-env port kill` with no port shows a picker for ports 3000–3999 (dev servers). The same tools are in **4 Helpers → 6 Ports**. Needs `lsof`.
 
 ## Browser says the certificate is invalid
 
@@ -55,11 +64,17 @@ The site cert is fine only after the **root CA** is trusted. See [Trust the loca
 
 Show the token with **1 System → 2 Web UI → 4 Show sign-in token** and paste that value with no extra spaces. Restart the Web UI after the token changes so `nginx-webui` reloads `.env-core/system/nginx/.env`.
 
-Stopping the Web UI does not stop Nginx. Stopping Nginx (`compose down` on the system stack) does stop the Web UI if it was part of that project.
+Stopping the Web UI does not stop Nginx. Stopping Nginx (**1 System → 1 Nginx → 2 Stop**) also stops the Web UI, because both are in the same Compose stack.
+
+## Web UI is slow on the first load
+
+If **1 System → 2 Web UI** shows `(dev)`, the UI runs `next dev`. That mode compiles each page the first time you open it, which can add 5–10 seconds after a start. Later loads are fast.
+
+If you are not changing the Web UI code, switch to the production image with **1 System → 2 Web UI → 5 Rebuild image**. That menu item shows only in [development mode](getting-started.md#development-mode).
 
 ## Project already exists
 
-The short domain is unique. Pick another name, or delete the old site (**3 → 1 Docker → 1 Permanently Remove**, or Delete in the Web UI).
+The short domain is unique. Pick another name, or delete the old site (**3 Sites → pick the site → More → 6 Remove site**, or Delete in the Web UI).
 
 ## Helpers that destroy Docker data
 

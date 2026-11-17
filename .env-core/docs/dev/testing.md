@@ -19,7 +19,11 @@ Two suites. They do not replace each other.
 
 `bootstrap.sh` points `ENV_DIR` at the clone root (three levels above `tests/unit`). Assertions that expect a failure still print the script’s own error lines. That is normal.
 
+A failed assertion does not stop the run. Every `test_*.sh` runs and the summary counts all failures. Sourced scripts load `common.sh`, which turns `errexit` back on, so `unit_source` and `run.sh` turn it off again. Keep that if you change either file.
+
 Add a case by sourcing the script with `unit_source "path/under/sh/file.sh"` and calling `assert_*`. Keep tests free of menus, `read`, and `docker`.
+
+A test that sets project globals (`PROJECT_DIR`, `DOMAIN_FULL`, `PROJECT_ROOT_DIR`) should clear them at the end, because every test file shares one shell. `test_site_root_guard.sh` is an example.
 
 ## ShellCheck
 

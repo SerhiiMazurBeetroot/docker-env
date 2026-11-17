@@ -37,11 +37,14 @@ If Start says the UI is already running, use the printed URL. Do not treat “al
 - Expand services, copy URLs (does not auto-open tabs)
 - Toggle extra `/etc/hosts` names when the container can write the hosts file
 - Open container logs in Dozzle
-- Create a new project when `ENV_MODE=development` (same types as the CLI). The Create button stays hidden otherwise. Version fields list the published releases in `.env-core/data/catalog.json`. The Web UI refreshes that file once a day. Default leaves the choice to the CLI. A version that is not in that file is rejected before Docker starts.
+- Create a new project when `ENV_MODE=development` (same types as the CLI). The Create button stays hidden otherwise. Version fields list the published releases in `.env-core/data/catalog.json`. The Web UI refreshes that file once a day. Leave a field on Default to use the type’s default version. A version that is not in that file is rejected before Docker starts.
 - Read these guides from **Documentation** in the header (`/docs`)
 
 The Console panel streams CLI output. On a phone, close it with the **X** in the top-right of that panel. Settings → **Open on actions** controls whether Start/Stop/Rebuild (and similar) open that panel automatically. Opening a service’s logs still opens it.
 
 ## Develop image (optional)
 
-Rebuild / Develop menu items show only when `ENV_MODE=development`. Production use: Start / Stop / Open is enough.
+**5 Rebuild image** and **6 Develop image** show only in [development mode](getting-started.md#development-mode). For normal use, Start / Stop / Open is enough.
+
+- **Rebuild image** builds the production image (`next start`). Pages are compiled once, during the build.
+- **Develop image** mounts `.env-core/webui` and runs `next dev`, so code edits show without a rebuild. Each page compiles the first time it is opened, so the first load after a start is slow. The Web UI menu status shows `(dev)` in this mode.

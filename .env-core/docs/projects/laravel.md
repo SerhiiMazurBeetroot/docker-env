@@ -1,10 +1,10 @@
 # Laravel
 
-Laravel with MariaDB, phpMyAdmin, and Mailhog behind Nginx. Shown in **New project** only when `ENV_MODE=development`. Disk path: `laravel/{DOMAIN_FULL}/`.
+Laravel with MariaDB, phpMyAdmin, and Mailhog behind Nginx. Shown in **New site** only when `ENV_MODE=development`. Disk path: `laravel/{DOMAIN_FULL}/`.
 
 ## Create
 
-CLI: **2 New project → Laravel**.
+CLI: **2 New site → Laravel**.
 
 1. Short name
 2. Host (default `dev.{name}.local`)

@@ -6,7 +6,7 @@ Classic WordPress in Docker behind [Nginx](../system.md). Disk path: `wordpress/
 
 ## Create
 
-CLI: **2 New project → Wordpress**. Web UI: **New project**, type WordPress.
+CLI: **2 New site → Wordpress**. Web UI: **Create**, type WordPress (the button shows only in [development mode](../getting-started.md#development-mode)).
 
 Nginx must already be running.
 
@@ -51,8 +51,11 @@ App container: `{shortname}-wordpress`.
 
 ## After install
 
-- **3 → 1 Docker** — start, stop, restart, rebuild, URLs, delete
-- **3 → 2 Database** — import, export, search-replace
-- **3 → 5 Tools → 4 Other Services → 1 WP Workflow** — Composer, empty content, convert to multisite
+**3 Sites → pick the site**, then:
+
+- **Open site**, **Start** / **Stop**, **Shell**
+- **Database** — import, export, search-replace, replace project from DB
+- **WordPress** — Composer install (theme), Composer package, delete site data, convert to multisite
+- **More** — restart, rebuild, Git, archive, remove
 
 [Getting started](../getting-started.md) · [Bedrock](bedrock.md)

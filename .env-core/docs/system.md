@@ -87,7 +87,7 @@ The Web UI can add or remove extra names when `/etc/hosts` is mounted into `ngin
 
 ## Mail (WordPress / Bedrock)
 
-Outgoing mail is caught on `https://{DOMAIN_FULL}.mail` (MailHog-style host). Add that name to hosts (the extra hosts line includes it).
+Outgoing mail is caught by Mailhog at `https://{DOMAIN_FULL}.mail`. Add that name to hosts (the extra hosts line includes it).
 
 ## Database UIs
 
@@ -100,7 +100,7 @@ These are per-project virtual hosts, not ports on localhost:
 
 ## Git tokens
 
-**3 Sites → pick a site → More → Git → Repo access** stores GitHub/GitLab tokens in `.env-core/data/settings.log` (gitignored). Needed only to create remote repos from the CLI.
+**3 Sites → pick a site → More → 3 Git → 5 Repo access** stores GitHub/GitLab tokens in `.env-core/data/settings.log` (gitignored). Needed only to create remote repos from the CLI.
 
 - [GitHub personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
 - [GitLab personal access token](https://docs.gitlab.com/user/profile/personal_access_tokens/)

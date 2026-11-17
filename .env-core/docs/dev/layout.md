@@ -36,6 +36,10 @@ docker-env/
 | --- | --- |
 | `.env-core/data/settings.log` | `ENV_MODE`, `ENV_THEME`, `WEBUI_TOKEN`, git tokens |
 | `.env-core/data/instances.json` | Sites the CLI and Web UI list |
+| `.env-core/data/catalog.json` | Published versions for the create form (refreshed daily, see [catalog](catalog.md)) |
+| `.env-core/data/catalog-refresh.log` | Log of that daily refresh |
+| `.env-core/data/diagnostics.jsonl` | CLI errors, one JSON line each, tokens redacted (`record_diagnostic`) |
+| `.env-core/data/webui-last-actions.json` | Last action result per site, shown on Web UI cards |
 | `.env-core/system/nginx/.env` | Compose env for the proxy stack, including `WEBUI_TOKEN` |
 
 `instances.json` is the source of truth for “which sites exist”. Docker state (running or stopped) is read from containers at list time.

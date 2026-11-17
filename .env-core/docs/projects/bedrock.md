@@ -6,7 +6,7 @@
 
 ## Create
 
-CLI: **2 New project → BEDROCK**. Same **default / custom / beetroot** flow as [WordPress](wordpress.md).
+CLI: **2 New site → BEDROCK**. Same **default / custom / beetroot** flow as [WordPress](wordpress.md).
 
 Nginx must be running. Confirm the summary, then optional Git clone.
 
@@ -30,6 +30,6 @@ Default admin: `developer` / `1` unless you set custom values.
 
 App container: `{shortname}-bedrock`.
 
-Composer and WP tools: **3 → 5 Tools** (same menus as WordPress).
+Composer and WP tools: **3 Sites → pick the site → WordPress** (same menu as [WordPress](wordpress.md#after-install)).
 
 [Getting started](../getting-started.md) · [WordPress](wordpress.md)

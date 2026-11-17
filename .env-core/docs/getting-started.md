@@ -10,7 +10,7 @@ Install these on the host (not inside a container):
 2. [jq](https://jqlang.github.io/jq/download/)
 3. [Node.js](https://nodejs.org/) (needed to run the CLI healthcheck)
 
-Linux: install the Compose plugin if `docker compose version` fails. Compose v1 (`docker-compose`) is no longer supported.
+Linux: install the Compose plugin if `docker compose version` fails. Compose v1 (`docker-compose`) is not tested. The CLI falls back to it, but prints a warning on start.
 
 ## Install
 
@@ -60,6 +60,17 @@ On macOS and Linux the CLI appends `127.0.0.1` lines to `/etc/hosts` (sudo). On 
 
 Open `https://dev.blog.local` (HTTPS on port **443**).
 
+### Without the menu
+
+The same create runs from one command. Prompts take their defaults, so it also works from scripts:
+
+```bash
+docker-env create --type wordpress --name blog
+docker-env create --type wordpress --name blog --domain dev.blog.local
+```
+
+`docker-env help` lists the types you can create. `--domain` is optional and defaults to `dev.{name}.local` (`dev.{name}.elastic` for Elastic Stack).
+
 ![CLI overview](gifs/docker-env.gif)
 
 ## Everyday commands
@@ -73,6 +84,7 @@ Open `https://dev.blog.local` (HTTPS on port **443**).
 | Zip a site | Site → **More → Archive** | — |
 | Restore a zip | **3 Sites → [r]** when an archive exists | — |
 | Container logs | Dozzle | Card → logs |
+| See or free a busy port | `docker-env port list`, `docker-env port kill 3001` | — |
 
 Dozzle: [http://127.0.0.1:7007](http://127.0.0.1:7007)
 
@@ -94,5 +106,17 @@ flowchart LR
   proxy --> site
   webui --> site
 ```
+
+## Development mode
+
+Some things stay hidden until you turn on development mode: work-in-progress project types, **Create** in the Web UI, the Web UI **Rebuild** / **Develop** items, and **System → 4 Run tests**.
+
+There is no menu switch. Add this line to `.env-core/data/settings.log`, then restart `docker-env`:
+
+```text
+ENV_MODE=development
+```
+
+The only accepted values are `development` and empty. Remove the line to go back.
 
 Next: [system services](system.md) or a [project type](README.md#projects).

@@ -1,10 +1,10 @@
 # Directus + Next.js
 
-Next.js site with Directus and PostgreSQL behind Nginx. Shown in **New project** only when `ENV_MODE=development`. Disk path: `directus_nextjs/{DOMAIN_FULL}/`.
+Next.js site with Directus and PostgreSQL behind Nginx. Shown in **New site** only when `ENV_MODE=development`. Disk path: `directus_nextjs/{DOMAIN_FULL}/`.
 
 ## Create
 
-CLI: **2 New project → Directus + Next.js**.
+CLI: **2 New site → Directus + Next.js**.
 
 1. Short name
 2. Host (default `dev.{name}.local`)

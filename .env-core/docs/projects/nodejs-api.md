@@ -1,10 +1,10 @@
 # Node.js API
 
-Express API behind Nginx. Shown in **New project** only when `ENV_MODE=development`. Disk path: `nodejs_api/{DOMAIN_FULL}/`.
+Express API behind Nginx. Shown in **New site** only when `ENV_MODE=development`. Disk path: `nodejs_api/{DOMAIN_FULL}/`.
 
 ## Create
 
-CLI: **2 New project → Node.js API**.
+CLI: **2 New site → Node.js API**.
 
 1. Short name
 2. Host (default `dev.{name}.local`)
