@@ -59,7 +59,7 @@ zip_project() {
 			ECHO_ERROR "Docker volume does not exist"
 		fi
 
-		delete_site_data
+		delete_site_data || return 1
 
 		ECHO_SUCCESS "Archive $DOMAIN_FULL successfully created."
 	else

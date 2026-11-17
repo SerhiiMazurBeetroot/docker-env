@@ -117,7 +117,27 @@ get_compose_project_name() {
 	fi
 }
 
+# _site_path_part NAME: one plain path segment (no /, not empty, not hidden, not . or ..).
+_site_path_part() {
+	local part="${1:-}"
+
+	[[ -n "$part" && "$part" != *"/"* && "$part" != .* ]]
+}
+
+# site_root_is_safe: PROJECT_ROOT_DIR is exactly $ENV_DIR/<type dir>/<domain>.
+# Guards rm -rf against an empty or partial path (e.g. a rollback before DOMAIN_FULL is set).
+site_root_is_safe() {
+	_site_path_part "${PROJECT_DIR:-}" || return 1
+	_site_path_part "${DOMAIN_FULL:-}" || return 1
+	[[ "${PROJECT_ROOT_DIR:-}" == "${ENV_DIR}/${PROJECT_DIR}/${DOMAIN_FULL}" ]]
+}
+
 delete_site_data() {
+	if ! site_root_is_safe; then
+		ECHO_ERROR "Refusing to delete site data: unexpected path [${PROJECT_ROOT_DIR:-}]"
+		return 1
+	fi
+
 	if [ -d "$PROJECT_ROOT_DIR" ]; then
 		EMPTY_LINE
 		ECHO_YELLOW "Deleting Site files and webroot"
