@@ -70,7 +70,7 @@ env_mode() {
 		return 0
 	fi
 	ENV_MODE_WARNED=1
-	ECHO_WARN_RED "Unknown ENV_MODE '${ENV_MODE}'."
+	# ECHO_WARN_RED "Unknown ENV_MODE '${ENV_MODE}'."
 }
 
 versions() {

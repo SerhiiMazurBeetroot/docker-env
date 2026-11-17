@@ -47,10 +47,6 @@ before=$(wc -l <"$DIR_DATA/diagnostics.jsonl" | tr -d ' ')
 warn=$(env_mode)
 after=$(wc -l <"$DIR_DATA/diagnostics.jsonl" | tr -d ' ')
 assert_eq "$before" "$after" "unknown ENV_MODE stays out of the bug log"
-if printf '%s' "$warn" | grep -q 'Accepted values: empty or development'; then
-	assert_eq "shown" "shown" "unknown ENV_MODE names the accepted values"
-else
-	assert_eq "shown" "hidden" "unknown ENV_MODE names the accepted values"
-fi
-
+# The unknown-mode warning is silenced in env_mode (core_system_check.sh).
+assert_eq "" "$warn" "unknown ENV_MODE prints no warning"
 TEST_RUNNING=1
