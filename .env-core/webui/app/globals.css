@@ -173,6 +173,14 @@
 		@apply bg-transparent p-0;
 	}
 
+	.doc-mermaid {
+		@apply my-4 flex justify-center overflow-x-auto rounded-xl border border-line bg-ink/60 p-4;
+	}
+
+	.doc-mermaid svg {
+		@apply h-auto max-w-full;
+	}
+
 	.doc-prose img {
 		@apply my-4 max-w-full rounded-xl border border-line;
 	}

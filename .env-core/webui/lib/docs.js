@@ -278,6 +278,11 @@ export function renderMarkdown(source, fileDir) {
 				i += 1;
 			}
 			i += 1;
+			if (lang === "mermaid") {
+				// Drawn in the browser by components/docs/MermaidDiagrams. Until then, the source shows as code.
+				html.push(`<pre class="lang-mermaid" data-mermaid><code>${escapeHtml(buf.join("\n"))}</code></pre>`);
+				continue;
+			}
 			const className = lang ? ` class="lang-${escapeHtml(lang)}"` : "";
 			html.push(`<pre${className}><code>${escapeHtml(buf.join("\n"))}</code></pre>`);
 			continue;

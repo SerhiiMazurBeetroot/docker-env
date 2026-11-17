@@ -7,6 +7,7 @@
     "start": "next start -H 0.0.0.0 -p 7777"
   },
   "dependencies": {
+    "mermaid": "12.2.0",
     "next": "^14.2.15",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

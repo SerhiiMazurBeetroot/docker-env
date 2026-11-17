@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import AppHeader from "../../components/layout/AppHeader";
+import MermaidDiagrams from "../../components/docs/MermaidDiagrams";
 import { isDeveloperSection, isDevelopmentMode, listDocs, readDoc } from "../../../lib/docs";
 
 export const dynamic = "force-dynamic";
@@ -76,6 +77,7 @@ export default function DocsPage({ params }) {
 					))}
 				</nav>
 				<article className="doc-prose min-w-0" dangerouslySetInnerHTML={{ __html: doc.html }} />
+				<MermaidDiagrams slug={doc.slug} />
 			</div>
 		</div>
 	);
