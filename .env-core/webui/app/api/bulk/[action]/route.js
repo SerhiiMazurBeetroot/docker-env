@@ -4,7 +4,8 @@ import { streamBulkAction } from "../../../../lib/cli";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-export async function POST(request, { params }) {
+export async function POST(request, props) {
+	const params = await props.params;
 	const action = params.action || "";
 	const scope = request.nextUrl.searchParams.get("scope") || (action === "stop" ? "running" : "stopped");
 	const result = streamBulkAction(action, scope, request.signal);

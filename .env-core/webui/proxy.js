@@ -44,7 +44,7 @@ function isPublicPath(pathname) {
 	return false;
 }
 
-export function middleware(request) {
+export function proxy(request) {
 	const expected = expectedToken();
 	if (!expected || isPublicPath(request.nextUrl.pathname)) {
 		return NextResponse.next();

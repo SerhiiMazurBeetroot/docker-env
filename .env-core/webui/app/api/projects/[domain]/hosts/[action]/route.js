@@ -4,7 +4,8 @@ import { streamHostsAction } from "../../../../../../lib/cli";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-export async function POST(request, { params }) {
+export async function POST(request, props) {
+	const params = await props.params;
 	const domain = decodeURIComponent(params.domain || "");
 	const action = params.action || "";
 	const result = streamHostsAction(action, domain, request.signal);

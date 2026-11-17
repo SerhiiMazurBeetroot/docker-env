@@ -515,7 +515,7 @@ function healthFromStatus(state, status) {
 function servicesForProject(row, psRows, catalog) {
 	const domain = row.domain;
 	const prefix = `${domain}-`;
-	const root = path.join(envDir(), row.type || "", row.domainFull || domain);
+	const root = path.join(/*turbopackIgnore: true*/ envDir(), row.type || "", row.domainFull || domain);
 	const composeDir = findComposeDir(root, row.type, composeRelForType(catalog, row.type));
 	const composeFile = path.join(composeDir, "docker-compose.yml");
 	const defined = composeServiceNames(composeFile);

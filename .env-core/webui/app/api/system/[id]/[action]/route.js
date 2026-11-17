@@ -4,7 +4,8 @@ import { streamSystemAction } from "../../../../../lib/cli";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-export async function POST(request, { params }) {
+export async function POST(request, props) {
+	const params = await props.params;
 	const id = decodeURIComponent(params.id || "");
 	const action = params.action || "";
 	const result = streamSystemAction(id, action, request.signal);

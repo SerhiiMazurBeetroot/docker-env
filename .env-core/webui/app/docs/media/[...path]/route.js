@@ -3,7 +3,8 @@ import { mediaFile, mediaType } from "../../../../lib/docs";
 
 export const dynamic = "force-dynamic";
 
-export function GET(_request, { params }) {
+export async function GET(_request, props) {
+	const params = await props.params;
 	const file = mediaFile(params.path || []);
 	if (!file) {
 		return new Response("Not found", { status: 404 });

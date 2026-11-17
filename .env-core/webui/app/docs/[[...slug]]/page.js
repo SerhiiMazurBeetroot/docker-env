@@ -6,7 +6,8 @@ import { isDeveloperSection, isDevelopmentMode, listDocs, readDoc } from "../../
 
 export const dynamic = "force-dynamic";
 
-export function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+	const params = await props.params;
 	const slug = (params.slug || []).join("/");
 	const doc = readDoc(slug);
 	const developer = isDeveloperSection(slug);
@@ -18,7 +19,8 @@ export function generateMetadata({ params }) {
 	return { title: doc ? `${doc.title} · ${section}` : `${section} · docker-env` };
 }
 
-export default function DocsPage({ params }) {
+export default async function DocsPage(props) {
+	const params = await props.params;
 	const slug = (params.slug || []).join("/");
 	const doc = readDoc(slug);
 	if (!doc) {

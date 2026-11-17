@@ -236,7 +236,7 @@ export async function getProjectDetail(domain) {
 		return { status: 404, body: { ok: false, error: "Unknown project" } };
 	}
 
-	const root = path.join(envDir(), row.type || "", row.domainFull || domain);
+	const root = path.join(/*turbopackIgnore: true*/ envDir(), row.type || "", row.domainFull || domain);
 	const catalog = await loadProjectCatalog().catch(() => null);
 	const composeDir = findComposeDir(root, row.type, composeRelForType(catalog, row.type));
 	const composeFile = path.join(composeDir, "docker-compose.yml");

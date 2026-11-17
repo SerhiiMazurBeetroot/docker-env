@@ -4,7 +4,8 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-export async function GET(request, { params }) {
+export async function GET(request, props) {
+	const params = await props.params;
 	const name = decodeURIComponent(params.name || "");
 	const result = streamContainerLogs(name, request.signal);
 
