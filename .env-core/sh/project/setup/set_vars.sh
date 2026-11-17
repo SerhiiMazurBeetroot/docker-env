@@ -76,6 +76,11 @@ set_project_vars() {
 		DOCKER_CONTAINER_DB=""
 		;;
 	"nextjs")
+		# Local create-next-app has no template. Compose is written into docker/
+		# with VIRTUAL_HOST so Nginx loads it the same way as a Docker site.
+		if nextjs_is_local; then
+			PROJECT_DOCKER_DIR=$(nextjs_local_compose_dir)
+		fi
 		;;
 	"directus")
 		DB_TYPE="POSTGRES"

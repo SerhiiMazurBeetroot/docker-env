@@ -15,6 +15,7 @@ docker_delete_project() {
 	ECHO_YELLOW "Deleting site [$PROJECT_ROOT_DIR]"
 	fix_permissions || true
 	docker_stop || true
+	nextjs_local_remove || true
 
 	if [[ -n "${DOCKER_CONTAINER_APP:-}" && $(docker image ls --format '{{.Repository}}' | grep -E '(^|_|-)'"$DOCKER_CONTAINER_APP"'($)') ]]; then
 		imageid=$(docker image ls --format '{{.Repository}}' | grep -E '(^|_|-)'"$DOCKER_CONTAINER_APP"'($)')
@@ -30,7 +31,7 @@ docker_delete_project() {
 		ECHO_YELLOW "No project volume to delete"
 	fi
 
-	delete_site_data
+	delete_site_data || return 1
 	notice_windows_host rem
 	ECHO_SUCCESS "Project deleted [${DOMAIN_NAME:-}]"
 }
@@ -63,6 +64,6 @@ docker_delete() {
 		done
 	else
 		ECHO_ERROR "Site DIR does not exist: $PROJECT_ROOT_DIR"
-		delete_site_data
+		delete_site_data || return 1
 	fi
 }

@@ -10,6 +10,13 @@ docker_start() {
 
 	docker_require_project_context "======== START project ========" || return 1
 
+	# Local Next.js has no template. Start writes docker/compose with VIRTUAL_HOST
+	# and the hosts line, then brings that container up on dockerwp.
+	if nextjs_is_local; then
+		nextjs_local_start || return 1
+		return 0
+	fi
+
 	if container_is_running; then
 		ECHO_WARN_RED "Containers already running for this domain"
 		return 0
@@ -21,6 +28,11 @@ docker_start() {
 # Non-interactive start for the current DOMAIN_NAME (used by Web UI).
 docker_start_project() {
 	docker_require_project_context "======== START project ========" || return 1
+
+	if nextjs_is_local; then
+		nextjs_local_start || return 1
+		return 0
+	fi
 
 	if container_is_running; then
 		ECHO_WARN_RED "Containers already running for this domain"

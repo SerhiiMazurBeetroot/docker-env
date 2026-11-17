@@ -56,6 +56,8 @@ create_nextjs_app() {
 		install_nextjs
 
 		print_to_file_instances
+		nextjs_local_start || return 1
+		notice_project_vars open
 	else
 		ECHO_ERROR "Site already exists"
 		return 1
