@@ -42,6 +42,7 @@ git_create_repo_gitlab() {
 		if [[ "$response" == *'"id":'* && "$response" != *'"message"'* ]]; then
 			ECHO_SUCCESS "Gitlab"
 
+			local prev_dir="$PWD"
 			cd "$PROJECT_ROOT_DIR" || return 1
 
 			if [[ -d "${PWD}/.git" ]]; then
@@ -58,7 +59,7 @@ git_create_repo_gitlab() {
 				git_push_origin_with_token "$TOKEN_GITLAB"
 			fi
 
-			cd ../../
+			cd "$prev_dir" || return 1
 		else
 			ECHO_ERROR "Gitlab: $response"
 		fi

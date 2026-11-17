@@ -45,6 +45,26 @@ docker_compose_version() {
 	[[ $COMPOSE_VERSION == 2 ]] && DOCKER_COMPOSE_CMD="docker compose" || DOCKER_COMPOSE_CMD="docker-compose"
 }
 
+# settings_get KEY [FILE]: value of the first KEY=value line in settings.log.
+# Only a line that starts with KEY= counts, so comments and other keys that contain
+# KEY are ignored. The value stops at the first space, as the old reads did.
+settings_get() {
+	local key="${1:-}"
+	local file="${2:-${FILE_SETTINGS:-}}"
+
+	[[ -n "$key" && -f "$file" ]] || return 0
+
+	awk -v k="$key" '
+		index($0, k "=") == 1 {
+			v = substr($0, length(k) + 2)
+			sub(/\r$/, "", v)
+			split(v, parts, /[ \t]/)
+			print parts[1]
+			exit
+		}
+	' "$file"
+}
+
 env_mode_accepted() {
 	case "${1:-}" in
 	"" | development) return 0 ;;
@@ -53,7 +73,7 @@ env_mode_accepted() {
 }
 
 env_mode() {
-	ENV_MODE=$(awk '/ENV_MODE/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_MODE='//')
+	ENV_MODE=$(settings_get ENV_MODE)
 	ENV_MODE="${ENV_MODE#\"}"
 	ENV_MODE="${ENV_MODE%\"}"
 	ENV_MODE="${ENV_MODE#\'}"

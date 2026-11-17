@@ -59,7 +59,9 @@ update_env() {
 			git fetch
 			git reset --hard origin/master
 			save_settings "ENV_VERSION=$GIT_VERSION"
-			exit
+			# The scripts this shell has loaded were just replaced, so it cannot go on.
+			ECHO_SUCCESS "Updated. Run docker-env again to load the new version."
+			exit 0
 			;;
 		*)
 			ECHO_YELLOW "Update cancelled."

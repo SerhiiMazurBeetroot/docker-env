@@ -32,21 +32,44 @@ _hosts_append_line() {
 	printf '%s\n' "$line" >>"$file"
 }
 
+# Print FILE without the lines that list NAME as a host (same token match as _hosts_has_token).
+# dev.blog.local must not remove the line for blog.local, and comments never count.
+_hosts_without_token() {
+	local file="$1"
+	local name="$2"
+
+	awk -v name="$name" '
+		{
+			line = $0
+			sub(/#.*/, "")
+			keep = 1
+			for (i = 2; i <= NF; i++) if ($i == name) keep = 0
+			if (keep) print line
+		}
+	' "$file"
+}
+
 _hosts_remove_line() {
 	local file="$1"
 	local site="$2"
 	local privileged="$3"
-	local tmp
-
-	if [[ "$privileged" -eq 1 ]]; then
-		sudo sed -i.bak "/$(printf '%s' "$site" | sed 's/[.[\*^$]/\\&/g')/d" "$file"
-		return $?
-	fi
+	local tmp rc=0
 
 	tmp=$(mktemp)
-	grep -Fv -- "$site" "$file" >"$tmp" || true
-	cat "$tmp" >"$file"
+	if ! _hosts_without_token "$file" "$site" >"$tmp"; then
+		rm -f "$tmp"
+		return 1
+	fi
+
+	# Write back in place: keeps the file's owner and mode, and leaves no .bak behind.
+	if [[ "$privileged" -eq 1 ]]; then
+		sudo tee "$file" <"$tmp" >/dev/null || rc=$?
+	else
+		cat "$tmp" >"$file" || rc=$?
+	fi
+
 	rm -f "$tmp"
+	return "$rc"
 }
 
 setup_hosts_file() {

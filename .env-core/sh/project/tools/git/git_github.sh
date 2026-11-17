@@ -57,6 +57,7 @@ EOF
 		if [[ $response == "201" || $response == "200" ]]; then
 			ECHO_SUCCESS "Github"
 
+			local prev_dir="$PWD"
 			cd "$PROJECT_ROOT_DIR" || return 1
 
 			if [[ -d "${PWD}/.git" ]]; then
@@ -73,7 +74,7 @@ EOF
 				git_push_origin_with_token "$TOKEN_GITHUB"
 			fi
 
-			cd ../../
+			cd "$prev_dir" || return 1
 		else
 			ECHO_ERROR "Github: HTTP $response"
 		fi

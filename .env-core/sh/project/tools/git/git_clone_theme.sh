@@ -10,7 +10,10 @@ git_clone_theme() {
 	if [[ $DOMAIN_EXISTS == 1 ]]; then
 		case ${PROJECT_TYPE:-} in
 		"wordpress" | "bedrock" | "wordpress_nextjs")
-			git_can_clone "Getting themes from the repository"
+			if ! git_can_clone "Getting themes from the repository"; then
+				unset_variables "PROJECT_TYPE"
+				return 1
+			fi
 
 			THEME_NAME=$(basename "$URL_CORRECT" .git)
 

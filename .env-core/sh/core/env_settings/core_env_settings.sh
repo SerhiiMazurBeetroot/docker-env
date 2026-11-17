@@ -34,8 +34,8 @@ env_settings() {
 }
 
 change_env_theme() {
-	ENV_THEME=$(awk '/ENV_THEME/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_THEME='//')
-	ENV_VERSION=$(awk '/ENV_VERSION/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_VERSION='//')
+	ENV_THEME=$(settings_get ENV_THEME)
+	ENV_VERSION=$(settings_get ENV_VERSION)
 
 	if [ "$ENV_THEME" = 'dark' ]; then
 		settings=("ENV_THEME=light")
@@ -44,7 +44,12 @@ change_env_theme() {
 	fi
 
 	save_settings "${settings[@]}"
-	exit
+
+	# Colors are plain variables set when colors.sh is sourced. Source it again so the
+	# menu switches theme now, instead of ending the session.
+	# shellcheck disable=SC1091
+	source "${ENV_DIR}/.env-core/sh/core/utils/colors.sh"
+	ECHO_SUCCESS "Theme changed to ${settings[0]#ENV_THEME=}"
 }
 
 check_env_version() {
@@ -54,9 +59,9 @@ check_env_version() {
 	env_migration
 	add_alias
 
-	ENV_THEME=$(awk '/ENV_THEME/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_THEME='//')
-	ENV_VERSION=$(awk '/ENV_VERSION/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_VERSION='//')
-	ENV_DATE_CHECK=$(awk '/ENV_DATE_CHECK/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_DATE_CHECK='//')
+	ENV_THEME=$(settings_get ENV_THEME)
+	ENV_VERSION=$(settings_get ENV_VERSION)
+	ENV_DATE_CHECK=$(settings_get ENV_DATE_CHECK)
 	DATE_NOW=$(date +'%m/%d/%Y')
 
 	if [[ $ENV_DATE_CHECK == '' ]]; then

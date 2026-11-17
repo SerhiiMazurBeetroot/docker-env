@@ -4,7 +4,7 @@
 source "${ENV_DIR}/.env-core/sh/common.sh"
 
 git_clone_project() {
-	git_can_clone "Getting project [wp-core, plugins, themes, etc] from the repository"
+	git_can_clone "Getting project [wp-core, plugins, themes, etc] from the repository" || return 1
 
 	if [[ $CAN_CLONE == 1 ]]; then
 		ECHO_YELLOW "Cloning repository to temp..."
@@ -71,6 +71,6 @@ git_clone_project() {
 		done
 	else
 		ECHO_ERROR "Path is not correct"
-		exit
+		return 1
 	fi
 }

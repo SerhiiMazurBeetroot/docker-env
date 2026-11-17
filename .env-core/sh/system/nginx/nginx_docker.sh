@@ -22,9 +22,10 @@ docker_nginx_setup() {
 					docker_nginx_start
 				fi
 
-				#Fix certs DIR permissions
+				# mkcert writes certs-root as root. Give it to the current user so the CA can be
+				# trusted and Re-Setup can delete it, without making rootCA-key.pem world-readable.
 				if [[ $OSTYPE != "windows" ]]; then
-					sudo chmod -R 777 "$DIR_NGINX"/certs-root/
+					sudo chown -R "$(id -u):$(id -g)" "$DIR_NGINX"/certs-root/
 				fi
 
 				if [[ $OSTYPE == "linux" ]]; then

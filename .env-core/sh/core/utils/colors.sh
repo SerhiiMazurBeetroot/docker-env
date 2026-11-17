@@ -1,7 +1,9 @@
 #!/bin/bash
 
 if [[ -f "$FILE_SETTINGS" ]]; then
-    ENV_THEME=$(awk '/ENV_THEME/{print $1}' "$FILE_SETTINGS" | sed 's/'ENV_THEME='//')
+    # Same rule as settings_get (only a line starting with ENV_THEME=). Inline because
+    # the unit bootstrap sources this file before core_system_check.sh.
+    ENV_THEME=$(awk 'index($0, "ENV_THEME=") == 1 { v = substr($0, 11); sub(/\r$/, "", v); split(v, p, /[ \t]/); print p[1]; exit }' "$FILE_SETTINGS")
 fi
 
 BLACK='\033[0;30m'

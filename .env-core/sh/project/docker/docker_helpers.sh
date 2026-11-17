@@ -93,6 +93,30 @@ docker_compose_output() {
 	)
 }
 
+# docker_names_matching NAME: read "name [id]" lines on stdin, print the last field of each match.
+# A match is NAME itself or a Compose-prefixed name ending in _NAME or -NAME (blog_db_data, x-blog_db_data).
+# Plain string compare, so dots in NAME are not regex wildcards. Each result is printed once.
+docker_names_matching() {
+	local name="${1:-}"
+
+	[[ -n "$name" ]] || return 0
+
+	awk -v n="$name" '
+		NF == 0 { next }
+		{
+			r = $1
+			lr = length(r)
+			ln = length(n)
+			hit = (r == n)
+			if (!hit && lr > ln && substr(r, lr - ln + 1) == n) {
+				sep = substr(r, lr - ln, 1)
+				hit = (sep == "_" || sep == "-")
+			}
+			if (hit && !seen[$NF]++) print $NF
+		}
+	'
+}
+
 docker_official_image_exists() {
 	ECHO_YELLOW "Cheking docker image exists: $1"
 

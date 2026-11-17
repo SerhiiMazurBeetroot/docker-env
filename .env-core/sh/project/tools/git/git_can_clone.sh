@@ -39,6 +39,6 @@ git_can_clone() {
 		ECHO_WARN_YELLOW "URL NOT EXISTS"
 		ECHO_ERROR "Path is not correct"
 		export CAN_CLONE=0
-		exit
+		return 1
 	fi
 }

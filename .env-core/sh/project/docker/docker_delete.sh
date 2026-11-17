@@ -17,16 +17,40 @@ docker_delete_project() {
 	docker_stop || true
 	nextjs_local_remove || true
 
-	if [[ -n "${DOCKER_CONTAINER_APP:-}" && $(docker image ls --format '{{.Repository}}' | grep -E '(^|_|-)'"$DOCKER_CONTAINER_APP"'($)') ]]; then
-		imageid=$(docker image ls --format '{{.Repository}}' | grep -E '(^|_|-)'"$DOCKER_CONTAINER_APP"'($)')
-		[ -n "$imageid" ] && docker rmi "$imageid" --force && ECHO_YELLOW "Deleting images" || ECHO_WARN_YELLOW "Image not found"
+	local images volumes item
+
+	images=""
+	if [[ -n "${DOCKER_CONTAINER_APP:-}" ]]; then
+		images=$(docker image ls --format '{{.Repository}} {{.ID}}' 2>/dev/null | docker_names_matching "$DOCKER_CONTAINER_APP" || true)
+	fi
+
+	if [[ -n "$images" ]]; then
+		while IFS= read -r item; do
+			[[ -n "$item" ]] || continue
+			if docker rmi --force "$item" >/dev/null; then
+				ECHO_YELLOW "Deleted image $item"
+			else
+				ECHO_WARN_YELLOW "Could not delete image $item"
+			fi
+		done <<<"$images"
 	else
 		ECHO_YELLOW "No project image to delete"
 	fi
 
-	if [[ -n "${DOCKER_VOLUME_DB:-}" && $(docker volume ls --format '{{.Name}}' | grep -E '(^|_|-)'"$DOCKER_VOLUME_DB"'($)') ]]; then
-		volumename=$(docker volume ls --format '{{.Name}}' | grep -E '(^|_|-)'"$DOCKER_VOLUME_DB"'($)')
-		[ -n "$volumename" ] && docker volume rm "$volumename" && ECHO_YELLOW "Deleting Volume" || echo "Volume not found"
+	volumes=""
+	if [[ -n "${DOCKER_VOLUME_DB:-}" ]]; then
+		volumes=$(docker volume ls --format '{{.Name}}' 2>/dev/null | docker_names_matching "$DOCKER_VOLUME_DB" || true)
+	fi
+
+	if [[ -n "$volumes" ]]; then
+		while IFS= read -r item; do
+			[[ -n "$item" ]] || continue
+			if docker volume rm "$item" >/dev/null; then
+				ECHO_YELLOW "Deleted volume $item"
+			else
+				ECHO_WARN_YELLOW "Could not delete volume $item"
+			fi
+		done <<<"$volumes"
 	else
 		ECHO_YELLOW "No project volume to delete"
 	fi
