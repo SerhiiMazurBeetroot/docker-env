@@ -1,6 +1,9 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+
+const RECONNECT_MS = 3000;
 
 let memory = {
 	projects: null,
@@ -73,8 +76,19 @@ export function SnapshotProvider({ children }) {
 		setSnapshot((current) => nextSnapshot(current, data));
 	}, []);
 
+	// The provider lives in the root layout, so it stays mounted across client-side
+	// navigation. Skip the stream on /login (it would only get a 401), and reopen it
+	// once the user leaves that page after signing in.
+	const pathname = usePathname();
+	const onLogin = pathname === "/login" || pathname?.startsWith("/login/");
+
 	useEffect(() => {
-		const source = new EventSource("/api/events/stream");
+		if (onLogin) {
+			return undefined;
+		}
+		let source = null;
+		let retryTimer = null;
+		let stopped = false;
 		const onSnapshot = (event) => {
 			try {
 				applySnapshot(JSON.parse(event.data));
@@ -92,14 +106,40 @@ export function SnapshotProvider({ children }) {
 				// ignore a bad stats chunk
 			}
 		};
-		source.addEventListener("snapshot", onSnapshot);
-		source.addEventListener("stats", onStats);
-		return () => {
-			source.removeEventListener("snapshot", onSnapshot);
-			source.removeEventListener("stats", onStats);
-			source.close();
+		// EventSource retries network drops by itself, but an HTTP error (401, 5xx)
+		// closes it for good. Reopen it after a short delay so the dashboard recovers
+		// when the session or the dev server comes back.
+		const onError = () => {
+			if (stopped || !source || source.readyState !== EventSource.CLOSED) {
+				return;
+			}
+			clearTimeout(retryTimer);
+			retryTimer = setTimeout(connect, RECONNECT_MS);
 		};
-	}, [applySnapshot]);
+		function connect() {
+			if (stopped) {
+				return;
+			}
+			if (source) {
+				source.close();
+			}
+			source = new EventSource("/api/events/stream");
+			source.addEventListener("snapshot", onSnapshot);
+			source.addEventListener("stats", onStats);
+			source.addEventListener("error", onError);
+		}
+		connect();
+		return () => {
+			stopped = true;
+			clearTimeout(retryTimer);
+			if (source) {
+				source.removeEventListener("snapshot", onSnapshot);
+				source.removeEventListener("stats", onStats);
+				source.removeEventListener("error", onError);
+				source.close();
+			}
+		};
+	}, [applySnapshot, onLogin]);
 
 	const value = useMemo(() => {
 		const resources = snapshot.resources || {};
