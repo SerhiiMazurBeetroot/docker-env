@@ -5,10 +5,10 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export async function GET(request) {
-	const authRequired = isAuthConfigured();
 	return NextResponse.json({
 		ok: true,
-		authRequired,
-		authenticated: !authRequired || isAuthorizedRequest(request),
+		authRequired: true,
+		configured: isAuthConfigured(),
+		authenticated: isAuthorizedRequest(request),
 	});
 }

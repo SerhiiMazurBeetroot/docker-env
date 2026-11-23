@@ -1,29 +1,5 @@
 import { NextResponse } from "next/server";
-
-const COOKIE_NAME = "docker_env_webui_token";
-
-function expectedToken() {
-	return (process.env.WEBUI_TOKEN || "").trim();
-}
-
-function tokenFromRequest(request) {
-	const header = request.headers.get("authorization") || "";
-	if (header.toLowerCase().startsWith("bearer ")) {
-		return header.slice(7).trim();
-	}
-	return request.cookies.get(COOKIE_NAME)?.value || "";
-}
-
-function tokenMatches(got, expected) {
-	if (!got || !expected || got.length !== expected.length) {
-		return false;
-	}
-	let diff = 0;
-	for (let i = 0; i < got.length; i += 1) {
-		diff |= got.charCodeAt(i) ^ expected.charCodeAt(i);
-	}
-	return diff === 0;
-}
+import { isAuthConfigured, isAuthorizedRequest, notConfiguredJson, unauthorizedJson } from "./lib/auth.js";
 
 function isPublicPath(pathname) {
 	if (pathname === "/login") {
@@ -44,22 +20,24 @@ function isPublicPath(pathname) {
 	return false;
 }
 
+// Token checks live in lib/auth.js so the proxy and the auth routes agree.
+// With no token configured every protected path is refused (fail closed).
 export function proxy(request) {
-	const expected = expectedToken();
-	if (!expected || isPublicPath(request.nextUrl.pathname)) {
+	const { pathname } = request.nextUrl;
+	if (isPublicPath(pathname)) {
 		return NextResponse.next();
 	}
 
-	if (tokenMatches(tokenFromRequest(request), expected)) {
+	if (isAuthorizedRequest(request)) {
 		return NextResponse.next();
 	}
 
-	if (request.nextUrl.pathname.startsWith("/api/")) {
-		return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+	if (pathname.startsWith("/api/")) {
+		return isAuthConfigured() ? unauthorizedJson() : notConfiguredJson();
 	}
 
 	const login = new URL("/login", request.url);
-	login.searchParams.set("from", request.nextUrl.pathname);
+	login.searchParams.set("from", pathname);
 	return NextResponse.redirect(login);
 }
 

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { readExpectedToken, tokenMatches, WEBUI_AUTH_COOKIE } from "../../../../lib/auth";
+import { AUTH_NOT_CONFIGURED_ERROR, readExpectedToken, tokenMatches, WEBUI_AUTH_COOKIE } from "../../../../lib/auth";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 export async function POST(request) {
 	const expected = readExpectedToken();
 	if (!expected) {
-		return NextResponse.json({ ok: false, error: "Web UI auth is not configured" }, { status: 503 });
+		return NextResponse.json({ ok: false, error: AUTH_NOT_CONFIGURED_ERROR }, { status: 503 });
 	}
 
 	let body = {};

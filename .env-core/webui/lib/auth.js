@@ -74,14 +74,23 @@ export function tokenFromRequest(request) {
 	return "";
 }
 
+// Fails closed: with no WEBUI_TOKEN nobody is let in. The container can drive
+// Docker through the mounted socket, so an open dashboard is root on the host.
 export function isAuthorizedRequest(request) {
 	const expected = readExpectedToken();
 	if (!expected) {
-		return true;
+		return false;
 	}
 	return tokenMatches(tokenFromRequest(request), expected);
 }
 
+export const AUTH_NOT_CONFIGURED_ERROR =
+	"Web UI auth is not configured. Run System → Web UI → Show sign-in token in the CLI, then restart the Web UI.";
+
 export function unauthorizedJson() {
 	return Response.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+}
+
+export function notConfiguredJson() {
+	return Response.json({ ok: false, error: AUTH_NOT_CONFIGURED_ERROR }, { status: 503 });
 }
