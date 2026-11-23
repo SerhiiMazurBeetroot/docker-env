@@ -45,7 +45,14 @@ export default function ThemePicker() {
 				<span className="inline-flex items-center gap-2">Theme</span>
 			</span>
 			<span className="flex shrink-0 items-center gap-2">
-				<div className="flex gap-3">
+				<div className="flex flex-wrap justify-end gap-3">
+					<ThemeCard option="neon" label="Neon" selected={preference === "neon"} onSelect={setPreference}>
+						<span className="flex flex-1 flex-col gap-1 bg-[#212946] p-2">
+							<span className="h-1 w-3/4 rounded-full bg-[#08f7fe] shadow-[0_0_6px_#08f7fe]" />
+							<span className="h-1 w-1/2 rounded-full bg-[#fe53bb] shadow-[0_0_6px_#fe53bb]" />
+							<span className="h-1 w-full rounded-full bg-white/20" />
+						</span>
+					</ThemeCard>
 					<ThemeCard option="light" label="Light" selected={preference === "light"} onSelect={setPreference}>
 						<span className="flex flex-1 bg-[#f7f8fb]">
 							<PreviewLines tone="light" />

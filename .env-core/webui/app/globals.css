@@ -19,6 +19,10 @@
 		--glow-b: rgba(62, 224, 162, 0.08);
 		--bg-top: #0b1018;
 		--grid: rgba(255, 255, 255, 0.015);
+		--c1: 138 164 255;
+		--c2: 255 107 180;
+		--c3: 255 200 84;
+		--c4: 62 224 162;
 		--btn-start-text-disabled: 238 242 255;
 		--btn-start-bg-disabled: 20 24 36;
 		color-scheme: dark;
@@ -40,9 +44,39 @@
 		--glow-b: rgba(11, 157, 108, 0.08);
 		--bg-top: #eef2fb;
 		--grid: rgba(20, 24, 36, 0.04);
+		--c1: 61 95 208;
+		--c2: 200 60 140;
+		--c3: 196 123 18;
+		--c4: 11 157 108;
 		--btn-start-text-disabled: 20 24 36;
 		--btn-start-bg-disabled: 238 242 255;
 		color-scheme: light;
+	}
+
+	/* Neon: mplcyberpunk palette (navy #212946 ground, cyan / pink / yellow / green neon). */
+	html[data-theme="neon"] {
+		--ink: 33 41 70;
+		--panel: 37 46 82;
+		--raised: 42 52 89;
+		--line: rgba(143, 151, 189, 0.2);
+		--muted: 143 151 189;
+		--fg: 230 232 242;
+		--chip: 205 210 235;
+		--accent: 8 247 254;
+		--ok: 0 255 65;
+		--danger: 254 83 187;
+		--warn: 245 211 0;
+		--glow-a: rgba(8, 247, 254, 0.07);
+		--glow-b: rgba(254, 83, 187, 0.06);
+		--bg-top: #1d2442;
+		--grid: rgba(143, 151, 189, 0.05);
+		--btn-start-text-disabled: 230 232 242;
+		--btn-start-bg-disabled: 42 52 89;
+		--c1: 8 247 254;
+		--c2: 254 83 187;
+		--c3: 245 211 0;
+		--c4: 0 255 65;
+		color-scheme: dark;
 	}
 
 	html {
@@ -65,6 +99,10 @@
 		--glow-b: rgba(62, 224, 162, 0.08);
 		--bg-top: #0b1018;
 		--grid: rgba(255, 255, 255, 0.015);
+		--c1: 138 164 255;
+		--c2: 255 107 180;
+		--c3: 255 200 84;
+		--c4: 62 224 162;
 		color-scheme: dark;
 	}
 
@@ -107,6 +145,50 @@
 }
 
 @layer components {
+	.font-display {
+		letter-spacing: 0.02em;
+	}
+
+	.neon-glow {
+		box-shadow: 0 0 0 1px rgb(var(--ok) / 0.08), 0 0 28px -12px rgb(var(--ok) / 0.55);
+	}
+
+	.neon-busy {
+		box-shadow: 0 0 0 1px rgb(var(--warn) / 0.12), 0 0 28px -10px rgb(var(--warn) / 0.55);
+	}
+
+	.led {
+		@apply inline-block h-2 w-2 shrink-0 rounded-full;
+	}
+
+	html[data-theme="neon"] .led-on {
+		box-shadow: 0 0 8px rgb(var(--ok)), 0 0 2px rgb(var(--ok));
+	}
+
+	html[data-theme="neon"] .text-glow {
+		text-shadow: 0 0 10px rgb(var(--accent) / 0.55);
+	}
+
+	.progress-slide {
+		animation: progress-slide 1.2s ease-in-out infinite;
+	}
+
+	@keyframes progress-slide {
+		0% {
+			transform: translateX(-100%);
+		}
+		100% {
+			transform: translateX(260%);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.progress-slide,
+		.animate-pulsedot {
+			animation: none;
+		}
+	}
+
 	.log-output a {
 		@apply underline underline-offset-2;
 	}

@@ -4,6 +4,38 @@ import { usePathname } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
 const RECONNECT_MS = 3000;
+// Stats arrive every ~10 s, so 30 samples cover the last five minutes.
+export const HISTORY_SAMPLES = 30;
+
+function pushSample(list, value) {
+	const next = list ? list.concat(value) : [value];
+	return next.length > HISTORY_SAMPLES ? next.slice(next.length - HISTORY_SAMPLES) : next;
+}
+
+function nextHistory(current, stats) {
+	const sites = { ...(current.sites || {}) };
+	let cpu = 0;
+	let mem = 0;
+	for (const [domain, item] of Object.entries(stats)) {
+		const cpuValue = Number(item.cpuValue) || 0;
+		const memValue = Number(item.memValue) || 0;
+		cpu += cpuValue;
+		mem += memValue;
+		const prev = sites[domain] || { cpu: [], mem: [] };
+		sites[domain] = { cpu: pushSample(prev.cpu, cpuValue), mem: pushSample(prev.mem, memValue) };
+	}
+	// Sites that stopped get a zero sample so their chart drops instead of freezing.
+	for (const domain of Object.keys(sites)) {
+		if (!stats[domain]) {
+			sites[domain] = { cpu: pushSample(sites[domain].cpu, 0), mem: pushSample(sites[domain].mem, 0) };
+		}
+	}
+	return {
+		sites,
+		cpu: pushSample(current.cpu, cpu),
+		mem: pushSample(current.mem, mem),
+	};
+}
 
 let memory = {
 	projects: null,
@@ -12,6 +44,7 @@ let memory = {
 	resources: {},
 	setup: null,
 	features: {},
+	history: { sites: {}, cpu: [], mem: [] },
 };
 
 const SnapshotContext = createContext(memory);
@@ -52,6 +85,7 @@ function nextSnapshot(current, data) {
 		system,
 		error: "",
 		resources: current.resources || {},
+		history: current.history,
 		setup: data.setup || current.setup || null,
 		features: data.features || current.features || {},
 	};
@@ -100,7 +134,11 @@ export function SnapshotProvider({ children }) {
 			try {
 				const payload = JSON.parse(event.data);
 				if (payload?.ok && payload.stats) {
-					setSnapshot((current) => ({ ...current, resources: payload.stats }));
+					setSnapshot((current) => ({
+						...current,
+						resources: payload.stats,
+						history: nextHistory(current.history || {}, payload.stats),
+					}));
 				}
 			} catch (err) {
 				// ignore a bad stats chunk
@@ -153,6 +191,7 @@ export function SnapshotProvider({ children }) {
 			error: snapshot.error,
 			setup: snapshot.setup || null,
 			features: snapshot.features || {},
+			history: snapshot.history || { sites: {}, cpu: [], mem: [] },
 		};
 	}, [snapshot]);
 

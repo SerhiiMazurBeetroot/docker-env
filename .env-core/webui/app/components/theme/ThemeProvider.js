@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import {
+	DEFAULT_THEME,
 	THEME_STORAGE_KEY,
 	applyResolvedTheme,
 	readThemePreference,
@@ -9,14 +10,14 @@ import {
 } from "../../lib/theme";
 
 const ThemeContext = createContext({
-	preference: "dark",
-	theme: "dark",
+	preference: DEFAULT_THEME,
+	theme: DEFAULT_THEME,
 	setPreference: () => {},
 });
 
 export function ThemeProvider({ children }) {
-	const [preference, setPreferenceState] = useState("dark");
-	const [theme, setTheme] = useState("dark");
+	const [preference, setPreferenceState] = useState(DEFAULT_THEME);
+	const [theme, setTheme] = useState(DEFAULT_THEME);
 
 	useEffect(() => {
 		const next = readThemePreference();

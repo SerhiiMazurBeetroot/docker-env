@@ -1,5 +1,6 @@
 export const THEME_STORAGE_KEY = "docker-env-theme";
-export const THEME_OPTIONS = ["light", "dark", "auto"];
+export const THEME_OPTIONS = ["neon", "light", "dark", "auto"];
+export const DEFAULT_THEME = "neon";
 
 export function readThemePreference() {
 	try {
@@ -8,7 +9,7 @@ export function readThemePreference() {
 	} catch (err) {
 		// ignore
 	}
-	return "dark";
+	return DEFAULT_THEME;
 }
 
 export function resolvedTheme(preference) {
@@ -18,11 +19,12 @@ export function resolvedTheme(preference) {
 		}
 		return "light";
 	}
-	return preference === "light" ? "light" : "dark";
+	if (preference === "light" || preference === "dark" || preference === "neon") return preference;
+	return DEFAULT_THEME;
 }
 
 export function applyResolvedTheme(theme) {
 	if (typeof document === "undefined") return;
 	document.documentElement.setAttribute("data-theme", theme);
-	document.documentElement.style.colorScheme = theme;
+	document.documentElement.style.colorScheme = theme === "light" ? "light" : "dark";
 }
