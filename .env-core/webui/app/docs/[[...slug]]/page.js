@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import AppHeader from "../../components/layout/AppHeader";
+import AppShell from "../../components/layout/AppShell";
 import MermaidDiagrams from "../../components/docs/MermaidDiagrams";
 import { isDeveloperSection, isDevelopmentMode, listDocs, readDoc } from "../../../lib/docs";
 
@@ -34,10 +34,9 @@ export default async function DocsPage(props) {
 	const groups = listDocs(developer ? "developer" : "user");
 
 	return (
-		<div className="min-h-screen">
-			<AppHeader subtitle={developer ? "Developer docs" : "Documentation"} />
-			<div className="mx-auto grid max-w-6xl gap-8 px-6 py-8 lg:grid-cols-[220px_minmax(0,1fr)]">
-				<nav className="lg:sticky lg:top-20 lg:self-start">
+		<AppShell active="docs">
+			<div className="grid w-full max-w-6xl gap-8 px-4 py-8 sm:px-8 lg:grid-cols-[220px_minmax(0,1fr)]">
+				<nav className="lg:sticky lg:top-6 lg:self-start">
 					{devMode ? (
 						<div className="mb-5 flex rounded-lg border border-line p-0.5 text-xs font-semibold">
 							<Link
@@ -81,6 +80,6 @@ export default async function DocsPage(props) {
 				<article className="doc-prose min-w-0" dangerouslySetInnerHTML={{ __html: doc.html }} />
 				<MermaidDiagrams slug={doc.slug} />
 			</div>
-		</div>
+		</AppShell>
 	);
 }

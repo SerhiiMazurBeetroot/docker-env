@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import DisplayPicker from "../display/DisplayPicker";
-import AppHeader from "../layout/AppHeader";
+import AppShell from "../layout/AppShell";
 import ConsoleSettings from "../console/ConsoleSettings";
 import LogSettings from "../logs/LogSettings";
 import ThemePicker from "../theme/ThemePicker";
@@ -18,10 +18,10 @@ export default function SettingsPage() {
 	}
 
 	return (
-		<div className="min-h-screen">
-			<AppHeader subtitle="Settings" />
-			<main className="mx-auto max-w-3xl px-6 py-8">
-				<h2 className="m-0 text-2xl font-extrabold tracking-tight">Settings</h2>
+		<AppShell active="settings">
+			<main className="w-full max-w-3xl px-4 py-8 sm:px-8">
+				<p className="m-0 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">docker-env</p>
+				<h2 className="m-0 mt-1 font-display text-3xl font-semibold">Settings</h2>
 				<p className="mt-2 text-sm text-muted">Appearance, console, log view, and diagnostics.</p>
 
 				<section className="mt-8 overflow-hidden rounded-2xl border border-line bg-panel/90">
@@ -67,6 +67,6 @@ export default function SettingsPage() {
 					</div>
 				</section>
 			</main>
-		</div>
+		</AppShell>
 	);
 }

@@ -16,7 +16,7 @@ export const viewport = {
 	viewportFit: "cover",
 };
 
-const themeBootScript = `(function(){try{var p=localStorage.getItem("docker-env-theme")||"dark";var d=p==="auto"?(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):(p==="light"?"light":"dark");document.documentElement.setAttribute("data-theme",d);document.documentElement.style.colorScheme=d;}catch(e){}})();`;
+const themeBootScript = `(function(){try{var p=localStorage.getItem("docker-env-theme")||"neon";var d=p==="auto"?(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):(p==="light"||p==="dark"?p:"neon");document.documentElement.setAttribute("data-theme",d);document.documentElement.style.colorScheme=d==="light"?"light":"dark";}catch(e){}})();`;
 
 export default function RootLayout({ children }) {
 	return (
@@ -26,7 +26,7 @@ export default function RootLayout({ children }) {
 				<link rel="preconnect" href="https://fonts.googleapis.com" />
 				<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 				<link
-					href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+					href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
 					rel="stylesheet"
 				/>
 			</head>

@@ -1,25 +1,36 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { appendCliLog, readSse, visibleLog } from "../../lib/logs";
 import { filterProjects, projectStats, projectTypes, bulkTargets, dozzleBaseUrl, dozzleContainerUrl, readProjectFilter, readProjectQuery, writeProjectFilter, writeProjectQuery } from "../../lib/projects";
 import { expectFromAction, pendingResolved } from "../../lib/waiting";
 import { useSnapshot } from "../snapshot/SnapshotProvider";
 import { useConsoleSettings } from "../console/ConsoleSettingsProvider";
-import { useDisplay } from "../display/DisplayProvider";
-import AppHeader from "../layout/AppHeader";
-import Console from "./Console";
+import AppShell from "../layout/AppShell";
+import ActivityView from "./ActivityView";
+import ConsoleDock from "./ConsoleDock";
 import CreateProjectModal from "./CreateProjectModal";
 import ProjectDetail from "./ProjectDetail";
-import ProjectList from "./ProjectList";
+import SiteGrid from "./SiteGrid";
+import SummaryStats from "./SummaryStats";
 import ProjectToolbar from "./ProjectToolbar";
-import SystemSection from "./SystemSection";
+import SystemView from "./SystemView";
 import SetupChecklist from "./SetupChecklist";
 import { reportError } from "../../lib/reportError";
+import { IconPlus } from "../ui/Icons";
+
+const VIEWS = {
+	sites: { eyebrow: "Local containers", title: "Sites" },
+	system: { eyebrow: "Shared services", title: "System" },
+	activity: { eyebrow: "Tasks and logs", title: "Activity" },
+};
 
 export default function Dashboard() {
-	const { projects, system, error, setup, features } = useSnapshot();
-	const { density } = useDisplay();
+	const { projects, system, error, setup, features, history } = useSnapshot();
+	const searchParams = useSearchParams();
+	const view = VIEWS[searchParams.get("view")] ? searchParams.get("view") : "sites";
+	const [tasks, setTasks] = useState([]);
 	const { autoOpen } = useConsoleSettings();
 	const [busy, setBusy] = useState({});
 	const [pending, setPending] = useState({});
@@ -36,6 +47,7 @@ export default function Dashboard() {
 	const [detailDomain, setDetailDomain] = useState("");
 	const [createOpen, setCreateOpen] = useState(false);
 	const logsSource = useRef(null);
+	const taskSeq = useRef(0);
 
 	useEffect(() => {
 		setFilter(readProjectFilter());
@@ -143,6 +155,10 @@ export default function Dashboard() {
 		setLogContainer("");
 		setLogTitle("Console");
 		setBusy((current) => ({ ...current, [key]: label }));
+		taskSeq.current += 1;
+		const taskId = taskSeq.current;
+		const target = String(key).replace(/^(system|hosts|svc):/, "").replace(/:/g, " · ");
+		setTasks((current) => [{ id: taskId, label, target, state: "running", started: Date.now() }, ...current].slice(0, 50));
 		if (expect) {
 			setPending((current) => {
 				const next = { ...current };
@@ -190,6 +206,11 @@ export default function Dashboard() {
 				message: err.message || "Request failed",
 			});
 		} finally {
+			setTasks((current) =>
+				current.map((task) =>
+					task.id === taskId ? { ...task, state: succeeded ? "ok" : "failed", ended: Date.now() } : task
+				)
+			);
 			setLogLive(false);
 			setBusy((current) => {
 				const next = { ...current };
@@ -292,43 +313,66 @@ export default function Dashboard() {
 		{ id: "archived", label: "Archived", count: stats.archived },
 	];
 
+	const consoleProps = {
+		mode: consoleMode,
+		log,
+		entries: logEntries,
+		title: logTitle,
+		logLive,
+		onStop: stopLogs,
+		dozzleUrl: consoleMode === "logs" && logContainer ? dozzleContainerUrl(logContainer, dozzleBase) : "",
+		onClear: () => {
+			setLog("");
+			setLogEntries([]);
+		},
+	};
+	const runningTasks = tasks.filter((task) => task.state === "running").length;
+	const canCreate = !!features?.["webui.create"];
+	const createBusy = Object.values(busy).includes("create");
+	const loading = projects == null;
+
 	return (
-		<div className="flex h-screen flex-col overflow-hidden">
-			<AppHeader
-				loading={projects == null}
-				createBusy={Object.values(busy).includes("create")}
-				onCreate={features?.["webui.create"] ? () => setCreateOpen(true) : undefined}
-			/>
-			<div className="flex min-h-0 flex-1">
-				<main className="min-w-0 flex-1 overflow-y-auto">
-					<div className={`mx-auto px-6 py-6 ${density === "grid" ? "max-w-7xl" : "max-w-6xl"}`}>
-						<SetupChecklist setup={setup} loading={projects == null} busy={busy} onHosts={runHosts} />
-						<SystemSection
-							services={system}
-							loading={projects == null}
-							busy={busy}
-							pending={pending}
-							onAction={runSystemAction}
-							onLogs={followLogs}
-							logContainer={logContainer}
-							dozzleBase={dozzleBase}
-						/>
+		<AppShell active={view} badges={{ activity: runningTasks || null }}>
+			<main className="w-full px-4 pb-8 pt-6 sm:px-8">
+				<header className="mb-5 flex flex-wrap items-end gap-3">
+					<div className="min-w-0">
+						<p className="m-0 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">{VIEWS[view].eyebrow}</p>
+						<h2 className="m-0 mt-1 font-display text-3xl font-semibold">{VIEWS[view].title}</h2>
+					</div>
+					{view === "sites" && canCreate ? (
+						<button
+							type="button"
+							disabled={loading || createBusy}
+							onClick={() => setCreateOpen(true)}
+							className="ml-auto inline-flex h-9 items-center gap-2 rounded-lg bg-accent px-3.5 text-sm font-semibold text-ink shadow-[0_0_18px_-2px_rgb(var(--accent)/0.6)] transition hover:brightness-110 disabled:opacity-50"
+						>
+							<IconPlus />
+							New site
+						</button>
+					) : null}
+				</header>
+
+				{view === "sites" ? (
+					<>
+						<SetupChecklist setup={setup} loading={loading} busy={busy} onHosts={runHosts} />
+						<SummaryStats projects={projects} history={history} />
 						<ProjectToolbar
 							filters={filters}
 							filter={filter}
 							onFilter={setFilter}
 							query={query}
 							onQuery={setQuery}
-							loading={projects == null}
+							loading={loading}
 							projects={projects}
 							types={types}
 							busy={busy.bulk || ""}
 							onBulk={runBulk}
 						/>
-						<ProjectList
+						<SiteGrid
 							projects={projects}
 							visible={visible}
 							error={error}
+							history={history}
 							busy={busy}
 							pending={pending}
 							onAction={runAction}
@@ -337,28 +381,36 @@ export default function Dashboard() {
 							onOpen={setDetailDomain}
 							onHosts={runHosts}
 							onDelete={runDelete}
+							onCreate={canCreate ? () => setCreateOpen(true) : undefined}
 							selectedDomain={detailDomain}
 							logContainer={logContainer}
 							dozzleBase={dozzleBase}
 						/>
-					</div>
-				</main>
-				<Console
-					mode={consoleMode}
-					log={log}
-					entries={logEntries}
-					title={logTitle}
-					logOpen={logOpen}
-					logLive={logLive}
-					onToggle={() => setLogOpen((open) => !open)}
-					onStop={stopLogs}
-					dozzleUrl={consoleMode === "logs" && logContainer ? dozzleContainerUrl(logContainer, dozzleBase) : ""}
-					onClear={() => {
-						setLog("");
-						setLogEntries([]);
-					}}
-				/>
-			</div>
+					</>
+				) : null}
+
+				{view === "system" ? (
+					<SystemView
+						services={system}
+						loading={loading}
+						setup={setup}
+						busy={busy}
+						pending={pending}
+						onAction={runSystemAction}
+						onLogs={followLogs}
+						onHosts={runHosts}
+						logContainer={logContainer}
+						dozzleBase={dozzleBase}
+					/>
+				) : null}
+
+				{view === "activity" ? <ActivityView tasks={tasks} consoleProps={consoleProps} /> : null}
+			</main>
+
+			{view !== "activity" ? (
+				<ConsoleDock open={logOpen} onToggle={() => setLogOpen((open) => !open)} consoleProps={consoleProps} />
+			) : null}
+
 			<ProjectDetail
 				domain={detailDomain}
 				onClose={() => setDetailDomain("")}
@@ -368,8 +420,8 @@ export default function Dashboard() {
 				open={createOpen}
 				onClose={() => setCreateOpen(false)}
 				onCreate={runCreate}
-				busy={Object.values(busy).includes("create")}
+				busy={createBusy}
 			/>
-		</div>
+		</AppShell>
 	);
 }

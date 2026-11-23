@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import ActionButton from "../ui/ActionButton";
+import { CardButton } from "./SiteCard";
 import { IconChevron, IconPlay, IconRestart, IconStop } from "../ui/Icons";
 import { SystemSkeleton } from "../ui/Skeleton";
 import StatusBadge from "../ui/StatusBadge";
@@ -77,7 +77,7 @@ export default function SystemSection({ services, loading, busy, pending = {}, o
 	);
 }
 
-function SystemCard({ service, action, pendingExpect, onAction, onLogs, active, dozzleBase }) {
+export function SystemCard({ service, action, pendingExpect, onAction, onLogs, active, dozzleBase }) {
 	const running = !!service.running;
 	const waiting = !!action || !!pendingExpect;
 	const urls = service.urls || [];
@@ -86,9 +86,9 @@ function SystemCard({ service, action, pendingExpect, onAction, onLogs, active, 
 	const kind = waiting ? "waiting" : serviceKind(service);
 
 	return (
-		<article className="flex h-full flex-col rounded-lg border border-line bg-raised/60 px-3 py-2.5">
+		<article className="flex h-full flex-col rounded-xl border border-line bg-panel/90 px-4 py-3">
 			<div className="mb-1 flex items-center justify-between gap-2">
-				<h2 className="m-0 text-sm font-extrabold tracking-tight">{service.name}</h2>
+				<h2 className="m-0 font-display text-base font-semibold">{service.name}</h2>
 				<StatusBadge
 					running={running}
 					compact
@@ -131,36 +131,33 @@ function SystemCard({ service, action, pendingExpect, onAction, onLogs, active, 
 				</div>
 			) : null}
 			{canAct ? (
-				<div className="mt-auto pt-3">
-				<div className="flex flex-wrap gap-1 rounded-lg border border-line bg-fg/5 p-1">
-					<ActionButton
-						label="Start"
-						tone="start"
-						size="sm"
-						icon={<IconPlay />}
-						disabled={running || waiting}
-						loading={action === "start" || (waiting && pendingExpect === "running" && !action)}
-						onClick={() => onAction("start", service.id)}
-					/>
-					<ActionButton
+				<div className="mt-auto flex flex-wrap gap-2 pt-3">
+					{running ? (
+						<CardButton
+							label="Stop"
+							tone="stop"
+							icon={<IconStop />}
+							disabled={waiting}
+							loading={action === "stop" || (waiting && pendingExpect === "stopped" && !action)}
+							onClick={() => onAction("stop", service.id)}
+						/>
+					) : (
+						<CardButton
+							label="Start"
+							tone="start"
+							icon={<IconPlay />}
+							disabled={waiting}
+							loading={action === "start" || (waiting && pendingExpect === "running" && !action)}
+							onClick={() => onAction("start", service.id)}
+						/>
+					)}
+					<CardButton
 						label="Restart"
-						tone="restart"
-						size="sm"
 						icon={<IconRestart />}
 						disabled={!running || waiting}
 						loading={action === "restart"}
 						onClick={() => onAction("restart", service.id)}
 					/>
-					<ActionButton
-						label="Stop"
-						tone="stop"
-						size="sm"
-						icon={<IconStop />}
-						disabled={!running || waiting}
-						loading={action === "stop" || (waiting && pendingExpect === "stopped" && !action)}
-						onClick={() => onAction("stop", service.id)}
-					/>
-				</div>
 				</div>
 			) : null}
 		</article>
