@@ -2,7 +2,10 @@ import { useDisplay } from "../display/DisplayProvider";
 import { IconCollapse, IconExpand } from "../ui/Icons";
 
 export default function ExpandAllButton() {
-	const { expandAll, setExpandAll } = useDisplay();
+	const { density, expandAll, setExpandAll } = useDisplay();
+
+	// Comfortable cards always show containers and links, so there is nothing to expand.
+	if (density === "comfortable") return null;
 
 	return (
 		<button

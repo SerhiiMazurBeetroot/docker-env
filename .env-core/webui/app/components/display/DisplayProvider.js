@@ -12,12 +12,16 @@ const DisplayContext = createContext({
 
 export function DisplayProvider({ children }) {
 	const [density, setDensityState] = useState("comfortable");
-	const [expandAll, setExpandAllState] = useState(true);
+	const [expandWide, setExpandWide] = useState(true);
+	const [expandCompact, setExpandCompact] = useState(false);
 
 	useEffect(() => {
 		setDensityState(readCardDensity());
-		setExpandAllState(readExpandAll());
+		setExpandWide(readExpandAll("comfortable"));
+		setExpandCompact(readExpandAll("compact"));
 	}, []);
+
+	const expandAll = density === "compact" ? expandCompact : expandWide;
 
 	const value = useMemo(
 		() => ({
@@ -30,8 +34,9 @@ export function DisplayProvider({ children }) {
 			expandAll,
 			setExpandAll: (next) => {
 				const resolved = !!next;
-				setExpandAllState(resolved);
-				writeExpandAll(resolved);
+				if (density === "compact") setExpandCompact(resolved);
+				else setExpandWide(resolved);
+				writeExpandAll(resolved, density);
 			},
 		}),
 		[density, expandAll]

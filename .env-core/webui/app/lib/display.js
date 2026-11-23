@@ -20,21 +20,28 @@ export function writeCardDensity(density) {
 }
 
 export const EXPAND_STORAGE_KEY = "docker-env-expand-all";
+// Compact rows keep their own expand state and start collapsed, so "Expand all" on the
+// wider layouts does not turn the one-line list into tall rows.
+export const EXPAND_COMPACT_STORAGE_KEY = "docker-env-expand-all-compact";
 
-export function readExpandAll() {
+function expandKey(density) {
+	return density === "compact" ? EXPAND_COMPACT_STORAGE_KEY : EXPAND_STORAGE_KEY;
+}
+
+export function readExpandAll(density) {
 	try {
-		const value = localStorage.getItem(EXPAND_STORAGE_KEY);
+		const value = localStorage.getItem(expandKey(density));
 		if (value === "0") return false;
 		if (value === "1") return true;
 	} catch (err) {
 		// ignore
 	}
-	return true;
+	return density !== "compact";
 }
 
-export function writeExpandAll(expanded) {
+export function writeExpandAll(expanded, density) {
 	try {
-		localStorage.setItem(EXPAND_STORAGE_KEY, expanded ? "1" : "0");
+		localStorage.setItem(expandKey(density), expanded ? "1" : "0");
 	} catch (err) {
 		// ignore
 	}

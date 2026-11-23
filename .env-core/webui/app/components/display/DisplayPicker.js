@@ -25,7 +25,7 @@ export default function DisplayPicker() {
 			<span className="min-w-0 flex-1">
 				<span className="inline-flex items-center gap-2">Project cards</span>
 				<span className="mt-0.5 block text-xs font-normal text-muted">
-					Comfortable list, compact rows, or a multi-column grid. All layouts group by project type.
+					Layout of the Sites page. Comfortable shows one wide card per row with a large CPU chart, Compact shows one line per site, and Grid fits small tiles side by side.
 				</span>
 			</span>
 			<span className="flex shrink-0 items-center gap-2">
@@ -36,8 +36,12 @@ export default function DisplayPicker() {
 						selected={density === "comfortable"}
 						onSelect={setDensity}
 					>
-						<span className="h-5 w-full rounded-sm bg-fg/20" />
-						<span className="h-5 w-full rounded-sm bg-fg/12" />
+						{["bg-fg/15", "bg-fg/10"].map((shade) => (
+							<span key={shade} className={`flex h-5 w-full gap-1 rounded-sm p-0.5 ${shade}`}>
+								<span className="w-2/5 rounded-[2px] bg-fg/25" />
+								<span className="flex-1 rounded-[2px] bg-accent/40" />
+							</span>
+						))}
 					</LayoutCard>
 					<LayoutCard option="compact" label="Compact" selected={density === "compact"} onSelect={setDensity}>
 						<span className="h-2 w-full rounded-sm bg-fg/20" />
