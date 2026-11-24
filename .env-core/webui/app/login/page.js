@@ -70,7 +70,7 @@ export default function LoginPage() {
 							placeholder="Paste WEBUI_TOKEN"
 						/>
 					</label>
-					{error ? <p className="text-sm text-red-400">{error}</p> : null}
+					{error ? <p className="text-sm text-danger">{error}</p> : null}
 					<button
 						type="submit"
 						disabled={busy || !token.trim()}

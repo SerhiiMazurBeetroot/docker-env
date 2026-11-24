@@ -37,9 +37,11 @@
 		--fg: 20 24 36;
 		--chip: 61 70 88;
 		--accent: 61 95 208;
-		--ok: 11 157 108;
-		--danger: 214 69 97;
-		--warn: 196 123 18;
+		/* ok / warn / danger are darker than the dark-theme tones so status
+		   text on white panels and on their own /15 tints stays above 4.5:1. */
+		--ok: 4 112 80;
+		--danger: 190 40 75;
+		--warn: 150 88 6;
 		--glow-a: rgba(61, 95, 208, 0.12);
 		--glow-b: rgba(11, 157, 108, 0.08);
 		--bg-top: #eef2fb;

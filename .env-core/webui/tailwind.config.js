@@ -40,5 +40,11 @@ module.exports = {
 			},
 		},
 	},
-	plugins: [],
+	plugins: [
+		// `light:` applies only in the light theme (html[data-theme="light"]).
+		// Palette colors tuned for the dark grounds use it for a darker shade.
+		function lightTheme({ addVariant }) {
+			addVariant("light", 'html[data-theme="light"] &');
+		},
+	],
 };

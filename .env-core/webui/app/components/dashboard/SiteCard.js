@@ -144,13 +144,19 @@ export default function SiteCard({
 	);
 
 	const hostLink = project.url ? (
+		// One line in every layout: a long host ends in "…" (full host on hover)
+		// instead of breaking mid-word, and the ↗ always stays visible.
 		<a
 			href={project.url}
 			target="_blank"
 			rel="noreferrer"
-			className={`text-glow font-mono text-[12px] text-accent hover:underline ${compact ? "truncate" : "break-all"}`}
+			title={hostLabel}
+			className="text-glow inline-flex min-w-0 max-w-full items-center gap-1 font-mono text-[12px] text-accent hover:underline"
 		>
-			{hostLabel} ↗
+			<span className="truncate">{hostLabel}</span>
+			<span aria-hidden className="shrink-0">
+				↗
+			</span>
 		</a>
 	) : (
 		<span className="truncate font-mono text-[12px] text-muted">{hostLabel || "No domain"}</span>

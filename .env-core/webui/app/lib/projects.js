@@ -8,25 +8,28 @@ export const URL_LABELS = {
 	DOMAIN_LOGSTASH: "Logstash",
 };
 
+// Type badges. The first pair is for the dark and neon grounds; `light:`
+// swaps in a darker text and a slightly stronger tint on the white panels.
+// Class strings stay literal so Tailwind keeps them.
 const TYPE_TONES = {
-	php: "bg-sky-400/15 text-sky-300",
-	wordpress: "bg-blue-400/15 text-blue-300",
-	wordpressnextjs: "bg-indigo-400/15 text-indigo-300",
-	wp: "bg-blue-400/15 text-blue-300",
-	laravel: "bg-rose-400/15 text-rose-300",
-	nextjs: "bg-zinc-400/15 text-zinc-200",
-	nodejs: "bg-lime-400/15 text-lime-300",
-	nodejsapi: "bg-emerald-400/15 text-emerald-300",
-	directus: "bg-violet-400/15 text-violet-300",
-	directusnextjs: "bg-violet-400/15 text-violet-300",
-	elastic: "bg-amber-400/15 text-amber-300",
-	elasticsearch: "bg-amber-400/15 text-amber-300",
-	bedrock: "bg-cyan-400/15 text-cyan-300",
+	php: "bg-sky-400/15 text-sky-300 light:bg-sky-500/15 light:text-sky-800",
+	wordpress: "bg-blue-400/15 text-blue-300 light:bg-blue-500/15 light:text-blue-800",
+	wordpressnextjs: "bg-indigo-400/15 text-indigo-300 light:bg-indigo-500/15 light:text-indigo-800",
+	wp: "bg-blue-400/15 text-blue-300 light:bg-blue-500/15 light:text-blue-800",
+	laravel: "bg-rose-400/15 text-rose-300 light:bg-rose-500/15 light:text-rose-800",
+	nextjs: "bg-zinc-400/15 text-zinc-200 light:bg-zinc-500/15 light:text-zinc-800",
+	nodejs: "bg-lime-400/15 text-lime-300 light:bg-lime-500/20 light:text-lime-800",
+	nodejsapi: "bg-emerald-400/15 text-emerald-300 light:bg-emerald-500/15 light:text-emerald-800",
+	directus: "bg-violet-400/15 text-violet-300 light:bg-violet-500/15 light:text-violet-800",
+	directusnextjs: "bg-violet-400/15 text-violet-300 light:bg-violet-500/15 light:text-violet-800",
+	elastic: "bg-amber-400/15 text-amber-300 light:bg-amber-500/20 light:text-amber-800",
+	elasticsearch: "bg-amber-400/15 text-amber-300 light:bg-amber-500/20 light:text-amber-800",
+	bedrock: "bg-cyan-400/15 text-cyan-300 light:bg-cyan-500/15 light:text-cyan-800",
 };
 
 export function typeTone(type) {
 	const key = String(type || "").toLowerCase().replace(/[\s_-]/g, "");
-	return TYPE_TONES[key] || "bg-white/10 text-muted";
+	return TYPE_TONES[key] || "bg-fg/10 text-muted";
 }
 
 export function projectUrls(project) {

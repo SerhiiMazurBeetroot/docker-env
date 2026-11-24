@@ -85,7 +85,7 @@ export default function ServiceChip({
 						title={`compose start ${service}`}
 						disabled={!canStart}
 						onClick={onStart}
-						className="rounded p-0.5 text-ok hover:bg-ok/15 disabled:pointer-events-none disabled:text-white/20"
+						className="rounded p-0.5 text-ok hover:bg-ok/15 disabled:pointer-events-none disabled:text-fg/20"
 					>
 						<IconPlay className="h-3 w-3" />
 					</button>
@@ -94,7 +94,7 @@ export default function ServiceChip({
 						title={`compose stop ${service}`}
 						disabled={!canStop}
 						onClick={onStop}
-						className="rounded p-0.5 text-danger hover:bg-danger/15 disabled:pointer-events-none disabled:text-white/20"
+						className="rounded p-0.5 text-danger hover:bg-danger/15 disabled:pointer-events-none disabled:text-fg/20"
 					>
 						<IconStop className="h-3 w-3" />
 					</button>
