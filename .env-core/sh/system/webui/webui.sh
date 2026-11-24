@@ -47,6 +47,10 @@ webui_dispatch() {
 	service)
 		webui_compose_service "${2:-}" "${3:-}" "${4:-}"
 		;;
+	updates)
+		# Developer updates check (sh/system/updates). Writes data/updates.json.
+		updates_check_refresh force
+		;;
 	*)
 		echo '{"ok":false,"error":"unknown command"}' >&2
 		return 1

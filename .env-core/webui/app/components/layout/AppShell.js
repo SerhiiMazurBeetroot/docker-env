@@ -8,6 +8,8 @@ const NAV = [
 	{ id: "system", label: "System", href: "/?view=system", icon: IconServer },
 	{ id: "activity", label: "Activity", href: "/?view=activity", icon: IconPulse },
 	{ id: "docs", label: "Docs", href: "/docs", icon: IconBook },
+	// Developer page; listed only when the `updates` feature is on (ENV_MODE=development).
+	{ id: "updates", label: "Updates", href: "/updates", icon: IconUpdates, feature: "updates" },
 	{ id: "settings", label: "Settings", href: "/settings", icon: IconGear },
 ];
 
@@ -16,7 +18,8 @@ const NAV = [
  * `active` names the current section; `badges` adds a small count next to a nav item.
  */
 export default function AppShell({ active = "sites", badges = {}, children }) {
-	const { projects, system } = useSnapshot();
+	const { projects, system, features } = useSnapshot();
+	const nav = NAV.filter((item) => !item.feature || features?.[item.feature]);
 	const running = projects ? projects.filter((item) => item.running).length : null;
 	const counts = { sites: running, ...badges };
 
@@ -25,7 +28,7 @@ export default function AppShell({ active = "sites", badges = {}, children }) {
 			<aside className="sticky top-0 z-40 hidden h-screen w-56 shrink-0 flex-col gap-1 border-r border-line bg-ink/70 px-3 py-5 backdrop-blur-xl md:flex">
 				<Brand />
 				<nav className="mt-5 flex flex-col gap-1" aria-label="Main">
-					{NAV.map((item) => (
+					{nav.map((item) => (
 						<NavItem key={item.id} item={item} active={active === item.id} count={counts[item.id]} />
 					))}
 				</nav>
@@ -35,7 +38,7 @@ export default function AppShell({ active = "sites", badges = {}, children }) {
 			<header className="sticky top-0 z-40 border-b border-line bg-ink/85 px-4 pb-2 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-xl md:hidden">
 				<Brand />
 				<nav className="-mx-1 mt-2 flex gap-1 overflow-x-auto pb-1" aria-label="Main">
-					{NAV.map((item) => (
+					{nav.map((item) => (
 						<NavItem key={item.id} item={item} active={active === item.id} count={counts[item.id]} compact />
 					))}
 				</nav>
@@ -128,6 +131,16 @@ function IconBook({ className }) {
 		<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} aria-hidden="true">
 			<path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z" />
 			<path d="M4 19V5" />
+		</svg>
+	);
+}
+
+function IconUpdates({ className }) {
+	return (
+		<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} aria-hidden="true">
+			<path d="M20 12a8 8 0 1 1-2.3-5.6" />
+			<path d="M20 4v4h-4" />
+			<path d="M12 8v5l3 2" />
 		</svg>
 	);
 }

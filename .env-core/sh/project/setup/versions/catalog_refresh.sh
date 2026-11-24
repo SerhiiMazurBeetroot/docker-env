@@ -281,8 +281,22 @@ version_catalog_sleep_until_tomorrow() {
 	sleep "$wait"
 }
 
+# Developer updates check (sh/system/updates). Runs in the same daily loop,
+# only when ENV_MODE=development. Its failure never affects the catalog.
+version_catalog_updates_check() {
+	local script="${ENV_DIR}/.env-core/sh/system/updates/updates_check.sh"
+	[[ -f "$script" ]] || return 0
+	(
+		# shellcheck disable=SC1090
+		source "$script"
+		updates_check_enabled || exit 0
+		updates_check_refresh
+	) || version_catalog_log "updates check failed; keeping the previous file"
+}
+
 version_catalog_refresh_loop() {
 	while true; do
+		version_catalog_updates_check
 		if version_catalog_due; then
 			if ! version_catalog_refresh force; then
 				version_catalog_log "catalog refresh failed; keeping the previous file"
