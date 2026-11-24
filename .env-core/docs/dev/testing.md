@@ -1,6 +1,6 @@
 # Tests
 
-Two suites. They do not replace each other.
+Shell unit tests, Web UI tests and lint, and the Docker smokes. They do not replace each other.
 
 ## Unit tests
 
@@ -34,6 +34,32 @@ A test that sets project globals (`PROJECT_DIR`, `DOMAIN_FULL`, `PROJECT_ROOT_DI
 Warning level, bash dialect. It scans `.env-core/sh`, `setup.sh`, and `.env-core/tests/unit`. It skips `sh/dev`. If `shellcheck` is not installed, the script runs the `koalaman/shellcheck` image.
 
 CI (`.github/workflows/ci.yml`) runs both commands on push and pull request.
+
+## Web UI tests and lint
+
+From `.env-core/webui` (Node 24, the same major as the Web UI image):
+
+```bash
+npm ci
+npm run lint
+npm test
+```
+
+`npm test` runs `node --test` on `tests/**/*.test.mjs`. No browser, no Docker, no Next.js server. The suites cover:
+
+| File | What it guards |
+| --- | --- |
+| `auth.test.mjs` | Token match, bearer/cookie, `settings.log` fallback, fail-closed without a token |
+| `proxy.test.mjs` | `proxy.js`: 503 / login redirect without a token, 401 on a wrong token, public paths |
+| `guards.test.mjs` | Domain, service, container, option and bulk-scope checks before `webui_cli.sh`; secret redaction |
+| `updates.test.mjs` | Updates page sorting, summary, reading `updates.json` |
+| `cli-output.test.mjs` | JSON and URL markers in CLI output, version choices |
+
+`tests/helpers.mjs` gives each test a temp `ENV_DIR` and restores env vars. `tests/register.mjs` maps `next/server` to `next/server.js`, which plain Node ESM needs and the Next.js bundler does not.
+
+`npm run lint` is ESLint 9 with `eslint-config-next` (`eslint.config.mjs`). ESLint stays on 9 until the plugins inside `eslint-config-next` support 10. `react-hooks/set-state-in-effect` is a warning for now: ten components still set state in an effect.
+
+The CI `webui` job runs install, lint, tests and `npm run build`.
 
 ## Docker smokes
 

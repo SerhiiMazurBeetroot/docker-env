@@ -28,6 +28,9 @@
 #===================================#
 */*
 
+# GitHub Actions. */* above would otherwise hide .github/workflows.
+!/.github/workflows/
+
 #===================================#
 #             env-core              #
 #===================================#

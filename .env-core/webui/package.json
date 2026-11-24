@@ -4,7 +4,9 @@
   "scripts": {
     "dev": "next dev -H 0.0.0.0 -p 7777",
     "build": "next build",
-    "start": "next start -H 0.0.0.0 -p 7777"
+    "start": "next start -H 0.0.0.0 -p 7777",
+    "lint": "eslint .",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./tests/register.mjs --test \"tests/**/*.test.mjs\""
   },
   "dependencies": {
     "mermaid": "12.2.0",
@@ -14,6 +16,8 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.5",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17"
   }

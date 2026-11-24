@@ -38,6 +38,7 @@ From the clone root:
 ./.env-core/shellcheck.sh
 ./.env-core/tests/unit/run.sh
 ./setup.sh catalog --json
+(cd .env-core/webui && npm run lint && npm test)
 ```
 
-GitHub Actions runs ShellCheck and the unit suite (`.github/workflows/ci.yml`). The Docker smoke tests under `sh/system/tests/` stay manual and only appear in the CLI when `ENV_MODE=development`.
+GitHub Actions runs ShellCheck, the shell unit suite, and Web UI lint, tests and build (`.github/workflows/ci.yml`). The Docker smoke tests under `sh/system/tests/` stay manual and only appear in the CLI when `ENV_MODE=development`.
