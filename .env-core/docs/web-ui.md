@@ -14,6 +14,8 @@ The dashboard asks for a token on `/login`.
 
 The token is created the first time that menu item runs, or the first time the Web UI starts. It is also written into `.env-core/system/nginx/.env` so the container can read it. Sign out from **Settings**.
 
+With no token set, the dashboard refuses every page and API call (the API answers `503`). The Web UI container controls Docker, so it never runs open. Create the token from the menu above, then restart the Web UI.
+
 If the login page rejects a token you just copied, restart the Web UI (**1 System → 2 Web UI → Stop**, then **Start**) so the container picks up the new value.
 
 ## Start and stop

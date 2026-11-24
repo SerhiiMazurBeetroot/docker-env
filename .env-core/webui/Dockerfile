@@ -1,17 +1,21 @@
-FROM docker:27-cli AS dockercli
+# Pinned base images. Node 24 is LTS until April 2028.
+ARG NODE_IMAGE=node:24-bookworm-slim
+ARG DOCKER_CLI_IMAGE=docker:29-cli
 
-FROM node:20-bookworm-slim AS deps
+FROM ${DOCKER_CLI_IMAGE} AS dockercli
+
+FROM ${NODE_IMAGE} AS deps
 WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm install
 
-FROM node:20-bookworm-slim AS builder
+FROM ${NODE_IMAGE} AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
-FROM node:20-bookworm-slim AS develop
+FROM ${NODE_IMAGE} AS develop
 COPY --from=dockercli /usr/local/bin/docker /usr/local/bin/docker
 COPY --from=dockercli /usr/local/libexec/docker/cli-plugins /usr/local/libexec/docker/cli-plugins
 
@@ -37,7 +41,7 @@ EXPOSE 7777
 # appends to .env-core/data/catalog-refresh.log. The dev server starts after that.
 CMD ["sh", "-c", "if [ -n \"${ENV_DIR:-}\" ] && [ -f \"${ENV_DIR}/.env-core/sh/project/setup/versions/catalog_refresh.sh\" ]; then mkdir -p \"${ENV_DIR}/.env-core/data\"; bash \"${ENV_DIR}/.env-core/sh/project/setup/versions/catalog_refresh.sh\" loop >>\"${ENV_DIR}/.env-core/data/catalog-refresh.log\" 2>&1 & fi; exec npm run dev"]
 
-FROM node:20-bookworm-slim AS runner
+FROM ${NODE_IMAGE} AS runner
 COPY --from=dockercli /usr/local/bin/docker /usr/local/bin/docker
 COPY --from=dockercli /usr/local/libexec/docker/cli-plugins /usr/local/libexec/docker/cli-plugins
 

@@ -8,7 +8,7 @@ Containers:
 
 | Name | Role |
 | --- | --- |
-| `nginx-proxy` | [jwilder/nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy) — routes by `VIRTUAL_HOST` |
+| `nginx-proxy` | [nginxproxy/nginx-proxy](https://hub.docker.com/r/nginxproxy/nginx-proxy) — routes by `VIRTUAL_HOST` |
 | `nginx-mkcert` | Issues certs into the `ssl-certs` volume |
 | `nginx-dozzle` | Log UI |
 | `nginx-webui` | Dashboard (started with Nginx, can be stopped alone) |

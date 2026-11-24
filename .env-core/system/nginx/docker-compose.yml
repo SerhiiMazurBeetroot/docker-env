@@ -1,8 +1,8 @@
 name: ${COMPOSE_PROJECT_NAME:-docker-env}
 services:
   nginx:
-    image: jwilder/nginx-proxy
-    platform: linux/amd64
+    # Multi-arch image, runs natively on Apple Silicon. 1.11 = patch updates only.
+    image: nginxproxy/nginx-proxy:1.11
     container_name: nginx-proxy
     ports:
       - '8080:80'
@@ -15,7 +15,8 @@ services:
     restart: always
 
   mkcert:
-    image: aegypius/mkcert-for-nginx-proxy
+    # Only published for amd64 (last release 2021), so it stays emulated on arm64.
+    image: aegypius/mkcert-for-nginx-proxy:v1.0.2
     platform: linux/amd64
     container_name: nginx-mkcert
     restart: unless-stopped
@@ -28,7 +29,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
   dozzle:
-    image: amir20/dozzle:latest
+    image: amir20/dozzle:v11
     container_name: nginx-dozzle
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
