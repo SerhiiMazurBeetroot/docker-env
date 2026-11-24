@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { formatLogClock, formatLogDate } from "../../../lib/logParse";
 import { useLogSettings } from "./LogSettingsProvider";
 
@@ -31,7 +31,19 @@ function LogFields({ fields }) {
 	);
 }
 
+// Dates and clocks follow the viewer's time zone and locale, which the server (UTC in the container)
+// does not know. Render them only in the browser so server HTML and hydration agree.
+const noopSubscribe = () => () => {};
+function useIsClient() {
+	return useSyncExternalStore(
+		noopSubscribe,
+		() => true,
+		() => false
+	);
+}
+
 function LogEntry({ entry, settings }) {
+	const isClient = useIsClient();
 	const date = entry.ts ? new Date(entry.ts) : null;
 	const valid = date && !Number.isNaN(date.getTime());
 	const lines = String(entry.message || "").split("\n");
@@ -47,8 +59,16 @@ function LogEntry({ entry, settings }) {
 				{settings.timestamps ? (
 					<div className="shrink-0 select-none whitespace-nowrap pt-px font-mono text-muted tabular-nums group-hover/entry:text-fg/80">
 						<div className="inline-flex gap-2">
-							{valid ? <time className="max-md:hidden">{formatLogDate(date, settings.dateFormat)}</time> : null}
-							{valid ? <time>{formatLogClock(date, settings.timeFormat)}</time> : <span>—</span>}
+							{valid ? (
+								<time className="max-md:hidden" dateTime={entry.ts}>
+									{isClient ? formatLogDate(date, settings.dateFormat) : null}
+								</time>
+							) : null}
+							{valid ? (
+								<time dateTime={entry.ts}>{isClient ? formatLogClock(date, settings.timeFormat) : null}</time>
+							) : (
+								<span>—</span>
+							)}
 						</div>
 					</div>
 				) : null}
