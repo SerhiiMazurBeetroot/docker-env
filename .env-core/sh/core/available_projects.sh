@@ -26,8 +26,7 @@ PROJECT_IDS=(
 	"laravel"            # 6  wip
 	"directus_nextjs"    # 7  wip
 	"wordpress_nextjs"   # 8  wip
-	"nodejs"             # 9  wip
-	"nodejs_api"         # 10 wip
+	"nodejs_api"         # 9  wip
 )
 # Label in New site and the Web UI create list. project_field menu.
 # build_visible_projects copies these into PROJECT_TITLES.
@@ -41,7 +40,6 @@ PROJECT_MENU_TITLES=(
 	"Laravel [dev]"                # laravel
 	"Directus + Next.js [dev]"     # directus_nextjs
 	"WordPress + Next.js [dev]"    # wordpress_nextjs
-	"Node.js [dev]"                # nodejs
 	"Node.js API [dev]"            # nodejs_api
 )
 # Short name in the open-site header: "domain · label · running".
@@ -56,7 +54,6 @@ PROJECT_SITE_LABELS=(
 	"Laravel"                # laravel
 	"Directus + Next.js"     # directus_nextjs
 	"WordPress + Next.js"    # wordpress_nextjs
-	"Node.js"                # nodejs
 	"Node.js API"            # nodejs_api
 )
 # stable = always listed. wip = listed only when ENV_MODE=development.
@@ -71,7 +68,6 @@ PROJECT_TIERS=(
 	"wip"       # laravel
 	"wip"       # directus_nextjs
 	"wip"       # wordpress_nextjs
-	"wip"       # nodejs
 	"wip"       # nodejs_api
 )
 # How docker_create_dispatch asks for the domain and the project args.
@@ -88,7 +84,6 @@ PROJECT_SETUP_FLOWS=(
 	"domain"               # laravel
 	"domain"               # directus_nextjs
 	"domain"               # wordpress_nextjs
-	"domain"               # nodejs
 	"domain"               # nodejs_api
 )
 # 1 = domain flow calls set_project_args (versions, db name, …).
@@ -103,7 +98,6 @@ PROJECT_SETUP_ARGS=(
 	"1"    # laravel
 	"1"    # directus_nextjs
 	"1"    # wordpress_nextjs
-	"0"    # nodejs — no version prompt; ports come from CREATE_NODE_PORTS
 	"1"    # nodejs_api
 )
 # Passed to get_project_dir in the domain flow. installation_type ignores it.
@@ -118,15 +112,14 @@ PROJECT_DIR_QUESTIONS=(
 	""                 # laravel
 	""                 # directus_nextjs
 	""                 # wordpress_nextjs
-	"skip_question"    # nodejs
 	""                 # nodejs_api
 )
 # Space-separated KEY=VALUE flags. docker_create_dispatch exports them before
 # docker_create_project. A value cannot contain a space. Empty uses the defaults
-# in docker_create.sh (clone the GitHub template, fix permissions, reload Nginx).
-#   CREATE_TEMPLATE=clone|copy|wordpress_nextjs|directus_nextjs|nodejs|laravel
+# in docker_create.sh (fix permissions, reload Nginx). The template always comes
+# from docker-env-template-<id> on GitHub, or a local copy with
+# CREATE_TEMPLATE_SOURCE=local (docker_create_template_check).
 #   CREATE_SYNC_PORT_FRONT=1   publish the app on the same host port as the proxy
-#   CREATE_NODE_PORTS=1        assign MongoDB / Mongo Express ports from that port
 #   CREATE_SKIP_PERMISSIONS=1  do not chown the project tree after start
 #   CREATE_SKIP_DOCKER_RESTART=1  do not reload Nginx; the after hook may do it
 PROJECT_CREATE_FLAGS=(
@@ -137,9 +130,8 @@ PROJECT_CREATE_FLAGS=(
 	""    # directus
 	"CREATE_SKIP_DOCKER_RESTART=1"    # elasticsearch — after hook reloads Nginx
 	""    # laravel
-	"CREATE_TEMPLATE=directus_nextjs"    # directus_nextjs — copy templates/directus_nextjs
+	""    # directus_nextjs
 	""    # wordpress_nextjs
-	"CREATE_TEMPLATE=nodejs CREATE_NODE_PORTS=1 CREATE_SKIP_PERMISSIONS=1 CREATE_SKIP_DOCKER_RESTART=1"    # nodejs
 	"CREATE_SKIP_PERMISSIONS=1"    # nodejs_api
 )
 # Function called after the containers are up. Define it in
@@ -154,7 +146,6 @@ PROJECT_AFTER_HOOKS=(
 	"docker_create_laravel_after"            # laravel
 	"docker_create_directus_nextjs_after"    # directus_nextjs
 	"docker_create_wp_next_after"            # wordpress_nextjs
-	""                                       # nodejs
 	""                                       # nodejs_api
 )
 # Directory of docker-compose.yml under the project root.
@@ -170,7 +161,6 @@ PROJECT_COMPOSE_DIRS=(
 	"docker"       # laravel
 	"docker"       # directus_nextjs
 	"docker"       # wordpress_nextjs
-	"."            # nodejs
 	"docker"       # nodejs_api
 )
 # Main container is {DOMAIN_NAME}-<suffix>. project_container_name.
@@ -185,7 +175,6 @@ PROJECT_CONTAINER_SUFFIXES=(
 	"laravel"          # laravel
 	"nextjs"           # directus_nextjs — the Next.js app is the main container
 	"wordpress"        # wordpress_nextjs — WordPress is the main container
-	"nodejs"           # nodejs
 	"nodejs_api"       # nodejs_api
 )
 # Extra container suffixes on the same project, space-separated.
@@ -200,7 +189,6 @@ PROJECT_ALSO_CONTAINERS=(
 	""            # laravel
 	"directus"    # directus_nextjs → also {domain}-directus
 	"nextjs"      # wordpress_nextjs → also {domain}-nextjs
-	""            # nodejs
 	""            # nodejs_api
 )
 # 1 = create refuses to start unless the Nginx proxy is running
@@ -215,7 +203,6 @@ PROJECT_REQUIRE_NGINX=(
 	"1"    # laravel
 	"1"    # directus_nextjs
 	"1"    # wordpress_nextjs
-	"1"    # nodejs
 	"1"    # nodejs_api
 )
 
@@ -263,7 +250,6 @@ SITE_ACTION_TYPES=(
 	"directus_nextjs"      # Next.js half → nextjs_menu
 	"php"                  # → php_menu
 	"elasticsearch"        # → elastic_menu
-	"nodejs"               # → nodejs_menu
 	"nodejs_api"           # → nodejs_menu
 )
 SITE_ACTION_LABELS=(
@@ -279,7 +265,6 @@ SITE_ACTION_LABELS=(
 	"Next.js"         # directus_nextjs
 	"PHP"             # php
 	"Elastic"         # elasticsearch
-	"Node.js"         # nodejs
 	"Node.js API"     # nodejs_api
 )
 # Grey hint under the menu row. Shown by site_menu_row.
@@ -296,7 +281,6 @@ SITE_ACTION_HINTS=(
 	"npm, logs"                      # directus_nextjs / Next.js
 	"composer, logs"                 # php
 	"Kibana, health, logs"           # elasticsearch
-	"npm, logs"                      # nodejs
 	"npm, health, logs"              # nodejs_api
 )
 # Function the site menu calls for that row. Defined in sh/menus/*_menu.sh.
@@ -313,7 +297,6 @@ SITE_ACTION_COMMANDS=(
 	"nextjs_menu"      # directus_nextjs / Next.js
 	"php_menu"         # php
 	"elastic_menu"     # elasticsearch
-	"nodejs_menu"      # nodejs
 	"nodejs_menu"      # nodejs_api
 )
 

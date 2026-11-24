@@ -34,6 +34,7 @@ docker_create_dispatch() {
 
 	unset_variables
 	project_require_nginx_for_type "$type" || return 1
+	docker_create_template_check "$type" || return 1
 
 	if [[ "$flow" == "installation_type" ]]; then
 		# Asks default/custom/beetroot and resolves the dir and args itself.

@@ -151,7 +151,7 @@ const DOC_BY_TYPE = {
 	nodejs_api: "projects/nodejs-api",
 };
 
-const WIP_TYPES = new Set(["laravel", "directus_nextjs", "wordpress_nextjs", "nodejs", "nodejs_api"]);
+const WIP_TYPES = new Set(["laravel", "directus_nextjs", "wordpress_nextjs", "nodejs_api"]);
 
 export function guideForType(type, development) {
 	const slug = DOC_BY_TYPE[type] || "";

@@ -34,7 +34,6 @@ const TYPE_FIELDS = {
 		{ key: "WP_VERSION", label: "WordPress version" },
 		{ key: "NODE_VERSION", label: "Node version" },
 	],
-	nodejs: [{ key: "NODE_VERSION", label: "Node version" }],
 	nodejs_api: [{ key: "NODE_VERSION", label: "Node version" }],
 };
 

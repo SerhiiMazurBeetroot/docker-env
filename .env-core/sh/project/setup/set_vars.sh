@@ -65,11 +65,6 @@ set_project_vars() {
 		DOMAIN_MAIL="$DOMAIN_FULL.mail"
 		HOST_EXTRA="$DOMAIN_ADMIN $DOMAIN_DB $DOMAIN_MAIL"
 		;;
-	"nodejs")
-		DB_TYPE="MONGO"
-		PROJECT_DIR="nodejs"
-		DOCKER_CONTAINER_DB="$DOMAIN_NAME-mongo"
-		;;
 	"nodejs_api")
 		DB_TYPE="0"
 		DOCKER_VOLUME_DB=""

@@ -19,8 +19,6 @@ WIP project types stay out of the user guides. Their pages:
 - [WordPress + Next.js](../projects/wordpress-nextjs.md)
 - [Node.js API](../projects/nodejs-api.md)
 
-Node.js has no separate guide yet.
-
 ## Conventions
 
 - Target **bash 3.2** (macOS default). No associative arrays.

@@ -32,36 +32,82 @@ docker_create_require_new_site() {
 	fi
 }
 
-# Sibling checkout first, then the copy bundled in this repo.
-docker_create_copy_local_template() {
-	local sibling="$ENV_DIR/../docker-env-templates/docker-env-template-${PROJECT_TYPE}"
-	local bundled="$ENV_DIR/.env-core/templates/${PROJECT_TYPE}"
-	local src=""
+# Local template for TYPE: the sibling checkout first, then the copy bundled
+# in this repo. A folder counts only when it has at least one file.
+docker_create_local_template_dir() {
+	local type="${1:-${PROJECT_TYPE:-}}" dir
+	for dir in \
+		"$ENV_DIR/../docker-env-templates/docker-env-template-${type}" \
+		"$ENV_DIR/.env-core/templates/${type}"; do
+		if [[ -d "$dir" ]] && [[ -n "$(find "$dir" -type f -not -path '*/.git/*' -print -quit 2>/dev/null)" ]]; then
+			printf '%s' "$dir"
+			return 0
+		fi
+	done
+	return 1
+}
 
-	if [[ -d "$sibling" ]]; then
-		src="$sibling"
-	elif [[ -d "$bundled" ]]; then
-		src="$bundled"
-	else
-		ECHO_ERROR "Local template not found for ${PROJECT_TYPE:-}"
+docker_create_template_url() {
+	printf '%s-%s.git' "${TEMPLATES_REPO:-}" "${1:-${PROJECT_TYPE:-}}"
+}
+
+# Runs before any question, so a type without a template fails at once
+# instead of after the domain and versions were asked.
+#   CREATE_TEMPLATE_SOURCE=github (default)  the GitHub repo must answer.
+#   CREATE_TEMPLATE_SOURCE=local             a local template must exist.
+docker_create_template_check() {
+	local type="${1:-${PROJECT_TYPE:-}}" url
+
+	if [[ ${CREATE_TEMPLATE_SOURCE:-github} == "local" ]]; then
+		if docker_create_local_template_dir "$type" >/dev/null; then
+			return 0
+		fi
+		ECHO_ERROR "No local template for ${type}."
+		ECHO_INFO "Looked in ../docker-env-templates/docker-env-template-${type} and .env-core/templates/${type}."
 		return 1
 	fi
+
+	if ! command -v git >/dev/null 2>&1; then
+		ECHO_ERROR "git is not installed"
+		return 1
+	fi
+
+	url=$(docker_create_template_url "$type")
+	if ! GIT_TERMINAL_PROMPT=0 git ls-remote --exit-code "$url" HEAD >/dev/null 2>&1; then
+		ECHO_ERROR "Template repository for ${type} is not reachable: ${url}"
+		ECHO_INFO "Check the network, or set CREATE_TEMPLATE_SOURCE=local to copy a local template."
+		return 1
+	fi
+}
+
+docker_create_copy_local_template() {
+	local src
+
+	src=$(docker_create_local_template_dir "${PROJECT_TYPE:-}") || {
+		ECHO_ERROR "Local template not found for ${PROJECT_TYPE:-}"
+		return 1
+	}
 
 	ECHO_INFO "Using local template ${src}"
 	rsync -a --exclude .git "$src/" "$PROJECT_ROOT_DIR/"
 }
 
+docker_create_clone_template() {
+	local url
+	url=$(docker_create_template_url "${PROJECT_TYPE:-}")
+	GIT_TERMINAL_PROMPT=0 git clone --depth 1 "$url" "$PROJECT_ROOT_DIR"
+}
+
 # Optional flags (unset at end of docker_create_project). docker_create_dispatch
 # sets these from PROJECT_CREATE_FLAGS in core/available_projects.sh:
-#   CREATE_TEMPLATE=clone|copy|wordpress_nextjs|directus_nextjs|nodejs|laravel
 #   CREATE_TEMPLATE_SOURCE=github|local
 #     github is the default and clones docker-env-template-$PROJECT_TYPE.
 #     local copies the sibling checkout, or .env-core/templates/$PROJECT_TYPE.
+#     docker_create_template_check verifies the source before any question.
 #   CREATE_COMPOSE_CMD="up -d"
 #   CREATE_COMPOSE_DIR=
 #   CREATE_ENV_FILE=
 #   CREATE_SYNC_PORT_FRONT=1
-#   CREATE_NODE_PORTS=1
 #   CREATE_SKIP_PERMISSIONS=1
 #   CREATE_SKIP_DOCKER_RESTART=1
 docker_create_project() {
@@ -74,11 +120,6 @@ docker_create_project() {
 	if [[ ${CREATE_SYNC_PORT_FRONT:-0} -eq 1 ]]; then
 		export PORT_FRONT=$PORT
 	fi
-	if [[ ${CREATE_NODE_PORTS:-0} -eq 1 ]]; then
-		MONGODB_DOCKER_PORT=$((PORT + 23707))
-		MONGODB_LOCAL_PORT=$((PORT + 3707))
-		MONGO_EXPRESS_PORT=$((PORT + 4771))
-	fi
 
 	get_project_dir "skip_question"
 	print_to_file_instances "building"
@@ -90,36 +131,16 @@ docker_create_project() {
 		template_source="local"
 	fi
 
-	case "${CREATE_TEMPLATE:-clone}" in
-	copy)
-		git_clone_templates_files "copy"
-		;;
-	wordpress_nextjs)
-		cp -R "$ENV_DIR/.env-core/templates/wordpress_nextjs/." "$PROJECT_ROOT_DIR/"
-		;;
-	directus_nextjs)
-		cp -R "$ENV_DIR/.env-core/templates/directus_nextjs/." "$PROJECT_ROOT_DIR/"
-		;;
-	nodejs)
-		rsync -av "$ENV_DIR/.env-core/templates/nodejs/" "$PROJECT_ROOT_DIR/"
-		;;
-	laravel)
-		cp -R "$ENV_DIR/.env-core/templates/laravel/." "$PROJECT_ROOT_DIR/"
-		;;
-	*)
-		if [[ $template_source == "local" ]]; then
-			if ! docker_create_copy_local_template; then
-				docker_create_rollback
-				return 1
-			fi
-		else
-			if ! git_clone_templates_files; then
-				docker_create_rollback
-				return 1
-			fi
-		fi
-		;;
-	esac
+	# Every template failure removes the half-created site.
+	local template_step="docker_create_clone_template"
+	if [[ $template_source == "local" ]]; then
+		template_step="docker_create_copy_local_template"
+	fi
+	if ! "$template_step"; then
+		ECHO_ERROR "Could not get the ${PROJECT_TYPE:-} template."
+		docker_create_rollback
+		return 1
+	fi
 
 	replace_templates_files
 	# GitHub stays the source. In development, local Dockerfiles can still
@@ -170,6 +191,6 @@ docker_create_project() {
 
 	notice_project_vars "$notice_mode"
 
-	unset CREATE_TEMPLATE CREATE_COMPOSE_CMD CREATE_COMPOSE_DIR CREATE_ENV_FILE
-	unset CREATE_SYNC_PORT_FRONT CREATE_NODE_PORTS CREATE_SKIP_PERMISSIONS CREATE_SKIP_DOCKER_RESTART
+	unset CREATE_COMPOSE_CMD CREATE_COMPOSE_DIR CREATE_ENV_FILE
+	unset CREATE_SYNC_PORT_FRONT CREATE_SKIP_PERMISSIONS CREATE_SKIP_DOCKER_RESTART
 }

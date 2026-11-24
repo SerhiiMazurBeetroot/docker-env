@@ -26,7 +26,9 @@ The Web UI container runs `catalog_refresh.sh loop` in the background. Once a da
 
 1. Append one value to every `PROJECT_*` array in `available_projects.sh` (same position).
 2. If the type needs a post-create step, add `docker_create_<id>.sh` and set `PROJECT_AFTER_HOOKS`.
-3. Add a template under `templates/<id>/` or document the GitHub template repo. `CREATE_TEMPLATE_SOURCE=local` copies the local template.
+3. Publish the template as `docker-env-template-<id>` on GitHub. Create clones it. With `CREATE_TEMPLATE_SOURCE=local` it copies `../docker-env-templates/docker-env-template-<id>` or `.env-core/templates/<id>` instead.
+
+`docker_create_template_check` runs before the first question. A type whose template repo does not answer (or, in local mode, has no local template with files) stops there with the URL or folders it tried. If the clone or copy still fails later, `docker_create_rollback` removes the half-made site.
 4. Add a short user page under `docs/projects/` and link it from [docs/README.md](../README.md).
 5. Cover catalog lookups in `tests/unit/test_catalog.sh` if you add a new helper.
 
