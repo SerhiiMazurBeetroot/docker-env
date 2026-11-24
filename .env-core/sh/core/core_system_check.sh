@@ -33,16 +33,32 @@ detect_os() {
 	export OSTYPE
 }
 
-docker_compose_version() {
-	if [[ -z $(docker info --format '{{range .ClientInfo.Plugins}}{{if eq .Name "compose"}}{{.Path}}{{end}}{{end}}') ]]; then
-		# V1
-		COMPOSE_VERSION="$(docker-compose --version | awk '{print $3}' | sed -e 's/,//g' | grep -Eo '[0-9]\.' | head -n 1 | tr -d .)"
-	else
-		# V2
-		COMPOSE_VERSION="$(docker compose version | awk '{print $4}' | sed -e 's/,//g' | grep -Eo '[0-9]\.' | head -n 1 | tr -d .)"
+# Major version from "v5.7.1", "2.29.7" or "docker-compose version 1.29.2, build …".
+_compose_major() {
+	local text="${1:-}"
+	if [[ "$text" =~ ([0-9]+)\.[0-9]+ ]]; then
+		printf '%s' "${BASH_REMATCH[1]}"
 	fi
+}
 
-	[[ $COMPOSE_VERSION == 2 ]] && DOCKER_COMPOSE_CMD="docker compose" || DOCKER_COMPOSE_CMD="docker-compose"
+# Sets DOCKER_COMPOSE_CMD and COMPOSE_VERSION (major, empty when unknown).
+# The `docker compose` plugin wins at any version (v2 … v5 and later); the
+# standalone docker-compose binary is only a fallback. Comparing the major
+# with 2 sent Compose v5 to a docker-compose binary the Web UI image lacks.
+docker_compose_version() {
+	local out=""
+
+	if out=$(docker compose version --short 2>/dev/null) && [[ -n "$out" ]]; then
+		DOCKER_COMPOSE_CMD="docker compose"
+		COMPOSE_VERSION=$(_compose_major "$out")
+	elif command -v docker-compose >/dev/null 2>&1; then
+		DOCKER_COMPOSE_CMD="docker-compose"
+		out=$(docker-compose version --short 2>/dev/null || docker-compose --version 2>/dev/null || true)
+		COMPOSE_VERSION=$(_compose_major "$out")
+	else
+		DOCKER_COMPOSE_CMD="docker compose"
+		COMPOSE_VERSION=""
+	fi
 }
 
 # settings_get KEY [FILE]: value of the first KEY=value line in settings.log.

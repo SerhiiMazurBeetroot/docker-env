@@ -11,7 +11,6 @@ export FILE_INSTANCES_LOG="$DIR_DATA/instances.log"
 export FILE_DOCKER_HUB="$DIR_DATA/dockerHub.log"
 export FILE_ENV="$DIR_SYSTEM/.env"
 export FILE_WEBUI_PID="$DIR_DATA/webui.pid"
-export FILE_WEBUI_LOG="$DIR_DATA/webui.log"
 
 export WEBUI_HOST="127.0.0.1"
 export WEBUI_PORT="7777"
