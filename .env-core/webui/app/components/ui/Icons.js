@@ -158,3 +158,18 @@ export function Spinner({ className = "h-4 w-4" }) {
 		</svg>
 	);
 }
+
+// Brand mark: the same drawing as app/icon.svg (the favicon), so keep the two in step.
+export function LogoMark({ className = "h-8 w-8" }) {
+	return (
+		<svg viewBox="0 0 32 32" className={className} fill="none" aria-hidden>
+			<rect width="32" height="32" rx="8" fill="#10151f" />
+			<rect x="7" y="7" width="5" height="18" rx="2" fill="#3ee0a2" />
+			<g fill="#8aa4ff">
+				<rect x="13.5" y="7" width="8" height="5" rx="1.8" />
+				<rect x="13.5" y="13.5" width="11.5" height="5" rx="1.8" />
+				<rect x="13.5" y="20" width="8" height="5" rx="1.8" />
+			</g>
+		</svg>
+	);
+}

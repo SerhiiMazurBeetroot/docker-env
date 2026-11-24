@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useSnapshot } from "../snapshot/SnapshotProvider";
+import { LogoMark } from "../ui/Icons";
 
 const NAV = [
 	{ id: "sites", label: "Sites", href: "/", icon: IconGlobe },
@@ -52,9 +53,7 @@ export default function AppShell({ active = "sites", badges = {}, children }) {
 function Brand() {
 	return (
 		<Link href="/" className="flex items-center gap-2.5 px-2 text-fg">
-			<span className="grid h-8 w-8 place-items-center rounded-lg border border-accent/70 font-mono text-[12px] font-medium text-accent shadow-[0_0_14px_-2px_rgb(var(--accent)/0.55),inset_0_0_8px_rgb(var(--accent)/0.2)]">
-				de
-			</span>
+			<LogoMark className="h-8 w-8 shrink-0 rounded-lg shadow-[0_0_14px_-2px_rgb(var(--accent)/0.55)]" />
 			<span className="font-display text-[17px] font-semibold tracking-wide">docker-env</span>
 		</Link>
 	);
