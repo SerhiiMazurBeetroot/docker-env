@@ -1,21 +1,3 @@
-export const CONSOLE_OPEN_KEY = "docker-env-console-open";
-
-export function readConsoleOpen() {
-	try {
-		return localStorage.getItem(CONSOLE_OPEN_KEY) === "1";
-	} catch (err) {
-		return false;
-	}
-}
-
-export function writeConsoleOpen(open) {
-	try {
-		localStorage.setItem(CONSOLE_OPEN_KEY, open ? "1" : "0");
-	} catch (err) {
-		// ignore
-	}
-}
-
 export function stripAnsi(text) {
 	return String(text || "").replace(/\u001b\[[0-9;]*m/g, "");
 }

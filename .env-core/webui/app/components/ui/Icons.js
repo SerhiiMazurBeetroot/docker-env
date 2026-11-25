@@ -135,30 +135,6 @@ export function IconTrash({ className = "h-3.5 w-3.5" }) {
 	);
 }
 
-export function IconHome({ className = "h-5 w-5" }) {
-	return (
-		<svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>
-			<path d="M12 3.4 4.2 10v10.2A1.4 1.4 0 0 0 5.6 21.6h3.7v-6.2h5.4V21.6h3.7a1.4 1.4 0 0 0 1.4-1.4V10L12 3.4z" />
-		</svg>
-	);
-}
-
-export function IconDocs({ className = "h-5 w-5" }) {
-	return (
-		<svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>
-			<path d="M6.2 3.5h8.2l3.4 3.4V20a1.5 1.5 0 0 1-1.5 1.5H6.2A1.5 1.5 0 0 1 4.7 20V5A1.5 1.5 0 0 1 6.2 3.5zm7.4 1.6v2.7h2.7L13.6 5.1zM8 11.2h8v1.4H8v-1.4zm0 3.2h8v1.4H8v-1.4zm0-6.4h4.2v1.4H8V8z" />
-		</svg>
-	);
-}
-
-export function IconSettings({ className = "h-5 w-5" }) {
-	return (
-		<svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>
-			<path d="M12 15.5A3.5 3.5 0 0 1 8.5 12A3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5a3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z" />
-		</svg>
-	);
-}
-
 export function Spinner({ className = "h-4 w-4" }) {
 	return (
 		<svg className={`${className} animate-spin`} viewBox="0 0 16 16" fill="none" aria-hidden>

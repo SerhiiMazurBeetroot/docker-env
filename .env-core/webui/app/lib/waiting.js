@@ -19,11 +19,6 @@ export function isBuildingProject(project) {
 	return String(project?.status || "").toLowerCase() === "building";
 }
 
-export function isStartingState(state) {
-	const value = String(state || "").toLowerCase();
-	return value === "created" || value === "restarting" || value === "starting" || value === "removing";
-}
-
 export function pendingResolved(key, expect, projects, system) {
 	const wantRunning = expect === "running";
 

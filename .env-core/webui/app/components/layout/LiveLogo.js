@@ -12,10 +12,9 @@ import { useId } from "react";
  *  - boot: the stem grows up, then the blocks slide out of it one by one;
  *  - healthy with sites running: a light pulse runs down the stem every few seconds and
  *    each lit block flashes as it passes, like a heartbeat handing out packets;
- *  - warn / down: the stem pulses amber (slow) or red (faster);
- *  - hover: the blocks slide out on their rails.
- * Boot, loop and hover sit on separate nested elements, so a state change swaps the loop
- * without replaying the boot.
+ *  - warn / down: the stem pulses amber (slow) or red (faster).
+ * Boot and loop sit on separate nested elements, so a state change swaps the loop
+ * without replaying the boot. No hover motion on purpose.
  */
 
 const ROWS = [
@@ -101,20 +100,18 @@ export default function LiveLogo({ projects, system, className = "h-8 w-8" }) {
 					className="live-logo-boot-row"
 					style={{ "--d": `${260 + index * 110}ms` }}
 				>
-					<g className="live-logo-row" style={{ "--shift": `${1 + index * 0.6}px` }}>
-						<rect
-							className="live-logo-block"
-							data-lit={index < lit ? "true" : "false"}
-							style={{ "--p": `${index * 390}ms` }}
-							x="13.5"
-							y={row.y}
-							width={row.width}
-							height="5"
-							rx="1.8"
-							fill="#8aa4ff"
-							fillOpacity={index < lit ? 1 : 0.18}
-						/>
-					</g>
+					<rect
+						className="live-logo-block"
+						data-lit={index < lit ? "true" : "false"}
+						style={{ "--p": `${index * 390}ms` }}
+						x="13.5"
+						y={row.y}
+						width={row.width}
+						height="5"
+						rx="1.8"
+						fill="#8aa4ff"
+						fillOpacity={index < lit ? 1 : 0.18}
+					/>
 				</g>
 			))}
 		</svg>

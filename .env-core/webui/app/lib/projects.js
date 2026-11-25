@@ -42,15 +42,6 @@ export function projectUrls(project) {
 	return [];
 }
 
-export function serviceShortName(service, domain) {
-	const raw = String(service || "");
-	const prefix = domain ? `${domain}-` : "";
-	if (prefix && raw.startsWith(prefix)) {
-		return raw.slice(prefix.length);
-	}
-	return raw;
-}
-
 export const DOZZLE_DEFAULT_URL = "http://127.0.0.1:7007";
 export const PROJECT_FILTER_KEY = "docker-env-project-filter";
 export const PROJECT_QUERY_KEY = "docker-env-project-query";
@@ -87,22 +78,6 @@ export function writeProjectQuery(query) {
 	} catch (err) {
 		// ignore
 	}
-}
-
-export function groupProjectsByType(projects) {
-	const groups = new Map();
-	for (const project of projects || []) {
-		const type = String(project.type || "unknown");
-		if (!groups.has(type)) groups.set(type, []);
-		groups.get(type).push(project);
-	}
-	return [...groups.entries()]
-		.sort((a, b) => a[0].localeCompare(b[0]))
-		.map(([type, items]) => ({
-			type,
-			guide: items.find((item) => item.guide)?.guide || "",
-			items,
-		}));
 }
 
 export function projectTypes(projects) {

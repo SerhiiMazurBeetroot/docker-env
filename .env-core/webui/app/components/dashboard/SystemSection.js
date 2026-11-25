@@ -1,81 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { CardButton } from "./SiteCard";
-import { IconChevron, IconPlay, IconRestart, IconStop } from "../ui/Icons";
-import { SystemSkeleton } from "../ui/Skeleton";
+import { IconPlay, IconRestart, IconStop } from "../ui/Icons";
 import StatusBadge from "../ui/StatusBadge";
 import UrlChip from "../ui/UrlChip";
 import { waitLabel } from "../../lib/waiting";
 import { dozzleContainerUrl, serviceKind } from "../../lib/projects";
-
-export default function SystemSection({ services, loading, busy, pending = {}, onAction, onLogs, logContainer, dozzleBase }) {
-	const [open, setOpen] = useState(false);
-
-	if (loading) {
-		return <SystemSkeleton />;
-	}
-
-	if (!services.length) return null;
-
-	const unhealthy = services.some((service) => !service.running);
-	const runningCount = services.filter((service) => service.running).length;
-
-	return (
-		<section
-			className={`mb-4 rounded-xl border bg-panel/80 ${unhealthy ? "border-danger/35" : "border-line"}`}
-		>
-			<button
-				type="button"
-				aria-expanded={open}
-				aria-label={open ? "Hide system services" : "Show system services"}
-				onClick={() => setOpen((value) => !value)}
-				className="flex w-full flex-wrap items-center gap-2 px-3 py-2 text-left"
-			>
-				<span className="text-[10px] font-bold uppercase tracking-wider text-muted">System</span>
-				{services.map((service) => (
-					<span
-						key={service.id || service.container}
-						className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-fg"
-					>
-						<span
-							className={`h-1.5 w-1.5 rounded-full ${
-								busy[`system:${service.id}`] || pending[`system:${service.id}`]
-									? "bg-accent animate-pulsedot"
-									: service.running
-										? "bg-ok"
-										: "bg-danger"
-							}`}
-						/>
-						{service.name}
-					</span>
-				))}
-				<span className="ml-auto inline-flex items-center gap-2 text-[12px] font-semibold tabular-nums text-muted">
-					<span className={unhealthy ? "text-danger" : "text-fg"}>
-						{runningCount}/{services.length}
-					</span>
-					<IconChevron className={`h-3.5 w-3.5 transition ${open ? "rotate-180" : ""}`} />
-				</span>
-			</button>
-			{open ? (
-				<div className="grid items-stretch gap-2 border-t border-line px-3 py-3 sm:grid-cols-3">
-					{services.map((service) => (
-						<SystemCard
-							key={service.id || service.container}
-							service={service}
-							action={busy[`system:${service.id}`]}
-							pendingExpect={pending[`system:${service.id}`]}
-							onAction={onAction}
-							onLogs={onLogs}
-							active={logContainer === service.container}
-							dozzleBase={dozzleBase}
-						/>
-					))}
-				</div>
-			) : null}
-		</section>
-	);
-}
 
 export function SystemCard({ service, action, pendingExpect, onAction, onLogs, active, dozzleBase }) {
 	const running = !!service.running;

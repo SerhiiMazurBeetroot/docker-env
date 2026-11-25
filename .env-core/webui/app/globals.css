@@ -186,7 +186,7 @@
 
 
 	/* Live brand mark (components/layout/LiveLogo.js).
-	 * Boot, loop and hover are on nested elements so they never cancel each other.
+	 * Boot and loop are on nested elements so they never cancel each other. No hover motion.
 	 * Heartbeat: one 4.8s cycle; the sweep crosses the stem in ~1.4s and each lit block
 	 * flashes as the sweep passes its row (delays below are tuned to the row positions). */
 	.live-logo {
@@ -205,16 +205,6 @@
 		transform-box: fill-box;
 		transform-origin: left center;
 		animation: live-logo-dock 560ms var(--logo-ease) var(--d, 0ms) both;
-	}
-
-	.live-logo .live-logo-row {
-		transform-box: fill-box;
-		transition: transform 260ms var(--logo-ease);
-	}
-
-	.brand-link:hover .live-logo-row,
-	.brand-link:focus-visible .live-logo-row {
-		transform: translateX(var(--shift, 1px));
 	}
 
 	.live-logo .live-logo-stem,
@@ -313,8 +303,7 @@
 	@media (prefers-reduced-motion: reduce) {
 		.progress-slide,
 		.animate-pulsedot,
-		.live-logo *,
-		.live-logo .live-logo-row {
+		.live-logo * {
 			animation: none !important;
 			transition: none !important;
 		}

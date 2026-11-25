@@ -28,10 +28,6 @@ function parseCatalogStdout(stdout) {
 	}
 }
 
-export function clearProjectCatalogCache() {
-	cache = null;
-}
-
 export function loadProjectCatalog() {
 	if (cache) {
 		return Promise.resolve(cache);

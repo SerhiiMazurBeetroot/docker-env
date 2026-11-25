@@ -53,7 +53,7 @@ export default function AppShell({ active = "sites", badges = {}, children }) {
 function Brand({ projects, system }) {
 	const summary = liveLogoSummary(projects, system);
 	return (
-		<Link href="/" title={summary || undefined} className="brand-link flex items-center gap-2.5 px-2 text-fg">
+		<Link href="/" title={summary || undefined} className="flex items-center gap-2.5 px-2 text-fg">
 			<LiveLogo
 				projects={projects}
 				system={system}
