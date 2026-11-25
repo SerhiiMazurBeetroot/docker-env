@@ -46,18 +46,6 @@ webui_is_dev() {
 		| grep -qx 'WEBUI_DEV=1'
 }
 
-webui_status_label() {
-	if webui_server_is_running; then
-		if webui_is_dev; then
-			printf 'running %s (dev)' "$(webui_url)"
-		else
-			printf 'running %s' "$(webui_url)"
-		fi
-	else
-		printf 'stopped'
-	fi
-}
-
 webui_compose_webui() {
 	local files="${1:-}"
 	local args="${2:-}"

@@ -66,19 +66,6 @@ site_link_line() {
 	printf '%b%s%b\n' "$YELLOW" "$joined" "$NC"
 }
 
-site_menu_row() {
-	local num="$1"
-	local label="$2"
-	local hint="${3:-}"
-	local color="${4:-$GREEN}"
-
-	if [[ -n "$hint" ]]; then
-		printf '%b[%s]%b %-16s %b%s%b\n' "$color" "$num" "$NC" "$label" "$CYAN" "$hint" "$NC"
-	else
-		printf '%b[%s]%b %s\n' "$color" "$num" "$NC" "$label"
-	fi
-}
-
 site_menu() {
 	load_project_modules
 
@@ -136,7 +123,7 @@ site_menu() {
 		ECHO_YELLOW "[0] Sites"
 
 		for ((index = 0; index < ${#labels[@]}; index++)); do
-			site_menu_row "$((index + 1))" "${labels[$index]}" "${hints[$index]}"
+			menu_row "$((index + 1))" "${labels[$index]}" "${hints[$index]}"
 		done
 
 		action=$(GET_USER_INPUT "select_one_of")

@@ -266,7 +266,7 @@ SITE_ACTION_LABELS=(
 	"Elastic"         # elasticsearch
 	"Node.js API"     # nodejs_api
 )
-# Grey hint under the menu row. Shown by site_menu_row.
+# Grey hint under the menu row. Shown by menu_row (core/utils/menu.sh).
 SITE_ACTION_HINTS=(
 	"composer, multisite"            # wordpress
 	"composer, multisite"            # projects
