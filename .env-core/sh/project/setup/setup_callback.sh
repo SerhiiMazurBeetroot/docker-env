@@ -96,7 +96,7 @@ _setup_require_new_domain() {
 		return 0
 	fi
 
-	ECHO_ERROR "Site already exists"
+	echo_site_exists
 	reset_session_var DOMAIN_NAME
 	reset_session_var DOMAIN_FULL
 	DOMAIN_EXISTS=0

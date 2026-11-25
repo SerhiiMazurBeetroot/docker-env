@@ -37,7 +37,7 @@ const TYPE_FIELDS = {
 	nodejs_api: [{ key: "NODE_VERSION", label: "Node version" }],
 };
 
-export default function CreateProjectModal({ open, onClose, onCreate, busy = false }) {
+export default function CreateProjectModal({ open, onClose, onCreate, busy = false, existing = [] }) {
 	const [types, setTypes] = useState([]);
 	const [versions, setVersions] = useState({});
 	const [type, setType] = useState("wordpress");
@@ -84,6 +84,11 @@ export default function CreateProjectModal({ open, onClose, onCreate, busy = fal
 		}
 		if (!/^[a-z0-9]([a-z0-9-]{0,251}[a-z0-9])?$/.test(name)) {
 			setError("Use letters, numbers, and hyphens");
+			return;
+		}
+		// The CLI refuses a taken name too; catching it here keeps that refusal off the console.
+		if (existing.includes(name)) {
+			setError(`A site named ${name} already exists`);
 			return;
 		}
 		setError("");

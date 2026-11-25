@@ -83,6 +83,15 @@ ECHO_ERROR() {
 	fi
 }
 
+# The name the user typed belongs to a site that already exists. Nothing failed on
+# that site, so report the clash without DOMAIN_NAME: otherwise ECHO_ERROR records it
+# as that site's notice and the Web UI card shows "Site already exists" until the
+# site's next successful action.
+echo_site_exists() {
+	local name="${1:-${DOMAIN_NAME:-}}"
+	DOMAIN_NAME="" ECHO_ERROR "Site ${name:+$name }already exists"
+}
+
 GET_USER_INPUT() {
 	local prompt_type=${1:-}      # required
 	local msg=${2:-}              # optional, default empty string

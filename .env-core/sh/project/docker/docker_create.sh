@@ -27,7 +27,7 @@ docker_create_rollback() {
 
 docker_create_require_new_site() {
 	if [[ ${DOMAIN_EXISTS:-0} != 0 ]]; then
-		ECHO_ERROR "Site already exists"
+		echo_site_exists
 		return 1
 	fi
 }

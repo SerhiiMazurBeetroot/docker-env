@@ -59,7 +59,7 @@ create_nextjs_app() {
 		nextjs_local_start || return 1
 		notice_project_vars open
 	else
-		ECHO_ERROR "Site already exists"
+		echo_site_exists
 		return 1
 	fi
 

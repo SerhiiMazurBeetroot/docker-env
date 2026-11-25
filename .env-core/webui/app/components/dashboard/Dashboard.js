@@ -421,6 +421,7 @@ export default function Dashboard() {
 				onClose={() => setCreateOpen(false)}
 				onCreate={runCreate}
 				busy={createBusy}
+				existing={(projects || []).map((project) => project.domain)}
 			/>
 		</AppShell>
 	);
