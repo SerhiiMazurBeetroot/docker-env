@@ -96,39 +96,29 @@ function DetailBody({ data }) {
 	const last = data.lastAction;
 	return (
 		<div className="grid gap-5">
-			<section>
-				<SectionTitle>Last action</SectionTitle>
-				{last ? (
-					<div>
-						<p className="m-0 text-sm">
-							<span className="font-semibold">{last.action || "action"}</span>
-							<span className={last.ok ? "text-ok" : "text-danger"}> {last.ok ? "ok" : "failed"}</span>
-							<span className="text-muted"> · {formatWhen(last.at)}</span>
-						</p>
-						{!last.ok && last.message ? <p className="m-0 mt-1 text-sm text-danger">{last.message}</p> : null}
-					</div>
-				) : (
-					<p className="m-0 text-sm text-muted">No action recorded yet.</p>
-				)}
-			</section>
+			{last ? (
+				<section>
+					<SectionTitle>Last action</SectionTitle>
+					<p className="m-0 text-sm">
+						<span className="font-semibold">{last.action || "action"}</span>
+						<span className={last.ok ? "text-ok" : "text-danger"}> {last.ok ? "ok" : "failed"}</span>
+						<span className="text-muted"> · {formatWhen(last.at)}</span>
+					</p>
+					{!last.ok && last.message ? <p className="m-0 mt-1 text-sm text-danger">{last.message}</p> : null}
+				</section>
+			) : null}
 
 			<section>
-				<SectionTitle>Compose file</SectionTitle>
+				<SectionTitle>Files</SectionTitle>
 				<PathRow label="Project" path={data.paths?.root} href={data.editor?.root} />
 				<PathRow label="Compose" path={data.paths?.composeFile} href={data.editor?.compose} />
 				<PathRow label="Env file" path={data.paths?.envFile} href={data.editor?.env} />
-				{data.composePreview ? (
-					<pre className="mt-3 max-h-56 overflow-auto rounded-xl border border-line bg-raised p-3 font-mono text-[11px] leading-relaxed text-chip">
-						{data.composePreview}
-					</pre>
-				) : (
-					<p className="mt-2 text-sm text-muted">No docker-compose.yml found.</p>
-				)}
+				{data.paths?.composeFile ? null : <p className="mt-2 text-sm text-warn">No docker-compose.yml found.</p>}
 			</section>
 
-			<section>
-				<SectionTitle>Ports</SectionTitle>
-				{data.ports?.length ? (
+			{data.ports?.length ? (
+				<section>
+					<SectionTitle>Ports</SectionTitle>
 					<ul className="m-0 grid list-none gap-1.5 p-0">
 						{data.ports.map((item, index) => (
 							<li
@@ -143,10 +133,8 @@ function DetailBody({ data }) {
 							</li>
 						))}
 					</ul>
-				) : (
-					<p className="m-0 text-sm text-muted">No published ports in compose.</p>
-				)}
-			</section>
+				</section>
+			) : null}
 
 			<section>
 				<SectionTitle>Disk / volumes</SectionTitle>
@@ -171,15 +159,13 @@ function DetailBody({ data }) {
 							</li>
 						))}
 					</ul>
-				) : (
-					<p className="m-0 text-sm text-muted">No volumes in compose.</p>
-				)}
+				) : null}
 			</section>
 
-			<section>
-				<SectionTitle>Env keys</SectionTitle>
-				<p className="mb-2 text-[11px] text-muted">Names only. Secret-looking keys are marked; values are never shown.</p>
-				{data.env?.length ? (
+			{data.env?.length ? (
+				<section>
+					<SectionTitle>Env keys</SectionTitle>
+					<p className="mb-2 text-[11px] text-muted">Names only. Secret-looking keys are marked; values are never shown.</p>
 					<ul className="m-0 flex list-none flex-wrap gap-1.5 p-0">
 						{data.env.map((item) => (
 							<li
@@ -196,10 +182,8 @@ function DetailBody({ data }) {
 							</li>
 						))}
 					</ul>
-				) : (
-					<p className="m-0 text-sm text-muted">No env keys found.</p>
-				)}
-			</section>
+				</section>
+			) : null}
 		</div>
 	);
 }

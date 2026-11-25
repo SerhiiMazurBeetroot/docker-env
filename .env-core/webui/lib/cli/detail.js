@@ -112,15 +112,6 @@ function mergeEnvKeys(...lists) {
 	return merged.sort((a, b) => a.key.localeCompare(b.key));
 }
 
-function readComposePreview(file) {
-	if (!file || !fs.existsSync(file)) return "";
-	try {
-		return fs.readFileSync(file, "utf8").split(/\r?\n/).slice(0, 120).join("\n");
-	} catch (err) {
-		return "";
-	}
-}
-
 function parseComposeJson(raw) {
 	try {
 		return JSON.parse(raw);
@@ -281,7 +272,6 @@ export async function getProjectDetail(domain) {
 				compose: composeExists ? editorUrl(composeFile) : "",
 				env: envFile ? editorUrl(envFile) : "",
 			},
-			composePreview: readComposePreview(composeExists ? composeFile : ""),
 			ports: composeConfig ? portsFromCompose(composeConfig) : [],
 			volumes: composeConfig ? volumesFromCompose(composeConfig, composeDir) : [],
 			env,
