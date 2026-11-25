@@ -16,7 +16,9 @@ tests_actions() {
 
 			case $actions in
 			0)
-				system_menu
+				# Back to the caller (System menu). Calling system_menu here instead nested a
+				# new System menu on every visit, so its [0] led back into this loop.
+				return 0
 				;;
 			1)
 				if ! tests_create_all_projects; then
