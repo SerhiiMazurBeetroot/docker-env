@@ -56,12 +56,16 @@ export default function ConsolePanel({
 					) : null}
 					<button
 						type="button"
-						className={autoScroll ? "text-muted hover:text-fg" : "font-semibold text-accent"}
+						className={`inline-flex items-center gap-1.5 hover:text-fg ${autoScroll ? "text-fg" : "text-muted"}`}
 						onClick={() => setAutoScroll(!autoScroll)}
 						aria-pressed={autoScroll}
 						title={autoScroll ? "Autoscroll on. Click to pause." : "Autoscroll off. Click to follow."}
 					>
-						{autoScroll ? "Autoscroll" : "Paused"}
+						<span
+							aria-hidden
+							className={`h-1.5 w-1.5 rounded-full ${autoScroll ? "bg-ok shadow-[0_0_6px_rgb(var(--ok))]" : "bg-muted/50"}`}
+						/>
+						Autoscroll
 					</button>
 					<button
 						type="button"
