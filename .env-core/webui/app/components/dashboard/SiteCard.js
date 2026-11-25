@@ -6,7 +6,8 @@ import { dozzleContainerUrl, projectKind, projectUrls, typeTone, URL_LABELS } fr
 import { isBuildingProject, waitLabel } from "../../lib/waiting";
 import GlowChart from "../ui/GlowChart";
 import HostsStatus from "../ui/HostsStatus";
-import { IconChevron, IconMore, IconPlay, IconRebuild, IconRestart, IconStop, IconTrash, Spinner } from "../ui/Icons";
+import NotRunningModal from "./NotRunningModal";
+import { IconChevron, IconInfo, IconMore, IconPlay, IconRebuild, IconRestart, IconStop, IconTrash, Spinner } from "../ui/Icons";
 import ServiceChip from "../ui/ServiceChip";
 import UrlChip from "../ui/UrlChip";
 
@@ -67,21 +68,18 @@ export default function SiteCard({
 	const cpuHistory = history?.cpu || [];
 	const failed = project.notice && project.notice.ok === false && project.notice.message;
 
+	// Links of a stopped project would only hit a proxy error, so a plain click asks first.
+	const [blockedUrl, setBlockedUrl] = useState("");
+	const offline = !running;
+
+	function guardOpen(event, url) {
+		if (!offline || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+		event.preventDefault();
+		setBlockedUrl(url);
+	}
+
 	const compact = variant === "compact";
 	const wide = variant === "comfortable";
-
-	function openDetails(event) {
-		if (event.target.closest("a,button,[role='menu']")) return;
-		onOpen?.(project.domain);
-	}
-
-	function onCardKey(event) {
-		if (event.target !== event.currentTarget) return;
-		if (event.key === "Enter" || event.key === " ") {
-			event.preventDefault();
-			onOpen?.(project.domain);
-		}
-	}
 
 	const frame = waiting
 		? "neon-busy border-warn/40"
@@ -138,7 +136,6 @@ export default function SiteCard({
 		<CardMenu
 			waiting={waiting}
 			deleting={action === "delete"}
-			onDetails={() => onOpen?.(project.domain)}
 			onDelete={() => onDelete?.(project.domain)}
 		/>
 	);
@@ -146,18 +143,32 @@ export default function SiteCard({
 	const hostLink = project.url ? (
 		// One line in every layout: a long host ends in "…" (full host on hover)
 		// instead of breaking mid-word, and the ↗ always stays visible.
-		<a
-			href={project.url}
-			target="_blank"
-			rel="noreferrer"
-			title={hostLabel}
-			className="text-glow inline-flex min-w-0 max-w-full items-center gap-1 font-mono text-[12px] text-accent hover:underline"
-		>
-			<span className="truncate">{hostLabel}</span>
-			<span aria-hidden className="shrink-0">
-				↗
-			</span>
-		</a>
+		// Stopped: muted, no glow; the href stays so copy link / middle-click still work.
+		<>
+			<a
+				href={project.url}
+				target="_blank"
+				rel="noreferrer"
+				title={offline ? `${hostLabel} · stopped, start the project to open it` : hostLabel}
+				onClick={(event) => guardOpen(event, project.url)}
+				className={`inline-flex min-w-0 max-w-full items-center gap-1 font-mono text-[12px] hover:underline ${
+					offline ? "text-muted" : "text-glow text-accent"
+				}`}
+			>
+				<span className="truncate">{hostLabel}</span>
+				<span aria-hidden className={`shrink-0 ${offline ? "opacity-50" : ""}`}>
+					↗
+				</span>
+			</a>
+			<NotRunningModal
+				open={!!blockedUrl}
+				project={project.domain}
+				url={blockedUrl}
+				starting={waiting}
+				onStart={() => onAction("start", project.domain)}
+				onClose={() => setBlockedUrl("")}
+			/>
+		</>
 	) : (
 		<span className="truncate font-mono text-[12px] text-muted">{hostLabel || "No domain"}</span>
 	);
@@ -230,6 +241,8 @@ export default function SiteCard({
 								label={URL_LABELS[item.key] || item.key}
 								url={item.url}
 								compact
+								offline={offline}
+								onOpen={(event) => guardOpen(event, item.url)}
 							/>
 						))}
 						{project.hosts?.site ? (
@@ -244,6 +257,23 @@ export default function SiteCard({
 				) : null}
 			</div>
 		) : null;
+
+	// The project drawer (paths, volumes, env keys) opens only from this button,
+	// so a stray click on the card never pops it open.
+	const infoButton = onOpen ? (
+		<button
+			type="button"
+			onClick={() => onOpen(selected ? "" : project.domain)}
+			aria-pressed={selected}
+			title="Project info: paths, volumes, env keys"
+			aria-label="Project info: paths, volumes, env keys"
+			className={`inline-flex h-8 w-8 items-center justify-center rounded-lg hover:bg-fg/10 hover:text-fg ${
+				selected ? "bg-accent/15 text-accent" : "text-muted"
+			}`}
+		>
+			<IconInfo />
+		</button>
+	) : null;
 
 	const detailsToggle =
 		onToggleDetails && hasDetails && !wide ? (
@@ -262,11 +292,8 @@ export default function SiteCard({
 	if (compact) {
 		return (
 			<article
-				tabIndex={0}
-				onClick={openDetails}
-				onKeyDown={onCardKey}
-				aria-label={`${project.domain}, ${statusLabel}. Press Enter for details.`}
-				className={`relative flex min-w-0 cursor-pointer flex-col gap-2 rounded-xl border bg-panel/90 px-3 py-2 transition hover:border-accent/40 ${frame} ${
+				aria-label={`${project.domain}, ${statusLabel}`}
+				className={`relative flex min-w-0 flex-col gap-2 rounded-xl border bg-panel/90 px-3 py-2 transition hover:border-accent/40 ${frame} ${
 					selected ? "ring-1 ring-accent/50" : ""
 				}`}
 			>
@@ -297,6 +324,7 @@ export default function SiteCard({
 						{primaryAction}
 						{secondaryActions}
 						{detailsToggle}
+						{infoButton}
 						{menu}
 					</div>
 				</div>
@@ -325,11 +353,8 @@ export default function SiteCard({
 	if (wide) {
 		return (
 			<article
-				tabIndex={0}
-				onClick={openDetails}
-				onKeyDown={onCardKey}
-				aria-label={`${project.domain}, ${statusLabel}. Press Enter for details.`}
-				className={`relative grid min-w-0 cursor-pointer gap-x-6 gap-y-4 rounded-2xl border bg-panel/90 p-5 transition hover:border-accent/40 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] ${frame} ${
+				aria-label={`${project.domain}, ${statusLabel}`}
+				className={`relative grid min-w-0 gap-x-6 gap-y-4 rounded-2xl border bg-panel/90 p-5 transition hover:border-accent/40 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] ${frame} ${
 					selected ? "ring-1 ring-accent/50" : ""
 				}`}
 			>
@@ -387,6 +412,7 @@ export default function SiteCard({
 						{secondaryActions}
 						<div className="ml-auto flex items-center gap-1">
 							{detailsToggle}
+							{infoButton}
 							{menu}
 						</div>
 					</footer>
@@ -402,11 +428,8 @@ export default function SiteCard({
 
 	return (
 		<article
-			tabIndex={0}
-			onClick={openDetails}
-			onKeyDown={onCardKey}
-			aria-label={`${project.domain}, ${statusLabel}. Press Enter for details.`}
-			className={`relative flex min-w-0 cursor-pointer flex-col gap-3 rounded-2xl border bg-panel/90 p-3.5 transition hover:border-accent/40 ${frame} ${
+			aria-label={`${project.domain}, ${statusLabel}`}
+			className={`relative flex min-w-0 flex-col gap-3 rounded-2xl border bg-panel/90 p-3.5 transition hover:border-accent/40 ${frame} ${
 				selected ? "ring-1 ring-accent/50" : ""
 			}`}
 		>
@@ -470,6 +493,7 @@ export default function SiteCard({
 				/>
 				<div className="ml-auto flex items-center gap-1">
 					{detailsToggle}
+					{infoButton}
 					{menu}
 				</div>
 			</footer>
@@ -517,7 +541,7 @@ export function CardButton({ label, icon, tone = "", iconOnly = false, disabled,
 	);
 }
 
-function CardMenu({ waiting, deleting, onDetails, onDelete }) {
+function CardMenu({ waiting, deleting, onDelete }) {
 	const [open, setOpen] = useState(false);
 	const root = useRef(null);
 
@@ -555,17 +579,6 @@ function CardMenu({ waiting, deleting, onDetails, onDelete }) {
 					role="menu"
 					className="absolute bottom-[calc(100%+0.35rem)] right-0 z-40 min-w-[11rem] overflow-hidden rounded-xl border border-line bg-panel py-1 shadow-card"
 				>
-					<button
-						type="button"
-						role="menuitem"
-						onClick={() => {
-							setOpen(false);
-							onDetails();
-						}}
-						className="flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] font-semibold text-fg hover:bg-fg/10"
-					>
-						Details
-					</button>
 					<button
 						type="button"
 						role="menuitem"

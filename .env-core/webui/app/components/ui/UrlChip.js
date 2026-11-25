@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { IconCheck, IconCopy, IconExternal } from "./Icons";
 
-export default function UrlChip({ label, url, compact = false }) {
+export default function UrlChip({ label, url, compact = false, offline = false, onOpen }) {
 	const [copied, setCopied] = useState(false);
 
 	if (!url) return null;
@@ -30,8 +30,9 @@ export default function UrlChip({ label, url, compact = false }) {
 				href={url}
 				target="_blank"
 				rel="noreferrer"
-				title={`Open ${url}`}
-				className="inline-flex min-w-0 items-center gap-1.5 hover:text-accent"
+				title={offline ? `${url} · stopped` : `Open ${url}`}
+				onClick={onOpen}
+				className={`inline-flex min-w-0 items-center gap-1.5 hover:text-accent ${offline ? "opacity-60" : ""}`}
 			>
 				<span className="text-[10px] font-bold uppercase tracking-wider text-muted">{label}</span>
 				<span className="truncate font-mono text-[11px]">
