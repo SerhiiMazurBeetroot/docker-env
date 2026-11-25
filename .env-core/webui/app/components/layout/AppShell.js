@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSnapshot } from "../snapshot/SnapshotProvider";
-import { LogoMark } from "../ui/Icons";
+import LiveLogo, { liveLogoSummary } from "./LiveLogo";
 
 const NAV = [
 	{ id: "sites", label: "Sites", href: "/", icon: IconGlobe },
@@ -27,7 +27,7 @@ export default function AppShell({ active = "sites", badges = {}, children }) {
 	return (
 		<div className="flex min-h-screen flex-col md:flex-row">
 			<aside className="sticky top-0 z-40 hidden h-screen w-56 shrink-0 flex-col gap-1 border-r border-line bg-ink/70 px-3 py-5 backdrop-blur-xl md:flex">
-				<Brand />
+				<Brand projects={projects} system={system} />
 				<nav className="mt-5 flex flex-col gap-1" aria-label="Main">
 					{nav.map((item) => (
 						<NavItem key={item.id} item={item} active={active === item.id} count={counts[item.id]} />
@@ -37,7 +37,7 @@ export default function AppShell({ active = "sites", badges = {}, children }) {
 			</aside>
 
 			<header className="sticky top-0 z-40 border-b border-line bg-ink/85 px-4 pb-2 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-xl md:hidden">
-				<Brand />
+				<Brand projects={projects} system={system} />
 				<nav className="-mx-1 mt-2 flex gap-1 overflow-x-auto pb-1" aria-label="Main">
 					{nav.map((item) => (
 						<NavItem key={item.id} item={item} active={active === item.id} count={counts[item.id]} compact />
@@ -50,10 +50,15 @@ export default function AppShell({ active = "sites", badges = {}, children }) {
 	);
 }
 
-function Brand() {
+function Brand({ projects, system }) {
+	const summary = liveLogoSummary(projects, system);
 	return (
-		<Link href="/" className="flex items-center gap-2.5 px-2 text-fg">
-			<LogoMark className="h-8 w-8 shrink-0 rounded-lg shadow-[0_0_14px_-2px_rgb(var(--accent)/0.55)]" />
+		<Link href="/" title={summary || undefined} className="brand-link flex items-center gap-2.5 px-2 text-fg">
+			<LiveLogo
+				projects={projects}
+				system={system}
+				className="h-8 w-8 shrink-0 rounded-lg shadow-[0_0_14px_-2px_rgb(var(--accent)/0.55)]"
+			/>
 			<span className="font-display text-[17px] font-semibold tracking-wide">docker-env</span>
 		</Link>
 	);

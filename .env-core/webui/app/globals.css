@@ -184,10 +184,139 @@
 		}
 	}
 
+
+	/* Live brand mark (components/layout/LiveLogo.js).
+	 * Boot, loop and hover are on nested elements so they never cancel each other.
+	 * Heartbeat: one 4.8s cycle; the sweep crosses the stem in ~1.4s and each lit block
+	 * flashes as the sweep passes its row (delays below are tuned to the row positions). */
+	.live-logo {
+		--logo-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+		--logo-beat: 4.8s;
+		--logo-loop-start: 1100ms;
+	}
+
+	.live-logo .live-logo-boot-stem {
+		transform-box: fill-box;
+		transform-origin: center bottom;
+		animation: live-logo-grow 460ms var(--logo-ease) both;
+	}
+
+	.live-logo .live-logo-boot-row {
+		transform-box: fill-box;
+		transform-origin: left center;
+		animation: live-logo-dock 560ms var(--logo-ease) var(--d, 0ms) both;
+	}
+
+	.live-logo .live-logo-row {
+		transform-box: fill-box;
+		transition: transform 260ms var(--logo-ease);
+	}
+
+	.brand-link:hover .live-logo-row,
+	.brand-link:focus-visible .live-logo-row {
+		transform: translateX(var(--shift, 1px));
+	}
+
+	.live-logo .live-logo-stem,
+	.live-logo .live-logo-block {
+		transition:
+			fill 500ms ease,
+			fill-opacity 500ms ease;
+	}
+
+	.live-logo .live-logo-sweep {
+		opacity: 0;
+	}
+
+	.live-logo[data-state="ok"][data-active="true"] .live-logo-sweep {
+		animation: live-logo-sweep var(--logo-beat) ease-in-out var(--logo-loop-start) infinite;
+	}
+
+	.live-logo[data-state="ok"][data-active="true"] .live-logo-block[data-lit="true"] {
+		animation: live-logo-flash var(--logo-beat) ease-out calc(var(--logo-loop-start) + 230ms + var(--p, 0ms)) infinite;
+	}
+
+	.live-logo[data-state="warn"] .live-logo-stem {
+		animation: live-logo-pulse 2.4s ease-in-out 600ms infinite;
+	}
+
+	.live-logo[data-state="down"] .live-logo-stem {
+		animation: live-logo-pulse 1.2s ease-in-out 600ms infinite;
+	}
+
+	@keyframes live-logo-grow {
+		from {
+			opacity: 0;
+			transform: scaleY(0.15);
+		}
+		40% {
+			opacity: 1;
+		}
+		to {
+			opacity: 1;
+			transform: none;
+		}
+	}
+
+	@keyframes live-logo-dock {
+		from {
+			opacity: 0;
+			transform: translateX(-7px) scaleX(0.4);
+		}
+		70% {
+			opacity: 1;
+			transform: translateX(0.7px) scaleX(1.02);
+		}
+		to {
+			opacity: 1;
+			transform: none;
+		}
+	}
+
+	@keyframes live-logo-sweep {
+		0% {
+			opacity: 0;
+			transform: translateY(0);
+		}
+		4%,
+		26% {
+			opacity: 1;
+		}
+		30%,
+		100% {
+			opacity: 0;
+			transform: translateY(24px);
+		}
+	}
+
+	@keyframes live-logo-flash {
+		0%,
+		12%,
+		100% {
+			fill: #8aa4ff;
+		}
+		3% {
+			fill: #dfe6ff;
+		}
+	}
+
+	@keyframes live-logo-pulse {
+		0%,
+		100% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0.45;
+		}
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.progress-slide,
-		.animate-pulsedot {
-			animation: none;
+		.animate-pulsedot,
+		.live-logo *,
+		.live-logo .live-logo-row {
+			animation: none !important;
+			transition: none !important;
 		}
 	}
 
