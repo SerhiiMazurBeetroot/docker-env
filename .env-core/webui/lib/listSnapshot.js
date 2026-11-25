@@ -295,10 +295,9 @@ async function writeDockerHosts(source, text) {
 }
 
 export async function loadHostsText(force = false) {
-	if (!force && hostsCache.at && Date.now() - hostsCache.at < 8000) {
-		return hostsCache;
-	}
-
+	// A mounted hosts file is tiny, so it is read on every call. Caching it hid lines that
+	// "create" writes right after the containers start: the refresh fired by the last docker
+	// event reused text read before the write, and the "missing from hosts" banner stuck.
 	const file = hostsFilePath();
 	if (file) {
 		try {
@@ -306,6 +305,11 @@ export async function loadHostsText(force = false) {
 		} catch (err) {
 			// try docker next
 		}
+	}
+
+	// The docker fallback starts a container per read, so only that path is cached.
+	if (!force && hostsCache.at && Date.now() - hostsCache.at < 8000) {
+		return hostsCache;
 	}
 
 	// /etc/hosts inside Docker is the VM file. On OrbStack it can look like the Mac

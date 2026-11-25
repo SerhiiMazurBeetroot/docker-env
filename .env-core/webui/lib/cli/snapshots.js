@@ -1,7 +1,7 @@
 import fs from "fs";
 import { spawn } from "child_process";
 import { decorateList } from "../diagnostics.js";
-import { sampleProjectStats } from "../listSnapshot";
+import { hostsFilePath, sampleProjectStats } from "../listSnapshot";
 import { getCachedSnapshot, markSnapshotDirty, rememberSnapshot, snapshotCacheIsStale } from "./cache.js";
 import { listProjects, listProjectsLite } from "./list.js";
 import { instancesDir } from "./shared.js";
@@ -19,6 +19,7 @@ export function streamProjectSnapshots(signal) {
 	let queued = false;
 	let eventsChild = null;
 	let watcher = null;
+	let hostsWatch = null;
 	let pingTimer = null;
 	let statsTimer = null;
 
@@ -130,6 +131,22 @@ export function streamProjectSnapshots(signal) {
 				// listing still works from docker events
 			}
 
+			// The hosts file changes without any docker event (create writes it after the
+			// containers start, or someone edits it by hand). Polling stat works through the
+			// single-file bind mount, where fs.watch events do not arrive.
+			try {
+				const hostsFile = hostsFilePath();
+				if (hostsFile) {
+					const onHosts = (curr, prev) => {
+						if (curr.mtimeMs !== prev.mtimeMs || curr.size !== prev.size) scheduleRefresh();
+					};
+					fs.watchFile(hostsFile, { interval: 2000, persistent: false }, onHosts);
+					hostsWatch = () => fs.unwatchFile(hostsFile, onHosts);
+				}
+			} catch (err) {
+				// the banner still updates on the next docker event
+			}
+
 			pingTimer = setInterval(() => {
 				sendRaw(": ping\n\n");
 			}, 15000);
@@ -142,6 +159,7 @@ export function streamProjectSnapshots(signal) {
 				clearInterval(statsTimer);
 				eventsChild?.kill("SIGTERM");
 				watcher?.close();
+				hostsWatch?.();
 				signal?.removeEventListener("abort", onAbort);
 				try {
 					controller.close();
@@ -162,6 +180,7 @@ export function streamProjectSnapshots(signal) {
 			clearInterval(statsTimer);
 			eventsChild?.kill("SIGTERM");
 			watcher?.close();
+			hostsWatch?.();
 		},
 	});
 

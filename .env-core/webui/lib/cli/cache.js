@@ -12,7 +12,7 @@ function mergeLiteIntoCache(full, lite) {
 		partial: false,
 		projects: (full.projects || []).map((item) => {
 			const hit = byDomain.get(item.domain);
-			return hit ? { ...item, running: hit.running, status: hit.status } : item;
+			return hit ? { ...item, running: hit.running, status: hit.status, hosts: hit.hosts || item.hosts } : item;
 		}),
 		system: (full.system || []).map((item) => {
 			const hit = byId.get(item.id);
