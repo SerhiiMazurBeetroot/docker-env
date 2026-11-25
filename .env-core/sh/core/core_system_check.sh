@@ -144,13 +144,3 @@ require_command() {
 		exit 1
 	fi
 }
-
-function is_file() {
-	local file=$1
-	[[ -f "$file" ]]
-}
-
-function is_dir() {
-	local dir=$1
-	[[ -d "$dir" ]]
-}

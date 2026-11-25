@@ -11,7 +11,6 @@ database_replace_project_from_db() {
 		DOMAIN_FULL=$(instances_get domain_full)
 
 		PREV_INSTANCES=$(instances_line)
-		PREV_DB_NAME=$(instances_get db_name)
 
 		# DB_FILE
 		get_db_file
@@ -36,8 +35,6 @@ database_replace_project_from_db() {
 		instances_set_field db_name "$NEW_DB_NAME"
 
 		# Replace .env
-		PREV_DB_ENV=$(awk '/'MYSQL_DATABASE'/{print}' $PROJECT_DOCKER_DIR/.env | head -n 1)
-		PREV_TABLE_PREFIX=$(awk '/'TABLE_PREFIX'/{print}' $PROJECT_DOCKER_DIR/.env | head -n 1)
 		sed_inplace "s|^MYSQL_DATABASE=.*$|MYSQL_DATABASE='$NEW_DB_NAME'|" "$PROJECT_DOCKER_DIR/.env"
 		sed_inplace "s|^TABLE_PREFIX=.*$|TABLE_PREFIX='$NEW_TABLE_PREFIX'|" "$PROJECT_DOCKER_DIR/.env"
 

@@ -97,13 +97,3 @@ update_core_env_file() {
 	# Update the .env file
 	sed_inplace "s|^HOSTS_FILE=.*$|HOSTS_FILE=${HOSTS_FILE}|g" "$FILE_ENV"
 }
-
-get_bash_version() {
-	# Check if Bash version is 4 or higher
-	if [[ "${BASH_VERSINFO:-0}" -lt 4 ]]; then
-		ECHO_ERROR "Please install Bash 4 or higher."
-		ECHO_KEY_VALUE "- bash: " "$BASH_VERSION"
-
-		exit 1
-	fi
-}

@@ -12,14 +12,8 @@ get_latest_wp_version() {
 
 	if [[ -z "${WP[0]:-}" ]]; then
 		WP_LATEST_VER=""
-		WP_PREV_VER=""
 		return 0
 	fi
 
 	WP_LATEST_VER=$(echo "${WP[0]}" | grep -Eo '[0-9]+\.[0-9]+\.?[0-9]+' || echo "${WP[0]}.0")
-	if [[ -n "${WP[1]:-}" ]]; then
-		WP_PREV_VER=$(echo "${WP[1]}" | grep -Eo '[0-9]+\.[0-9]+\.?[0-9]+' || echo "${WP[1]}.0")
-	else
-		WP_PREV_VER=""
-	fi
 }

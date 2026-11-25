@@ -8,7 +8,6 @@ export DIR_NGINX="$DIR_SYSTEM/nginx"
 export FILE_SETTINGS="$DIR_DATA/settings.log"
 export FILE_INSTANCES="$DIR_DATA/instances.json"
 export FILE_INSTANCES_LOG="$DIR_DATA/instances.log"
-export FILE_DOCKER_HUB="$DIR_DATA/dockerHub.log"
 export FILE_ENV="$DIR_SYSTEM/.env"
 export FILE_WEBUI_PID="$DIR_DATA/webui.pid"
 
@@ -48,7 +47,6 @@ export PORT=""
 export PORT_FRONT=""
 export COMPOSE_PROJECT_NAME=""
 export MONGODB_LOCAL_PORT=""
-export MONGODB_DOCKER_PORT=""
 export MONGO_EXPRESS_PORT=""
 export ELASTIC_PORT=""
 export KIBANA_PORT=""
@@ -105,7 +103,6 @@ export CREATE_SKIP_PERMISSIONS=0
 export CREATE_SKIP_DOCKER_RESTART=0
 
 export WP_LATEST_VER=""
-export WP_PREV_VER=""
 
 # Bash 3.2 arrays (not exported)
 TESTS_PROJECT_TYPES=()

@@ -7,7 +7,6 @@ set_project_vars() {
 	get_project_type
 
 	PROJECT_DIR=$PROJECT_TYPE
-	DOMAIN_NODOT=$(echo "$DOMAIN_NAME" | tr . _)
 	PROJECT_ROOT_DIR="$ENV_DIR"/"$PROJECT_DIR"/"$DOMAIN_FULL"
 	PROJECT_ARCHIVE_DIR=$PROJECT_DIR"_""$DOMAIN_FULL"
 
@@ -25,7 +24,6 @@ set_project_vars() {
 	DOMAIN_MAIL=""
 	HOST_EXTRA=""
 
-	PROJECT_BACKEND_DIR=$PROJECT_ROOT_DIR/backend
 	PROJECT_FRONTEND_DIR=$PROJECT_ROOT_DIR/frontend
 
 	if [[ -z "$PORT_FRONT" ]]; then

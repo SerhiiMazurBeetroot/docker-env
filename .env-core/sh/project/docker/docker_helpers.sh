@@ -74,11 +74,6 @@ docker_compose_runner() {
 	)
 }
 
-# Backwards-compatible alias for tests_helpers.
-docker_compose_unset_project_env() {
-	docker_compose_unset_interpolation_env
-}
-
 # Run compose in a subshell (safe interpolation) and capture stdout — for tests/ps checks.
 docker_compose_output() {
 	local COMMAND=${1:-}
@@ -115,35 +110,6 @@ docker_names_matching() {
 			if (hit && !seen[$NF]++) print $NF
 		}
 	'
-}
-
-docker_official_image_exists() {
-	ECHO_YELLOW "Cheking docker image exists: $1"
-
-	# First check local image
-	exist=$(docker image inspect "$1" >/dev/null 2>&1 && echo yes || echo no)
-
-	# Second check FILE_DOCKER_HUB
-	if [[ -f "$FILE_DOCKER_HUB" ]]; then
-		remote_image_exist=$(awk '/'"$1"'/{print $1}' "$FILE_DOCKER_HUB")
-		[[ ! "$remote_image_exist" ]] && exist=no || exist=yes
-	fi
-
-	# Only after than check remote (increase limit)
-	if [[ "$exist" == "no" ]]; then
-		exist=$(docker manifest inspect "$1" >/dev/null 2>&1 && echo yes || echo no)
-	fi
-
-	if [[ "$exist" == "no" ]]; then
-		WP_VERSION=$WP_PREV_VER
-	else
-		WP_VERSION=$WP_LATEST_VER
-
-		# Save image to FILE_DOCKER_HUB
-		if [ ! "$remote_image_exist" ]; then
-			echo "$1" >>"$FILE_DOCKER_HUB"
-		fi
-	fi
 }
 
 get_docker_ip() {

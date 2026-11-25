@@ -86,14 +86,6 @@ env_file_value() {
 	printf '%s' "$value"
 }
 
-replace_env() {
-	local key=$1
-	local value=$2
-	local file=$3
-
-	sed_inplace "s|{$key}|${value}|g" "$file"
-}
-
 # Load existing .env, or create placeholders. Prefer env_create for new sites.
 env_file_load() {
 	local ACTION=${1:-}
@@ -103,9 +95,6 @@ env_file_load() {
 		env_create
 		[[ "yes" == "${MULTISITE:-}" ]] && wp_multisite_env
 		rm -f "$PROJECT_ROOT_DIR/.env.example"
-	elif [[ $ACTION == 'update' ]]; then
-		sed_inplace "s|^DOMAIN_ELASTIC=.*$|DOMAIN_ELASTIC='${DOMAIN_ELASTIC:-}'|" "$PROJECT_DOCKER_DIR/.env"
-		sed_inplace "s|^DOMAIN_KIBANA=.*$|DOMAIN_KIBANA='${DOMAIN_KIBANA:-}'|" "$PROJECT_DOCKER_DIR/.env"
 	elif [[ -f "$PROJECT_DOCKER_DIR/.env" ]]; then
 		env_load
 	else

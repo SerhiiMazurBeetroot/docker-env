@@ -225,7 +225,6 @@ _project_catalog_split() {
 	done
 
 	ALL_PROJECT_TYPES=("${STABLE_PROJECTS[@]}" "${WIP_PROJECTS[@]}")
-	ALL_PROJECT_TITLES=("${STABLE_PROJECT_TITLES[@]}" "${WIP_PROJECT_TITLES[@]}")
 }
 
 _project_catalog_split

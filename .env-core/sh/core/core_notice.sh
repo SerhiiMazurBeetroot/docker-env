@@ -123,7 +123,7 @@ notice_project_ips() {
 		fi
 	done
 
-	env_file_load # TODO: why was "update" ?
+	env_file_load
 }
 
 notice_project_vars() {

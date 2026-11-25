@@ -82,22 +82,6 @@ wp_get_default_theme() {
 	fi
 }
 
-wp_npm_install() {
-	if [ "$DOMAIN_NAME" == '' ]; then
-		running_projects_list "======= Install npm ======" || return 1
-		wp_get_default_theme
-	fi
-
-	if [[ -f "$PROJECT_WP_CONTENT_DIR/themes/$WP_DEFAULT_THEME/package.json" ]]; then
-		EMPTY_LINE
-		ECHO_YELLOW "Running npm install... $DOCKER_CONTAINER_APP"
-		docker exec -i \
-			-e WP_THEME="${WP_DEFAULT_THEME}" \
-			"$DOCKER_CONTAINER_APP" \
-			bash -lc 'cd "./wp-content/themes/$WP_THEME" && rm -rf ./node_modules && npm install' || true
-	fi
-}
-
 wait_for_wp_core() {
 	local marker="/var/www/html/wp-includes/version.php"
 

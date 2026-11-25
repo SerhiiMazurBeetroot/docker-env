@@ -67,11 +67,6 @@ env_load_file() {
 	done <"$file"
 }
 
-mysql_root() {
-	docker exec -e MYSQL_PWD="${MYSQL_ROOT_PASSWORD:-}" -i "$DOCKER_CONTAINER_DB" \
-		"${MYSQL_CMD:-mysql}" -uroot --silent "$@"
-}
-
 git_push_origin_with_token() {
 	local token="$1"
 	local askpass

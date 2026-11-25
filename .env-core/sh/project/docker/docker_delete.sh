@@ -59,35 +59,3 @@ docker_delete_project() {
 	notice_windows_host rem
 	ECHO_SUCCESS "Project deleted [${DOMAIN_NAME:-}]"
 }
-
-docker_delete() {
-	get_existing_domains "======== DELETE project =======" || return 1
-
-	if [ -d "$PROJECT_ROOT_DIR" ]; then
-		EMPTY_LINE
-		ECHO_ATTENTION "You can't restore the site after it has been deleted."
-		ECHO_ATTENTION "This operation will remove the localhost containers, volumes, and the WordPress core files."
-
-		while true; do
-			ECHO_WARN_YELLOW "Removing now... [$PROJECT_ROOT_DIR]"
-			yn=$(GET_USER_INPUT "question" "Do you wish to proceed?" "y")
-
-			case $yn in
-			[Yy]*)
-				EMPTY_LINE
-				docker_delete_project
-				break
-				;;
-			[Nn]*)
-				unset_variables
-				return 1
-				;;
-
-			*) echo "Please answer [y/n]" ;;
-			esac
-		done
-	else
-		ECHO_ERROR "Site DIR does not exist: $PROJECT_ROOT_DIR"
-		delete_site_data || return 1
-	fi
-}
