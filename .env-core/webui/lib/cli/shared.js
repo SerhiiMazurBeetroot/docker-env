@@ -60,22 +60,44 @@ function isComposeNoise(line) {
 		/^(exporting|writing image|naming to|transferring|resolving provenance|DONE )\b/.test(line) ||
 		/platform \(linux\//.test(line) ||
 		/Compose now can delegate build/.test(line) ||
-		/COMPOSE_BAKE/.test(line)
+		/COMPOSE_BAKE/.test(line) ||
+		// Docker CLI logfmt notes, e.g. `time="…" level=warning msg="… attribute `version` is obsolete"`.
+		/^time="[^"]*"\s+level=(warning|info|debug)\b/.test(line) ||
+		/^(WARN|INFO)\[\d+\]/.test(line)
 	);
 }
 
+// The one line that explains a failed CLI run, for the card and the diagnostics log.
+// Pick the cause, not the last word: cleanup after a failure prints more errors and warnings.
+//   1. A docker/build failure ("failed to solve: …", "Error response from daemon: …"),
+//      with a tool error code such as ERR_PNPM_IGNORED_BUILDS appended when one was printed.
+//   2. Otherwise the first shell `[ERROR]` line (ECHO_ERROR); later ones are usually fallout.
+//   3. Otherwise the last line that is not compose progress or a docker note.
 export function failureLine(log, fallback) {
 	const lines = String(log || "")
 		.replace(/\u001b\[[0-9;]*m/g, "")
 		.split("\n")
 		.map((line) => line.trim())
 		.filter(Boolean);
-	for (let i = lines.length - 1; i >= 0; i -= 1) {
-		const cleaned = lines[i].replace(/^🛑\s*/, "").replace(/^\[ERROR\]\s*/, "").trim();
-		if (!cleaned || isComposeNoise(cleaned)) continue;
-		return cleaned.slice(0, 500);
+	const clip = (text) => text.slice(0, 500);
+
+	const tool = [...lines].reverse().find((line) => /^(failed to solve:|Error response from daemon:)/.test(line));
+	if (tool) {
+		const code = lines.map((line) => line.match(/\b(ERR_[A-Z0-9_]+)\b/)?.[1]).find(Boolean);
+		return clip(code && !tool.includes(code) ? `${tool} (${code})` : tool);
 	}
-	return String(fallback || "Command failed").slice(0, 500);
+
+	for (const line of lines) {
+		const match = line.match(/^(?:🛑\s*)?\[ERROR\]\s*(.+)$/);
+		if (match && match[1].trim()) return clip(match[1].trim());
+	}
+
+	for (let i = lines.length - 1; i >= 0; i -= 1) {
+		const cleaned = lines[i].replace(/^🛑\s*/, "").trim();
+		if (!cleaned || isComposeNoise(cleaned)) continue;
+		return clip(cleaned);
+	}
+	return clip(String(fallback || "Command failed"));
 }
 
 export function recordLastAction(domain, action, ok, message = "") {

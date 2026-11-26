@@ -8,6 +8,7 @@ import GlowChart from "../ui/GlowChart";
 import HostsStatus from "../ui/HostsStatus";
 import NotRunningModal from "./NotRunningModal";
 import { IconChevron, IconInfo, IconMore, IconPlay, IconRebuild, IconRestart, IconStop, IconTrash, Spinner } from "../ui/Icons";
+import ErrorHint from "../ui/ErrorHint";
 import ServiceChip from "../ui/ServiceChip";
 import UrlChip from "../ui/UrlChip";
 
@@ -67,6 +68,12 @@ export default function SiteCard({
 	const tone = TONES[index % TONES.length];
 	const cpuHistory = history?.cpu || [];
 	const failed = project.notice && project.notice.ok === false && project.notice.message;
+	// "delete" → "Delete failed". Shell errors without a known action read "Last command failed".
+	const failedAction = String(project.notice?.action || "").trim();
+	const failedLabel =
+		failedAction && failedAction !== "cli"
+			? `${failedAction.charAt(0).toUpperCase()}${failedAction.slice(1)} failed`
+			: "Last command failed";
 
 	// Links of a stopped project would only hit a proxy error, so a plain click asks first.
 	const [blockedUrl, setBlockedUrl] = useState("");
@@ -173,13 +180,11 @@ export default function SiteCard({
 		<span className="truncate font-mono text-[12px] text-muted">{hostLabel || "No domain"}</span>
 	);
 
+	// Last failure: a red icon next to the status, full message on hover/focus/tap.
+	const errorHint = failed ? <ErrorHint label={failedLabel} message={project.notice.message} /> : null;
+
 	const alerts = (
 		<>
-			{failed ? (
-				<p className="m-0 rounded-lg border border-danger/30 bg-danger/10 px-2.5 py-1.5 text-[12px] text-danger">
-					{project.notice.message}
-				</p>
-			) : null}
 			{siteMissing ? (
 				<div className="flex items-center gap-2 rounded-lg border border-warn/30 bg-warn/10 px-2.5 py-1.5 text-[12px] text-warn">
 					<span className="min-w-0 flex-1">This domain is missing from your hosts file.</span>
@@ -308,8 +313,11 @@ export default function SiteCard({
 					<span className={`shrink-0 rounded-md px-2 py-0.5 font-mono text-[11px] font-medium ${typeTone(project.type)}`}>
 						{project.type || "site"}
 					</span>
-					<span className={`w-20 shrink-0 text-[12px] font-semibold capitalize ${STATUS_TEXT[kind] || "text-muted"}`}>
-						{statusLabel}
+					<span className="inline-flex w-24 shrink-0 items-center gap-1">
+						<span className={`text-[12px] font-semibold capitalize ${STATUS_TEXT[kind] || "text-muted"}`}>
+							{statusLabel}
+						</span>
+						{errorHint}
 					</span>
 					<div className="flex shrink-0 items-center gap-4 font-mono text-[12px] tabular-nums">
 						<InlineMetric label="CPU" value={running && resources ? resources.cpu : "—"} warn={resources?.high} />
@@ -328,7 +336,7 @@ export default function SiteCard({
 						{menu}
 					</div>
 				</div>
-				{failed || siteMissing ? <div className="grid gap-1.5">{alerts}</div> : null}
+				{siteMissing ? <div className="grid gap-1.5">{alerts}</div> : null}
 				{details ? <div className="border-t border-line pb-1 pt-2.5">{details}</div> : null}
 				{waiting ? (
 					<span className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
@@ -381,6 +389,7 @@ export default function SiteCard({
 
 					<div className="flex items-center gap-2 text-[12px]">
 						<span className={`font-semibold capitalize ${STATUS_TEXT[kind] || "text-muted"}`}>{statusLabel}</span>
+						{errorHint}
 						{services.length ? (
 							<span className="font-mono text-muted">
 								· {runningServices}/{services.length} containers
@@ -446,6 +455,7 @@ export default function SiteCard({
 
 			<div className="flex items-center gap-2 text-[12px]">
 				<span className={`font-semibold capitalize ${STATUS_TEXT[kind] || "text-muted"}`}>{statusLabel}</span>
+				{errorHint}
 				{services.length ? (
 					<span className="ml-auto font-mono text-muted">
 						{runningServices}/{services.length} containers

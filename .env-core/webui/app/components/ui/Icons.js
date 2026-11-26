@@ -127,6 +127,15 @@ export function IconInfo({ className = "h-3.5 w-3.5" }) {
 	);
 }
 
+export function IconWarn({ className = "h-3.5 w-3.5" }) {
+	return (
+		<svg viewBox="0 0 16 16" className={className} fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
+			<path d="M7.1 2.6a1 1 0 0 1 1.8 0l5.3 9.6a1 1 0 0 1-.9 1.5H2.7a1 1 0 0 1-.9-1.5l5.3-9.6z" strokeLinejoin="round" />
+			<path d="M8 6.2v3.2M8 11.4v.1" strokeLinecap="round" />
+		</svg>
+	);
+}
+
 export function IconTrash({ className = "h-3.5 w-3.5" }) {
 	return (
 		<svg viewBox="0 0 16 16" className={className} fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>

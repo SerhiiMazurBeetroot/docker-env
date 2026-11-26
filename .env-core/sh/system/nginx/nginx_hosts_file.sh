@@ -143,7 +143,9 @@ setup_hosts_file() {
 			_hosts_remove_line "$ETC_HOSTS" "$DOMAIN_FULL" "$privileged" || return 1
 			EMPTY_LINE
 		else
-			ECHO_ERROR "$DOMAIN_FULL was not found in your $ETC_HOSTS"
+			# Nothing to remove is a normal outcome (rollback of a create that never added the line),
+			# not an error: ECHO_ERROR would log a diagnostic and could become the card's reason.
+			ECHO_YELLOW "$DOMAIN_FULL is not in $ETC_HOSTS, nothing to remove"
 		fi
 	fi
 
