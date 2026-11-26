@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { appendCliLog, readSse, visibleLog } from "../../lib/logs";
-import { filterProjects, projectStats, projectTypes, bulkTargets, dozzleBaseUrl, dozzleContainerUrl, readProjectFilter, readProjectQuery, writeProjectFilter, writeProjectQuery } from "../../lib/projects";
+import { filterProjects, projectStats, projectTypes, projectTypeCounts, bulkTargets, dozzleBaseUrl, dozzleContainerUrl, readProjectFilter, readProjectQuery, readProjectTypeFilter, writeProjectFilter, writeProjectQuery, writeProjectTypeFilter } from "../../lib/projects";
 import { expectFromAction, pendingResolved } from "../../lib/waiting";
 import { useSnapshot } from "../snapshot/SnapshotProvider";
 import { useConsoleSettings } from "../console/ConsoleSettingsProvider";
@@ -27,7 +27,7 @@ const VIEWS = {
 };
 
 export default function Dashboard() {
-	const { projects, system, error, setup, features, history } = useSnapshot();
+	const { projects, system, error, setup, history } = useSnapshot();
 	const searchParams = useSearchParams();
 	const view = VIEWS[searchParams.get("view")] ? searchParams.get("view") : "sites";
 	const [tasks, setTasks] = useState([]);
@@ -37,6 +37,7 @@ export default function Dashboard() {
 	const [log, setLog] = useState("");
 	const [query, setQuery] = useState("");
 	const [filter, setFilter] = useState("all");
+	const [typeFilter, setTypeFilter] = useState([]);
 	const [logOpen, setLogOpen] = useState(false);
 	const [logLive, setLogLive] = useState(false);
 	const [consoleReady, setConsoleReady] = useState(false);
@@ -52,6 +53,7 @@ export default function Dashboard() {
 	useEffect(() => {
 		setFilter(readProjectFilter());
 		setQuery(readProjectQuery());
+		setTypeFilter(readProjectTypeFilter());
 		setConsoleReady(true);
 	}, []);
 
@@ -59,7 +61,8 @@ export default function Dashboard() {
 		if (!consoleReady) return;
 		writeProjectFilter(filter);
 		writeProjectQuery(query);
-	}, [consoleReady, filter, query]);
+		writeProjectTypeFilter(typeFilter);
+	}, [consoleReady, filter, query, typeFilter]);
 
 	useEffect(() => {
 		return () => {
@@ -301,10 +304,20 @@ export default function Dashboard() {
 	const dozzleBase = useMemo(() => dozzleBaseUrl(system), [system]);
 	const stats = useMemo(() => projectStats(projects), [projects]);
 	const types = useMemo(() => projectTypes(projects), [projects]);
+	const typeCounts = useMemo(() => projectTypeCounts(projects), [projects]);
+	// Only types that still have sites count, so a stale saved choice never hides every card.
+	const activeTypes = useMemo(() => typeFilter.filter((type) => types.includes(type)), [typeFilter, types]);
 	const visible = useMemo(
-		() => filterProjects(projects, query, filter),
-		[projects, query, filter]
+		() => filterProjects(projects, query, filter, activeTypes),
+		[projects, query, filter, activeTypes]
 	);
+
+	function toggleType(type) {
+		setTypeFilter((current) => {
+			const live = current.filter((item) => types.includes(item));
+			return live.includes(type) ? live.filter((item) => item !== type) : [...live, type];
+		});
+	}
 	const filters = [
 		{ id: "all", label: "All", count: stats.total },
 		{ id: "running", label: "Running", count: stats.running },
@@ -327,7 +340,6 @@ export default function Dashboard() {
 		},
 	};
 	const runningTasks = tasks.filter((task) => task.state === "running").length;
-	const canCreate = !!features?.["webui.create"];
 	const createBusy = Object.values(busy).includes("create");
 	const loading = projects == null;
 
@@ -339,7 +351,7 @@ export default function Dashboard() {
 						<p className="m-0 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">{VIEWS[view].eyebrow}</p>
 						<h2 className="m-0 mt-1 font-display text-3xl font-semibold">{VIEWS[view].title}</h2>
 					</div>
-					{view === "sites" && canCreate ? (
+					{view === "sites" ? (
 						<button
 							type="button"
 							disabled={loading || createBusy}
@@ -360,6 +372,10 @@ export default function Dashboard() {
 							filters={filters}
 							filter={filter}
 							onFilter={setFilter}
+							typeCounts={typeCounts}
+							activeTypes={activeTypes}
+							onToggleType={toggleType}
+							onClearTypes={() => setTypeFilter([])}
 							query={query}
 							onQuery={setQuery}
 							loading={loading}
@@ -381,7 +397,7 @@ export default function Dashboard() {
 							onOpen={setDetailDomain}
 							onHosts={runHosts}
 							onDelete={runDelete}
-							onCreate={canCreate ? () => setCreateOpen(true) : undefined}
+							onCreate={() => setCreateOpen(true)}
 							selectedDomain={detailDomain}
 							logContainer={logContainer}
 							dozzleBase={dozzleBase}

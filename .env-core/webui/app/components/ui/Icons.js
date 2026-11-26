@@ -92,6 +92,17 @@ export function IconCollapse({ className = "h-2.5 w-3.5" }) {
 	);
 }
 
+// Two labelled sections of blocks: the "Group by type" switch.
+export function IconGroup({ className = "h-3.5 w-3.5" }) {
+	return (
+		<svg viewBox="0 0 16 16" className={className} fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
+			<path d="M2.5 3h4M2.5 9.5h4" strokeLinecap="round" />
+			<rect x="2.5" y="4.8" width="11" height="2.6" rx="0.9" />
+			<rect x="2.5" y="11.3" width="11" height="2.6" rx="0.9" />
+		</svg>
+	);
+}
+
 export function IconChevron({ className = "h-3 w-3" }) {
 	return (
 		<svg viewBox="0 0 16 16" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>

@@ -45,6 +45,7 @@ export function projectUrls(project) {
 export const DOZZLE_DEFAULT_URL = "http://127.0.0.1:7007";
 export const PROJECT_FILTER_KEY = "docker-env-project-filter";
 export const PROJECT_QUERY_KEY = "docker-env-project-query";
+export const PROJECT_TYPES_KEY = "docker-env-project-types";
 const PROJECT_FILTERS = new Set(["all", "running", "building", "stopped", "archived"]);
 
 export function readProjectFilter() {
@@ -80,6 +81,34 @@ export function writeProjectQuery(query) {
 	}
 }
 
+// Selected type chips. Stored as a JSON array; anything unreadable means "all types".
+export function readProjectTypeFilter() {
+	try {
+		const parsed = JSON.parse(localStorage.getItem(PROJECT_TYPES_KEY) || "[]");
+		return Array.isArray(parsed) ? parsed.filter((item) => typeof item === "string") : [];
+	} catch (err) {
+		return [];
+	}
+}
+
+export function writeProjectTypeFilter(types) {
+	try {
+		localStorage.setItem(PROJECT_TYPES_KEY, JSON.stringify(types || []));
+	} catch (err) {
+		// ignore
+	}
+}
+
+// Sites per type, for the chip counts: [{ type, count }] sorted by type name.
+export function projectTypeCounts(projects) {
+	const counts = new Map();
+	for (const project of projects || []) {
+		const type = String(project?.type || "").trim();
+		if (type) counts.set(type, (counts.get(type) || 0) + 1);
+	}
+	return [...counts.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([type, count]) => ({ type, count }));
+}
+
 export function projectTypes(projects) {
 	const seen = new Set();
 	for (const project of projects || []) {
@@ -87,6 +116,23 @@ export function projectTypes(projects) {
 		if (type) seen.add(type);
 	}
 	return [...seen].sort((a, b) => a.localeCompare(b));
+}
+
+// Sections for the "Group by type" view: [{ type, guide, items }] sorted by type name.
+export function groupProjectsByType(projects) {
+	const groups = new Map();
+	for (const project of projects || []) {
+		const type = String(project.type || "unknown");
+		if (!groups.has(type)) groups.set(type, []);
+		groups.get(type).push(project);
+	}
+	return [...groups.entries()]
+		.sort((a, b) => a[0].localeCompare(b[0]))
+		.map(([type, items]) => ({
+			type,
+			guide: items.find((item) => item.guide)?.guide || "",
+			items,
+		}));
 }
 
 export function bulkTargets(projects, action, scope) {
@@ -135,10 +181,14 @@ export function projectKind(project) {
 	return "stopped";
 }
 
-export function filterProjects(projects, query, filter) {
+// `types`: selected type chips. Empty means every type. A selected type with no sites
+// left (a deleted site, a stale saved choice) simply matches nothing on its own.
+export function filterProjects(projects, query, filter, types = []) {
 	const list = projects || [];
 	const needle = query.trim().toLowerCase();
+	const wanted = new Set(types || []);
 	return list.filter((project) => {
+		if (wanted.size && !wanted.has(project.type)) return false;
 		if (filter === "running" && (!project.running || isBuilding(project))) return false;
 		if (filter === "stopped" && (project.running || isBuilding(project) || isArchived(project))) return false;
 		if (filter === "building" && !isBuilding(project)) return false;

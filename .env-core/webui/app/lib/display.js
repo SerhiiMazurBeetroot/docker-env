@@ -46,3 +46,22 @@ export function writeExpandAll(expanded, density) {
 		// ignore
 	}
 }
+
+// "Group by type" on the Sites page. Off by default: with a few sites, one grid is easier to scan.
+export const GROUP_STORAGE_KEY = "docker-env-group-by-type";
+
+export function readGroupByType() {
+	try {
+		return localStorage.getItem(GROUP_STORAGE_KEY) === "1";
+	} catch (err) {
+		return false;
+	}
+}
+
+export function writeGroupByType(enabled) {
+	try {
+		localStorage.setItem(GROUP_STORAGE_KEY, enabled ? "1" : "0");
+	} catch (err) {
+		// ignore
+	}
+}

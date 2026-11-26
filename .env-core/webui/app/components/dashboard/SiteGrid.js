@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useDisplay } from "../display/DisplayProvider";
-import { IconPlus } from "../ui/Icons";
+import { IconChevron, IconPlus } from "../ui/Icons";
 import { ProjectSkeleton } from "../ui/Skeleton";
+import { groupProjectsByType, typeTone } from "../../lib/projects";
 import SiteCard from "./SiteCard";
 
 // Comfortable: one wide, detailed card per row. Grid: small tiles, many per row. Compact: one-line rows.
@@ -31,8 +33,10 @@ export default function SiteGrid({
 	logContainer,
 	dozzleBase,
 }) {
-	const { density, expandAll } = useDisplay();
+	const { density, expandAll, groupByType } = useDisplay();
 	const [overrides, setOverrides] = useState({});
+	// Collapsed type sections, for this visit only.
+	const [collapsed, setCollapsed] = useState({});
 
 	useEffect(() => {
 		setOverrides({});
@@ -58,33 +62,85 @@ export default function SiteGrid({
 		);
 	}
 
+	const gridClass = `grid ${GRID[density] || GRID.comfortable}`;
+
+	const renderCard = (project, index) => (
+		<SiteCard
+			key={project.domain}
+			project={project}
+			index={projects.indexOf(project) >= 0 ? projects.indexOf(project) : index}
+			history={history?.sites?.[project.domain]}
+			variant={density}
+			action={busy[project.domain]}
+			busy={busy}
+			pending={pending}
+			detailsOpen={isOpen(project.domain)}
+			onToggleDetails={() =>
+				setOverrides((current) => ({ ...current, [project.domain]: !isOpen(project.domain) }))
+			}
+			onAction={onAction}
+			onLogs={onLogs}
+			onServiceAction={onServiceAction}
+			onOpen={onOpen}
+			onHosts={onHosts}
+			onDelete={onDelete}
+			selected={selectedDomain === project.domain}
+			logContainer={logContainer}
+			dozzleBase={dozzleBase}
+		/>
+	);
+
+	if (groupByType) {
+		return (
+			<div className="grid gap-6">
+				{groupProjectsByType(visible).map((group) => {
+					const open = !collapsed[group.type];
+					return (
+						<section key={group.type} aria-label={`${group.type} sites`}>
+							<header className="mb-2.5 flex items-center gap-2.5">
+								<button
+									type="button"
+									onClick={() => setCollapsed((current) => ({ ...current, [group.type]: open }))}
+									aria-expanded={open}
+									title={open ? `Collapse ${group.type}` : `Expand ${group.type}`}
+									className="inline-flex items-center gap-2 rounded-lg py-0.5 pr-1.5 text-left hover:text-fg"
+								>
+									<IconChevron className={`h-3.5 w-3.5 text-muted transition ${open ? "" : "-rotate-90"}`} />
+									<span className={`rounded-md px-2 py-0.5 font-mono text-[12px] font-medium ${typeTone(group.type)}`}>
+										{group.type}
+									</span>
+									<span className="font-mono text-[12px] tabular-nums text-muted">
+										{group.items.filter((item) => item.running).length}/{group.items.length} running
+									</span>
+								</button>
+								<span aria-hidden className="h-px flex-1 bg-line" />
+								{group.guide ? (
+									<Link href={group.guide} className="text-[12px] text-muted hover:text-accent">
+										Guide
+									</Link>
+								) : null}
+							</header>
+							{open ? <div className={gridClass}>{group.items.map(renderCard)}</div> : null}
+						</section>
+					);
+				})}
+				{onCreate ? (
+					<button
+						type="button"
+						onClick={onCreate}
+						className="flex h-14 items-center justify-center gap-2 rounded-2xl border border-dashed border-line px-4 text-[13px] font-semibold text-muted transition hover:border-accent/60 hover:text-accent"
+					>
+						<IconPlus className="h-4 w-4" />
+						New site
+					</button>
+				) : null}
+			</div>
+		);
+	}
+
 	return (
-		<div className={`grid ${GRID[density] || GRID.comfortable}`}>
-			{visible.map((project, index) => (
-				<SiteCard
-					key={project.domain}
-					project={project}
-					index={projects.indexOf(project) >= 0 ? projects.indexOf(project) : index}
-					history={history?.sites?.[project.domain]}
-					variant={density}
-					action={busy[project.domain]}
-					busy={busy}
-					pending={pending}
-					detailsOpen={isOpen(project.domain)}
-					onToggleDetails={() =>
-						setOverrides((current) => ({ ...current, [project.domain]: !isOpen(project.domain) }))
-					}
-					onAction={onAction}
-					onLogs={onLogs}
-					onServiceAction={onServiceAction}
-					onOpen={onOpen}
-					onHosts={onHosts}
-					onDelete={onDelete}
-					selected={selectedDomain === project.domain}
-					logContainer={logContainer}
-					dozzleBase={dozzleBase}
-				/>
-			))}
+		<div className={gridClass}>
+			{visible.map(renderCard)}
 			{onCreate && density !== "grid" ? (
 				<button
 					type="button"

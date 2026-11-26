@@ -1,24 +1,28 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { readCardDensity, writeCardDensity, readExpandAll, writeExpandAll, DISPLAY_OPTIONS } from "../../lib/display";
+import { readCardDensity, writeCardDensity, readExpandAll, writeExpandAll, readGroupByType, writeGroupByType, DISPLAY_OPTIONS } from "../../lib/display";
 
 const DisplayContext = createContext({
 	density: "comfortable",
 	setDensity: () => {},
 	expandAll: true,
 	setExpandAll: () => {},
+	groupByType: false,
+	setGroupByType: () => {},
 });
 
 export function DisplayProvider({ children }) {
 	const [density, setDensityState] = useState("comfortable");
 	const [expandWide, setExpandWide] = useState(true);
 	const [expandCompact, setExpandCompact] = useState(false);
+	const [groupByType, setGroupByTypeState] = useState(false);
 
 	useEffect(() => {
 		setDensityState(readCardDensity());
 		setExpandWide(readExpandAll("comfortable"));
 		setExpandCompact(readExpandAll("compact"));
+		setGroupByTypeState(readGroupByType());
 	}, []);
 
 	const expandAll = density === "compact" ? expandCompact : expandWide;
@@ -38,8 +42,14 @@ export function DisplayProvider({ children }) {
 				else setExpandWide(resolved);
 				writeExpandAll(resolved, density);
 			},
+			groupByType,
+			setGroupByType: (next) => {
+				const resolved = !!next;
+				setGroupByTypeState(resolved);
+				writeGroupByType(resolved);
+			},
 		}),
-		[density, expandAll]
+		[density, expandAll, groupByType]
 	);
 
 	return <DisplayContext.Provider value={value}>{children}</DisplayContext.Provider>;
