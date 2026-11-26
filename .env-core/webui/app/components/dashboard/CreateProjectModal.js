@@ -105,7 +105,7 @@ export default function CreateProjectModal({ open, onClose, onCreate, busy = fal
 			>
 				<div className="mb-4 flex items-start justify-between gap-3">
 					<div>
-						<h2 className="m-0 text-lg font-extrabold tracking-tight">New project</h2>
+						<h2 className="m-0 text-lg font-extrabold tracking-tight">New site</h2>
 						<p className="mt-1 text-xs text-muted">Default uses the current recommended release.</p>
 					</div>
 					<button type="button" onClick={onClose} className="rounded-lg p-1.5 text-muted hover:bg-raised hover:text-fg">

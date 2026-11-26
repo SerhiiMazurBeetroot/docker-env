@@ -10,7 +10,7 @@
 #      fields: id menu label compose container also nginx flow setup_args
 #              dir_question flags after
 #
-# WIP rows (PROJECT_TIERS=wip) show in New project only when ENV_MODE=development.
+# WIP rows (PROJECT_TIERS=wip) show in New site only when ENV_MODE=development.
 # docker_create_dispatch is the only create entry. It reads flow, setup_args,
 # dir_question, flags, and after.
 

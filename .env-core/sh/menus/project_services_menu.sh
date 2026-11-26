@@ -34,9 +34,9 @@ project_services_menu() {
 		if ((${#names[@]} == 0)); then
 			EMPTY_LINE
 			if instances_has_archived_sites; then
-				ECHO_CYAN "No active sites. Create one from New project, or restore an archive below."
+				ECHO_CYAN "No active sites. Create one from New site, or restore an archive below."
 			else
-				ECHO_CYAN "No active sites. Create one from New project."
+				ECHO_CYAN "No active sites. Create one from New site."
 			fi
 		else
 			for ((index = 0; index < ${#names[@]}; index++)); do
