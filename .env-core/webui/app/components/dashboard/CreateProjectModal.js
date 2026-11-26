@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { IconClose, IconPlus } from "../ui/Icons";
+import DevBadge from "../ui/DevBadge";
 import { normalizeProjectDomain } from "../../../lib/domain";
 import { versionsForOption } from "../../../lib/versionChoices";
 
@@ -121,12 +122,19 @@ export default function CreateProjectModal({ open, onClose, onCreate, busy = fal
 						}}
 						className="h-9 w-full rounded-xl border border-line bg-raised px-3 text-sm outline-none focus:border-accent/50"
 					>
+						{/* WIP types (tier "wip") are listed only in development mode. */}
 						{types.map((item) => (
 							<option key={item.id} value={item.id}>
-								{item.title}
+								{item.tier === "wip" ? `${item.title} · dev` : item.title}
 							</option>
 						))}
 					</select>
+					{types.find((item) => item.id === type)?.tier === "wip" ? (
+						<span className="mt-1.5 flex items-center gap-1.5 text-xs text-muted">
+							<DevBadge />
+							Work-in-progress type, listed only with ENV_MODE=development.
+						</span>
+					) : null}
 				</label>
 				<label className="mb-3 block text-sm">
 					<span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-muted">Domain</span>

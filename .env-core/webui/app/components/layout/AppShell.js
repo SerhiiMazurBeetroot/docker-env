@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSnapshot } from "../snapshot/SnapshotProvider";
 import LiveLogo, { liveLogoSummary } from "./LiveLogo";
+import DevBadge from "../ui/DevBadge";
 
 const NAV = [
 	{ id: "sites", label: "Sites", href: "/", icon: IconGlobe },
@@ -10,6 +11,7 @@ const NAV = [
 	{ id: "activity", label: "Activity", href: "/?view=activity", icon: IconPulse },
 	{ id: "docs", label: "Docs", href: "/docs", icon: IconBook },
 	// Developer page; listed only when the `updates` feature is on (ENV_MODE=development).
+	// Every `feature` item is a WIP feature, so it carries the "dev" badge.
 	{ id: "updates", label: "Updates", href: "/updates", icon: IconUpdates, feature: "updates" },
 	{ id: "settings", label: "Settings", href: "/settings", icon: IconGear },
 ];
@@ -80,6 +82,7 @@ function NavItem({ item, active, count, compact = false }) {
 		>
 			<Icon className="h-[17px] w-[17px] shrink-0" />
 			{item.label}
+			{item.feature ? <DevBadge /> : null}
 			{count ? <span className="ml-auto pl-2 font-mono text-[11px] text-accent">{count}</span> : null}
 		</Link>
 	);

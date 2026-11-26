@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import AppShell from "../layout/AppShell";
 import { Spinner } from "../ui/Icons";
+import DevBadge from "../ui/DevBadge";
 
 // Order and wording of the groups written by updates_check.sh.
 const GROUPS = [
@@ -101,7 +102,10 @@ export default function UpdatesPage({ enabled }) {
 				</p>
 				<div className="mt-1 flex flex-wrap items-end justify-between gap-3">
 					<div>
-						<h2 className="m-0 font-display text-3xl font-semibold">Updates</h2>
+						<h2 className="m-0 flex items-center gap-2.5 font-display text-3xl font-semibold">
+							Updates
+							<DevBadge className="text-[11px] leading-[18px]" />
+						</h2>
 						<p className="mt-2 text-sm text-muted">
 							What the repo pins, what is running, and what is published. Nothing here changes a pin or pulls an image.
 						</p>

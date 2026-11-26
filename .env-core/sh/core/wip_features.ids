@@ -1,3 +1,2 @@
 # One id per line. A feature runs only when ENV_MODE=development.
-webui.create
 updates

@@ -1,5 +1,4 @@
 import { catalogTypeIds, loadProjectCatalog } from "../catalog.js";
-import { wipFeatureDenied } from "../features.js";
 import { normalizeProjectDomain } from "../domain.js";
 import { readVersionCatalog, versionChoiceError } from "../versions.js";
 import { streamLockedCli } from "./stream.js";
@@ -69,9 +68,6 @@ export async function listProjectTypes() {
 }
 
 export async function streamCreateProject(type, domain, options, signal) {
-	const denied = wipFeatureDenied("webui.create");
-	if (denied) return { error: denied };
-
 	let catalog;
 	try {
 		catalog = await loadProjectCatalog();

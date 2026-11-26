@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import AppShell from "../../components/layout/AppShell";
 import MermaidDiagrams from "../../components/docs/MermaidDiagrams";
 import { isDeveloperSection, isDevelopmentMode, listDocs, readDoc } from "../../../lib/docs";
+import DevBadge from "../../components/ui/DevBadge";
 
 export const dynamic = "force-dynamic";
 
@@ -47,9 +48,10 @@ export default async function DocsPage(props) {
 							</Link>
 							<Link
 								href="/docs/dev"
-								className={`flex-1 rounded-md px-2 py-1.5 text-center ${developer ? "bg-raised text-fg" : "text-muted hover:text-fg"}`}
+								className={`inline-flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-center ${developer ? "bg-raised text-fg" : "text-muted hover:text-fg"}`}
 							>
 								Developing
+								<DevBadge />
 							</Link>
 						</div>
 					) : null}
