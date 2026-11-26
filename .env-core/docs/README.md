@@ -9,7 +9,6 @@ docker-env runs local sites in Docker behind one Nginx proxy. The CLI and the We
 | [System services](system.md) | Proxy, certificates, hosts, logs, mail |
 | [Troubleshooting](troubleshooting.md) | Ports, certs, hosts, login |
 | [Projects](#projects) | How a stack is created |
-| [Developer guide](dev/README.md) | Changing docker-env itself |
 
 [Back to the project README](../../README.MD)
 
