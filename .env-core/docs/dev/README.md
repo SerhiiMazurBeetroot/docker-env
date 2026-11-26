@@ -28,8 +28,7 @@ WIP project types stay out of the user guides. Their pages:
 
 ## Docs media
 
-`docs/gifs/` are terminal recordings used in the user guides. `docs/yml/` holds the matching recorder configs (one `.yml` per GIF, same name). Re-record a GIF when the menu it shows changes. All seven were recorded before the main menu was renamed and still show **New project** instead of **2 New site**.
-
+`docs/gifs/` are terminal recordings used in the user guides. `docs/yml/` holds the matching recorder configs (one `.yml` per GIF, same name). Re-record a GIF when the menu it shows changes.
 ## Quick checks
 
 From the clone root:

@@ -140,7 +140,7 @@ records:
   - delay: 432
     content: "\r\n"
   - delay: 32
-    content: "\e[0;36m======== docker-env ======= \e[0m\r\n\e[0;93m0 - Exit and do nothing \e[0m\r\n\e[0;32m1 - Nginx \e[0m\r\n\e[0;32m2 - New project \e[0m\r\n\e[0;32m3 - Existing project \e[0m\r\n\e[0;37m4 - Settings \e[0;32m \e[0m\r\n\e[0;93mPlease select one of: \e[0m"
+    content: "\e[0;36m======== docker-env ======= \e[0m\r\n\e[0;93m0 - Exit \e[0m\r\n\e[0;32m1 - System \e[0m\r\n\e[0;32m2 - New site \e[0m\r\n\e[0;32m3 - Sites \e[0m\r\n\e[0;37m4 - Helpers \e[0;32m \e[0m\r\n\e[0;93mPlease select one of: \e[0m"
   - delay: 1277
     content: '2'
   - delay: 1277

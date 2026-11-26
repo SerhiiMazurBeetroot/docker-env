@@ -139,6 +139,6 @@ records:
   - delay: 420
     content: "\r\n"
   - delay: 42
-    content: "\e[0;36m======== docker-env ======= \e[0m\r\n\e[0;93m0 - Exit and do nothing \e[0m\r\n\e[0;32m1 - Nginx \e[0m\r\n\e[0;32m2 - New project \e[0m\r\n\e[0;32m3 - Existing project \e[0m\r\n\e[0;37m4 - Settings \e[0;32m \e[0m\r\n\e[0;93mPlease select one of: \e[0m"
+    content: "\e[0;36m======== docker-env ======= \e[0m\r\n\e[0;93m0 - Exit \e[0m\r\n\e[0;32m1 - System \e[0m\r\n\e[0;32m2 - New site \e[0m\r\n\e[0;32m3 - Sites \e[0m\r\n\e[0;37m4 - Helpers \e[0;32m \e[0m\r\n\e[0;93mPlease select one of: \e[0m"
   - delay: 1941
     content: "\r\n\e[?2004h\e]0;serhiimazur: ~/Desktop/docker-env\a\e[01;32mserhiimazur\e[00m:\e[01;34m~/Desktop/docker-env\e[00m$ "
