@@ -6,7 +6,7 @@ Classic WordPress in Docker behind [Nginx](../system.md). Disk path: `wordpress/
 
 ## Create
 
-CLI: **2 New site → Wordpress**. Web UI: **Create**, type WordPress (the button shows only in [development mode](../getting-started.md#development-mode)).
+CLI: **2 New site → Wordpress**. Web UI: **New site**, type WordPress.
 
 Nginx must already be running.
 

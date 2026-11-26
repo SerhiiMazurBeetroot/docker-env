@@ -24,18 +24,17 @@ Published ports:
 
 Network: `dockerwp`. Volume: `ssl-certs`.
 
-CLI: **1 System → 1 Nginx**
+CLI: **System → Nginx proxy**. The header shows whether the proxy and Dozzle run, and the menu lists only what fits that state.
 
-| Key | Action |
-| --- | --- |
-| 1 Setup | Create network/volume if needed, start proxy + mkcert + Dozzle, try Web UI |
-| 2 Stop | `docker compose down` on the Nginx stack |
-| 3 Start | Start proxy stack if it is down |
-| 4 Restart | Restart `nginx-proxy` only |
-| 5 Rebuild | Recreate nginx, mkcert, dozzle |
-| 6 Re-Setup | Stop, delete `ssl-certs` and `certs-root`, Setup again |
+| Action | Shown when | What it does |
+| --- | --- | --- |
+| Start | stopped | Create the `dockerwp` network and `ssl-certs` volume if missing, start proxy + mkcert + Dozzle, try the Web UI. The first start (no certificates yet) also hands `certs-root` to your user, which asks for `sudo` |
+| Restart | running | Restart `nginx-proxy` only |
+| Stop | running | `docker compose down` on the Nginx stack |
+| Rebuild | always | Recreate nginx, mkcert, dozzle |
+| Reset SSL | running | Asks first, then stops, deletes `ssl-certs` and `certs-root`, and sets up again |
 
-After Re-Setup, [trust the CA](#trust-the-local-ca) again.
+After Reset SSL, [trust the CA](#trust-the-local-ca) again.
 
 ## Trust the local CA
 
@@ -65,7 +64,7 @@ Open `rootCA.pem` in Keychain Access, add it to the **login** or **System** keyc
 
 Copy the PEM into the OS trust store (often `/usr/local/share/ca-certificates`) and update certificates (`update-ca-certificates` on Debian/Ubuntu). Firefox may need its own authority store.
 
-Restart the browser after installing. If you Re-Setup Nginx, replace the old root with the new one.
+Restart the browser after installing. If you reset SSL, replace the old root with the new one.
 
 ## Hosts file
 

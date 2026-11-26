@@ -10,7 +10,7 @@ These pages are for changing docker-env itself. Day-to-day site setup stays in t
 | [Tests](testing.md) | Unit tests, ShellCheck, Docker smokes |
 | [Updates check](updates.md) | Pinned images, Node, npm packages and releases vs newest (Web UI `/updates`) |
 
-WIP product behavior uses the same switch. Add an id to [`sh/core/wip_features.ids`](../../sh/core/wip_features.ids), then guard the shell with `wip_feature "<id>"` and the Web UI with `wipFeatureEnabled("<id>")` from `webui/lib/features.js`. The dashboard snapshot includes a `features` map. `webui.create` is the Create button and `POST /api/projects`; both stay off unless `ENV_MODE=development`.
+WIP product behavior uses the same switch. Add an id to [`sh/core/wip_features.ids`](../../sh/core/wip_features.ids), then guard the shell with `wip_feature "<id>"` and the Web UI with `wipFeatureEnabled("<id>")` from `webui/lib/features.js`. The dashboard snapshot includes a `features` map. `updates` (the Updates page and its API) is the current WIP feature. Anything shown only to developers carries a **dev** badge (`app/components/ui/DevBadge.js`): the Updates sidebar item and page, WIP project types in **New site**, and the Developing docs tab. Creating projects from the Web UI is open to everyone.
 
 WIP project types stay out of the user guides. Their pages:
 

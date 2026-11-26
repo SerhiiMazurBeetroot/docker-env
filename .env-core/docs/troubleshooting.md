@@ -23,7 +23,7 @@ You are on Compose v1. The CLI still falls back to `docker-compose`, but that pa
 
 ## Nginx container not running
 
-Create and Docker actions require `nginx-proxy`. **1 System → 1 Nginx → 1 Setup**.
+Create and Docker actions require `nginx-proxy`. Start it with **System → Nginx proxy → Start**.
 
 ## Port already allocated
 
@@ -47,7 +47,7 @@ docker-env port kill 3001
 
 ## Browser says the certificate is invalid
 
-The site cert is fine only after the **root CA** is trusted. See [Trust the local CA](system.md#trust-the-local-ca). Restart the browser. After Nginx **Re-Setup**, install the new root.
+The site cert is fine only after the **root CA** is trusted. See [Trust the local CA](system.md#trust-the-local-ca). Restart the browser. After Nginx **Reset SSL**, install the new root.
 
 ## Site does not resolve
 
@@ -56,21 +56,21 @@ The site cert is fine only after the **root CA** is trusted. See [Trust the loca
 ## Web UI will not start
 
 1. Confirm Nginx is up (`docker ps` → `nginx-proxy`).
-2. **1 System → 2 Web UI → 1 Start**.
+2. **System → Web UI → Start**.
 3. Open [http://127.0.0.1:7777](http://127.0.0.1:7777), not a `*.local` host.
 4. If port 7777 is taken, stop the other listener.
 
 ## Web UI login fails
 
-Show the token with **1 System → 2 Web UI → 4 Show sign-in token** and paste that value with no extra spaces. Restart the Web UI after the token changes so `nginx-webui` reloads `.env-core/system/nginx/.env`.
+Show the token with **System → Web UI → Sign-in token** and paste that value with no extra spaces. Restart the Web UI after the token changes so `nginx-webui` reloads `.env-core/system/nginx/.env`.
 
-Stopping the Web UI does not stop Nginx. Stopping Nginx (**1 System → 1 Nginx → 2 Stop**) also stops the Web UI, because both are in the same Compose stack.
+Stopping the Web UI does not stop Nginx. Stopping Nginx (**System → Nginx proxy → Stop**) also stops the Web UI, because both are in the same Compose stack.
 
 ## Web UI is slow on the first load
 
-If **1 System → 2 Web UI** shows `(dev)`, the UI runs `next dev`. That mode compiles each page the first time you open it, which can add 5–10 seconds after a start. Later loads are fast.
+If **System → Web UI** shows `(dev)`, the UI runs `next dev`. That mode compiles each page the first time you open it, which can add 5–10 seconds after a start. Later loads are fast.
 
-If you are not changing the Web UI code, switch to the production image with **1 System → 2 Web UI → 5 Rebuild image**. That menu item shows only in [development mode](getting-started.md#development-mode).
+If you are not changing the Web UI code, switch to the production image with **System → Web UI → Rebuild image**. That menu item shows only in [development mode](getting-started.md#development-mode).
 
 ## Project already exists
 

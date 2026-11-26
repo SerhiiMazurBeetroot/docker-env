@@ -42,7 +42,7 @@ Projects need the shared proxy. In the CLI:
 
 That creates the `dockerwp` network and `ssl-certs` volume, then starts `nginx-proxy`, `nginx-mkcert`, and `nginx-dozzle`. It also tries to start the Web UI at [http://127.0.0.1:7777](http://127.0.0.1:7777).
 
-The first time the Web UI starts, the CLI creates a sign-in token. Show it with **1 System → 2 Web UI → 4 Show sign-in token**, then paste it on `/login`. See [Web UI](web-ui.md).
+The first time the Web UI starts, the CLI creates a sign-in token. Show it with **System → Web UI → Sign-in token**, then paste it on `/login`. See [Web UI](web-ui.md).
 
 ![Nginx setup](gifs/nginx.gif)
 
@@ -109,7 +109,7 @@ flowchart LR
 
 ## Development mode
 
-Some things stay hidden until you turn on development mode: work-in-progress project types, **Create** in the Web UI, the Web UI **Rebuild** / **Develop** items, and **System → 4 Run tests**.
+Some things stay hidden until you turn on development mode: work-in-progress project types, the Web UI **Rebuild image** / **Develop mode** items, the **Updates** page, and **System → Run tests**. In the Web UI they carry a **dev** badge.
 
 There is no menu switch. Add this line to `.env-core/data/settings.log`, then restart `docker-env`:
 

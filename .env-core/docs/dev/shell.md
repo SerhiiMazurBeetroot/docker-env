@@ -111,4 +111,4 @@ Non-interactive create:
 
 ## Web UI bridge
 
-The dashboard does not talk to Docker itself. API routes call `webui/webui_cli.sh`, which sources the same shell functions as the CLI (`list`, `create`, start/stop). Auth is `WEBUI_TOKEN` in `settings.log`, copied into the nginx compose env, checked by `webui/proxy.js` (Next.js 16 proxy, formerly middleware). The CLI prints that token from **1 System → 2 Web UI → 4 Show sign-in token** (`webui_show_token`).
+The dashboard does not talk to Docker itself. API routes call `webui/webui_cli.sh`, which sources the same shell functions as the CLI (`list`, `create`, start/stop). Auth is `WEBUI_TOKEN` in `settings.log`, copied into the nginx compose env, checked by `webui/proxy.js` (Next.js 16 proxy, formerly middleware). The CLI prints that token from **System → Web UI → Sign-in token** (`webui_show_token`).
